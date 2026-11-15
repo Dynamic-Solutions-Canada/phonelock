@@ -34,7 +34,7 @@ import java.util.Arrays;
  * tells the parents.
  */
 final class Updater {
-    static final String RELEASE = "https://github.com/RyanEwen/phonelock/releases/latest/download/";
+    static final String RELEASE = "https://github.com/Dynamic-Solutions-Canada/phonelock/releases/latest/download/";
     private static final long CHECK_EVERY_MS = 6 * 3600_000L;
     private static final long MAX_APK = 30L * 1024 * 1024;
     private static final long RETRY_MS = 3600_000L;

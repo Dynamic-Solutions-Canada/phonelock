@@ -8,7 +8,7 @@ Drafts for the Play Console. Only the parent app goes on Play; the lock app is i
 - **Category:** Parenting
 - **Contains ads:** No
 - **Target audience:** adults (parents). Not designed for children.
-- **Privacy policy URL:** https://github.com/RyanEwen/phonelock/blob/main/PRIVACY.md
+- **Privacy policy URL:** https://github.com/Dynamic-Solutions-Canada/phonelock/blob/main/PRIVACY.md
 
 ## Short description (80 characters max)
 

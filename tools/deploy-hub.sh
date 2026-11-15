@@ -9,7 +9,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 HOST=${DEPLOY_SSH_HOST:-apps}
 DIR=${DEPLOY_REPO_PATH:-/home/apps/phonelock}
-REPO=https://github.com/RyanEwen/phonelock.git
+REPO=https://github.com/Dynamic-Solutions-Canada/phonelock.git
 
 # Only deploy what is pushed, so the host matches the repo.
 git fetch -q origin main

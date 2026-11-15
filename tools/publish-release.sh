@@ -7,7 +7,7 @@
 #   tools/publish-release.sh            # builds from the committed, pushed HEAD
 set -euo pipefail
 cd "$(dirname "$0")/.."
-REPO=RyanEwen/phonelock
+REPO=Dynamic-Solutions-Canada/phonelock
 [ -z "$(git status --porcelain)" ] || { echo "commit first: releases must match a pushed commit"; exit 1; }
 git fetch -q origin main
 [ "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)" ] || { echo "push first"; exit 1; }

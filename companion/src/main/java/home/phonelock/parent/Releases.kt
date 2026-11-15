@@ -16,7 +16,7 @@ import java.util.Base64
  */
 object Releases {
     /** Files of the newest release; GitHub redirects these to the actual download. */
-    const val LATEST = "https://github.com/RyanEwen/phonelock/releases/latest/download/"
+    const val LATEST = "https://github.com/Dynamic-Solutions-Canada/phonelock/releases/latest/download/"
 
     /** What an APK says it is: package name, version, and its signing certificate (see [certHash]). */
     data class ApkInfo(val packageName: String, val versionCode: Long, val signer: String?)
