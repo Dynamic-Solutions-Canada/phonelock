@@ -163,7 +163,7 @@ object PhoneTools {
         val error = m.optString("error").takeIf { it.isNotEmpty() }
         if (error != null || attachmentUrl == null) {
             capturing.update { it - d.id }
-            setScreen(d.id, PhoneScreen(ts, label = label, error = error ?: "No image received"))
+            setScreen(d.id, PhoneScreen(ts, label = label, error = error ?: Strings.get(R.string.setup_screenshot_no_image)))
             return
         }
         thread(name = "shot") {
@@ -172,7 +172,7 @@ object PhoneTools {
                 .getOrNull()
             capturing.update { it - d.id }
             setScreen(d.id, if (image != null) PhoneScreen(ts, image, label)
-                else PhoneScreen(ts, label = label, error = "Couldn't open the screenshot"))
+                else PhoneScreen(ts, label = label, error = Strings.get(R.string.setup_screenshot_unreadable)))
         }
     }
 

@@ -8,6 +8,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 
 /**
@@ -29,15 +30,14 @@ internal fun SharePhoneDialog(device: Device, close: () -> Unit) {
     SecureScreen()
     AppDialog(
         onDismissRequest = close,
-        title = { Text("Share ${device.name}'s device") },
+        title = { Text(stringResource(R.string.setup_share_title, device.name)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                Text("On the other parent's phone, open PhoneLock, tap \"Add a device another parent set up\" " +
-                    "and scan this code.")
+                Text(stringResource(R.string.setup_share_instructions, stringResource(R.string.setup_add_existing_title)))
                 QrCode(Setup.pairingLink(device))
-                Text("Anyone with this code can control the device. Only show it to the other parent.",
+                Text(stringResource(R.string.setup_share_warning),
                     style = MaterialTheme.typography.bodySmall)
             }
         },
-        confirmButton = { TextButton(onClick = close) { Text("Done") } })
+        confirmButton = { TextButton(onClick = close) { Text(stringResource(R.string.done)) } })
 }

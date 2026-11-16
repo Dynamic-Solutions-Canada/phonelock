@@ -35,6 +35,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -136,37 +137,38 @@ internal fun AllowedNowSection(dev: String, state: PhoneState, now: Long) {
         (scheduled && (state.blocks[id] ?: 0) <= now) || (state.grants[id] ?: 0) > now
     }
 
-    Section("Allowed right now") {
+    Section(stringResource(R.string.apps_allowed_now_title)) {
         if (scheduled.isEmpty() && live.isEmpty() && paused.isEmpty() && controlsNow.isEmpty()) {
-            EmptyNote("Nothing is allowed right now. Allow an app for a while from the list below.")
+            EmptyNote(stringResource(R.string.apps_allowed_now_empty))
         }
         if (scheduled.isNotEmpty()) {
-            Text("Tap an app to pause it for a while.", style = MaterialTheme.typography.bodySmall)
+            Text(stringResource(R.string.apps_tap_to_pause), style = MaterialTheme.typography.bodySmall)
             AppIconGrid(dev, state, scheduled, onTap = { blocking = it })
         }
         if (live.isNotEmpty()) {
-            Text("Allowed for a while", style = MaterialTheme.typography.titleSmall)
+            Text(stringResource(R.string.apps_allowed_for_a_while), style = MaterialTheme.typography.titleSmall)
             AppIconGrid(dev, state, phoneFirst(state, live.keys), onTap = { granted = it },
-                notes = live.mapValues { "until ${time(it.value)}" })
+                notes = live.mapValues { stringResource(R.string.apps_until_time, time(it.value)) })
         }
         if (paused.isNotEmpty()) {
-            Text("Paused for a while", style = MaterialTheme.typography.titleSmall)
+            Text(stringResource(R.string.apps_paused_for_a_while), style = MaterialTheme.typography.titleSmall)
             AppIconGrid(dev, state, phoneFirst(state, paused.keys), onTap = { unpausing = it },
-                notes = paused.mapValues { "until ${time(it.value)}" }, dimmed = paused.keys)
+                notes = paused.mapValues { stringResource(R.string.apps_until_time, time(it.value)) }, dimmed = paused.keys)
         }
         ControlPills(dev, controlsNow, label = { id ->
-            DeviceControls.label(id) + (state.grants[id]?.takeIf { it > now }?.let { " · until ${time(it)}" } ?: "")
+            state.grants[id]?.takeIf { it > now }?.let { stringResource(R.string.apps_control_until, DeviceControls.label(id), time(it)) }
+                ?: DeviceControls.label(id)
         }, onTap = { id -> if ((state.grants[id] ?: 0) > now) granted = id else blocking = id })
     }
 
     blocking?.let { p ->
-        LengthDialog("Pause ${state.label(p)} for how long?", onPick = { m -> Hub.block(dev, p, m); blocking = null },
+        LengthDialog(stringResource(R.string.apps_pause_how_long, state.label(p)), onPick = { m -> Hub.block(dev, p, m); blocking = null },
             onDismiss = { blocking = null })
     }
     unpausing?.let { p ->
-        LengthDialog("Allow ${state.label(p)} for how long?", onPick = { m -> Hub.grant(dev, p, m); unpausing = null },
+        LengthDialog(stringResource(R.string.apps_allow_how_long, state.label(p)), onPick = { m -> Hub.grant(dev, p, m); unpausing = null },
             onDismiss = { unpausing = null },
-            extra = "Allow again now" to { Hub.unblock(dev, p); unpausing = null })
+            extra = stringResource(R.string.apps_allow_again_now) to { Hub.unblock(dev, p); unpausing = null })
     }
     granted?.let { p ->
         val until = state.grants[p] ?: 0
@@ -175,19 +177,19 @@ internal fun AllowedNowSection(dev: String, state: PhoneState, now: Long) {
             val nowMs = System.currentTimeMillis()
             grants.filterValues { it > nowMs }.forEach { (app, end) -> Hub.grant(dev, app, ((end - nowMs) / 60_000).coerceAtLeast(1)) }
         }
-        OptionsDialog("${state.label(p)} until ${time(until)}", onDismiss = { granted = null }, options = listOfNotNull(
-            MenuEntry("Add 30 minutes") {
+        OptionsDialog(stringResource(R.string.apps_app_until, state.label(p), time(until)), onDismiss = { granted = null }, options = listOfNotNull(
+            MenuEntry(stringResource(R.string.apps_add_30_minutes)) {
                 Hub.grant(dev, p, (until - System.currentTimeMillis()) / 60_000 + 30); granted = null
             },
-            MenuEntry("Stop now") {
+            MenuEntry(stringResource(R.string.apps_stop_now)) {
                 val before = mapOf(p to until)
                 Hub.revoke(dev, p); granted = null
-                Undo.offer("${state.label(p)} stopped") { regrant(before) }
+                Undo.offer(Strings.get(R.string.apps_app_stopped, state.label(p))) { regrant(before) }
             },
-            if (live.size > 1) MenuEntry("Stop all allowed-for-a-while apps") {
+            if (live.size > 1) MenuEntry(stringResource(R.string.apps_stop_all)) {
                 val before = live
                 Hub.revoke(dev, "all"); granted = null
-                Undo.offer("All allowed-for-a-while apps stopped") { regrant(before) }
+                Undo.offer(Strings.get(R.string.apps_all_stopped)) { regrant(before) }
             } else null,
         ))
     }
@@ -235,19 +237,20 @@ internal fun NotAllowedNowSection(dev: String, state: PhoneState) {
         !allowed && id !in state.notOffered
     }
 
-    Section("Not allowed right now") {
-        Text("Tap an app to allow it for a while.", style = MaterialTheme.typography.bodySmall)
+    Section(stringResource(R.string.apps_not_allowed_now_title)) {
+        Text(stringResource(R.string.apps_tap_to_allow), style = MaterialTheme.typography.bodySmall)
         AppIconGrid(dev, state, grantable, onTap = { pick = it },
-            notes = paused.mapValues { "Paused until\n${time(it.value)}" })
+            notes = paused.mapValues { stringResource(R.string.apps_paused_until_note, time(it.value)) })
         ControlPills(dev, controlsOff, label = { id ->
-            DeviceControls.label(id) + (state.blocks[id]?.takeIf { it > nowMs }?.let { " · paused until ${time(it)}" } ?: "")
+            state.blocks[id]?.takeIf { it > nowMs }?.let { stringResource(R.string.apps_control_paused_until, DeviceControls.label(id), time(it)) }
+                ?: DeviceControls.label(id)
         }, onTap = { pick = it })
     }
 
     pick?.let { p ->
         // A paused app can simply be given back; any app can be allowed for a set time.
-        val unpause = if (p in paused || (state.blocks[p] ?: 0) > nowMs) ("Allow again now" to { Hub.unblock(dev, p); pick = null }) else null
-        LengthDialog("Allow ${state.label(p)} for how long?", onPick = { m -> Hub.grant(dev, p, m); pick = null },
+        val unpause = if (p in paused || (state.blocks[p] ?: 0) > nowMs) (stringResource(R.string.apps_allow_again_now) to { Hub.unblock(dev, p); pick = null }) else null
+        LengthDialog(stringResource(R.string.apps_allow_how_long, state.label(p)), onPick = { m -> Hub.grant(dev, p, m); pick = null },
             onDismiss = { pick = null }, extra = unpause)
     }
 }
@@ -269,13 +272,13 @@ internal fun LengthDialog(title: String, onPick: (Long) -> Unit, onDismiss: () -
     OptionsDialog(title, onDismiss, options = listOfNotNull(
         extra?.let { (label, action) -> MenuEntry(label, onClick = action) },
         *GRANT_DURATIONS.map { m -> MenuEntry(fmtMinutes(m)) { onPick(m) } }.toTypedArray(),
-        MenuEntry("Until a time…") {
+        MenuEntry(stringResource(R.string.apps_until_a_time)) {
             val now = java.util.Calendar.getInstance()
             android.app.TimePickerDialog(ctx, { _, h, min -> onPick(minutesUntil(h, min)) },
                 now.get(java.util.Calendar.HOUR_OF_DAY), now.get(java.util.Calendar.MINUTE),
                 android.text.format.DateFormat.is24HourFormat(ctx)).show()
         },
-        MenuEntry("Custom length…") { custom = true },
+        MenuEntry(stringResource(R.string.apps_custom_length)) { custom = true },
     ))
 }
 
@@ -293,18 +296,18 @@ private fun CustomLengthDialog(title: String, onPick: (Long) -> Unit, onDismiss:
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     OutlinedTextField(hours, { hours = it.filter(Char::isDigit).take(2) }, Modifier.weight(1f),
-                        label = { Text("Hours") }, singleLine = true,
+                        label = { Text(stringResource(R.string.apps_hours)) }, singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
                     OutlinedTextField(mins, { mins = it.filter(Char::isDigit).take(4) }, Modifier.weight(1f),
-                        label = { Text("Minutes") }, singleLine = true,
+                        label = { Text(stringResource(R.string.apps_minutes)) }, singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
                 }
-                if (total > MAX_GRANT_MINUTES) Text("At most 24 hours.", color = MaterialTheme.colorScheme.error,
+                if (total > MAX_GRANT_MINUTES) Text(stringResource(R.string.apps_at_most_24_hours), color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodySmall)
             }
         },
-        confirmButton = { TextButton(onClick = { onPick(total) }, enabled = ok) { Text("Set") } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } })
+        confirmButton = { TextButton(onClick = { onPick(total) }, enabled = ok) { Text(stringResource(R.string.apps_set)) } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } })
 }
 
 /** Longest grant or block the device accepts (24 hours). */

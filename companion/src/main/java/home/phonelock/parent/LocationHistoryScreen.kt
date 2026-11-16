@@ -1,5 +1,6 @@
 package home.phonelock.parent
 
+import java.util.Locale
 import androidx.activity.compose.BackHandler
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.foundation.layout.safeDrawingPadding
@@ -12,6 +13,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.foundation.layout.Box
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
@@ -197,19 +199,20 @@ internal fun LocationHistoryScreen(dev: String, name: String, onBack: () -> Unit
             )
             FilledTonalIconButton(onClick = { mapFull = false },
                 Modifier.align(Alignment.TopEnd).safeDrawingPadding().padding(12.dp)) {
-                Icon(Icons.Default.Close, contentDescription = "Close full-screen map")
+                Icon(Icons.Default.Close, contentDescription = stringResource(R.string.device_close_full_map))
             }
         }
         return
     }
 
-    Page("Activity", onBack, scroll = false, dev = dev, waitingOn = setOf("locate", "track"), actions = {
+    Page(stringResource(R.string.device_activity_title), onBack, scroll = false, dev = dev, waitingOn = setOf("locate", "track"), actions = {
         // With the map hidden, this brings it back (on the map, its own corner button hides it).
         if (!showMap) IconButton(onClick = { setMap(true) }) {
-            Icon(Icons.Default.LocationOn, contentDescription = "Show map")
+            Icon(Icons.Default.LocationOn, contentDescription = stringResource(R.string.device_show_map))
         }
         IconButton(onClick = ::refresh, enabled = dev !in locating) {
-            Icon(Icons.Default.Refresh, contentDescription = if (dev in locating) "Locating" else "Refresh")
+            Icon(Icons.Default.Refresh, contentDescription = if (dev in locating) stringResource(R.string.device_locating)
+                else stringResource(R.string.refresh))
         }
     }) {
 
@@ -229,7 +232,7 @@ internal fun LocationHistoryScreen(dev: String, name: String, onBack: () -> Unit
                         modifier = Modifier.fillMaxSize(),
                     )
                     FilledTonalIconButton(onClick = { setMap(false) }, Modifier.align(Alignment.TopEnd).padding(8.dp)) {
-                        Icon(Icons.Default.KeyboardArrowUp, contentDescription = "Hide map")
+                        Icon(Icons.Default.KeyboardArrowUp, contentDescription = stringResource(R.string.device_hide_map))
                     }
                     FilledTonalIconButton(onClick = { mapFull = true }, Modifier.align(Alignment.TopStart).padding(8.dp)) {
                         Text("⤢", style = MaterialTheme.typography.titleMedium)
@@ -240,7 +243,7 @@ internal fun LocationHistoryScreen(dev: String, name: String, onBack: () -> Unit
                 Column(m) {
                     // An event from before the first reading (or with none near it) has no place on the map.
                     if (showMap && selectedRow != null && selectedRow.position == null) {
-                        Text("No location recorded at ${clock(selectedRow.at)}", style = MaterialTheme.typography.bodySmall,
+                        Text(stringResource(R.string.device_no_location_at, clock(selectedRow.at)), style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     val i = days.indexOf(day) // days run newest first
@@ -291,7 +294,7 @@ private fun Timeline(
         item {
             Column(Modifier.padding(vertical = 6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) { header() }
         }
-        if (rows.isEmpty()) item { EmptyNote("Nothing to show on this day.") }
+        if (rows.isEmpty()) item { EmptyNote(stringResource(R.string.device_nothing_this_day)) }
         // Newest first. Gaps ("no readings") aren't events, so they can't be selected.
         items(rows.asReversed()) { row ->
             val selectable = row !is TimelineRow.NoReadings
@@ -310,8 +313,10 @@ private fun Timeline(
 private fun ShowBar(places: Boolean, calls: Boolean, apps: Boolean, events: Boolean,
                     onPlaces: (Boolean) -> Unit, onCalls: (Boolean) -> Unit, onApps: (Boolean) -> Unit,
                     onEvents: (Boolean) -> Unit) {
-    val parts = listOf(Triple("Places", places, onPlaces), Triple("Calls", calls, onCalls), Triple("Apps", apps, onApps),
-        Triple("Events", events, onEvents))
+    val parts = listOf(Triple(stringResource(R.string.device_filter_places), places, onPlaces),
+        Triple(stringResource(R.string.device_filter_calls), calls, onCalls),
+        Triple(stringResource(R.string.device_filter_apps), apps, onApps),
+        Triple(stringResource(R.string.device_filter_events), events, onEvents))
     MultiChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
         parts.forEachIndexed { i, (label, on, set) ->
             SegmentedButton(checked = on, onCheckedChange = set,
@@ -347,7 +352,8 @@ private fun timeline(places: List<Place>, showPlaces: Boolean, calls: List<CallE
 @Composable
 private fun TimelineItem(row: TimelineRow, addresses: Map<String, String>, now: Long, selected: Boolean,
                          onClick: (() -> Unit)?) {
-    fun where(p: Place?) = p?.let { "at " + (addresses[it.spot] ?: "%.4f, %.4f".format(it.lat, it.lng)) }
+    // A plain function, not composable, so it reads its wording through Strings.
+    fun where(p: Place?) = p?.let { Strings.get(R.string.device_at_place, addresses[it.spot] ?: "%.4f, %.4f".format(Locale.US, it.lat, it.lng)) }
     if (row is TimelineRow.At) LaunchedEffect(row.place.spot) { LocationHistory.lookUp(row.place) }
     val time: String
     val title: String
@@ -356,15 +362,17 @@ private fun TimelineItem(row: TimelineRow, addresses: Map<String, String>, now: 
         is TimelineRow.At -> {
             val p = row.place
             time = clockSpan(p.from, p.to)
-            title = addresses[p.spot] ?: "%.5f, %.5f".format(p.lat, p.lng)
+            title = addresses[p.spot] ?: "%.5f, %.5f".format(Locale.US, p.lat, p.lng)
             detail = buildList {
-                if (p.accuracyM > 0) add("within ${p.accuracyM} m")
-                if (p.battery >= 0) add("battery ${p.battery}%" + if (p.charging) " (charging)" else "")
+                if (p.accuracyM > 0) add(stringResource(R.string.device_within_metres, p.accuracyM))
+                if (p.battery >= 0) {
+                    add(stringResource(if (p.charging) R.string.device_battery_charging else R.string.device_battery, p.battery))
+                }
             }.joinToString(" · ").ifEmpty { null }
         }
         is TimelineRow.NoReadings -> {
             time = clockSpan(row.from, row.to)
-            title = "No readings"
+            title = stringResource(R.string.device_no_readings)
             detail = null
         }
         is TimelineRow.Call -> {
@@ -372,13 +380,17 @@ private fun TimelineItem(row: TimelineRow, addresses: Map<String, String>, now: 
             val c = row.call
             val (arrow, word) = callKind(c.type)
             time = clock(c.ts)
-            title = "📞 $arrow $word: ${callWho(c)}" + if (c.durationS > 0) " · ${callLength(c.durationS)}" else ""
+            title = if (c.durationS > 0) {
+                stringResource(R.string.device_timeline_call_length, arrow, word, callWho(c), callLength(c.durationS))
+            } else {
+                stringResource(R.string.device_timeline_call, arrow, word, callWho(c))
+            }
             detail = where(row.where)
         }
         is TimelineRow.App -> {
             val s = row.session
             time = clockSpan(s.from, s.to)
-            title = "📱 ${s.label}, ${fmtMinutes(maxOf(1, (s.to - s.from) / 60_000))}"
+            title = stringResource(R.string.device_timeline_app, s.label, fmtMinutes(maxOf(1, (s.to - s.from) / 60_000)))
             detail = where(row.where)
         }
         is TimelineRow.Note -> {
@@ -388,18 +400,20 @@ private fun TimelineItem(row: TimelineRow, addresses: Map<String, String>, now: 
         }
         is TimelineRow.Now -> {
             val l = row.loc
-            time = l?.fixTime?.let { clock(it) } ?: "Now"
-            title = "📍 Now: " + when {
-                l == null && row.locating -> "locating…"
-                l == null -> "no answer (offline or switched off)"
+            time = l?.fixTime?.let { clock(it) } ?: stringResource(R.string.device_now)
+            title = stringResource(R.string.device_timeline_now, when {
+                l == null && row.locating -> stringResource(R.string.device_now_locating)
+                l == null -> stringResource(R.string.device_now_no_answer)
                 l.error != null -> l.error
-                else -> l.address ?: "%.5f, %.5f".format(l.lat ?: 0.0, l.lng ?: 0.0)
-            }
+                else -> l.address ?: "%.5f, %.5f".format(Locale.US, l.lat ?: 0.0, l.lng ?: 0.0)
+            })
             detail = l?.takeIf { it.error == null }?.let {
                 buildList {
-                    it.fixTime?.let { t -> add("seen ${ago(now - t)}") }
-                    it.accuracyM?.let { a -> add("within $a m") }
-                    it.battery?.let { b -> add("battery $b%" + if (it.charging) " (charging)" else "") }
+                    it.fixTime?.let { t -> add(stringResource(R.string.device_seen_ago, ago(now - t))) }
+                    it.accuracyM?.let { a -> add(stringResource(R.string.device_within_metres, a)) }
+                    it.battery?.let { b ->
+                        add(stringResource(if (it.charging) R.string.device_battery_charging else R.string.device_battery, b))
+                    }
                 }.joinToString(" · ").ifEmpty { null }
             }
         }
@@ -432,11 +446,15 @@ internal fun startOfDay(t: Long): Long = java.util.Calendar.getInstance().apply 
 /** Midnight at the start of the day after [day] (23 or 25 hours later when the clocks change). */
 private fun nextDay(day: Long): Long = startOfDay(day + DAY_MS + 3 * 3600_000L)
 
-/** "Today", "Yesterday", or "Mon, Nov 9". */
+/** "Today", "Yesterday", or "Mon, Nov 9" (in the order and words of the phone's language). */
 internal fun dayName(d: Long, now: Long): String = when (startOfDay(now) - d) {
-    0L -> "Today"
-    in 1..DAY_MS + 3600_000 -> "Yesterday"
-    else -> java.text.SimpleDateFormat("EEE, MMM d", java.util.Locale.getDefault()).format(java.util.Date(d))
+    0L -> Strings.get(R.string.device_today)
+    in 1..DAY_MS + 3600_000 -> Strings.get(R.string.device_yesterday)
+    else -> {
+        val locale = java.util.Locale.getDefault()
+        val pattern = android.text.format.DateFormat.getBestDateTimePattern(locale, "EEEMMMd")
+        java.text.SimpleDateFormat(pattern, locale).format(java.util.Date(d))
+    }
 }
 
 /**

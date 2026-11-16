@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Wording for the app sections, app time, usage report, schedule, parent mode, app picker and debugging dialogs. -->
+<resources>
+    <!-- Allowed / not allowed right now -->
+    <string name="apps_allowed_now_title">Gerade erlaubt</string>
+    <string name="apps_allowed_now_empty">Gerade ist nichts erlaubt. Erlaube eine App über die Liste unten für eine Weile.</string>
+    <string name="apps_tap_to_pause">Tippe auf eine App, um sie eine Weile zu pausieren.</string>
+    <string name="apps_allowed_for_a_while">Eine Weile erlaubt</string>
+    <string name="apps_paused_for_a_while">Eine Weile pausiert</string>
+    <!-- Small note under an app icon; %1$s is a clock time such as 7:00 PM -->
+    <string name="apps_until_time">bis %1$s</string>
+    <!-- Wi-Fi or Bluetooth pill; %1$s is "Wi-Fi" or "Bluetooth", %2$s a clock time -->
+    <string name="apps_control_until">%1$s · bis %2$s</string>
+    <string name="apps_control_paused_until">%1$s · pausiert bis %2$s</string>
+    <!-- %1$s is an app name -->
+    <string name="apps_pause_how_long">%1$s wie lange pausieren?</string>
+    <string name="apps_allow_how_long">%1$s wie lange erlauben?</string>
+    <string name="apps_allow_again_now">Jetzt wieder erlauben</string>
+    <!-- Dialog title; %1$s is an app name, %2$s a clock time -->
+    <string name="apps_app_until">%1$s bis %2$s</string>
+    <string name="apps_add_30_minutes">30 Minuten mehr</string>
+    <string name="apps_stop_now">Jetzt beenden</string>
+    <!-- Snackbar; %1$s is an app name -->
+    <string name="apps_app_stopped">%1$s beendet</string>
+    <string name="apps_stop_all">Alle eine Weile erlaubten Apps beenden</string>
+    <string name="apps_all_stopped">Alle eine Weile erlaubten Apps beendet</string>
+    <string name="apps_not_allowed_now_title">Gerade nicht erlaubt</string>
+    <string name="apps_tap_to_allow">Tippe auf eine App, um sie eine Weile zu erlauben.</string>
+    <!-- Two-line note under a narrow app icon; %1$s is a clock time -->
+    <string name="apps_paused_until_note">Pausiert bis\n%1$s</string>
+
+    <!-- Choosing a length of time -->
+    <string name="apps_until_a_time">Bis zu einer Uhrzeit …</string>
+    <string name="apps_custom_length">Eigene Dauer …</string>
+    <string name="apps_hours">Stunden</string>
+    <string name="apps_minutes">Minuten</string>
+    <string name="apps_at_most_24_hours">Höchstens 24 Stunden.</string>
+    <!-- Button that confirms a custom length -->
+    <string name="apps_set">Festlegen</string>
+
+    <!-- App time screen -->
+    <string name="apps_app_time_title">App-Zeit</string>
+    <string name="apps_app_time_hint">Für ein Tageslimit tippe auf dem Hauptbildschirm unter „Apps und wann sie erlaubt sind“ auf ⋮ neben der App.</string>
+    <!-- %1$s is the reason the child's device gave, in English -->
+    <string name="apps_usage_error">%1$s. Erlaube es mit „Einrichtung per Wi-Fi reparieren“.</string>
+
+    <!-- Daily limits; %1$s is the allowance, such as "1 h a day" -->
+    <string name="apps_limit_times_up">%1$s · Zeit für heute abgelaufen</string>
+    <string name="apps_limit_no_limit_today">%1$s · heute kein Limit</string>
+    <string name="apps_limit_not_allowed_today">%1$s · heute nicht erlaubt</string>
+    <!-- %2$s is a length of time such as "35 min" -->
+    <string name="apps_limit_left">%1$s · noch %2$s</string>
+    <string name="apps_limit_none">Kein Limit</string>
+    <string name="apps_limit_not_allowed">Nicht erlaubt</string>
+    <!-- Lower-case forms, used in the middle of apps_limit_split -->
+    <string name="apps_limit_none_lower">kein Limit</string>
+    <string name="apps_limit_not_allowed_lower">nicht erlaubt</string>
+    <string name="apps_limit_not_allowed_any_day">An keinem Tag erlaubt</string>
+    <!-- %1$s is a length of time such as "1 h" -->
+    <string name="apps_limit_per_day">%1$s pro Tag</string>
+    <!-- %1$s and %2$s are lengths of time, or "No limit" / "not allowed" -->
+    <string name="apps_limit_split">%1$s unter der Woche, %2$s am Wochenende</string>
+    <string name="apps_limit_varies">Je nach Tag</string>
+    <!-- %1$s is an app name -->
+    <string name="apps_limit_title">Tageslimit für %1$s</string>
+    <string name="apps_limit_every_day">Jeden Tag</string>
+    <string name="apps_limit_weekdays_weekends">Unter der Woche und am Wochenende</string>
+    <string name="apps_limit_each_day">Pro Tag einzeln</string>
+    <string name="apps_limit_mon_fri">Montag bis Freitag</string>
+    <string name="apps_limit_sat_sun">Samstag und Sonntag</string>
+    <string name="apps_limit_explainer">Wenn die Zeit abgelaufen ist, schließt sich die App bis morgen. Zeit, die du mit „Eine Weile erlauben“ gibst, kommt dazu und zählt nicht mit.</string>
+
+    <!-- App use report -->
+    <string name="apps_app_use_title">App-Nutzung</string>
+    <string name="apps_no_use_yet">Noch keine App-Nutzung erfasst.</string>
+    <string name="apps_no_use_period">Keine App-Nutzung in diesem Zeitraum.</string>
+    <string name="apps_tap_bar">Tippe auf einen Balken, um den Tag zu sehen.</string>
+    <!-- %1$s is the total time, %2$s the average time per day -->
+    <string name="apps_total_per_day">%1$s · %2$s/Tag</string>
+    <string name="apps_most_used">Meistgenutzte Apps</string>
+    <string name="apps_include_system">System-Apps einbeziehen</string>
+    <string name="apps_include_system_hint">Hintergrundteile wie Google Play-Dienste und Einstellungen</string>
+    <!-- Report periods, on segmented buttons -->
+    <string name="apps_period_day">Tag</string>
+    <string name="apps_period_week">Woche</string>
+    <string name="apps_period_month">Monat</string>
+    <!-- Chart part for all the less used apps together -->
+    <string name="apps_other">Sonstige</string>
+    <!-- Short chart axis labels: minutes, hours, hours and minutes -->
+    <string name="apps_axis_minutes">%1$d min</string>
+    <string name="apps_axis_hours">%1$d h</string>
+    <string name="apps_axis_hours_minutes">%1$d h %2$d</string>
+
+    <!-- Situations -->
+    <string name="apps_mode_bedtime">Schlafenszeit</string>
+    <string name="apps_mode_limited">Begrenzte Zeit</string>
+    <string name="apps_mode_normal">Normale Zeit</string>
+    <!-- Lower-case forms, used inside apps_situation_allowed / apps_situation_not_allowed (German nouns keep their capital) -->
+    <string name="apps_situation_bedtime">Schlafenszeit</string>
+    <string name="apps_situation_limited">begrenzte Zeit</string>
+    <string name="apps_situation_normal">normale Zeit</string>
+    <!-- Snackbar; %1$s is an app name (or Wi-Fi, Bluetooth), %2$s a situation such as "limited hours" -->
+    <string name="apps_situation_allowed">%1$s: erlaubt (%2$s)</string>
+    <string name="apps_situation_not_allowed">%1$s: nicht erlaubt (%2$s)</string>
+    <!-- Column titles over the situation checkboxes; keep short -->
+    <string name="apps_col_normal">Normal</string>
+    <string name="apps_col_limited">Begrenzt</string>
+    <string name="apps_col_bedtime">Schlafen</string>
+
+    <!-- Apps and when they're allowed -->
+    <string name="apps_table_title">Apps und wann sie erlaubt sind</string>
+    <string name="apps_table_hint">Angehakte Apps sind in dieser Zeit auf dem Startbildschirm. Apps ohne Haken sind nur eine Weile erlaubt. Mit ⋮ legst du ein Tageslimit fest.</string>
+    <!-- Read out for an app's menu button; %1$s is an app name -->
+    <string name="apps_more_for">Mehr zu %1$s</string>
+    <string name="apps_set_limit">Tageslimit festlegen …</string>
+    <string name="apps_change_limit">Tageslimit ändern …</string>
+    <string name="apps_remove_limit">Tageslimit entfernen</string>
+    <!-- Snackbar; %1$s is an app name -->
+    <string name="apps_limit_removed">%1$s: Tageslimit entfernt</string>
+    <string name="apps_hide">Ausblenden</string>
+    <string name="apps_hide_untick">Ausblenden (erst alle drei Haken entfernen)</string>
+    <!-- Snackbars; %1$s is an app name -->
+    <string name="apps_app_hidden">%1$s ausgeblendet</string>
+    <string name="apps_app_shown">%1$s eingeblendet</string>
+    <string name="apps_uninstall_menu">Deinstallieren …</string>
+    <!-- %1$s is an app name -->
+    <string name="apps_uninstall_title">%1$s deinstallieren?</string>
+    <string name="apps_uninstall_body">Die App wird mit ihren Daten vom Gerät entfernt. Das lässt sich nicht rückgängig machen; du müsstest sie neu installieren.</string>
+    <!-- Button -->
+    <string name="apps_uninstall">Deinstallieren</string>
+    <!-- %1$d is how many apps are hidden -->
+    <string name="apps_hidden_apps">Ausgeblendete Apps (%1$d)</string>
+    <!-- Button that shows a hidden app again -->
+    <string name="apps_show">Einblenden</string>
+
+    <!-- Schedule -->
+    <string name="apps_schedule_title">Zeitplan</string>
+    <string name="apps_schedule_empty">Noch keine begrenzte Zeit oder Schlafenszeit, also gilt immer die normale Zeit.</string>
+    <string name="apps_days_every_day">Jeden Tag</string>
+    <string name="apps_days_weekdays">Unter der Woche</string>
+    <string name="apps_days_weekends">Am Wochenende</string>
+    <!-- %1$s is days such as "Weekdays" or "Mon, Wed" -->
+    <string name="apps_rule_all_day">%1$s, ganztägig</string>
+    <!-- %1$s is days, %2$s and %3$s clock times -->
+    <string name="apps_rule_range">%1$s, %2$s bis %3$s</string>
+    <!-- Snackbars; %1$s is "Limited hours" or "Bedtime" -->
+    <string name="apps_rule_removed">%1$s entfernt</string>
+    <string name="apps_rule_added">%1$s hinzugefügt</string>
+    <string name="apps_rule_changed">%1$s geändert</string>
+    <string name="apps_edit">Bearbeiten …</string>
+    <string name="apps_add_limited">Begrenzte Zeit hinzufügen</string>
+    <string name="apps_add_bedtime">Schlafenszeit hinzufügen</string>
+    <string name="apps_edit_limited">Begrenzte Zeit bearbeiten</string>
+    <string name="apps_edit_bedtime">Schlafenszeit bearbeiten</string>
+    <string name="apps_days">Tage</string>
+    <!-- Labels over the start and end times -->
+    <string name="apps_from">Von</string>
+    <string name="apps_until">Bis</string>
+    <string name="apps_all_day">Ganztägig.</string>
+    <string name="apps_past_midnight">Geht über Mitternacht in den nächsten Tag.</string>
+
+    <!-- Parent mode, PIN and starting a situation by hand; %1$s is the child's device name -->
+    <string name="apps_parent_mode_title">%1$s für einen Elternteil entsperren?</string>
+    <string name="apps_parent_mode_note">Einstellungen und Play Store sind dann auf dem Gerät für alle offen, die es in der Hand haben. Es sperrt sich wieder, wenn die Zeit abläuft oder der Bildschirm ausgeht.</string>
+    <!-- %1$s is a length of time such as "15 min" -->
+    <string name="apps_for_length">Für %1$s</string>
+    <string name="apps_pin_title">Eltern-PIN ändern</string>
+    <string name="apps_pin_new">Neue PIN (4 bis 8 Ziffern)</string>
+    <string name="apps_pin_again">Noch einmal eingeben</string>
+    <string name="apps_pin_hint">Wird auf dem Gerät deines Kindes verwendet: Halte die Uhr 4 Sekunden lang gedrückt.</string>
+    <!-- %1$s is "Limited hours" or "Bedtime" -->
+    <string name="apps_mode_how_long">%1$s: wie lange?</string>
+    <string name="apps_start_mode_title">Auf dem Gerät von %1$s starten</string>
+    <string name="apps_start_mode_note">Nur die dafür angehakten Apps sind verfügbar. Ein strengerer Zeitplan gilt trotzdem.</string>
+
+    <!-- App picker -->
+    <string name="apps_all_apps">Alle Apps</string>
+    <plurals name="apps_count">
+        <item quantity="one">%1$d App</item>
+        <item quantity="other">%1$d Apps</item>
+    </plurals>
+
+    <!-- Debugging; %1$s is the child's device name -->
+    <string name="apps_debugging_title">Debugging einschalten?</string>
+    <string name="apps_debugging_note">Für Reparaturen: Schaltet USB-Debugging und Debugging über WLAN auf %1$s ein, damit es sich von einem Computer aus reparieren oder aktualisieren lässt, auch wenn seine Bildschirme nicht funktionieren. Es schaltet sich von selbst wieder aus.\n\nSolange es an ist, kann jeder mit einem gekoppelten Computer das Gerät steuern. Unter „Letzte Ereignisse“ steht, wohin du dich verbinden kannst.</string>
+    <!-- %1$s is a length of time such as "30 min" -->
+    <string name="apps_debugging_on_for">An für %1$s</string>
+    <string name="apps_debugging_off">Jetzt ausschalten</string>
+</resources>

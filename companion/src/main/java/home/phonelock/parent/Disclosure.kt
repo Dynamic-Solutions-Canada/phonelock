@@ -16,6 +16,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 
 /**
@@ -40,37 +41,24 @@ internal fun DisclosureScreen(onAccept: () -> Unit) {
     val ctx = LocalContext.current
     Column(Modifier.safeDrawingPadding().padding(20.dp).verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(14.dp)) {
-        Text("Before you start", style = MaterialTheme.typography.headlineSmall)
-        Text("PhoneLock is a parental control app. It lets you manage your child's phone or tablet and see " +
-            "information from it.")
-        Section("What you'll see from your child's device") {
-            Text("• Its location: on request, and a log every 15 minutes (every 2 while moving), kept 7 days\n" +
-                "• Battery level, and when it turns off or on\n" +
-                "• Installed apps, requests to use them, and which apps they use and for how long\n" +
-                "• Wi-Fi networks they join and Bluetooth devices they pair\n" +
-                "• Calls (call log) and contacts\n" +
-                "• Files, photos and videos in its shared storage, when you open them\n" +
-                "• Its screen, when you tap View screen")
+        Text(stringResource(R.string.device_disclosure_title), style = MaterialTheme.typography.headlineSmall)
+        Text(stringResource(R.string.device_disclosure_intro))
+        Section(stringResource(R.string.device_disclosure_seen_title)) {
+            Text(stringResource(R.string.device_disclosure_seen))
         }
-        Section("Who can read it") {
-            Text("Only you and other parents you share the device with. Everything is end-to-end encrypted " +
-                "on the devices; the relay server that passes messages along, and Google's push service, " +
-                "only ever see encrypted data. Nothing is sold or used for ads.")
+        Section(stringResource(R.string.device_disclosure_readers_title)) {
+            Text(stringResource(R.string.device_disclosure_readers))
         }
-        Section("Your child is told") {
-            Text("Their home screen says that location, battery, calls and app use are shared with you, they get a notice " +
-                "each time a parent views their screen, and a notification shows that parent controls are " +
-                "active. PhoneLock can't be hidden from them.")
+        Section(stringResource(R.string.device_disclosure_child_title)) {
+            Text(stringResource(R.string.device_disclosure_child))
         }
-        Text("By continuing, you confirm you are the parent or legal guardian of the child whose device " +
-            "you'll manage, or have their permission, and that you'll use PhoneLock only for that purpose.",
-            style = MaterialTheme.typography.bodyMedium)
+        Text(stringResource(R.string.device_disclosure_consent), style = MaterialTheme.typography.bodyMedium)
         TextButton(onClick = {
             ctx.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(Disclosure.PRIVACY_POLICY_URL)))
-        }) { Text("Privacy policy") }
+        }) { Text(stringResource(R.string.device_privacy_policy)) }
         Button(onClick = {
             Disclosure.accept(ctx)
             onAccept()
-        }) { Text("I agree, continue") }
+        }) { Text(stringResource(R.string.device_disclosure_agree)) }
     }
 }

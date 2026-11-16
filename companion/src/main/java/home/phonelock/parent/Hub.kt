@@ -99,6 +99,7 @@ data class ScreenArea(val key: String, val name: String)
 class App : Application() {
     override fun onCreate() {
         super.onCreate()
+        Strings.init(this)
         Hub.init(this)
         AppIconCache.init(this)
         PhoneTools.init(this)
@@ -169,7 +170,7 @@ object Hub {
         prefs.getString("config", null)?.let { s ->
             val o = JSONObject(s)
             if (_parentName.value.isEmpty()) setParentName(o.optString("name"))
-            addDevice(Device(o.getString("server"), o.getString("topic"), o.getString("secret"), "Device"))
+            addDevice(Device(o.getString("server"), o.getString("topic"), o.getString("secret"), Setup.UNNAMED_DEVICE))
             prefs.edit().remove("config").remove("state").remove("requests").remove("events").apply()
         }
         prefs.getString("states", null)?.let { s ->
@@ -210,8 +211,9 @@ object Hub {
     }
 
     fun deviceName(id: String): String =
-        _states.value[id]?.name?.takeIf { it.isNotBlank() && it != "Phone" && it != "Device" }
-            ?: _devices.value.firstOrNull { it.id == id }?.name ?: "Device"
+        _states.value[id]?.name?.takeIf { it.isNotBlank() && it != "Phone" && it != Setup.UNNAMED_DEVICE }
+            ?: _devices.value.firstOrNull { it.id == id }?.name?.takeIf { it != Setup.UNNAMED_DEVICE }
+            ?: Strings.get(R.string.alerts_device_fallback)
 
     // ---------- pairing ----------
 
@@ -222,7 +224,7 @@ object Hub {
         val k = u.getQueryParameter("k")!!
         Crypto.key(k)
         Device((u.getQueryParameter("s") ?: "https://ntfy.sh").trimEnd('/'), u.getQueryParameter("t")!!, k,
-            u.getQueryParameter("n")?.takeIf { it.isNotBlank() } ?: "Device")
+            u.getQueryParameter("n")?.takeIf { it.isNotBlank() } ?: Setup.UNNAMED_DEVICE)
     }.getOrNull()
 
     fun setParentName(name: String) {
@@ -436,25 +438,25 @@ object Hub {
 
     fun debugging(dev: String, minutes: Long) {
         send(dev, msg("debug").put("minutes", minutes))
-        Undo.notify(if (minutes > 0) "Asked ${deviceName(dev)}'s device to turn on debugging" else "Asked ${deviceName(dev)}'s device to turn off debugging")
+        Undo.notify(Strings.get(if (minutes > 0) R.string.alerts_debugging_on_sent else R.string.alerts_debugging_off_sent, deviceName(dev)))
     }
 
     /** Asks [dev] to check for a lock app update now; it installs the next time the screen is off. */
     fun updateNow(dev: String) {
         send(dev, msg("update"))
-        Undo.notify("Asked ${deviceName(dev)}'s device to check for an update. Results appear in Recent events.")
+        Undo.notify(Strings.get(R.string.alerts_update_sent, deviceName(dev)))
     }
 
     /** Uninstalls [app] from [dev] (removes it and its data; only for apps the device reports removable). */
     fun uninstall(dev: String, app: String) {
         send(dev, msg("uninstall").put("app", app))
-        Undo.notify("Asked ${deviceName(dev)}'s device to uninstall ${_states.value[dev]?.label(app) ?: app}")
+        Undo.notify(Strings.get(R.string.alerts_uninstall_sent, deviceName(dev), _states.value[dev]?.label(app) ?: app))
     }
 
     /** Sets the parent PIN on [dev] (4 to 8 digits). */
     fun setPin(dev: String, pin: String) {
         send(dev, msg("pin").put("pin", pin))
-        Undo.notify("New parent PIN sent to ${deviceName(dev)}'s device")
+        Undo.notify(Strings.get(R.string.alerts_pin_sent, deviceName(dev)))
     }
 
     /** Replaces the device's call settings (limits and safe list), showing the change at once. */
@@ -501,9 +503,9 @@ object Hub {
                 }
                 val code = h.responseCode
                 h.disconnect()
-                if (code !in 200..299) addEvent(dev, "Couldn't send (HTTP $code)")
+                if (code !in 200..299) addEvent(dev, Strings.get(R.string.alerts_send_failed_http, code))
             } catch (e: Exception) {
-                addEvent(dev, "Couldn't send: ${e.message}")
+                addEvent(dev, Strings.get(R.string.alerts_send_failed, e.message.toString()))
             }
         }
     }
@@ -579,8 +581,8 @@ object Hub {
                 if (_requests.value.none { it.req == r.req }) {
                     _requests.update { it + r }
                     saveRequests()
-                    addEvent(dev, "Asked for ${r.label} (${fmtMinutes(r.minutes)})", ts)
-                    notify(dev, "Asks for ${r.label} for ${fmtMinutes(r.minutes)}", r)
+                    addEvent(dev, Strings.get(R.string.alerts_request_event, r.label, fmtMinutes(r.minutes)), ts)
+                    notify(dev, Strings.get(R.string.alerts_request_notification, r.label, fmtMinutes(r.minutes)), r)
                 }
             }
             // A message too big for ntfy's 4 KB limit, carried as an encrypted attachment.
@@ -630,7 +632,9 @@ object Hub {
         val at = where.optLong("at")
         val p = Place(at, at, where.getDouble("lat"), where.getDouble("lng"))
         val address = LocationHistory.addressNow(p) ?: return ""
-        return " · last near $address" + if (at > 0) " at ${LocationHistory.clock(at)}" else ""
+        val last = if (at > 0) Strings.get(R.string.alerts_last_near_at, address, LocationHistory.clock(at))
+            else Strings.get(R.string.alerts_last_near, address)
+        return " · $last"
     }
 
     private fun parseState(m: JSONObject): PhoneState {
@@ -759,10 +763,10 @@ object Hub {
 
     fun channels(c: Context) {
         val nm = c.getSystemService(NotificationManager::class.java)
-        nm.createNotificationChannel(NotificationChannel("requests", "Requests", NotificationManager.IMPORTANCE_HIGH))
-        nm.createNotificationChannel(NotificationChannel("events", "Device activity", NotificationManager.IMPORTANCE_DEFAULT))
-        nm.createNotificationChannel(NotificationChannel("others", "Other parent's actions", NotificationManager.IMPORTANCE_LOW))
-        nm.createNotificationChannel(NotificationChannel("service", "Connection", NotificationManager.IMPORTANCE_MIN))
+        nm.createNotificationChannel(NotificationChannel("requests", Strings.get(R.string.alerts_channel_requests), NotificationManager.IMPORTANCE_HIGH))
+        nm.createNotificationChannel(NotificationChannel("events", Strings.get(R.string.alerts_channel_events), NotificationManager.IMPORTANCE_DEFAULT))
+        nm.createNotificationChannel(NotificationChannel("others", Strings.get(R.string.alerts_channel_others), NotificationManager.IMPORTANCE_LOW))
+        nm.createNotificationChannel(NotificationChannel("service", Strings.get(R.string.alerts_channel_service), NotificationManager.IMPORTANCE_MIN))
     }
 
     /** Posts [text] for [dev]; with a request [r] it gets answer buttons. [channel] overrides the default. */
@@ -783,14 +787,14 @@ object Hub {
                         .putExtra("minutes", minutes),
                     PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)).build()
             val base = r.req.hashCode()
-            b.addAction(action("Allow ${fmtMinutes(r.minutes)}", "allow", r.minutes, base))
+            b.addAction(action(Strings.get(R.string.alerts_action_allow_duration, fmtMinutes(r.minutes)), "allow", r.minutes, base))
             // Android shows at most 3 actions, so other lengths are picked in the app.
-            b.addAction(Notification.Action.Builder(null, "Choose time…", open).build())
-            b.addAction(action("Deny", "deny", 0, base + 2))
+            b.addAction(Notification.Action.Builder(null, Strings.get(R.string.alerts_action_choose_time), open).build())
+            b.addAction(action(Strings.get(R.string.deny), "deny", 0, base + 2))
         }
         val nid = r?.req?.hashCode() ?: (System.currentTimeMillis() and 0x7fffffff).toInt()
         if (allowScreen != null) {
-            b.addAction(Notification.Action.Builder(null, "Allow for 30 min", PendingIntent.getBroadcast(app, nid,
+            b.addAction(Notification.Action.Builder(null, Strings.get(R.string.alerts_action_allow_30_min), PendingIntent.getBroadcast(app, nid,
                 Intent(app, ActionReceiver::class.java).putExtra("kind", "allowscreen").putExtra("device", dev)
                     .putExtra("screen", allowScreen).putExtra("nid", nid),
                 PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)).build())
@@ -813,8 +817,9 @@ object Hub {
 /** Grant lengths offered to parents, in minutes. */
 val GRANT_DURATIONS = listOf(15L, 30L, 60L, 120L, 240L, 480L)
 
+/** A length of time for display, e.g. "2 h", "1 h 30 min" or "45 min", in the app's language. */
 fun fmtMinutes(m: Long): String = when {
-    m % 60 == 0L -> "${m / 60} h"
-    m > 60 -> "${m / 60} h ${m % 60} min"
-    else -> "$m min"
+    m % 60 == 0L -> Strings.get(R.string.duration_hours, m / 60)
+    m > 60 -> Strings.get(R.string.duration_hours_minutes, m / 60, m % 60)
+    else -> Strings.get(R.string.duration_minutes, m)
 }

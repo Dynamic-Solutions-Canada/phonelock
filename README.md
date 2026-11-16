@@ -12,6 +12,16 @@ Two Android apps for locking down a child's phone:
 
 Both apps talk through an [ntfy](https://ntfy.sh) server. `server/` runs our own (ntfy in Docker behind the apps host's shared nginx, Cloudflare-proxied) with Firebase Cloud Messaging, so parent phones get messages by push instead of a permanent background connection; see `server/README.md`. The parent app reads the hub address and Firebase settings from `secrets/firebase.properties` (`hubUrl`, `appId`, `apiKey`, `projectId`, `senderId`); without it, it uses ntfy.sh and its own connection. Only the parent app is meant for Google Play; the parent app installs the lock app on the child device over Wireless debugging.
 
+## Languages
+
+The parent app is available in the same languages as Persistent and Little Launcher: English (US and Canada), Spanish (Spain), French (France and Canada), German, Simplified Chinese, Brazilian Portuguese and Japanese. Canadian English and Canadian French use the English and French wording, with their own date and number formats. Other languages fall back to English; Traditional Chinese never gets the Simplified wording.
+
+It follows the phone's language unless the parent picks one in a device's Settings > Language, which is the same setting as Android's per-app language. The list lives in `companion/src/main/res/xml/locales_config.xml`. English wording is in `companion/src/main/res/values/strings*.xml`, one file per area, and each language has the same files under `values-<language>/` with the same names. Code with no screen to draw on (notifications, services) gets its wording through `Strings`.
+
+Release builds fail if a language is missing a string, has an extra one, or has mismatched placeholders, so new wording needs all six translations before a release. The translations were written with AI assistance and have not been reviewed by native speakers yet. Names, app labels and what people type are never translated. The privacy policy stays in English. Entries already in Recent events keep the language they were written in. Phone number layout and the first day of the week follow the phone's region, not the language picked in the app.
+
+The lock app (the child's phone) is still English only; it follows in a later change.
+
 ## Build (WSL)
 
 ```bash

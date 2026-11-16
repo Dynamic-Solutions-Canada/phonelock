@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
@@ -50,16 +51,15 @@ private fun ChooseHowToAdd(canCancel: Boolean, onPick: (String) -> Unit, onCance
     if (canCancel) BackHandler(onBack = onCancel)
     Column(Modifier.safeDrawingPadding().padding(20.dp).verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        Text("Add a child's device", style = MaterialTheme.typography.headlineSmall)
-        Text("Is PhoneLock already on their phone or tablet?")
-        ChoiceCard("Set up a new device",
-            "Install PhoneLock on their device from this phone, over Wi-Fi. Takes about 10 minutes, and " +
-                "nothing on it is erased.",
-            "For a device that doesn't have PhoneLock yet.") { onPick("new") }
-        ChoiceCard("Add a device another parent set up",
-            "Scan the pairing code from the other parent's app, and you'll both manage it.",
-            "For a device that already has PhoneLock.") { onPick("existing") }
-        if (canCancel) TextButton(onClick = onCancel) { Text("Cancel") }
+        Text(stringResource(R.string.setup_add_child_device), style = MaterialTheme.typography.headlineSmall)
+        Text(stringResource(R.string.setup_already_installed_question))
+        ChoiceCard(stringResource(R.string.setup_set_up_new_device),
+            stringResource(R.string.setup_new_device_body),
+            stringResource(R.string.setup_new_device_when)) { onPick("new") }
+        ChoiceCard(stringResource(R.string.setup_add_existing_title),
+            stringResource(R.string.setup_add_existing_body),
+            stringResource(R.string.setup_add_existing_when)) { onPick("existing") }
+        if (canCancel) TextButton(onClick = onCancel) { Text(stringResource(R.string.cancel)) }
     }
 }
 
@@ -80,7 +80,7 @@ private fun ChoiceCard(title: String, body: String, whenToUse: String, onClick: 
  */
 @Composable
 private fun AddExistingDevice(initialLink: String?, done: (String?) -> Unit) {
-    val heading = "Add a device"
+    val heading = stringResource(R.string.setup_add_a_device)
     var link by remember { mutableStateOf(initialLink ?: "") }
     val parsed = Hub.parsePairing(link)
     // A link opened from outside skips the explanation and the scan.
@@ -88,7 +88,7 @@ private fun AddExistingDevice(initialLink: String?, done: (String?) -> Unit) {
     var scanning by remember { mutableStateOf(false) }
     val parentName by Hub.parentName.collectAsState()
     var you by remember { mutableStateOf(parentName) }
-    var deviceName by remember(parsed?.topic) { mutableStateOf(parsed?.name ?: "") }
+    var deviceName by remember(parsed?.topic) { mutableStateOf(parsed?.name?.takeIf { it != Setup.UNNAMED_DEVICE } ?: "") }
 
     if (scanning) {
         BackHandler { scanning = false }
@@ -98,33 +98,32 @@ private fun AddExistingDevice(initialLink: String?, done: (String?) -> Unit) {
     }
 
     when (step) {
-        1 -> WizardIntro(heading, "What to expect", onBack = { done(null) }, onStart = { step = 2 }) {
+        1 -> WizardIntro(heading, stringResource(R.string.setup_what_to_expect), onBack = { done(null) }, onStart = { step = 2 }) {
             StepOutline(listOf(
-                "Get the pairing code" to "The other parent opens PhoneLock, taps ⋮ on the device, then Share " +
-                    "with another parent. It shows a QR code.",
-                "Scan it" to "With this phone's camera, or paste the pairing link if they sent it to you.",
-                "Name it" to "Choose what this app calls the device, and how your name appears on it.",
+                stringResource(R.string.setup_get_code_title) to stringResource(R.string.setup_get_code_detail),
+                stringResource(R.string.setup_scan_it_title) to stringResource(R.string.setup_scan_it_detail),
+                stringResource(R.string.setup_name_it_title) to stringResource(R.string.setup_name_it_detail),
             ))
-            Text("You'll need", style = MaterialTheme.typography.titleSmall)
-            Requirements(listOf("The other parent's phone nearby, or a pairing link from them"))
+            Text(stringResource(R.string.setup_you_need), style = MaterialTheme.typography.titleSmall)
+            Requirements(listOf(stringResource(R.string.setup_need_other_parent)))
         }
-        2 -> WizardStep(heading, 1, 2, "Scan the pairing code", onBack = { step = 1 },
+        2 -> WizardStep(heading, 1, 2, stringResource(R.string.setup_scan_code_title), onBack = { step = 1 },
             nextEnabled = parsed != null, onNext = { step = 3 }) {
-            Text("On the other parent's phone: PhoneLock > ⋮ on the device > Share with another parent.",
+            Text(stringResource(R.string.setup_scan_code_where),
                 style = MaterialTheme.typography.bodyMedium)
-            Button(onClick = { scanning = true }) { Text("Scan QR code") }
-            OutlinedTextField(link, { link = it.trim() }, Modifier.fillMaxWidth(), label = { Text("Or paste a pairing link") },
+            Button(onClick = { scanning = true }) { Text(stringResource(R.string.setup_scan_qr)) }
+            OutlinedTextField(link, { link = it.trim() }, Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.setup_paste_link)) },
                 isError = link.isNotBlank() && parsed == null,
                 supportingText = {
-                    Text(when {
-                        parsed != null -> "Pairing code recognised"
-                        link.isNotBlank() -> "This isn't a PhoneLock pairing link"
-                        else -> "Starts with phonelock://pair"
-                    })
+                    Text(stringResource(when {
+                        parsed != null -> R.string.setup_code_recognised
+                        link.isNotBlank() -> R.string.setup_not_a_link
+                        else -> R.string.setup_link_starts_with
+                    }))
                 })
         }
-        else -> WizardStep(heading, 2, 2, "Name it", onBack = { step = 2 },
-            next = "Add device", nextEnabled = parsed != null && you.isNotBlank(), onNext = {
+        else -> WizardStep(heading, 2, 2, stringResource(R.string.setup_name_it_title), onBack = { step = 2 },
+            next = stringResource(R.string.setup_add_device_button), nextEnabled = parsed != null && you.isNotBlank(), onNext = {
                 parsed?.let {
                     Hub.setParentName(you)
                     Hub.addDevice(it.copy(name = deviceName.ifBlank { it.name }))
@@ -132,11 +131,14 @@ private fun AddExistingDevice(initialLink: String?, done: (String?) -> Unit) {
                 }
             }) {
             OutlinedTextField(deviceName, { deviceName = it }, Modifier.fillMaxWidth(),
-                label = { Text("Child's device name") }, singleLine = true,
-                supportingText = { Text("What this app calls their device, e.g. their first name") })
+                label = { Text(stringResource(R.string.child_device_name)) }, singleLine = true,
+                supportingText = { Text(stringResource(R.string.setup_device_name_hint)) })
             OutlinedTextField(you, { you = it }, Modifier.fillMaxWidth(),
-                label = { Text("Your name") }, singleLine = true,
-                supportingText = { Text("Shown on their device, e.g. \"${you.ifBlank { "Dad" }} allowed Camera\"") })
+                label = { Text(stringResource(R.string.your_name)) }, singleLine = true,
+                supportingText = {
+                    val example = you.ifBlank { stringResource(R.string.setup_example_parent_name) }
+                    Text(stringResource(R.string.setup_your_name_hint_example, example))
+                })
         }
     }
 }

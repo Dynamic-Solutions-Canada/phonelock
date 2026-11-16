@@ -142,8 +142,9 @@ object DeviceData {
 
     /** Several files being saved from one device, one after another: [paths], the one at [index] in flight. */
     private data class Batch(val paths: List<String>, val index: Int = 0, val saved: Int = 0) {
-        /** "(2 of 5) " in front of each status while there's more than one. */
-        val prefix get() = if (paths.size > 1) "(${index + 1} of ${paths.size}) " else ""
+        /** [status] with "(2 of 5) " in front while there's more than one file, else [status] as it is. */
+        fun label(status: String) =
+            if (paths.size > 1) Strings.get(R.string.device_batch_status, index + 1, paths.size, status) else status
     }
 
     /** Device -> its batch of saves; changed on the main thread, read from download threads. */
@@ -174,14 +175,24 @@ object DeviceData {
             synchronized(batches) { batches.remove(dev) }
             if (done.paths.size > 1) {
                 val failed = done.paths.size - done.saved
-                setTransfer(dev, "Saved ${done.saved} of ${done.paths.size} files to Downloads/PhoneLock" +
-                    if (failed > 0) "; $failed couldn't be downloaded" else "")
+                val total = done.paths.size
+                setTransfer(dev, if (failed > 0) {
+                    Strings.plural(R.plurals.device_batch_saved_some_failed, total, done.saved, total, failed)
+                } else {
+                    Strings.plural(R.plurals.device_batch_saved, total, done.saved, total)
+                })
             }
         }
     }
 
-    /** "(2 of 5) " while [dev] is saving several files, else "". */
-    private fun batchPrefix(dev: String) = synchronized(batches) { batches[dev]?.prefix ?: "" }
+    /**
+     * Labels statuses with [dev]'s place in its batch as it is now ("(2 of 5) Downloading…"), or leaves them as
+     * they are when it isn't saving several files.
+     */
+    private fun batchLabel(dev: String): (String) -> String {
+        val b = synchronized(batches) { batches[dev] }
+        return { status -> b?.label(status) ?: status }
+    }
 
     /**
      * Sends the `get` for [path] and shows that it's waiting for the device, which then sends the file (see
@@ -191,13 +202,13 @@ object DeviceData {
         val name = path.substringAfterLast('/')
         val m = track(Hub.msg("files").put("op", "get").put("path", path))
         if (open) openRequests.add(m.getString("id"))
-        val prefix = if (open) "" else batchPrefix(dev)
-        val asking = setTransfer(dev, "${prefix}Asking ${Hub.deviceName(dev)}'s device for $name…", busy = true)
+        val inBatch: (String) -> String = if (open) { s -> s } else batchLabel(dev)
+        val asking = setTransfer(dev, inBatch(Strings.get(R.string.device_file_asking, Hub.deviceName(dev), name)), busy = true)
         // Not a Pending "files" wait: this status line is the download's own indicator.
         Hub.send(dev, m)
         main.postDelayed({
             if (transfer.value[dev]?.id == asking.id) {
-                setTransfer(dev, "${prefix}No answer from ${Hub.deviceName(dev)}'s device for $name. It may be off or offline.")
+                setTransfer(dev, inBatch(Strings.get(R.string.device_file_no_answer, Hub.deviceName(dev), name)))
                 if (!open) batchStep(dev, ok = false)
             }
         }, 60_000)
@@ -221,15 +232,15 @@ object DeviceData {
             }.getOrNull() ?: "file"
             val tmp = java.io.File(app.cacheDir, "upload.tmp")
             try {
-                setTransfer(dev, "Preparing $name…", busy = true)
+                setTransfer(dev, Strings.get(R.string.device_file_preparing, name), busy = true)
                 val size = cr.openInputStream(uri)?.use { input ->
                     tmp.outputStream().use { out -> input.copyTo(out) }
-                } ?: throw IOException("Couldn't read $name")
+                } ?: throw IOException(Strings.get(R.string.device_file_cant_read, name))
                 if (size > MAX_UPLOAD) {
-                    setTransfer(dev, "$name is over 48 MB")
+                    setTransfer(dev, Strings.get(R.string.device_file_too_large, name))
                     return@thread
                 }
-                setTransfer(dev, "Uploading $name…", busy = true, progress = 0f)
+                setTransfer(dev, Strings.get(R.string.device_file_uploading, name), busy = true, progress = 0f)
                 val o = track(Hub.msg("files").put("op", "put").put("path", path).put("name", name))
                 val key = Crypto.key(d.secret)
                 val h = URL("${d.server}/${d.topic}").openConnection() as HttpURLConnection
@@ -242,7 +253,7 @@ object DeviceData {
                 h.setFixedLengthStreamingMode(BlobStream.sealedSize(size))
                 tmp.inputStream().buffered().use { input ->
                     progressStream(h.outputStream, BlobStream.sealedSize(size)) { f ->
-                        setTransfer(dev, "Uploading $name…", busy = true, progress = f)
+                        setTransfer(dev, Strings.get(R.string.device_file_uploading, name), busy = true, progress = f)
                     }.buffered().use { out ->
                         BlobStream.seal(key, "phonelock/file/${o.getString("id")}", input, size, out)
                     }
@@ -250,10 +261,10 @@ object DeviceData {
                 val code = h.responseCode
                 h.disconnect()
                 if (code in 200..299) Pending.start(dev, "files", o.getString("id"))
-                if (code in 200..299) setTransfer(dev, "Sent $name; waiting for the device to save it…", busy = true)
-                else setTransfer(dev, "Upload failed (HTTP $code)")
+                if (code in 200..299) setTransfer(dev, Strings.get(R.string.device_file_sent, name), busy = true)
+                else setTransfer(dev, Strings.get(R.string.device_upload_failed_http, code))
             } catch (e: Throwable) {
-                setTransfer(dev, "Upload failed: ${e.message}")
+                setTransfer(dev, Strings.get(R.string.device_upload_failed, e.message.toString()))
             } finally {
                 tmp.delete()
             }
@@ -367,7 +378,7 @@ object DeviceData {
             }, error) else (cur ?: Folder("", emptyList())).copy(error = error, loading = false)
             all + (dev to folder)
         }
-        if (m.optString("op") == "put") setTransfer(dev, error ?: "Uploaded ${m.optString("path").substringAfterLast('/')}")
+        if (m.optString("op") == "put") setTransfer(dev, error ?: Strings.get(R.string.device_file_uploaded, m.optString("path").substringAfterLast('/')))
         // A file the device couldn't send (missing, too large): end the "Asking…" status with why.
         if (m.optString("op") == "get" && error != null) {
             val wasOpen = openRequests.remove(m.optString("req"))
@@ -388,8 +399,8 @@ object DeviceData {
             return
         }
         val size = m.optLong("size")
-        val prefix = batchPrefix(d.id)
-        setTransfer(d.id, "${prefix}Downloading $name…", busy = true, progress = 0f)
+        val inBatch = batchLabel(d.id)
+        setTransfer(d.id, inBatch(Strings.get(R.string.device_file_downloading, name)), busy = true, progress = 0f)
         thread(name = "download") {
             val values = ContentValues().apply {
                 put(MediaStore.Downloads.DISPLAY_NAME, name)
@@ -406,7 +417,7 @@ object DeviceData {
                 try {
                     h.inputStream.buffered().use { input ->
                         progressStream(cr.openOutputStream(target) ?: throw IOException("Couldn't write the file"), size) { f ->
-                            setTransfer(d.id, "${prefix}Downloading $name…", busy = true, progress = f)
+                            setTransfer(d.id, inBatch(Strings.get(R.string.device_file_downloading, name)), busy = true, progress = f)
                         }.use { out ->
                             BlobStream.open(Crypto.key(d.secret), "phonelock/file/${m.getString("id")}", input, out, MAX_UPLOAD)
                         }
@@ -415,12 +426,12 @@ object DeviceData {
                     h.disconnect()
                 }
                 cr.update(target, ContentValues().apply { put(MediaStore.Downloads.IS_PENDING, 0) }, null, null)
-                setTransfer(d.id, "${prefix}Saved $name to Downloads/PhoneLock")
+                setTransfer(d.id, inBatch(Strings.get(R.string.device_file_saved, name)))
                 batchStep(d.id, ok = true)
             } catch (e: Throwable) {
                 Log.w(TAG, "download: $e")
                 target?.let { runCatching { cr.delete(it, null, null) } }
-                setTransfer(d.id, "${prefix}Couldn't download $name")
+                setTransfer(d.id, inBatch(Strings.get(R.string.device_file_cant_download, name)))
                 batchStep(d.id, ok = false)
             }
         }
@@ -445,7 +456,7 @@ object DeviceData {
      */
     private fun openFromHub(d: Device, m: JSONObject, url: String, name: String) {
         val size = m.optLong("size")
-        setTransfer(d.id, "Downloading $name…", busy = true, progress = 0f)
+        setTransfer(d.id, Strings.get(R.string.device_file_downloading, name), busy = true, progress = 0f)
         thread(name = "open-file") {
             pruneOpened()
             // A folder per download keeps the real file name (the viewer shows it) without clashes.
@@ -458,7 +469,7 @@ object DeviceData {
                 try {
                     h.inputStream.buffered().use { input ->
                         progressStream(file.outputStream(), size) { f ->
-                            setTransfer(d.id, "Downloading $name…", busy = true, progress = f)
+                            setTransfer(d.id, Strings.get(R.string.device_file_downloading, name), busy = true, progress = f)
                         }.use { out ->
                             BlobStream.open(Crypto.key(d.secret), "phonelock/file/${m.getString("id")}", input, out, MAX_UPLOAD)
                         }
@@ -466,12 +477,12 @@ object DeviceData {
                 } finally {
                     h.disconnect()
                 }
-                setTransfer(d.id, "Opening $name…", busy = true)
+                setTransfer(d.id, Strings.get(R.string.device_file_opening, name), busy = true)
                 showInViewer(d.id, file, name)
             } catch (e: Throwable) {
                 Log.w(TAG, "open: $e")
                 file.delete()
-                setTransfer(d.id, "Couldn't open $name")
+                setTransfer(d.id, Strings.get(R.string.device_file_cant_open, name))
             }
         }
     }
@@ -486,10 +497,10 @@ object DeviceData {
         android.os.Handler(android.os.Looper.getMainLooper()).post {
             try {
                 app.startActivity(view)
-                setTransfer(dev, "Opened $name (not saved)")
+                setTransfer(dev, Strings.get(R.string.device_file_opened, name))
             } catch (e: android.content.ActivityNotFoundException) {
                 file.delete()
-                setTransfer(dev, "No app on this phone can open $name. Use Save to Downloads instead.")
+                setTransfer(dev, Strings.get(R.string.device_file_no_viewer, name))
             }
         }
     }

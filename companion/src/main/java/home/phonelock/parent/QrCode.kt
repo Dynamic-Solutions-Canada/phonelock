@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
@@ -26,7 +27,7 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 @Composable
 internal fun QrCode(text: String, modifier: Modifier = Modifier) {
     val image = remember(text) { encodeQr(text) }
-    Image(image, contentDescription = "QR code", filterQuality = FilterQuality.None,
+    Image(image, contentDescription = stringResource(R.string.setup_qr_code), filterQuality = FilterQuality.None,
         modifier = modifier.fillMaxWidth().aspectRatio(1f).background(androidx.compose.ui.graphics.Color.White)
             .padding(12.dp))
 }

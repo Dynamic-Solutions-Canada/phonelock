@@ -70,7 +70,9 @@ object QuietWatch {
         if (prefs.getLong("alerted_$dev", 0) == 0L) return
         prefs.edit().remove("alerted_$dev").apply()
         val gap = System.currentTimeMillis() - lastSeen
-        Hub.notify(dev, "Heard from the phone again" + if (lastSeen > 0) " after ${duration(gap)}" else "", null)
+        val text = if (lastSeen > 0) Strings.get(R.string.alerts_heard_again_after, duration(gap))
+            else Strings.get(R.string.alerts_heard_again)
+        Hub.notify(dev, text, null)
     }
 
     /** Drops this phone's settings for [dev] (the device was removed). */
@@ -128,13 +130,19 @@ object QuietWatch {
     }
 
     /** "No word from the phone for 1 h 10 min. Last near 12 Main St at 2:40 p.m. Battery 8%." */
-    private fun quietText(dev: String, gap: Long, v: Vitals): String = buildString {
-        append("No word from the phone for ${duration(gap)}.")
+    private fun quietText(dev: String, gap: Long, v: Vitals): String {
+        // Whole sentences, joined with spaces.
+        val sentences = mutableListOf(Strings.get(R.string.alerts_quiet_for, duration(gap)))
         LocationHistory.places.value[dev]?.firstOrNull()?.let { p ->
-            val where = LocationHistory.addressNow(p) ?: "its last location"
-            append(" Last near $where at ${LocationHistory.clock(p.to)}.")
+            val at = LocationHistory.clock(p.to)
+            val where = LocationHistory.addressNow(p)
+            sentences += if (where != null) Strings.get(R.string.alerts_quiet_last_near, where, at)
+                else Strings.get(R.string.alerts_quiet_last_location, at)
         }
-        if (v.battery >= 0) append(" Battery ${v.battery}%${if (v.charging) ", charging" else ""}.")
+        if (v.battery >= 0) {
+            sentences += Strings.get(if (v.charging) R.string.alerts_battery_charging else R.string.alerts_battery, v.battery)
+        }
+        return sentences.joinToString(" ")
     }
 
     /** Whether this phone itself has a working internet connection. */
@@ -148,9 +156,9 @@ object QuietWatch {
     private fun duration(ms: Long): String {
         val m = ms / 60_000
         return when {
-            m < 60 -> "$m min"
-            m % 60 == 0L -> "${m / 60} h"
-            else -> "${m / 60} h ${m % 60} min"
+            m < 60 -> Strings.get(R.string.duration_minutes, m)
+            m % 60 == 0L -> Strings.get(R.string.duration_hours, m / 60)
+            else -> Strings.get(R.string.duration_hours_minutes, m / 60, m % 60)
         }
     }
 }

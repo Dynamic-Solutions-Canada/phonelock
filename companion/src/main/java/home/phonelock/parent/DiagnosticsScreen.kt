@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -40,31 +41,38 @@ internal fun DiagnosticsScreen(dev: String, name: String, onBack: () -> Unit) {
     LaunchedEffect(dev) { Diagnostics.request(dev) }
     val ctx = LocalContext.current
 
-    Page("Diagnostics", onBack, busy = asking) {
+    // Read here: the Share button's onClick isn't composable.
+    val subject = stringResource(R.string.device_diag_subject, name)
+    val shareTitle = stringResource(R.string.device_diag_share_title)
+
+    Page(stringResource(R.string.device_diag_title), onBack, busy = asking) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             OutlinedButton(onClick = { Diagnostics.request(dev) }, enabled = !asking) {
-                Text(if (asking) "Asking $name…" else "Ask again")
+                Text(if (asking) stringResource(R.string.device_diag_asking, name) else stringResource(R.string.device_diag_ask_again))
             }
             if (report != null) Button(onClick = {
                 val send = Intent(Intent.ACTION_SEND).setType("text/plain")
-                    .putExtra(Intent.EXTRA_SUBJECT, "$name diagnostics")
+                    .putExtra(Intent.EXTRA_SUBJECT, subject)
                     .putExtra(Intent.EXTRA_TEXT, asText(name, report))
-                ctx.startActivity(Intent.createChooser(send, "Share diagnostics"))
-            }) { Text("Share") }
+                ctx.startActivity(Intent.createChooser(send, shareTitle))
+            }) { Text(stringResource(R.string.device_diag_share)) }
         }
         if (report == null) {
-            Text(if (asking) "Waiting for $name to answer. If it's offline or off, nothing will come."
-                else "No report yet.", style = MaterialTheme.typography.bodyMedium)
+            Text(if (asking) stringResource(R.string.device_diag_waiting, name)
+                else stringResource(R.string.device_diag_no_report), style = MaterialTheme.typography.bodyMedium)
             return@Page
         }
-        Text("Report from ${time(report.ts)}", style = MaterialTheme.typography.bodySmall)
-        Section("Checks") {
+        Text(stringResource(R.string.device_diag_report_from, time(report.ts)), style = MaterialTheme.typography.bodySmall)
+        Section(stringResource(R.string.device_diag_checks)) {
             // Problems first, so they can't hide in a long list.
             report.checks.sortedBy { if (it.ok == false) 0 else 1 }.forEach { CheckRow(it) }
         }
-        Section("Recent log") {
-            TextButton(onClick = { showLog = !showLog }) { Text(if (showLog) "Hide log" else "Show log") }
-            if (showLog) Text(report.log.ifBlank { "Empty." }, Modifier.horizontalScroll(rememberScrollState()),
+        Section(stringResource(R.string.device_diag_recent_log)) {
+            TextButton(onClick = { showLog = !showLog }) {
+                Text(if (showLog) stringResource(R.string.device_diag_hide_log) else stringResource(R.string.device_diag_show_log))
+            }
+            val emptyLog = stringResource(R.string.device_diag_log_empty)
+            if (showLog) Text(report.log.ifBlank { emptyLog }, Modifier.horizontalScroll(rememberScrollState()),
                 fontFamily = FontFamily.Monospace, style = MaterialTheme.typography.bodySmall, softWrap = false)
         }
     }
@@ -84,15 +92,18 @@ private fun CheckRow(c: DiagCheck) {
     }
 }
 
-/** The whole report as plain text, for sharing. */
+/**
+ * The whole report as plain text, for sharing. The `[ok]`/`[FAIL]` marks stay as they are in every language, as a
+ * fixed format for whoever is troubleshooting; the check names and values are the device's own words.
+ */
 private fun asText(name: String, r: DiagReport): String = buildString {
-    appendLine("$name diagnostics, ${java.util.Date(r.ts)}")
+    appendLine(Strings.get(R.string.device_diag_report_heading, name, java.util.Date(r.ts).toString()))
     appendLine()
     r.checks.forEach { c ->
         val mark = when (c.ok) { true -> "[ok]"; false -> "[FAIL]"; null -> "-" }
         appendLine("$mark ${c.name}" + (c.value?.let { ": $it" } ?: ""))
     }
     appendLine()
-    appendLine("Recent log:")
+    appendLine(Strings.get(R.string.device_diag_report_log))
     append(r.log)
 }

@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
@@ -25,8 +26,8 @@ internal fun WizardIntro(heading: String, title: String, onBack: () -> Unit, onS
         Text(title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
         content()
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Button(onClick = onStart) { Text("Get started") }
-            TextButton(onClick = onBack) { Text("Cancel") }
+            Button(onClick = onStart) { Text(stringResource(R.string.main_get_started)) }
+            TextButton(onClick = onBack) { Text(stringResource(R.string.cancel)) }
         }
     }
 }
@@ -44,21 +45,21 @@ internal fun WizardStep(
     steps: Int,
     title: String,
     onBack: () -> Unit,
-    next: String = "Next",
+    next: String = stringResource(R.string.next),
     nextEnabled: Boolean = true,
     onNext: (() -> Unit)?,
     content: @Composable () -> Unit,
 ) {
     Page(heading, onBack) {
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            if (steps > 1) Text("Step $step of $steps", style = MaterialTheme.typography.labelLarge,
+            if (steps > 1) Text(stringResource(R.string.main_step_of, step, steps), style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.primary)
             Text(title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
         }
         content()
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             if (onNext != null) Button(onClick = onNext, enabled = nextEnabled) { Text(next) }
-            TextButton(onClick = onBack) { Text("Back") }
+            TextButton(onClick = onBack) { Text(stringResource(R.string.back)) }
         }
     }
 }

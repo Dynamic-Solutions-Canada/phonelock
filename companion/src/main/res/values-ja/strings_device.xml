@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Activity (location history and map), file transfers, the first-run disclosure, Diagnostics, device Settings and this app's own updates. -->
+<resources>
+    <!-- Activity: page, map and filters -->
+    <string name="device_activity_title">アクティビティ</string>
+    <string name="device_close_full_map">全画面の地図を閉じる</string>
+    <string name="device_show_map">地図を表示</string>
+    <string name="device_hide_map">地図を非表示</string>
+    <!-- Spoken label of the Refresh button while the child's device is being located -->
+    <string name="device_locating">位置を確認中</string>
+    <!-- %1$s: a time, e.g. 2:15 p.m. -->
+    <string name="device_no_location_at">%1$s の位置情報は記録されていません</string>
+    <string name="device_nothing_this_day">この日に表示する内容はありません。</string>
+    <!-- Filter buttons above the timeline: four must fit across a phone, so keep them short -->
+    <string name="device_filter_places">場所</string>
+    <string name="device_filter_calls">通話</string>
+    <string name="device_filter_apps">アプリ</string>
+    <string name="device_filter_events">イベント</string>
+    <string name="device_today">今日</string>
+    <string name="device_yesterday">昨日</string>
+
+    <!-- Activity: timeline rows. Detail facts are joined with " · " and the first letter of the line is capitalised automatically, so they start lowercase. -->
+    <!-- %1$s: a street address or coordinates -->
+    <string name="device_at_place">%1$s</string>
+    <!-- %1$d: accuracy in metres -->
+    <string name="device_within_metres">誤差 %1$d m 以内</string>
+    <!-- %1$d: battery level in percent -->
+    <string name="device_battery">バッテリー %1$d%%</string>
+    <string name="device_battery_charging">バッテリー %1$d%%（充電中）</string>
+    <!-- %1$s: how long ago, e.g. 5 min ago -->
+    <string name="device_seen_ago">最終確認 %1$s</string>
+    <!-- A stretch of time with no location readings from the child's device -->
+    <string name="device_no_readings">記録なし</string>
+    <!-- A call: %1$s arrow symbol, %2$s direction (e.g. Outgoing), %3$s who -->
+    <string name="device_timeline_call">📞 %1$s %2$s：%3$s</string>
+    <!-- As above, with %4$s the call's length (e.g. 2:05) -->
+    <string name="device_timeline_call_length">📞 %1$s %2$s：%3$s · %4$s</string>
+    <!-- App use: %1$s app name, %2$s how long (e.g. 15 min) -->
+    <string name="device_timeline_app">📱 %1$s、%2$s</string>
+    <!-- The time column of the current location row, and the map marker for it -->
+    <string name="device_now">現在</string>
+    <!-- The current location: %1$s is an address, an error from the device, or one of the two lines below -->
+    <string name="device_timeline_now">📍 現在：%1$s</string>
+    <string name="device_now_locating">位置を確認中…</string>
+    <string name="device_now_no_answer">応答なし（オフラインまたは電源オフ）</string>
+    <!-- Map pin on a place where the child stayed a while (when its address is unknown) -->
+    <string name="device_map_stop">滞在地点</string>
+    <!-- A span of times: %1$s start, %2$s end (e.g. 2:15 p.m. – 5:30 p.m.) -->
+    <string name="device_time_range">%1$s～%2$s</string>
+    <!-- A short day name and a time, for spans crossing midnight: %1$s day (e.g. Fri), %2$s time -->
+    <string name="device_day_time">%1$s %2$s</string>
+
+    <!-- File transfers (shown while browsing the child's files). %1$s is a file name. -->
+    <!-- Wraps a status while several files are saved: %1$d this file's number, %2$d how many, %3$s the status -->
+    <string name="device_batch_status">（%1$d/%2$d）%3$s</string>
+    <!-- %1$d files saved of %2$d -->
+    <plurals name="device_batch_saved">
+        <item quantity="other">%2$d 個中 %1$d 個のファイルを Downloads/PhoneLock に保存しました</item>
+    </plurals>
+    <!-- %1$d files saved of %2$d; %3$d of them failed -->
+    <plurals name="device_batch_saved_some_failed">
+        <item quantity="other">%2$d 個中 %1$d 個のファイルを Downloads/PhoneLock に保存しました。%3$d 個はダウンロードできませんでした</item>
+    </plurals>
+    <!-- %1$s: the child's device name, %2$s: a file name -->
+    <string name="device_file_asking">%1$s のデバイスに %2$s を要求中…</string>
+    <string name="device_file_no_answer">%2$s について %1$s のデバイスから応答がありません。電源が切れているか、オフラインの可能性があります。</string>
+    <string name="device_file_preparing">%1$s を準備中…</string>
+    <string name="device_file_cant_read">%1$s を読み取れませんでした</string>
+    <string name="device_file_too_large">%1$s は 48 MB を超えています</string>
+    <string name="device_file_uploading">%1$s をアップロード中…</string>
+    <string name="device_file_sent">%1$s を送信しました。デバイスでの保存を待っています…</string>
+    <!-- %1$d: an HTTP status code -->
+    <string name="device_upload_failed_http">アップロードに失敗しました（HTTP %1$d）</string>
+    <!-- %1$s: the reason, as the system words it -->
+    <string name="device_upload_failed">アップロードに失敗しました：%1$s</string>
+    <string name="device_file_uploaded">%1$s をアップロードしました</string>
+    <string name="device_file_downloading">%1$s をダウンロード中…</string>
+    <string name="device_file_saved">%1$s を Downloads/PhoneLock に保存しました</string>
+    <string name="device_file_cant_download">%1$s をダウンロードできませんでした</string>
+    <string name="device_file_opening">%1$s を開いています…</string>
+    <string name="device_file_cant_open">%1$s を開けませんでした</string>
+    <string name="device_file_opened">%1$s を開きました（保存されていません）</string>
+    <string name="device_file_no_viewer">このスマートフォンには %1$s を開けるアプリがありません。代わりに「ダウンロードに保存」を使ってください。</string>
+
+    <!-- First-run disclosure, which the parent must accept before adding a device -->
+    <string name="device_disclosure_title">はじめに</string>
+    <string name="device_disclosure_intro">PhoneLock はペアレンタル コントロール アプリです。お子様のスマートフォンやタブレットを管理し、その情報を確認できます。</string>
+    <string name="device_disclosure_seen_title">お子様のデバイスから確認できる情報</string>
+    <!-- A bulleted list: keep one item per line -->
+    <string name="device_disclosure_seen">• 位置情報：リクエスト時、および 15 分ごと（移動中は 2 分ごと）の記録。7 日間保存されます\n• バッテリー残量と、電源のオン・オフ\n• インストール済みのアプリ、その使用リクエスト、どのアプリをどれだけ使ったか\n• 接続した Wi-Fi ネットワークとペア設定した Bluetooth デバイス\n• 通話（通話履歴）と連絡先\n• 共有ストレージ内のファイル、写真、動画（開いたとき）\n• 画面（「画面を表示」をタップしたとき）</string>
+    <string name="device_disclosure_readers_title">閲覧できる人</string>
+    <string name="device_disclosure_readers">あなたと、デバイスを共有している他の保護者のみです。すべてのデータはデバイス上でエンドツーエンド暗号化されます。メッセージを中継するリレーサーバーと Google のプッシュサービスが扱うのは、暗号化されたデータのみです。データの販売や広告への利用は一切ありません。</string>
+    <string name="device_disclosure_child_title">お子様に伝えられること</string>
+    <string name="device_disclosure_child">お子様のホーム画面には、位置情報、バッテリー、通話、アプリの使用状況が保護者と共有されていることが表示されます。保護者が画面を表示するたびにお子様に通知が届き、ペアレンタル コントロールが有効であることを示す通知も表示されます。PhoneLock をお子様から隠すことはできません。</string>
+    <string name="device_disclosure_consent">続行すると、あなたが管理するデバイスを使うお子様の親または法定後見人であること（またはその許可を得ていること）、および PhoneLock をその目的にのみ使用することに同意したものとみなされます。</string>
+    <!-- Opens the privacy policy, which is in English -->
+    <string name="device_privacy_policy">プライバシー ポリシー（英語）</string>
+    <string name="device_disclosure_agree">同意して続行</string>
+
+    <!-- Diagnostics. %1$s is the child's device name. -->
+    <string name="device_diag_title">診断</string>
+    <string name="device_diag_asking">%1$s に問い合わせ中…</string>
+    <string name="device_diag_ask_again">再度問い合わせる</string>
+    <!-- Subject of the shared report -->
+    <string name="device_diag_subject">%1$s の診断</string>
+    <string name="device_diag_share_title">診断を共有</string>
+    <string name="device_diag_share">共有</string>
+    <string name="device_diag_waiting">%1$s の応答を待っています。オフラインまたは電源オフの場合は応答がありません。</string>
+    <string name="device_diag_no_report">レポートはまだありません。</string>
+    <!-- %1$s: when the report was made -->
+    <string name="device_diag_report_from">%1$s のレポート</string>
+    <string name="device_diag_checks">チェック項目</string>
+    <string name="device_diag_recent_log">最近のログ</string>
+    <string name="device_diag_show_log">ログを表示</string>
+    <string name="device_diag_hide_log">ログを非表示</string>
+    <!-- Shown when the device sent an empty log -->
+    <string name="device_diag_log_empty">空です。</string>
+    <!-- First line of the shared report: %1$s device name, %2$s date and time -->
+    <string name="device_diag_report_heading">%1$s の診断、%2$s</string>
+    <!-- Heading above the log in the shared report -->
+    <string name="device_diag_report_log">最近のログ：</string>
+
+    <!-- Device settings -->
+    <string name="device_settings_title">設定</string>
+    <string name="device_names">名前</string>
+    <string name="device_your_name_detail">お子様のデバイスに表示されます</string>
+    <string name="device_names_saved">名前を保存しました</string>
+    <string name="device_save_names">名前を保存</string>
+    <string name="device_parent_access">保護者用アクセス</string>
+    <string name="device_parent_mode">保護者モード…</string>
+    <string name="device_parent_mode_detail">お子様のデバイスで設定と Play Store を一時的にロック解除します</string>
+    <string name="device_change_pin">保護者 PIN を変更…</string>
+    <string name="device_change_pin_detail">お子様のデバイスで時計を 4 秒間長押しして使います</string>
+    <string name="device_lock_app">ロックアプリ</string>
+    <!-- %1$d: the lock app's version number -->
+    <string name="device_lock_version">バージョン %1$d</string>
+    <string name="device_lock_version_unknown">バージョン不明</string>
+    <!-- %1$d: the installed version, %2$d: the version waiting to install -->
+    <string name="device_lock_version_update_ready">バージョン %1$d · 次に画面がオフになったときにバージョン %2$d をインストールします</string>
+    <string name="device_lock_version_unknown_update_ready">バージョン不明 · 次に画面がオフになったときにバージョン %1$d をインストールします</string>
+    <string name="device_check_update_now">今すぐアップデートを確認</string>
+    <string name="device_check_update_now_detail">次にお子様のデバイスの画面がオフになったときにインストールします</string>
+    <string name="device_diagnostics_detail">お子様のデバイスのチェック項目と最近のログ</string>
+    <string name="device_fix_setup">Wi-Fi でセットアップを修復</string>
+    <string name="device_fix_setup_detail">ワイヤレス デバッグを使って権限を修復します</string>
+    <string name="device_recovery">復旧：デバッグをオンにする…</string>
+    <string name="device_recovery_detail">パソコンから修復する場合</string>
+    <string name="device_sharing">共有</string>
+    <string name="device_share">他の保護者と共有…</string>
+    <string name="device_share_detail">他の保護者のスマートフォンからこのデバイスを管理できるようにします</string>
+    <string name="device_remove">このデバイスを削除…</string>
+    <!-- %1$s: the child's device name -->
+    <string name="device_remove_title">%1$s を削除しますか？</string>
+    <string name="device_remove_text">このアプリでの管理を終了します。お子様のデバイスは現在のロック状態のままになります。再び管理するには、他の保護者に共有してもらうか、もう一度セットアップしてください。</string>
+
+    <!-- This app's own updates (GitHub build). Versions are written 1.0.N; %1$d is N. -->
+    <string name="device_app_section">このアプリ</string>
+    <string name="device_app_version">バージョン 1.0.%1$d</string>
+    <!-- %1$d: the version, %2$d: percent downloaded -->
+    <string name="device_app_downloading">バージョン 1.0.%1$d をダウンロード中：%2$d%%</string>
+    <string name="device_app_installing">バージョン 1.0.%1$d をインストール中…</string>
+    <string name="device_app_update_to">バージョン 1.0.%1$d にアップデート</string>
+    <!-- %1$d: download size in MB -->
+    <string name="device_app_update_detail">%1$d MB のダウンロード。インストール時に Android から確認を求められます。</string>
+    <string name="device_app_check">アップデートを確認</string>
+    <string name="device_app_check_detail">GitHub の PhoneLock リリースから</string>
+    <string name="device_app_none_published">このアプリのアップデートはまだ公開されていません</string>
+    <string name="device_app_up_to_date">このアプリは最新です（バージョン 1.0.%1$d）</string>
+    <!-- %1$s: the reason -->
+    <string name="device_app_check_failed">アップデートを確認できませんでした：%1$s</string>
+    <string name="device_app_no_connection">接続がありません</string>
+    <string name="device_app_available">このアプリのバージョン 1.0.%1$d を利用できます</string>
+    <!-- Button on the message above -->
+    <string name="device_app_update">アップデート</string>
+    <!-- %1$s: the reason, one of the lowercase phrases below or one from Android -->
+    <string name="device_app_update_failed">このアプリをアップデートできませんでした：%1$s</string>
+    <string name="device_app_download_failed">ダウンロードに失敗しました</string>
+    <string name="device_app_install_failed">インストールに失敗しました</string>
+    <string name="device_app_no_confirmation">確認画面が表示されませんでした</string>
+    <string name="device_app_update_cancelled">アップデートをキャンセルしました</string>
+    <!-- Reasons a downloaded update was refused, shown after "Couldn't update this app:" -->
+    <string name="device_app_bad_checksum">ダウンロードしたファイルがリリースと一致しません（確認後にリリースが変更された可能性があります）</string>
+    <string name="device_app_not_an_app">ダウンロードしたファイルはアプリではありません</string>
+    <string name="device_app_different_app">ダウンロードしたファイルは別のアプリです</string>
+    <string name="device_app_different_version">ダウンロードしたファイルは別のバージョンです</string>
+    <string name="device_app_bad_signature">ダウンロードしたファイルは PhoneLock の署名がありません</string>
+    <!-- Download errors from GitHub releases (also during child setup). %1$d: an HTTP status code -->
+    <string name="device_download_failed_http">ダウンロードに失敗しました（HTTP %1$d）</string>
+    <string name="device_download_too_large">ダウンロードのサイズが大きすぎます</string>
+</resources>

@@ -45,6 +45,8 @@ object EmergencyAlerts {
     private const val SHOW_MS = 2 * 3600_000L
     private const val CHANNEL = "emergency"
     private const val TAG = "EmergencyAlerts"
+    /** Stored name of a parent who hasn't set one (see [me]); kept as it was before translation. */
+    private const val UNNAMED = "A parent"
 
     private lateinit var app: Context
     private val prefs by lazy { app.getSharedPreferences("emergency", Context.MODE_PRIVATE) }
@@ -84,14 +86,14 @@ object EmergencyAlerts {
         val name = Hub.deviceName(d.id)
         when {
             known == null && !next.cancelled -> {
-                Hub.addEvent(d.id, "Emergency alert from $name's phone", since)
+                Hub.addEvent(d.id, Strings.get(R.string.alerts_emergency_event, name), since)
                 Alarm.start(app)
             }
             m.optString("op") == "cancel" -> {
-                Hub.addEvent(d.id, "Emergency alert cancelled: sent by mistake")
+                Hub.addEvent(d.id, Strings.get(R.string.alerts_emergency_cancelled_event))
                 if (_alerts.value.none { it.ringing }) Alarm.stop(app)
             }
-            m.optString("op") == "msg" -> Hub.addEvent(d.id, "Emergency message: ${m.optString("text")}")
+            m.optString("op") == "msg" -> Hub.addEvent(d.id, Strings.get(R.string.alerts_emergency_message_event, m.optString("text")))
         }
         notify(next)
         // The address makes the alert useful at a glance; look it up off this thread and update.
@@ -111,10 +113,21 @@ object EmergencyAlerts {
 
     // ---------- this parent's answers ----------
 
+    /**
+     * How this parent appears in an alert's "on it" list. A parent with no name is stored as [UNNAMED],
+     * the same in every language, so changing the app's language can't make an answered alert ask again;
+     * [onItNames] translates it for display.
+     */
+    fun me(): String = Hub.parentName.value.ifBlank { UNNAMED }
+
+    /** [a]'s "on it" parents for display, with an unnamed parent in the app's language. */
+    private fun onItNames(a: Sos): String =
+        a.acks.joinToString(", ") { if (it == UNNAMED) Strings.get(R.string.alerts_a_parent) else it }
+
     /** "I'm on it": tells her and the other parents, and stops this phone ringing. */
     fun ack(id: String) {
         val a = _alerts.value.firstOrNull { it.id == id } ?: return
-        val me = Hub.parentName.value.ifBlank { "A parent" }
+        val me = me()
         Hub.send(a.dev, Hub.msg("sosack").put("sos", id))
         update(id) { it.copy(ringing = false, acks = if (me in it.acks) it.acks else it.acks + me) }
         afterAnswer(id)
@@ -149,8 +162,8 @@ object EmergencyAlerts {
     /** The alert's notification: full screen while ringing (where allowed), with I'm on it / Silence. */
     private fun notify(a: Sos) {
         val nm = app.getSystemService(NotificationManager::class.java)
-        nm.createNotificationChannel(NotificationChannel(CHANNEL, "Emergency alerts", NotificationManager.IMPORTANCE_HIGH).apply {
-            description = "When a child presses SOS. The alarm plays separately, as an alarm."
+        nm.createNotificationChannel(NotificationChannel(CHANNEL, Strings.get(R.string.alerts_channel_emergency), NotificationManager.IMPORTANCE_HIGH).apply {
+            description = Strings.get(R.string.alerts_channel_emergency_description)
             setSound(null, null) // the alarm service plays the sound
             enableVibration(false)
             setBypassDnd(true)
@@ -176,8 +189,8 @@ object EmergencyAlerts {
             .setOnlyAlertOnce(true)
         if (a.ringing) {
             b.setFullScreenIntent(open, true)
-            b.addAction(action("I'm on it", "ack"))
-            b.addAction(action("Silence", "silence"))
+            b.addAction(action(Strings.get(R.string.alerts_emergency_ack), "ack"))
+            b.addAction(action(Strings.get(R.string.alerts_emergency_silence), "silence"))
         }
         try {
             nm.notify(a.id.hashCode(), b.build())
@@ -187,18 +200,26 @@ object EmergencyAlerts {
     }
 
     /** "Emergency: Railyn", or "Cancelled: Railyn's alert". */
-    fun title(a: Sos): String = if (a.cancelled) "Cancelled: ${Hub.deviceName(a.dev)}'s alert"
-        else "Emergency: ${Hub.deviceName(a.dev)}"
+    fun title(a: Sos): String =
+        Strings.get(if (a.cancelled) R.string.alerts_emergency_cancelled_title else R.string.alerts_emergency_title,
+            Hub.deviceName(a.dev))
 
     /** Where she is, her messages and who's on it, in one paragraph. */
-    fun summary(a: Sos): String = buildString {
-        if (a.cancelled) append("Sent by mistake. ")
-        append(a.address?.let { "Near $it" } ?: if (a.where != null) "Location received" else "Waiting for her location")
-        a.where?.let { append(" (${LocationHistory.clock(it.to)})") }
-        append(".")
-        if (a.battery >= 0) append(" Battery ${a.battery}%.")
-        if (a.messages.isNotEmpty()) append(" She says: ").append(a.messages.joinToString(" · ")).append(".")
-        if (a.acks.isNotEmpty()) append(" On it: ").append(a.acks.joinToString(", ")).append(".")
+    fun summary(a: Sos): String {
+        // Whole sentences, joined with spaces.
+        val sentences = mutableListOf<String>()
+        if (a.cancelled) sentences += Strings.get(R.string.alerts_emergency_sent_by_mistake)
+        val at = a.where?.let { LocationHistory.clock(it.to) }
+        sentences += when {
+            a.address != null && at != null -> Strings.get(R.string.alerts_emergency_near_at, a.address, at)
+            a.address != null -> Strings.get(R.string.alerts_emergency_near, a.address)
+            at != null -> Strings.get(R.string.alerts_emergency_location_received, at)
+            else -> Strings.get(R.string.alerts_emergency_waiting_location)
+        }
+        if (a.battery >= 0) sentences += Strings.get(R.string.alerts_battery, a.battery)
+        if (a.messages.isNotEmpty()) sentences += Strings.get(R.string.alerts_emergency_she_says, a.messages.joinToString(" · "))
+        if (a.acks.isNotEmpty()) sentences += Strings.get(R.string.alerts_emergency_on_it, onItNames(a))
+        return sentences.joinToString(" ")
     }
 
     /** The notification's buttons. */
@@ -264,12 +285,12 @@ object EmergencyAlerts {
         override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
             val n = Notification.Builder(this, CHANNEL_SERVICE)
                 .setSmallIcon(android.R.drawable.ic_dialog_alert)
-                .setContentTitle("Emergency alarm")
+                .setContentTitle(Strings.get(R.string.alerts_emergency_alarm))
                 .setContentIntent(PendingIntent.getActivity(this, 0, Intent(this, EmergencyActivity::class.java),
                     PendingIntent.FLAG_IMMUTABLE))
                 .build()
             getSystemService(NotificationManager::class.java).createNotificationChannel(
-                NotificationChannel(CHANNEL_SERVICE, "Emergency alarm playing", NotificationManager.IMPORTANCE_LOW))
+                NotificationChannel(CHANNEL_SERVICE, Strings.get(R.string.alerts_channel_emergency_service), NotificationManager.IMPORTANCE_LOW))
             startForeground(SERVICE_ID, n, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
             if (player == null) play()
             android.os.Handler(mainLooper).postDelayed({ stopSelf() }, MAX_MS)

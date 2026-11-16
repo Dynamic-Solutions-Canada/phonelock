@@ -5,6 +5,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 
 /**
@@ -35,19 +36,20 @@ internal fun AppUpdateSection() {
     if (!AppUpdate.supported) return
     val st by AppUpdate.state.collectAsState()
 
-    Section("This app") {
-        Text("Version 1.0.${st.installed}")
+    Section(stringResource(R.string.device_app_section)) {
+        Text(stringResource(R.string.device_app_version, st.installed))
         ProgressTrack(st.busy)
         when {
-            st.busy -> Text(st.progress?.let { "Downloading version 1.0.${st.latest}: ${(it * 100).toInt()}%" }
-                ?: "Installing version 1.0.${st.latest}…", style = MaterialTheme.typography.bodyMedium)
+            st.busy -> Text(st.progress?.let { stringResource(R.string.device_app_downloading, st.latest, (it * 100).toInt()) }
+                ?: stringResource(R.string.device_app_installing, st.latest), style = MaterialTheme.typography.bodyMedium)
 
-            st.available -> ListRow("Update to version 1.0.${st.latest}",
-                AnnotatedString("${st.size / (1024 * 1024)} MB download. Android asks you to confirm the install."),
-                leading = { SymbolBadge("⬇") }, onClick = { AppUpdate.install() })
+            st.available -> ListRow(stringResource(R.string.device_app_update_to, st.latest),
+                AnnotatedString(stringResource(R.string.device_app_update_detail, st.size / (1024 * 1024))),
+                leading = { SymbolBadge("⬇") }, onClick = { AppUpdate.install() }, titleLines = 2)
 
-            else -> ListRow("Check for update", AnnotatedString("From the PhoneLock releases on GitHub"),
-                leading = { SymbolBadge("⬆") }, onClick = { AppUpdate.check(asked = true) })
+            else -> ListRow(stringResource(R.string.device_app_check),
+                AnnotatedString(stringResource(R.string.device_app_check_detail)),
+                leading = { SymbolBadge("⬆") }, onClick = { AppUpdate.check(asked = true) }, titleLines = 2)
         }
     }
 }

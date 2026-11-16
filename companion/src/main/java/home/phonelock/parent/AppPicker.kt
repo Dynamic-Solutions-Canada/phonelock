@@ -11,6 +11,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 
 /**
  * "All apps ▾": a menu of [apps] (package to name, most used first) to tick the ones to show; none ticked
@@ -19,12 +21,12 @@ import androidx.compose.runtime.setValue
  */
 @Composable
 internal fun AppPicker(apps: List<Pair<String, String>>, chosen: Set<String>, onChange: (Set<String>) -> Unit,
-                       allLabel: String = "All apps") {
+                       allLabel: String = stringResource(R.string.apps_all_apps)) {
     var open by remember { mutableStateOf(false) }
     val title = when (chosen.size) {
         0 -> allLabel
-        1 -> apps.firstOrNull { it.first in chosen }?.second ?: "1 app"
-        else -> "${chosen.size} apps"
+        1 -> apps.firstOrNull { it.first in chosen }?.second ?: pluralStringResource(R.plurals.apps_count, 1, 1)
+        else -> pluralStringResource(R.plurals.apps_count, chosen.size, chosen.size)
     }
     Box {
         OutlinedButton(onClick = { open = true }) { Text("$title ▾") }

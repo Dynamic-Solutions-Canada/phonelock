@@ -28,7 +28,7 @@ object Undo {
 
     /** Shows [text] with an Undo button that runs [undo]. A newer message replaces a pending one. */
     fun offer(text: String, undo: () -> Unit) {
-        items.trySend(Item(text, "Undo", undo))
+        items.trySend(Item(text, Strings.get(R.string.undo), undo))
     }
 
     /** Shows [text] with no action: confirms that something was sent when its result comes later. */

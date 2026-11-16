@@ -37,10 +37,10 @@ object Releases {
             when (val code = h.responseCode) {
                 200 -> {}
                 404 -> throw FileNotFoundException(url)
-                else -> throw IOException("Download failed (HTTP $code)")
+                else -> throw IOException(Strings.get(R.string.device_download_failed_http, code))
             }
             val total = h.contentLengthLong
-            if (total > maxBytes) throw IOException("Download is too large")
+            if (total > maxBytes) throw IOException(Strings.get(R.string.device_download_too_large))
 
             var done = 0L
             var shown = -1f
@@ -51,7 +51,7 @@ object Releases {
                         val n = input.read(buf)
                         if (n < 0) break
                         done += n
-                        if (done > maxBytes) throw IOException("Download is too large")
+                        if (done > maxBytes) throw IOException(Strings.get(R.string.device_download_too_large))
                         md.update(buf, 0, n)
                         out.write(buf, 0, n)
 

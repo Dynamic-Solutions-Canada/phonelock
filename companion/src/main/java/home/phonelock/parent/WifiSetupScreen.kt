@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -59,7 +60,7 @@ internal fun WifiSetupScreen(existing: Device?, onDone: (String?) -> Unit) {
     val draft = remember { SetupDraft(existing) }
     var step by rememberSaveable { mutableIntStateOf(1) }
     if (current != null) {
-        Page(if (existing == null) "Set up a new device" else "Fix setup", onBack = {
+        Page(stringResource(if (existing == null) R.string.setup_set_up_new_device else R.string.setup_fix_setup), onBack = {
             // Leaving mid-setup is allowed; it carries on and the result shows next time.
             ChildSetup.reset()
             onDone(current.deviceId)
@@ -76,17 +77,15 @@ internal fun WifiSetupScreen(existing: Device?, onDone: (String?) -> Unit) {
     }
 
     if (existing != null) {
-        val heading = "Fix setup"
+        val heading = stringResource(R.string.setup_fix_setup)
         when (step) {
-            1 -> WizardIntro(heading, "What this does", onBack = { onDone(null) }, onStart = { step = 2 }) {
-                Text("Fix setup turns PhoneLock's features back on for ${existing.name}: screen view, call limits " +
-                    "and call log, files, ringing through Do Not Disturb, and working while idle. It doesn't " +
-                    "change its pairing, schedule or apps.", style = MaterialTheme.typography.bodyMedium)
-                Text("You'll need", style = MaterialTheme.typography.titleSmall)
+            1 -> WizardIntro(heading, stringResource(R.string.setup_what_this_does), onBack = { onDone(null) }, onStart = { step = 2 }) {
+                Text(stringResource(R.string.setup_fix_explanation, existing.name), style = MaterialTheme.typography.bodyMedium)
+                Text(stringResource(R.string.setup_you_need), style = MaterialTheme.typography.titleSmall)
                 Requirements(listOf(
-                    "Their device on the same Wi-Fi as this phone",
-                    "Parent mode unlocked on it (hold the clock for 4 seconds, enter the PIN), to reach Settings",
-                    "Developer options turned on there: Settings > About phone, tap Build number 7 times",
+                    stringResource(R.string.setup_need_same_wifi_fix),
+                    stringResource(R.string.setup_need_parent_mode),
+                    stringResource(R.string.setup_need_developer_options),
                 ))
             }
             else -> PairStep(heading, 1, 1, draft, existing, onBack = { step = 1 })
@@ -94,45 +93,45 @@ internal fun WifiSetupScreen(existing: Device?, onDone: (String?) -> Unit) {
         return
     }
 
-    val heading = "Set up a new device"
+    val heading = stringResource(R.string.setup_set_up_new_device)
     when (step) {
-        1 -> WizardIntro(heading, "What to expect", onBack = { onDone(null) }, onStart = { step = 2 }) {
+        1 -> WizardIntro(heading, stringResource(R.string.setup_what_to_expect), onBack = { onDone(null) }, onStart = { step = 2 }) {
             StepOutline(listOf(
-                "Prepare their device" to "Same Wi-Fi, accounts removed for now, Developer options on. About 5 minutes.",
-                "Choose names and a PIN" to "The PIN unlocks parent mode on their device.",
-                "Pair with this phone" to "Their device shows a 6-digit code; you type it here.",
-                "PhoneLock sets it up" to "Installs, connects it to this app and turns on its features. About 2 minutes.",
+                stringResource(R.string.setup_outline_prepare_title) to stringResource(R.string.setup_outline_prepare_detail),
+                stringResource(R.string.setup_outline_names_title) to stringResource(R.string.setup_outline_names_detail),
+                stringResource(R.string.setup_outline_pair_title) to stringResource(R.string.setup_outline_pair_detail),
+                stringResource(R.string.setup_outline_install_title) to stringResource(R.string.setup_outline_install_detail),
             ))
-            Text("You'll need", style = MaterialTheme.typography.titleSmall)
+            Text(stringResource(R.string.setup_you_need), style = MaterialTheme.typography.titleSmall)
             Requirements(listOf(
-                "Their phone or tablet, with Android 13 or later, charged and in your hands",
-                "Both devices on the same Wi-Fi network",
-                "To sign out of its accounts until setup is done (you add them back in parent mode)",
+                stringResource(R.string.setup_need_device),
+                stringResource(R.string.setup_need_same_wifi),
+                stringResource(R.string.setup_need_sign_out),
             ))
-            Text("Nothing on their device is erased.", style = MaterialTheme.typography.bodyMedium)
+            Text(stringResource(R.string.setup_nothing_erased), style = MaterialTheme.typography.bodyMedium)
         }
-        2 -> WizardStep(heading, 1, 3, "Prepare their device", onBack = { step = 1 }, onNext = { step = 3 }) {
+        2 -> WizardStep(heading, 1, 3, stringResource(R.string.setup_outline_prepare_title), onBack = { step = 1 }, onNext = { step = 3 }) {
             StepOutline(listOf(
-                "Connect to Wi-Fi" to "The same network as this phone.",
-                "Remove its accounts" to "Settings > Passwords & accounts: remove each one (Google and others). " +
-                    "Android only lets PhoneLock take charge of a device with no accounts. You add them back at the end.",
-                "Turn on Developer options" to "Settings > About phone: tap Build number 7 times, until it says " +
-                    "you're a developer.",
+                stringResource(R.string.setup_connect_wifi_title) to stringResource(R.string.setup_connect_wifi_detail),
+                stringResource(R.string.setup_remove_accounts_title) to stringResource(R.string.setup_remove_accounts_detail),
+                stringResource(R.string.setup_developer_options_title) to stringResource(R.string.setup_developer_options_detail),
             ))
         }
         3 -> {
             val pinsMatch = draft.pin == draft.pinAgain
-            WizardStep(heading, 2, 3, "Names and PIN", onBack = { step = 2 },
+            WizardStep(heading, 2, 3, stringResource(R.string.setup_names_and_pin), onBack = { step = 2 },
                 nextEnabled = draft.child.isNotBlank() && draft.you.isNotBlank() && draft.pin.length >= 4 && pinsMatch,
                 onNext = { step = 4 }) {
                 OutlinedTextField(draft.child, { draft.child = it }, Modifier.fillMaxWidth(), singleLine = true,
-                    label = { Text("Child's device name") },
-                    supportingText = { Text("What this app calls their device, e.g. their first name") })
+                    label = { Text(stringResource(R.string.child_device_name)) },
+                    supportingText = { Text(stringResource(R.string.setup_device_name_hint)) })
                 OutlinedTextField(draft.you, { draft.you = it }, Modifier.fillMaxWidth(), singleLine = true,
-                    label = { Text("Your name") }, supportingText = { Text("Shown on their device") })
-                PinField(draft.pin, { draft.pin = it }, "Parent PIN (4 to 8 digits)", "Unlocks parent mode on their device")
-                PinField(draft.pinAgain, { draft.pinAgain = it }, "PIN again",
-                    if (draft.pinAgain.isNotEmpty() && !pinsMatch) "Doesn't match" else "To be sure it's right",
+                    label = { Text(stringResource(R.string.your_name)) },
+                    supportingText = { Text(stringResource(R.string.setup_shown_on_device)) })
+                PinField(draft.pin, { draft.pin = it }, stringResource(R.string.setup_parent_pin),
+                    stringResource(R.string.setup_pin_unlocks))
+                PinField(draft.pinAgain, { draft.pinAgain = it }, stringResource(R.string.setup_pin_again),
+                    stringResource(if (draft.pinAgain.isNotEmpty() && !pinsMatch) R.string.setup_pin_mismatch else R.string.setup_pin_confirm),
                     isError = draft.pinAgain.isNotEmpty() && !pinsMatch)
             }
         }
@@ -174,19 +173,18 @@ private fun PairStep(heading: String, step: Int, steps: Int, draft: SetupDraft, 
     val host = if (typing) typedHost.takeIf { typedPort != null } else endpoint?.host
     val port = if (typing) typedPort.takeIf { typedHost != null } else endpoint?.port
 
-    WizardStep(heading, step, steps, "Pair with their device", onBack = onBack,
-        next = if (existing == null) "Set up" else "Fix setup",
+    WizardStep(heading, step, steps, stringResource(R.string.setup_pair_title), onBack = onBack,
+        next = stringResource(if (existing == null) R.string.setup_set_up_button else R.string.setup_fix_setup),
         nextEnabled = host != null && port != null && draft.code.length == 6,
         onNext = {
             discovery.close()
             ChildSetup.start(ChildSetup.Request(host!!, port!!, draft.code, existing?.name ?: draft.child.trim(),
                 draft.you.trim(), draft.pin, existing, draft.connectPort.toIntOrNull(), draft.turnOff))
         }) {
-        Text("On their device: Settings > System > Developer options > Wireless debugging. Turn it on, then " +
-            "tap Pair device with pairing code. Keep that screen open until setup starts.",
+        Text(stringResource(R.string.setup_pair_instructions),
             style = MaterialTheme.typography.bodyMedium)
         if (pairable.isEmpty()) {
-            Text("Looking for it… It appears here once its pairing code is showing.",
+            Text(stringResource(R.string.setup_looking),
                 style = MaterialTheme.typography.bodySmall)
         } else {
             pairable.forEach { e ->
@@ -195,25 +193,25 @@ private fun PairStep(heading: String, step: Int, steps: Int, draft: SetupDraft, 
             }
         }
         OutlinedTextField(draft.code, { draft.code = it.filter(Char::isDigit).take(6) }, Modifier.fillMaxWidth(),
-            singleLine = true, label = { Text("Wi-Fi pairing code") },
-            supportingText = { Text("The 6 digits on their screen") },
+            singleLine = true, label = { Text(stringResource(R.string.setup_wifi_pairing_code)) },
+            supportingText = { Text(stringResource(R.string.setup_six_digits)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
 
         TextButton(onClick = { moreOptions = !moreOptions }) {
-            Text(if (moreOptions) "Fewer options" else "Not found, or more options")
+            Text(stringResource(if (moreOptions) R.string.setup_fewer_options else R.string.setup_more_options))
         }
         if (moreOptions) {
             OutlinedTextField(draft.manual, { draft.manual = it.trim() }, Modifier.fillMaxWidth(), singleLine = true,
-                label = { Text("Its IP address & port") },
-                supportingText = { Text("Shown under the pairing code, e.g. 192.168.1.20:37755") })
+                label = { Text(stringResource(R.string.setup_ip_and_port)) },
+                supportingText = { Text(stringResource(R.string.setup_ip_and_port_hint)) })
             OutlinedTextField(draft.connectPort, { draft.connectPort = it.filter(Char::isDigit).take(5) },
-                Modifier.fillMaxWidth(), singleLine = true, label = { Text("Its debugging port") },
-                supportingText = { Text("Only if setup can't find it: the port after \"IP address & Port\" on the Wireless debugging screen") },
+                Modifier.fillMaxWidth(), singleLine = true, label = { Text(stringResource(R.string.setup_debugging_port)) },
+                supportingText = { Text(stringResource(R.string.setup_debugging_port_hint)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
-                    Text("Turn off debugging when done", style = MaterialTheme.typography.bodyMedium)
-                    Text("Recommended, so it can't be used to undo PhoneLock. Parent mode can turn it back on.",
+                    Text(stringResource(R.string.setup_turn_off_debugging_option), style = MaterialTheme.typography.bodyMedium)
+                    Text(stringResource(R.string.setup_turn_off_debugging_detail),
                         style = MaterialTheme.typography.bodySmall)
                 }
                 Switch(draft.turnOff, { draft.turnOff = it })
@@ -224,7 +222,12 @@ private fun PairStep(heading: String, step: Int, steps: Int, draft: SetupDraft, 
 
 @Composable
 private fun SetupProgress(run: SetupRun, onRetry: () -> Unit, onClose: () -> Unit) {
-    Section(if (run.finished) (if (run.failed) "Setup stopped" else "Done") else "Setting up…") {
+    val title = when {
+        !run.finished -> R.string.setup_setting_up
+        run.failed -> R.string.setup_stopped
+        else -> R.string.done
+    }
+    Section(stringResource(title)) {
         run.steps.forEach { s ->
             val (mark, color) = when (s.state) {
                 StepState.WAITING -> "·" to MaterialTheme.colorScheme.onSurfaceVariant
@@ -244,9 +247,8 @@ private fun SetupProgress(run: SetupRun, onRetry: () -> Unit, onClose: () -> Uni
     }
     run.outcome?.let { Text(it, style = MaterialTheme.typography.bodyLarge) }
     if (run.finished && !run.failed) Text(
-        (if (run.debuggingOff) "Wireless debugging is now off on their device. "
-        else "Wireless debugging is still on on their device; turn it off in parent mode once it's working. ") +
-            "Add their accounts back in parent mode (hold the clock for 4 seconds).", style = MaterialTheme.typography.bodyMedium)
+        stringResource(if (run.debuggingOff) R.string.setup_finished_debugging_off else R.string.setup_finished_debugging_on),
+        style = MaterialTheme.typography.bodyMedium)
     // Setup takes a couple of minutes: keep this phone awake and in front meanwhile (Android may pause a
     // background app part way through).
     if (!run.finished) {
@@ -255,14 +257,14 @@ private fun SetupProgress(run: SetupRun, onRetry: () -> Unit, onClose: () -> Uni
             view.keepScreenOn = true
             onDispose { view.keepScreenOn = false }
         }
-        Text("Keep this screen open until setup finishes.", style = MaterialTheme.typography.bodySmall)
+        Text(stringResource(R.string.setup_keep_screen_open), style = MaterialTheme.typography.bodySmall)
     }
     if (run.finished) Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         if (run.failed) {
-            Button(onClick = onRetry) { Text("Try again") }
-            TextButton(onClick = onClose) { Text("Cancel") }
+            Button(onClick = onRetry) { Text(stringResource(R.string.try_again)) }
+            TextButton(onClick = onClose) { Text(stringResource(R.string.cancel)) }
         } else {
-            Button(onClick = onClose) { Text("Done") }
+            Button(onClick = onClose) { Text(stringResource(R.string.done)) }
         }
     }
 }

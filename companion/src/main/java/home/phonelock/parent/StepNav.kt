@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 
 /**
@@ -22,11 +23,11 @@ import androidx.compose.ui.text.style.TextAlign
 internal fun StepNav(title: String, onEarlier: (() -> Unit)?, onLater: (() -> Unit)?) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         IconButton(onClick = { onEarlier?.invoke() }, enabled = onEarlier != null) {
-            Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = "Earlier")
+            Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = stringResource(R.string.main_earlier))
         }
         Text(title, Modifier.weight(1f), style = MaterialTheme.typography.titleMedium, textAlign = TextAlign.Center)
         IconButton(onClick = { onLater?.invoke() }, enabled = onLater != null) {
-            Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "Later")
+            Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = stringResource(R.string.main_later))
         }
     }
 }

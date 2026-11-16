@@ -42,7 +42,7 @@ class ParentService : Service() {
             PendingIntent.FLAG_IMMUTABLE)
         val n = Notification.Builder(this, "service")
             .setSmallIcon(android.R.drawable.ic_lock_lock)
-            .setContentTitle("Listening for paired devices")
+            .setContentTitle(Strings.get(R.string.alerts_service_listening))
             .setContentIntent(open)
             .setOngoing(true)
             .build()

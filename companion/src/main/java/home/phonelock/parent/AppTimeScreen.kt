@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.PathParser
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import java.time.LocalDate
@@ -63,11 +64,10 @@ internal fun AppTimeScreen(dev: String, name: String, state: PhoneState, onBack:
     val error by AppTime.error.collectAsState()
     LaunchedEffect(dev) { AppTime.requestHistory(dev) }
 
-    Page("App time", onBack, dev = dev, waitingOn = setOf("usage")) {
-        Text("To set a daily limit on an app, use ⋮ next to it in \"Apps and when they're allowed\" on the main screen.",
-            style = MaterialTheme.typography.bodySmall)
+    Page(stringResource(R.string.apps_app_time_title), onBack, dev = dev, waitingOn = setOf("usage")) {
+        Text(stringResource(R.string.apps_app_time_hint), style = MaterialTheme.typography.bodySmall)
         ReportSection(dev, state)
-        error[dev]?.let { Text(it + ". Use Fix setup over Wi-Fi to allow it.", color = MaterialTheme.colorScheme.error) }
+        error[dev]?.let { Text(stringResource(R.string.apps_usage_error, it), color = MaterialTheme.colorScheme.error) }
     }
 }
 
@@ -84,11 +84,11 @@ internal fun limitStatus(l: TimeLimit, today: AppTimeToday?): Pair<String, Boole
     val used = t?.used?.get(l.id)
     val base = allowanceText(l.minutes)
     return when {
-        t?.out?.contains(l.id) == true -> "$base · Time's up today" to true
-        allowed < 0 -> "$base · no limit today" to false
-        allowed == 0 -> "$base · not allowed today" to false
+        t?.out?.contains(l.id) == true -> Strings.get(R.string.apps_limit_times_up, base) to true
+        allowed < 0 -> Strings.get(R.string.apps_limit_no_limit_today, base) to false
+        allowed == 0 -> Strings.get(R.string.apps_limit_not_allowed_today, base) to false
         used == null -> base to false
-        else -> "$base · ${fmtMinutes((allowed - used).coerceAtLeast(0).toLong())} left" to false
+        else -> Strings.get(R.string.apps_limit_left, base, fmtMinutes((allowed - used).coerceAtLeast(0).toLong())) to false
     }
 }
 
@@ -97,17 +97,23 @@ internal fun newLimit(app: String) = TimeLimit(TimeLimit.newId(), app, List(7) {
 
 /** "1 h a day", "1 h on weekdays, 2 h on weekends", or "Varies by day". */
 private fun allowanceText(min: List<Int>): String {
-    fun one(m: Int) = when {
-        m < 0 -> "No limit"
-        m == 0 -> "Not allowed"
+    // [lower] gives the lower-case form for the middle of a sentence ("…, no limit on weekends").
+    fun one(m: Int, lower: Boolean = false) = when {
+        m < 0 -> Strings.get(if (lower) R.string.apps_limit_none_lower else R.string.apps_limit_none)
+        m == 0 -> Strings.get(if (lower) R.string.apps_limit_not_allowed_lower else R.string.apps_limit_not_allowed)
         else -> fmtMinutes(m.toLong())
     }
     val weekdays = min.subList(1, 6).distinct()
     val weekend = listOf(min[0], min[6]).distinct()
     return when {
-        min.distinct().size == 1 -> if (min[0] < 0) "No limit" else if (min[0] == 0) "Not allowed any day" else "${one(min[0])} a day"
-        weekdays.size == 1 && weekend.size == 1 -> "${one(weekdays[0])} on weekdays, ${one(weekend[0]).lowercase()} on weekends"
-        else -> "Varies by day"
+        min.distinct().size == 1 -> when {
+            min[0] < 0 -> Strings.get(R.string.apps_limit_none)
+            min[0] == 0 -> Strings.get(R.string.apps_limit_not_allowed_any_day)
+            else -> Strings.get(R.string.apps_limit_per_day, one(min[0]))
+        }
+        weekdays.size == 1 && weekend.size == 1 ->
+            Strings.get(R.string.apps_limit_split, one(weekdays[0]), one(weekend[0], lower = true))
+        else -> Strings.get(R.string.apps_limit_varies)
     }
 }
 
@@ -130,40 +136,39 @@ internal fun LimitDialog(state: PhoneState, initial: TimeLimit, isNew: Boolean,
 
     AppDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Daily limit for ${state.label(initial.app)}") },
+        title = { Text(stringResource(R.string.apps_limit_title, state.label(initial.app))) },
         text = {
             Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     FilterChip(shape == LimitShape.SAME, { shape = LimitShape.SAME; minutes = List(7) { minutes[1] } },
-                        label = { Text("Every day") })
+                        label = { Text(stringResource(R.string.apps_limit_every_day)) })
                     FilterChip(shape == LimitShape.SPLIT, {
                         shape = LimitShape.SPLIT
                         minutes = List(7) { d -> if (d == 0 || d == 6) minutes[0] else minutes[1] }
-                    }, label = { Text("Weekdays and weekends") })
-                    FilterChip(shape == LimitShape.EACH, { shape = LimitShape.EACH }, label = { Text("Each day") })
+                    }, label = { Text(stringResource(R.string.apps_limit_weekdays_weekends)) })
+                    FilterChip(shape == LimitShape.EACH, { shape = LimitShape.EACH }, label = { Text(stringResource(R.string.apps_limit_each_day)) })
                 }
                 when (shape) {
-                    LimitShape.SAME -> Stepper("Every day", minutes[1]) { v -> minutes = List(7) { v } }
+                    LimitShape.SAME -> Stepper(stringResource(R.string.apps_limit_every_day), minutes[1]) { v -> minutes = List(7) { v } }
                     LimitShape.SPLIT -> {
-                        Stepper("Monday to Friday", minutes[1]) { v -> minutes = List(7) { d -> if (d in 1..5) v else minutes[d] } }
-                        Stepper("Saturday and Sunday", minutes[0]) { v -> minutes = List(7) { d -> if (d == 0 || d == 6) v else minutes[d] } }
+                        Stepper(stringResource(R.string.apps_limit_mon_fri), minutes[1]) { v -> minutes = List(7) { d -> if (d in 1..5) v else minutes[d] } }
+                        Stepper(stringResource(R.string.apps_limit_sat_sun), minutes[0]) { v -> minutes = List(7) { d -> if (d == 0 || d == 6) v else minutes[d] } }
                     }
                     LimitShape.EACH -> (0 until 7).map { (it + 1) % 7 }.forEach { d ->
                         Stepper(java.time.DayOfWeek.of(if (d == 0) 7 else d).getDisplayName(TextStyle.FULL, Locale.getDefault()),
                             minutes[d]) { v -> minutes = minutes.toMutableList().also { it[d] = v } }
                     }
                 }
-                Text("When the time runs out the app closes until tomorrow. Time you allow with \"Allow for a while\" " +
-                    "is extra and doesn't count.", style = MaterialTheme.typography.bodySmall)
+                Text(stringResource(R.string.apps_limit_explainer), style = MaterialTheme.typography.bodySmall)
             }
         },
         confirmButton = {
-            TextButton(onClick = { onSave(initial.copy(minutes = minutes)) }) { Text("Save") }
+            TextButton(onClick = { onSave(initial.copy(minutes = minutes)) }) { Text(stringResource(R.string.save)) }
         },
         dismissButton = {
             Row {
-                if (!isNew) DangerButton("Remove", onClick = onDelete)
-                TextButton(onClick = onDismiss) { Text("Cancel") }
+                if (!isNew) DangerButton(stringResource(R.string.remove), onClick = onDelete)
+                TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) }
             }
         })
 }
@@ -187,8 +192,8 @@ private fun Stepper(label: String, value: Int, onChange: (Int) -> Unit) {
             Text("−", style = MaterialTheme.typography.titleMedium)
         }
         Text(when {
-            value < 0 -> "No limit"
-            value == 0 -> "Not allowed"
+            value < 0 -> stringResource(R.string.apps_limit_none)
+            value == 0 -> stringResource(R.string.apps_limit_not_allowed)
             else -> fmtMinutes(value.toLong())
         }, Modifier.widthIn(min = 72.dp), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium,
             textAlign = androidx.compose.ui.text.style.TextAlign.Center, maxLines = 1)
@@ -233,13 +238,13 @@ private fun ReportSection(dev: String, state: PhoneState) {
 
     val dates = periodDays(period, anchor)
     val totals = totalsOver(days, dates)
-    val series = seriesFor(selected, totals, label)
+    val series = seriesFor(selected, totals, stringResource(R.string.apps_other), label)
 
-    Section("App use") {
+    Section(stringResource(R.string.apps_app_use_title)) {
         SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
             Period.entries.forEachIndexed { i, p ->
                 SegmentedButton(selected = period == p, onClick = { period = p },
-                    shape = SegmentedButtonDefaults.itemShape(i, Period.entries.size)) { Text(p.label) }
+                    shape = SegmentedButtonDefaults.itemShape(i, Period.entries.size)) { Text(stringResource(p.label)) }
             }
         }
         StepNav(periodTitle(period, dates),
@@ -249,9 +254,9 @@ private fun ReportSection(dev: String, state: PhoneState) {
         val bars = if (period == Period.DAY) series.indices.map { s -> series.indices.map { if (it == s) minutesOn(days, anchor, series[s]) else 0 } }
             else dates.map { d -> series.map { minutesOn(days, d, it) } }
         if (series.isEmpty() || bars.all { it.sum() == 0 }) {
-            EmptyNote(if (days.isEmpty()) "No app use recorded yet." else "No app use in this period.")
+            EmptyNote(stringResource(if (days.isEmpty()) R.string.apps_no_use_yet else R.string.apps_no_use_period))
         } else {
-            if (period != Period.DAY) Text("Tap a bar to see that day.", style = MaterialTheme.typography.bodySmall,
+            if (period != Period.DAY) Text(stringResource(R.string.apps_tap_bar), style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant)
             StackedBars(bars, series, xLabel = { i -> barLabel(period, dates, i) }, onTap = { i ->
                 if (period != Period.DAY) { anchorText = dates[i].toString(); period = Period.DAY }
@@ -266,7 +271,9 @@ private fun ReportSection(dev: String, state: PhoneState) {
                 Box(Modifier.size(12.dp).background(s.color, CircleShape))
                 Spacer(Modifier.width(10.dp))
                 Text(s.label, Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
-                Text(fmtMinutes(total.toLong()) + if (period != Period.DAY) " · ${fmtMinutes((total / counted).toLong())}/day" else "",
+                val totalText = fmtMinutes(total.toLong())
+                Text(if (period != Period.DAY) stringResource(R.string.apps_total_per_day, totalText, fmtMinutes((total / counted).toLong()))
+                    else totalText,
                     style = MaterialTheme.typography.bodyMedium)
             }
         }
@@ -274,20 +281,27 @@ private fun ReportSection(dev: String, state: PhoneState) {
         // Filter: nothing chosen shows the most used apps; choosing shows exactly those (the same menu as Activity).
         val apps = totals.entries.filter { it.value > 0 }.sortedByDescending { it.value }.map { it.key to label(it.key) }
         if (apps.size > 1) AppPicker(apps, selected.map { it.removePrefix("app:") }.toSet(),
-            onChange = { chosen -> selected = chosen.map { "app:$it" } }, allLabel = "Most used apps")
-        if (canFilter) SwitchRow("Include system apps", "Background parts such as Google Play services and Settings",
+            onChange = { chosen -> selected = chosen.map { "app:$it" } }, allLabel = stringResource(R.string.apps_most_used))
+        if (canFilter) SwitchRow(stringResource(R.string.apps_include_system), stringResource(R.string.apps_include_system_hint),
             on = showSystem, enabled = true) { showSystem = it }
     }
 }
 
-/** "Wednesday, Nov 11", "Nov 9 – 15", "November 2026". */
+/** A date formatter for [skeleton] (e.g. "MMMd") in the app's language, with that language's word order. */
+private fun localPattern(skeleton: String): DateTimeFormatter {
+    val locale = Locale.getDefault()
+    return DateTimeFormatter.ofPattern(android.text.format.DateFormat.getBestDateTimePattern(locale, skeleton), locale)
+}
+
+/** "Wednesday, Nov 11", "Nov 9 – 15", "November 2026" in English; each language orders these its own way. */
 private fun periodTitle(period: Period, dates: List<LocalDate>): String {
     val first = dates.first()
     return when (period) {
-        Period.DAY -> first.format(DateTimeFormatter.ofPattern("EEEE, MMM d"))
-        Period.WEEK -> first.format(DateTimeFormatter.ofPattern("MMM d")) + " – " +
-            dates.last().format(DateTimeFormatter.ofPattern(if (dates.last().month == first.month) "d" else "MMM d"))
-        Period.MONTH -> first.format(DateTimeFormatter.ofPattern("MMMM yyyy"))
+        Period.DAY -> first.format(localPattern("EEEEMMMd"))
+        // A range keeps the start's month (and drops the end's when it's the same) in the language's order.
+        Period.WEEK -> first.format(localPattern("MMMd")) + " – " +
+            dates.last().format(localPattern(if (dates.last().month == first.month) "d" else "MMMd"))
+        Period.MONTH -> first.format(localPattern("MMMMyyyy"))
     }
 }
 

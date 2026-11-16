@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Adding a child's device: setup over Wi-Fi, Fix setup, adding a shared device, sharing, QR scanning, and their errors. -->
+<resources>
+    <!-- Shared by the setup screens -->
+    <string name="setup_what_to_expect">手順の概要</string>
+    <string name="setup_you_need">必要なもの</string>
+    <string name="setup_set_up_new_device">新しいデバイスをセットアップ</string>
+    <string name="setup_fix_setup">セットアップを修復</string>
+    <string name="setup_device_name_hint">このアプリでのデバイスの呼び名（例：お子様の名前）</string>
+    <string name="setup_add_existing_title">他の保護者がセットアップしたデバイスを追加</string>
+
+    <!-- Add a child's device: choosing how -->
+    <string name="setup_add_child_device">お子様のデバイスを追加</string>
+    <string name="setup_already_installed_question">お子様のスマートフォンやタブレットに PhoneLock はすでにインストールされていますか？</string>
+    <string name="setup_new_device_body">このスマートフォンから Wi-Fi 経由で、お子様のデバイスに PhoneLock をインストールします。所要時間は約 10 分で、デバイス上のデータは消去されません。</string>
+    <string name="setup_new_device_when">PhoneLock がまだ入っていないデバイスの場合。</string>
+    <string name="setup_add_existing_body">他の保護者のアプリに表示されるペア設定コードをスキャンすると、2 人で管理できるようになります。</string>
+    <string name="setup_add_existing_when">PhoneLock がすでに入っているデバイスの場合。</string>
+
+    <!-- Adding a device another parent set up -->
+    <string name="setup_add_a_device">デバイスを追加</string>
+    <string name="setup_get_code_title">ペア設定コードを表示する</string>
+    <!-- ⋮ is the "more options" menu button -->
+    <string name="setup_get_code_detail">他の保護者が PhoneLock を開き、デバイスの ⋮ をタップしてから「他の保護者と共有」をタップします。QR コードが表示されます。</string>
+    <string name="setup_scan_it_title">スキャンする</string>
+    <string name="setup_scan_it_detail">このスマートフォンのカメラでスキャンします。ペア設定リンクが送られてきた場合は、そのリンクを貼り付けます。</string>
+    <string name="setup_name_it_title">名前を付ける</string>
+    <string name="setup_name_it_detail">このアプリでのデバイスの呼び名と、デバイスに表示されるあなたの名前を決めます。</string>
+    <string name="setup_need_other_parent">近くにある他の保護者のスマートフォン、またはその保護者から送られたペア設定リンク</string>
+    <string name="setup_scan_code_title">ペア設定コードをスキャン</string>
+    <string name="setup_scan_code_where">他の保護者のスマートフォンで：PhoneLock &gt; デバイスの ⋮ &gt; 他の保護者と共有</string>
+    <string name="setup_scan_qr">QR コードをスキャン</string>
+    <string name="setup_paste_link">またはペア設定リンクを貼り付け</string>
+    <string name="setup_code_recognised">ペア設定コードを認識しました</string>
+    <string name="setup_not_a_link">PhoneLock のペア設定リンクではありません</string>
+    <!-- phonelock://pair is the start of the link itself: keep it as is -->
+    <string name="setup_link_starts_with">phonelock://pair で始まるリンク</string>
+    <string name="setup_add_device_button">デバイスを追加</string>
+    <!-- An example name for the parent, used when they haven't typed theirs yet -->
+    <string name="setup_example_parent_name">パパ</string>
+    <!-- %1$s is the parent's name; "Camera" is an example app on the child's device -->
+    <string name="setup_your_name_hint_example">お子様のデバイスに表示されます（例：「%1$s がカメラを許可しました」）</string>
+
+    <!-- Sharing a device with another parent. %1$s is the device's name. -->
+    <string name="setup_share_title">%1$s のデバイスを共有</string>
+    <!-- %1$s is the button title the other parent taps (setup_add_existing_title) -->
+    <string name="setup_share_instructions">他の保護者のスマートフォンで PhoneLock を開き、「%1$s」をタップして、このコードをスキャンしてください。</string>
+    <string name="setup_share_warning">このコードを持っている人は誰でもデバイスを操作できます。他の保護者にのみ見せてください。</string>
+
+    <!-- Scanning a QR code -->
+    <string name="setup_camera_needed">ペア設定コードをスキャンするにはカメラへのアクセスが必要です。</string>
+    <string name="setup_allow_camera">カメラを許可</string>
+    <string name="setup_point_at_code">ペア設定用の QR コードにカメラを向けてください</string>
+    <!-- Spoken description of the QR code image -->
+    <string name="setup_qr_code">QR コード</string>
+
+    <!-- Setting up over Wi-Fi. Names of Android's own settings screens and options on the child's device
+         (Settings, About phone, Build number, System, Developer options, Wireless debugging, "Pair device with
+         pairing code", "IP address & Port", Passwords & accounts, Multiple users) must match the names Android
+         itself uses in this language. -->
+    <string name="setup_what_this_does">この機能について</string>
+    <!-- %1$s is the child's device name -->
+    <string name="setup_fix_explanation">セットアップの修復では、%1$s で PhoneLock の機能を再びオンにします：画面の表示、通話の制限と通話履歴、ファイル、サイレント モード中の鳴動、アイドル状態での動作。ペア設定、スケジュール、アプリは変更されません。</string>
+    <string name="setup_need_same_wifi_fix">お子様のデバイスがこのスマートフォンと同じ Wi-Fi に接続されていること</string>
+    <string name="setup_need_parent_mode">設定を開けるよう、お子様のデバイスで保護者モードのロックを解除しておくこと（時計を 4 秒間長押しし、PIN を入力）</string>
+    <string name="setup_need_developer_options">お子様のデバイスで開発者向けオプションがオンになっていること：[設定] &gt; [デバイス情報] で [ビルド番号] を 7 回タップ</string>
+    <string name="setup_outline_prepare_title">お子様のデバイスを準備</string>
+    <string name="setup_outline_prepare_detail">同じ Wi-Fi に接続し、アカウントを一時的に削除して、開発者向けオプションをオンにします。約 5 分。</string>
+    <string name="setup_outline_names_title">名前と PIN を決める</string>
+    <string name="setup_outline_names_detail">PIN はお子様のデバイスで保護者モードのロックを解除するのに使います。</string>
+    <string name="setup_outline_pair_title">このスマートフォンとペア設定</string>
+    <string name="setup_outline_pair_detail">お子様のデバイスに表示される 6 桁のコードを、ここに入力します。</string>
+    <string name="setup_outline_install_title">PhoneLock がセットアップ</string>
+    <string name="setup_outline_install_detail">インストールしてこのアプリに接続し、機能をオンにします。約 2 分。</string>
+    <string name="setup_need_device">お子様のスマートフォンまたはタブレット（Android 13 以降、充電済みで手元にあること）</string>
+    <string name="setup_need_same_wifi">両方のデバイスが同じ Wi-Fi ネットワークに接続されていること</string>
+    <string name="setup_need_sign_out">セットアップが終わるまでデバイスのアカウントからログアウトすること（アカウントは保護者モードで追加し直せます）</string>
+    <string name="setup_nothing_erased">お子様のデバイス上のデータは消去されません。</string>
+    <string name="setup_connect_wifi_title">Wi-Fi に接続</string>
+    <string name="setup_connect_wifi_detail">このスマートフォンと同じネットワークに接続します。</string>
+    <string name="setup_remove_accounts_title">アカウントを削除</string>
+    <string name="setup_remove_accounts_detail">[設定] &gt; [パスワードとアカウント] で、すべてのアカウント（Google など）を削除します。アカウントのないデバイスでなければ、Android は PhoneLock による管理を許可しません。アカウントは最後に追加し直します。</string>
+    <string name="setup_developer_options_title">開発者向けオプションをオンにする</string>
+    <string name="setup_developer_options_detail">[設定] &gt; [デバイス情報] で、「これでデベロッパーになりました」と表示されるまで [ビルド番号] を 7 回タップします。</string>
+    <string name="setup_names_and_pin">名前と PIN</string>
+    <string name="setup_shown_on_device">お子様のデバイスに表示されます</string>
+    <string name="setup_parent_pin">保護者 PIN（4～8 桁）</string>
+    <string name="setup_pin_unlocks">お子様のデバイスで保護者モードのロックを解除します</string>
+    <string name="setup_pin_again">PIN を再入力</string>
+    <string name="setup_pin_mismatch">一致しません</string>
+    <string name="setup_pin_confirm">確認のためもう一度入力してください</string>
+    <string name="setup_pair_title">お子様のデバイスとペア設定</string>
+    <string name="setup_set_up_button">セットアップ</string>
+    <string name="setup_pair_instructions">お子様のデバイスで、[設定] &gt; [システム] &gt; [開発者向けオプション] &gt; [ワイヤレス デバッグ] を開きます。オンにしてから、[ペア設定コードによるデバイスのペア設定] をタップします。セットアップが始まるまで、その画面を開いたままにしてください。</string>
+    <string name="setup_looking">デバイスを探しています… ペア設定コードが表示されると、ここに表示されます。</string>
+    <string name="setup_wifi_pairing_code">Wi-Fi ペア設定コード</string>
+    <string name="setup_six_digits">お子様の画面に表示される 6 桁の数字</string>
+    <string name="setup_fewer_options">オプションを減らす</string>
+    <string name="setup_more_options">見つからない場合、またはその他のオプション</string>
+    <string name="setup_ip_and_port">デバイスの IP アドレスとポート</string>
+    <!-- The example address must stay as is -->
+    <string name="setup_ip_and_port_hint">ペア設定コードの下に表示されます（例：192.168.1.20:37755）</string>
+    <string name="setup_debugging_port">デバイスのデバッグ用ポート</string>
+    <string name="setup_debugging_port_hint">セットアップでポートが見つからない場合のみ：[ワイヤレス デバッグ] 画面の [IP アドレスとポート] に表示される、コロンの後のポート番号</string>
+    <string name="setup_turn_off_debugging_option">完了後にデバッグをオフにする</string>
+    <string name="setup_turn_off_debugging_detail">PhoneLock を解除するために悪用されないよう、オフにすることをおすすめします。保護者モードで再びオンにできます。</string>
+
+    <!-- Setup progress -->
+    <string name="setup_stopped">セットアップが停止しました</string>
+    <string name="setup_setting_up">セットアップ中…</string>
+    <string name="setup_finished_debugging_off">お子様のデバイスのワイヤレス デバッグはオフになりました。保護者モードでアカウントを追加し直してください（時計を 4 秒間長押し）。</string>
+    <string name="setup_finished_debugging_on">お子様のデバイスのワイヤレス デバッグはまだオンです。正常に動作することを確認したら、保護者モードでオフにしてください。保護者モードでアカウントを追加し直してください（時計を 4 秒間長押し）。</string>
+    <string name="setup_keep_screen_open">セットアップが完了するまで、この画面を開いたままにしてください。</string>
+
+    <!-- The setup steps, as listed while setup runs -->
+    <string name="setup_step_pair">デバイスとペア設定</string>
+    <string name="setup_step_connect">接続</string>
+    <string name="setup_step_check">デバイスを確認</string>
+    <string name="setup_step_download">ロックアプリをダウンロード</string>
+    <string name="setup_step_install">ロックアプリをインストール</string>
+    <string name="setup_step_owner">デバイス オーナーに設定</string>
+    <string name="setup_step_connect_app">このアプリに接続</string>
+    <string name="setup_step_features">機能をオンにする</string>
+    <string name="setup_step_debugging_off">デバッグをオフにする</string>
+
+    <!-- Features turned on during setup, listed when some couldn't be -->
+    <string name="setup_grant_screen_view">画面の表示</string>
+    <string name="setup_grant_keep_screen_view">画面の表示を維持</string>
+    <string name="setup_grant_dnd">サイレント モード中の鳴動</string>
+    <string name="setup_grant_screen_calls">着信の選別</string>
+    <string name="setup_grant_limit_calls">発信の制限</string>
+    <string name="setup_grant_call_log">保護者向けの通話履歴</string>
+    <string name="setup_grant_app_use">保護者向けのアプリ使用状況</string>
+    <string name="setup_grant_files">保護者向けのファイル</string>
+    <string name="setup_grant_idle">アイドル状態での動作（バッテリー最適化の対象外）</string>
+
+    <!-- Notes and errors shown beside a setup step -->
+    <string name="setup_pairing_refused">ペア設定が拒否されました</string>
+    <string name="setup_no_debugging_port">デバイスのデバッグ用ポートが見つかりませんでした。デバイスで [ワイヤレス デバッグ] を開いたまま、もう一度お試しください。</string>
+    <string name="setup_device_no_answer">デバイスが応答しませんでした</string>
+    <string name="setup_android_too_old">このデバイスの Android のバージョンは 13 より前です</string>
+    <string name="setup_lock_no_answer">デバイス上の PhoneLock が応答しませんでした。もう一度お試しください。</string>
+    <!-- %1$s is the child's device name -->
+    <string name="setup_wrong_device">これは %1$s のデバイスではありません。正しいデバイスで [ワイヤレス デバッグ] を開いてください。</string>
+    <string name="setup_note_checking_features">機能を確認中</string>
+    <string name="setup_note_already_mine">このアプリにすでに接続済み：続行します</string>
+    <string name="setup_note_other_parent">他の保護者がセットアップ済み：機能の確認のみ行います</string>
+    <string name="setup_note_not_connected">PhoneLock はインストール済みですが未接続です：その続きから進めます</string>
+    <string name="setup_not_set_up">このデバイスでは PhoneLock がセットアップされていません。代わりに「お子様のデバイスを追加」を使ってください。</string>
+    <string name="setup_remove_accounts_first">先にデバイスのアカウントを削除してください（[設定] &gt; [パスワードとアカウント]）。アカウントは後で保護者モードで追加し直せます</string>
+    <string name="setup_remove_users_first">先にデバイスの他のユーザーを削除してください（[設定] &gt; [システム] &gt; [複数ユーザー]）</string>
+    <string name="setup_other_owner">このデバイスはすでに別のアプリによって管理されています（デバイス オーナー）</string>
+    <string name="setup_already_done">完了済み</string>
+    <string name="setup_refused">拒否されました</string>
+    <string name="setup_checking_answers">応答を確認中…</string>
+    <string name="setup_already_connected">接続済み</string>
+    <string name="setup_connected_other_parent">他の保護者に接続済み</string>
+    <!-- %1$s is a comma-separated list of features (the setup_grant_* names) -->
+    <string name="setup_not_turned_on">オンにできなかった機能：%1$s</string>
+    <string name="setup_debugging_left_on_chosen">選択どおりオンのまま</string>
+    <string name="setup_debugging_left_on_other">オンのまま：他の保護者のデバイスです</string>
+    <string name="setup_debugging_left_on_unreachable">デバイスがまだインターネット経由で応答していないため、オンのまま</string>
+    <string name="setup_debugging_not_confirmed">デバイスから確認がありませんでした。デバッグはまだオンの可能性があります</string>
+    <string name="setup_not_answering">デバイスがまだインターネット経由で応答していません。接続を確認してください。応答があるまでデバッグはオンのままです。</string>
+    <!-- %1$s is the reply the child's device sent, in English -->
+    <string name="setup_pairing_not_accepted">デバイスがペア設定を受け入れませんでした：%1$s。もう一度お試しください。</string>
+    <string name="setup_pairing_no_answer">デバイスがペア設定を受け入れませんでした：応答なし。もう一度お試しください。</string>
+    <string name="setup_download_404">ダウンロードに失敗しました（HTTP 404）</string>
+    <string name="setup_not_genuine">ダウンロードしたファイルは正規の PhoneLock ロックアプリではありません</string>
+
+    <!-- How setup ended -->
+    <string name="setup_outcome_fixed">セットアップを確認し、修復しました。</string>
+    <string name="setup_outcome_other_parent">このデバイスはすでに他の保護者がセットアップしています。その保護者に共有してもらってください（デバイスの設定 &gt; 他の保護者と共有）。</string>
+    <!-- %1$s is the child's device name -->
+    <string name="setup_outcome_done">%1$s のセットアップが完了し、このアプリに接続されました。</string>
+    <!-- %1$s is one of the setup_outcome_* sentences above -->
+    <string name="setup_outcome_some_features_failed">%1$s 一部の機能をオンにできませんでした。上記をご確認ください。</string>
+
+    <!-- Wireless debugging errors, shown when setup stops -->
+    <string name="setup_adb_install_failed">インストールに失敗しました</string>
+    <!-- %1$s is a technical service name, e.g. "shell" -->
+    <string name="setup_adb_service_refused">デバイスが「%1$s」を拒否しました</string>
+    <string name="setup_adb_corrupt_message">adb メッセージが破損しています</string>
+    <string name="setup_adb_message_too_large">adb メッセージが大きすぎます</string>
+    <string name="setup_adb_stopped_answering">デバイスが応答しなくなりました</string>
+    <string name="setup_adb_not_trusted_again">デバイスがこのスマートフォンを信頼していません（もう一度ペア設定してください）</string>
+    <string name="setup_adb_not_trusted_yet">デバイスはまだこのスマートフォンを信頼していません（先にペア設定してください）</string>
+    <string name="setup_adb_usb_auth">デバイスが USB 方式の承認を求めました。[ワイヤレス デバッグ] をオンにして、先にペア設定してください</string>
+    <string name="setup_adb_pairing_insecure">ペア設定の接続を保護できませんでした</string>
+    <string name="setup_adb_pairing_invalid">デバイスから無効なペア設定メッセージが送られました</string>
+    <string name="setup_adb_pairing_stopped">ペア設定中にデバイスが応答しなくなりました</string>
+    <string name="setup_adb_wrong_code">ペア設定コードが間違っているか、有効期限が切れています</string>
+    <!-- %1$d is a version number -->
+    <string name="setup_adb_pairing_version">サポートされていないペア設定バージョン %1$d</string>
+    <string name="setup_adb_pairing_unexpected">予期しないペア設定メッセージ</string>
+    <string name="setup_adb_pairing_size">ペア設定メッセージのサイズが不正です</string>
+    <!-- %1$s is a file name -->
+    <string name="setup_adb_save_failed">%1$s を保存できませんでした</string>
+
+    <!-- The main screen's prompts for permissions this phone still needs -->
+    <string name="setup_hint_background">リクエストがすぐに届くよう、バックグラウンドでの使用を許可してください。</string>
+    <string name="setup_hint_full_screen">緊急アラートを着信と同様に全画面で表示できるよう許可してください。</string>
+
+    <!-- Viewing the child's screen -->
+    <string name="setup_screenshot_no_image">画像を受信できませんでした</string>
+    <string name="setup_screenshot_unreadable">スクリーンショットを開けませんでした</string>
+</resources>

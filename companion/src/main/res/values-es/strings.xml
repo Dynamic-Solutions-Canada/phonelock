@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Wording shared across the app. Each screen or feature keeps its own wording in its own
+     strings_<area>.xml beside this file; every file here needs the same file, with the same names, in each
+     values-<language> folder. Names, app labels and anything typed by a person are never translated. -->
+<!-- Spanish (Spain), addressing the parent as "tú". Glossary: device = dispositivo; phone = teléfono; app = aplicación
+     ("Apps" only on the narrow Activity filter); parent (person) = padre o madre; parent mode = modo padres; parent PIN = PIN parental;
+     limited hours = horario limitado; bedtime = hora de dormir; normal hours = horario normal; allow = permitir;
+     allow for a while = permitir un rato; request = solicitud; safe list = lista de confianza; pairing code (between parents) =
+     código de vinculación; Wi-Fi pairing code (Android) = código de sincronización; "Ask for an app" (child's button) = "Pedir una aplicación". -->
+<resources>
+    <string name="app_name">Phone Lock</string>
+
+    <!-- Common buttons and labels: use these rather than adding another copy -->
+    <string name="cancel">Cancelar</string>
+    <string name="save">Guardar</string>
+    <string name="done">Hecho</string>
+    <string name="open">Abrir</string>
+    <string name="remove">Quitar</string>
+    <string name="delete">Eliminar</string>
+    <string name="refresh">Actualizar</string>
+    <string name="try_again">Reintentar</string>
+    <string name="back">Atrás</string>
+    <string name="next">Siguiente</string>
+    <string name="add">Añadir</string>
+    <string name="allow">Permitir</string>
+    <string name="deny">Denegar</string>
+    <string name="undo">Deshacer</string>
+    <string name="your_name">Tu nombre</string>
+    <string name="child_device_name">Nombre del dispositivo de tu hijo</string>
+
+    <!-- Lengths of time, as fmtMinutes() writes them -->
+    <string name="duration_minutes">%1$d min</string>
+    <string name="duration_hours">%1$d h</string>
+    <string name="duration_hours_minutes">%1$d h %2$d min</string>
+
+    <!-- Settings > Language -->
+    <string name="language_title">Idioma</string>
+    <string name="language_match_device">Igual que el dispositivo</string>
+    <string name="language_detail">El idioma que usa esta aplicación en este teléfono</string>
+</resources>

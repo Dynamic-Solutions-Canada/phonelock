@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -39,7 +40,7 @@ private val AVATAR_COLORS = listOf(
  * different styles look alike. Returned unchanged when it can't be formatted.
  */
 internal fun formatNumber(number: String): String =
-    runCatching { PhoneNumberUtils.formatNumber(number, Locale.getDefault().country) }.getOrNull() ?: number
+    runCatching { PhoneNumberUtils.formatNumber(number, AppLanguage.deviceRegion().country) }.getOrNull() ?: number
 
 /** A round avatar with [name]'s first letter (or "#" for a bare number), its colour fixed by the name. */
 @Composable
@@ -72,12 +73,13 @@ private fun Tag(text: String) {
  * The app's list row: a 40 dp [leading] badge, [title] with an optional [tag], a [detail] line, and a ⋮ menu
  * of [actions] when there are any; [onClick] makes the whole row tappable and [onLongClick] adds a long
  * press (for starting a selection). Used by contacts, the safe list, the call log, the schedule and files so
- * every list reads the same way.
+ * every list reads the same way. [titleLines] is how many lines the title may wrap to before it's cut short:
+ * one for names (files, contacts), more for labels that must be read whole, such as settings in long languages.
  */
 @Composable
 internal fun ListRow(title: String, detail: AnnotatedString, leading: @Composable () -> Unit, tag: String? = null,
                      actions: List<MenuEntry> = emptyList(), actionsEnabled: Boolean = true, onClick: (() -> Unit)? = null,
-                     onLongClick: (() -> Unit)? = null) {
+                     onLongClick: (() -> Unit)? = null, titleLines: Int = 1) {
     val base = Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp))
     val tappable = when {
         onLongClick != null -> base.combinedClickable(onClick = { onClick?.invoke() }, onLongClick = onLongClick)
@@ -90,13 +92,13 @@ internal fun ListRow(title: String, detail: AnnotatedString, leading: @Composabl
         Spacer(Modifier.width(14.dp))
         Column(Modifier.weight(1f)) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(title, Modifier.weight(1f, fill = false), fontWeight = FontWeight.Medium, maxLines = 1,
+                Text(title, Modifier.weight(1f, fill = false), fontWeight = FontWeight.Medium, maxLines = titleLines,
                     overflow = TextOverflow.Ellipsis)
                 tag?.let { Tag(it) }
             }
             Text(detail, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
-        if (actions.isNotEmpty()) RowMenu("More for $title", enabled = actionsEnabled, entries = actions)
+        if (actions.isNotEmpty()) RowMenu(stringResource(R.string.main_more_for, title), enabled = actionsEnabled, entries = actions)
     }
 }
 

@@ -27,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
@@ -55,8 +56,8 @@ internal fun PhoneHeader(dev: String, name: String, state: PhoneState, vitals: V
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(name, Modifier.weight(1f), style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onPrimaryContainer)
-                IconButton(onClick = onRefresh) { Icon(Icons.Default.Refresh, contentDescription = "Refresh") }
-                IconButton(onClick = onMenu) { Icon(Icons.Default.MoreVert, contentDescription = "Device settings") }
+                IconButton(onClick = onRefresh) { Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.refresh)) }
+                IconButton(onClick = onMenu) { Icon(Icons.Default.MoreVert, contentDescription = stringResource(R.string.main_device_settings)) }
             }
             // Meta line: whether the device is answering, and its battery, both as plain secondary text.
             val status = deviceStatus(vitals, state, askedAt, connected, now)
@@ -86,15 +87,17 @@ internal fun PhoneHeader(dev: String, name: String, state: PhoneState, vitals: V
             // Start limited hours or bedtime by hand, or end the one that's running: a real button.
             FilledTonalButton(onClick = if (manualOn) onEndMode else onStartMode) {
                 Icon(Icons.Default.DateRange, contentDescription = null, Modifier.size(18.dp))
-                Text(if (manualOn) "End ${modeLabel(state.manualMode).lowercase()} now" else "Start limited hours or bedtime",
+                Text(if (manualOn) stringResource(if (state.manualMode == "bedtime") R.string.main_end_bedtime_now else R.string.main_end_limited_now)
+                    else stringResource(R.string.main_start_mode),
                     Modifier.padding(start = 8.dp))
             }
-            if (state.ringing) Pill("Ringing", highlighted = true)
+            if (state.ringing) Pill(stringResource(R.string.main_ringing), highlighted = true)
             if (state.parentMode) Row(verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Pill("Parent mode" + if (state.parentUntil > 0) " until ${time(state.parentUntil)}" else " on",
+                Pill(if (state.parentUntil > 0) stringResource(R.string.main_parent_mode_until, time(state.parentUntil))
+                    else stringResource(R.string.main_parent_mode_on),
                     highlighted = true)
-                androidx.compose.material3.TextButton(onClick = onLockNow) { Text("Lock now") }
+                androidx.compose.material3.TextButton(onClick = onLockNow) { Text(stringResource(R.string.main_lock_now)) }
             }
         }
     }
@@ -112,7 +115,7 @@ private const val IN_USE_FRESH_MS = 2 * 60_000L
 private fun InUseLine(dev: String, state: PhoneState, now: Long) {
     val screenOn = state.screenOn ?: return
     val stale = now - state.updated > IN_USE_FRESH_MS
-    val asOf = if (stale) ", as of ${time(state.updated)}" else ""
+    val asOf = if (stale) time(state.updated) else null
     val color = MaterialTheme.colorScheme.onPrimaryContainer
     val style = MaterialTheme.typography.bodyMedium
     when {
@@ -121,12 +124,18 @@ private fun InUseLine(dev: String, state: PhoneState, now: Long) {
             AppIcon(dev, state.using, state.label(state.using), 20.dp)
             // Counting on while fresh; frozen at the report's time once it may be out of date.
             val open = (if (stale) state.updated else now) - state.usingSince
-            val length = if (open < 60_000) "just opened" else "open ${fmtMinutes(open / 60_000)}"
-            Text("Using ${state.label(state.using)} · $length$asOf", style = style, color = color,
+            val length = if (open < 60_000) stringResource(R.string.main_just_opened)
+            else stringResource(R.string.main_open_for, fmtMinutes(open / 60_000))
+            val app = state.label(state.using)
+            val text = if (asOf != null) stringResource(R.string.main_using_app_as_of, app, length, asOf)
+            else stringResource(R.string.main_using_app, app, length)
+            Text(text, style = style, color = color,
                 fontWeight = FontWeight.Medium)
         }
-        screenOn -> Text("On the home screen$asOf", style = style, color = color)
-        else -> Text("Screen off$asOf", style = style, color = color)
+        screenOn -> Text(if (asOf != null) stringResource(R.string.main_home_screen_as_of, asOf)
+            else stringResource(R.string.main_home_screen), style = style, color = color)
+        else -> Text(if (asOf != null) stringResource(R.string.main_screen_off_as_of, asOf)
+            else stringResource(R.string.main_screen_off), style = style, color = color)
     }
 }
 
@@ -141,18 +150,20 @@ private data class DeviceStatus(val text: String, val ok: Boolean)
  */
 private fun deviceStatus(v: Vitals, state: PhoneState, askedAt: Long, connected: Boolean, now: Long): DeviceStatus {
     val seen = maxOf(v.seen, state.updated)
-    val prefix = if (connected) "" else "Connecting… · "
-    if (seen <= 0) return DeviceStatus(prefix + "No reply yet", false)
+    /** [text], marked as still connecting while this phone has no link to the hub. */
+    fun withLink(text: String) = if (connected) text else Strings.get(R.string.main_status_connecting, text)
+    if (seen <= 0) return DeviceStatus(withLink(Strings.get(R.string.main_status_no_reply)), false)
     val waiting = askedAt > v.heard
+    val since = ago(now - seen)
     val text = when {
-        waiting && now - askedAt >= NO_ANSWER_MS -> "Not answering · last seen ${ago(now - seen)}"
-        waiting -> "Checking… · seen ${ago(now - seen)}"
+        waiting && now - askedAt >= NO_ANSWER_MS -> Strings.get(R.string.main_status_not_answering, since)
+        waiting -> Strings.get(R.string.main_status_checking, since)
         // Settings (app lists, schedule) still on their way: said here, in place, instead of in each section.
-        !state.full -> "Getting settings… · seen ${ago(now - seen)}"
-        else -> "Seen ${ago(now - seen)}"
+        !state.full -> Strings.get(R.string.main_status_getting_settings, since)
+        else -> Strings.get(R.string.main_status_seen, since)
     }
     val ok = connected && !(waiting && now - askedAt >= NO_ANSWER_MS) && now - seen < QUIET_MS
-    return DeviceStatus(prefix + text, ok)
+    return DeviceStatus(withLink(text), ok)
 }
 
 /**
@@ -163,13 +174,13 @@ private fun deviceStatus(v: Vitals, state: PhoneState, askedAt: Long, connected:
 @Composable
 private fun situationLines(state: PhoneState, manualOn: Boolean): Pair<String, String?> {
     val title = modeLabel(state.mode)
-    if (manualOn) return title to "Started by hand, until ${whenText(state.manualUntil)}"
+    if (manualOn) return title to stringResource(R.string.main_started_by_hand_until, whenText(state.manualUntil))
     val until = state.modeUntil
     if (until <= 0) return title to null
     val at = whenText(until)
-    if (state.mode != "normal") return title to "Until $at"
+    if (state.mode != "normal") return title to stringResource(R.string.main_until, at)
     val next = state.schedule.modeAt(until)
-    return title to if (next == "normal") null else "${modeLabel(next)} at $at"
+    return title to if (next == "normal") null else stringResource(R.string.main_mode_at, modeLabel(next), at)
 }
 
 /**
@@ -180,10 +191,16 @@ private fun situationLines(state: PhoneState, manualOn: Boolean): Pair<String, S
 private fun BatteryLevel(vitals: Vitals, state: PhoneState, now: Long) {
     val low = !vitals.charging && vitals.battery <= (state.battAlert.takeIf { it > 0 } ?: 15)
     val colour = if (low) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onPrimaryContainer
-    val age = if (now - vitals.batteryAt > BATTERY_FRESH_MS) " · ${ago(now - vitals.batteryAt)}" else ""
+    // A list of short facts, each its own phrase, so they're joined with " · " rather than built into a sentence.
+    val parts = listOfNotNull(
+        stringResource(R.string.main_percent, vitals.battery),
+        if (vitals.charging) stringResource(R.string.main_battery_charging) else null,
+        if (now - vitals.batteryAt > BATTERY_FRESH_MS) ago(now - vitals.batteryAt) else null,
+        if (low) stringResource(R.string.main_battery_low) else null,
+    )
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
         BatteryGlyph(vitals.battery, colour)
-        Text("${vitals.battery}%" + (if (vitals.charging) " · charging" else "") + age + (if (low) " · low" else ""),
+        Text(parts.joinToString(" · "),
             style = MaterialTheme.typography.bodyMedium, color = colour,
             fontWeight = if (low) FontWeight.SemiBold else FontWeight.Normal)
     }

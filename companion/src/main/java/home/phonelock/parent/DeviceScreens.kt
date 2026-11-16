@@ -55,6 +55,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import java.util.Date
@@ -78,7 +80,7 @@ internal fun Page(title: String, onBack: () -> Unit, scroll: Boolean = true,
     val waiting = busy || (dev != null && waits[dev].orEmpty().keys.any { it in waitingOn })
     Column(Modifier.fillMaxSize().safeDrawingPadding().padding(horizontal = 16.dp)) {
         Row(Modifier.padding(top = 8.dp, bottom = 4.dp), verticalAlignment = Alignment.CenterVertically) {
-            IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back") }
+            IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back)) }
             Text(title, Modifier.weight(1f), style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.SemiBold)
             actions()
         }
@@ -119,7 +121,7 @@ internal fun CallsScreen(dev: String, state: PhoneState, onBack: () -> Unit) {
     /** Adds to the safe list, or says it's already there (the same number in any format counts). */
     fun addSafe(name: String, number: String) {
         if (calls.isSafe(number)) {
-            android.widget.Toast.makeText(ctx, "$number is already on the safe list", android.widget.Toast.LENGTH_SHORT).show()
+            android.widget.Toast.makeText(ctx, Strings.get(R.string.main_already_safe, number), android.widget.Toast.LENGTH_SHORT).show()
         } else {
             Hub.setCalls(dev, calls.withSafe(SafeEntry(name, number)))
         }
@@ -127,43 +129,43 @@ internal fun CallsScreen(dev: String, state: PhoneState, onBack: () -> Unit) {
     /** Takes [number] off the safe list, with Undo. */
     fun removeSafe(name: String, number: String) {
         Hub.setCalls(dev, calls.withoutSafe(number))
-        Undo.offer("${name.ifEmpty { formatNumber(number) }} removed from the safe list") { Hub.setCalls(dev, calls) }
+        Undo.offer(Strings.get(R.string.main_removed_from_safe_list, name.ifEmpty { formatNumber(number) })) { Hub.setCalls(dev, calls) }
     }
-    Page("Calls", onBack, dev = dev, waitingOn = setOf("calllog", "contacts"), busy = !state.full) {
-        Section("Limits") {
-            SwitchRow("Outgoing calls only to the safe list", "Emergency numbers always work.", calls.limitOut, state.full) {
+    Page(stringResource(R.string.main_calls_title), onBack, dev = dev, waitingOn = setOf("calllog", "contacts"), busy = !state.full) {
+        Section(stringResource(R.string.main_limits_title)) {
+            SwitchRow(stringResource(R.string.main_limit_out), stringResource(R.string.main_limit_out_hint), calls.limitOut, state.full) {
                 Hub.setCalls(dev, calls.copy(limitOut = it))
             }
-            SwitchRow("Incoming calls only from the safe list", "Others, and hidden numbers, are rejected.", calls.limitIn, state.full) {
+            SwitchRow(stringResource(R.string.main_limit_in), stringResource(R.string.main_limit_in_hint), calls.limitIn, state.full) {
                 Hub.setCalls(dev, calls.copy(limitIn = it))
             }
         }
-        Section("Safe list") {
-            if (state.full && calls.safe.isEmpty()) EmptyNote("No numbers on the safe list yet.")
+        Section(stringResource(R.string.main_safe_list_title)) {
+            if (state.full && calls.safe.isEmpty()) EmptyNote(stringResource(R.string.main_safe_list_empty))
             calls.safe.forEach { e ->
                 PersonRow(e.name.ifEmpty { formatNumber(e.number) },
-                    AnnotatedString(if (e.name.isNotEmpty()) formatNumber(e.number) else "No name"),
+                    AnnotatedString(if (e.name.isNotEmpty()) formatNumber(e.number) else stringResource(R.string.main_no_name)),
                     actionsEnabled = state.full,
-                    actions = listOf(MenuEntry("Remove from safe list") { removeSafe(e.name, e.number) }))
+                    actions = listOf(MenuEntry(stringResource(R.string.main_remove_from_safe_list)) { removeSafe(e.name, e.number) }))
             }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedButton(onClick = { picking = true }, enabled = state.full) { Text("From contacts") }
-                OutlinedButton(onClick = { adding = true }, enabled = state.full) { Text("Add a number") }
+                OutlinedButton(onClick = { picking = true }, enabled = state.full) { Text(stringResource(R.string.main_from_contacts)) }
+                OutlinedButton(onClick = { adding = true }, enabled = state.full) { Text(stringResource(R.string.main_add_number)) }
             }
         }
-        Section("Call log") {
-            if (!state.canCallLog) Text("The device hasn't allowed reading its call log yet.",
+        Section(stringResource(R.string.main_call_log_title)) {
+            if (!state.canCallLog) Text(stringResource(R.string.main_no_call_log_access),
                 style = MaterialTheme.typography.bodySmall)
             val entries = log[dev].orEmpty()
             // Not "no calls" while the log is still on its way, or when it can't be read at all.
-            if (entries.isEmpty() && state.canCallLog && !isWaiting(dev, "calllog")) EmptyNote("No calls yet.")
+            if (entries.isEmpty() && state.canCallLog && !isWaiting(dev, "calllog")) EmptyNote(stringResource(R.string.main_no_calls))
             CappedList(entries, key = dev, initial = 10) { c ->
                 CallRow(c, safe = c.number.isNotEmpty() && calls.isSafe(c.number), canEdit = state.full,
                     onAddSafe = { addSafe(c.name, c.number) })
             }
         }
     }
-    if (adding) NumberDialog("Add to safe list", onDismiss = { adding = false }) { name, number ->
+    if (adding) NumberDialog(stringResource(R.string.main_add_to_safe_list), onDismiss = { adding = false }) { name, number ->
         addSafe(name, number)
         adding = false
     }
@@ -185,18 +187,18 @@ internal fun SwitchRow(title: String, hint: String, on: Boolean, enabled: Boolea
 }
 
 /** Who a call was with: their name, else the number laid out, else "Hidden number". */
-internal fun callWho(c: CallEntry) = c.name.ifEmpty { if (c.number.isEmpty()) "Hidden number" else formatNumber(c.number) }
+internal fun callWho(c: CallEntry) = c.name.ifEmpty { if (c.number.isEmpty()) Strings.get(R.string.main_hidden_number) else formatNumber(c.number) }
 
 /** The arrow and word for a call's direction ("↗" "Outgoing"), the same in the call log and Activity. */
 internal fun callKind(type: String): Pair<String, String> = when (type) {
-    "out" -> "↗" to "Outgoing"
-    "in" -> "↙" to "Incoming"
-    "missed" -> "↙" to "Missed"
-    "rejected" -> "⊘" to "Declined"
-    "blocked" -> "⊘" to "Blocked"
+    "out" -> "↗" to Strings.get(R.string.main_call_out)
+    "in" -> "↙" to Strings.get(R.string.main_call_in)
+    "missed" -> "↙" to Strings.get(R.string.main_call_missed)
+    "rejected" -> "⊘" to Strings.get(R.string.main_call_declined)
+    "blocked" -> "⊘" to Strings.get(R.string.main_call_blocked)
     // A call she tried to place to a number off the safe list; it was stopped before it rang.
-    "attempt" -> "⊘" to "Blocked call attempt"
-    "voicemail" -> "↙" to "Voicemail"
+    "attempt" -> "⊘" to Strings.get(R.string.main_call_attempt)
+    "voicemail" -> "↙" to Strings.get(R.string.main_call_voicemail)
     else -> "•" to type
 }
 
@@ -219,8 +221,9 @@ private fun CallRow(c: CallEntry, safe: Boolean, canEdit: Boolean, onAddSafe: ()
     PersonRow(name, buildAnnotatedString {
         withStyle(SpanStyle(color = dirColor, fontWeight = FontWeight.Medium)) { append("$arrow $word") }
         append(" · ${dateTime(c.ts)}$dur")
-    }, tag = if (safe) "Safe" else null, actionsEnabled = canEdit,
-        actions = if (safe || c.number.isEmpty()) emptyList() else listOf(MenuEntry("Add to safe list", onClick = onAddSafe)))
+    }, tag = if (safe) stringResource(R.string.main_safe_tag) else null, actionsEnabled = canEdit,
+        actions = if (safe || c.number.isEmpty()) emptyList()
+        else listOf(MenuEntry(stringResource(R.string.main_add_to_safe_list), onClick = onAddSafe)))
 }
 
 /** Name and number fields; [onSave] gets both trimmed. */
@@ -233,14 +236,14 @@ private fun NumberDialog(title: String, onDismiss: () -> Unit, onSave: (String, 
         title = { Text(title) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(name, { name = it }, label = { Text("Name") }, singleLine = true)
-                OutlinedTextField(number, { number = it }, label = { Text("Phone number") }, singleLine = true,
+                OutlinedTextField(name, { name = it }, label = { Text(stringResource(R.string.main_name)) }, singleLine = true)
+                OutlinedTextField(number, { number = it }, label = { Text(stringResource(R.string.main_phone_number)) }, singleLine = true,
                     keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
                         keyboardType = androidx.compose.ui.text.input.KeyboardType.Phone))
             }
         },
-        confirmButton = { TextButton(enabled = number.isNotBlank(), onClick = { onSave(name.trim(), number.trim()) }) { Text("Add") } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } })
+        confirmButton = { TextButton(enabled = number.isNotBlank(), onClick = { onSave(name.trim(), number.trim()) }) { Text(stringResource(R.string.add)) } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } })
 }
 
 /** Picks one number of one of the device's contacts. */
@@ -251,14 +254,14 @@ private fun ContactPicker(dev: String, contacts: List<Contact>?, calls: CallSett
     val choices = contacts.orEmpty().flatMap { c -> c.distinctNumbers.filterNot(calls::isSafe).map { c to it } }
     AppDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Choose a contact") },
+        title = { Text(stringResource(R.string.main_choose_contact)) },
         text = {
             Column(Modifier.verticalScroll(rememberScrollState())) {
                 ProgressTrack(isWaiting(dev, "contacts"), Modifier.padding(bottom = 6.dp))
                 when {
                     contacts == null -> Unit
-                    contacts.isEmpty() -> EmptyNote("No contacts with phone numbers.")
-                    choices.isEmpty() -> EmptyNote("Every contact's number is already on the safe list.")
+                    contacts.isEmpty() -> EmptyNote(stringResource(R.string.main_no_contacts))
+                    choices.isEmpty() -> EmptyNote(stringResource(R.string.main_all_contacts_safe))
                 }
                 choices.forEach { (c, n) ->
                     ListRow(c.name, AnnotatedString(formatNumber(n)), leading = { InitialAvatar(c.name) },
@@ -267,7 +270,7 @@ private fun ContactPicker(dev: String, contacts: List<Contact>?, calls: CallSett
             }
         },
         confirmButton = {},
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } })
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } })
 }
 
 // ---------- Contacts ----------
@@ -281,40 +284,40 @@ internal fun ContactsScreen(dev: String, state: PhoneState, onBack: () -> Unit) 
     LaunchedEffect(dev) { DeviceData.loadContacts(dev) }
     val contacts = all[dev]
     val calls = state.calls
-    Page("Contacts", onBack, dev = dev, waitingOn = setOf("contacts")) {
-        Section("On the device") {
-            if (contacts != null && contacts.isEmpty()) EmptyNote("No contacts with phone numbers.")
+    Page(stringResource(R.string.main_contacts_title), onBack, dev = dev, waitingOn = setOf("contacts")) {
+        Section(stringResource(R.string.main_on_device_title)) {
+            if (contacts != null && contacts.isEmpty()) EmptyNote(stringResource(R.string.main_no_contacts))
             contacts.orEmpty().forEach { c ->
                 val safeNumbers = c.distinctNumbers.filter(calls::isSafe)
                 val number = c.distinctNumbers.firstOrNull()
                 PersonRow(c.name, AnnotatedString(c.distinctNumbers.joinToString(", ") { formatNumber(it) }),
-                    tag = if (safeNumbers.isNotEmpty()) "Safe" else null,
+                    tag = if (safeNumbers.isNotEmpty()) stringResource(R.string.main_safe_tag) else null,
                     actions = listOfNotNull(
                         // The safe list changes wait for the device's call settings (a full state).
-                        if (safeNumbers.isNotEmpty()) MenuEntry("Remove from safe list", enabled = state.full) {
+                        if (safeNumbers.isNotEmpty()) MenuEntry(stringResource(R.string.main_remove_from_safe_list), enabled = state.full) {
                             Hub.setCalls(dev, safeNumbers.fold(calls) { s, n -> s.withoutSafe(n) })
-                            Undo.offer("${c.name} removed from the safe list") { Hub.setCalls(dev, calls) }
-                        } else if (number != null) MenuEntry("Add to safe list", enabled = state.full) {
+                            Undo.offer(Strings.get(R.string.main_removed_from_safe_list, c.name)) { Hub.setCalls(dev, calls) }
+                        } else if (number != null) MenuEntry(stringResource(R.string.main_add_to_safe_list), enabled = state.full) {
                             Hub.setCalls(dev, calls.withSafe(SafeEntry(c.name, number)))
                         } else null,
-                        MenuEntry("Delete contact…") { removing = c },
+                        MenuEntry(stringResource(R.string.main_delete_contact)) { removing = c },
                     ))
             }
             // Below the list, like the safe list's buttons.
-            OutlinedButton(onClick = { adding = true }) { Text("Add a contact") }
+            OutlinedButton(onClick = { adding = true }) { Text(stringResource(R.string.main_add_contact)) }
         }
     }
-    if (adding) NumberDialog("Add a contact", onDismiss = { adding = false }) { name, number ->
+    if (adding) NumberDialog(stringResource(R.string.main_add_contact), onDismiss = { adding = false }) { name, number ->
         DeviceData.addContact(dev, name.ifEmpty { number }, number)
         adding = false
     }
     removing?.let { c ->
         AppDialog(
             onDismissRequest = { removing = null },
-            title = { Text("Delete ${c.name}?") },
-            text = { Text("It's deleted from their device and their Google contacts. They get a notice.") },
-            confirmButton = { DangerButton("Delete") { DeviceData.removeContact(dev, c.key); removing = null } },
-            dismissButton = { TextButton(onClick = { removing = null }) { Text("Cancel") } })
+            title = { Text(stringResource(R.string.main_delete_contact_title, c.name)) },
+            text = { Text(stringResource(R.string.main_delete_contact_body)) },
+            confirmButton = { DangerButton(stringResource(R.string.delete)) { DeviceData.removeContact(dev, c.key); removing = null } },
+            dismissButton = { TextButton(onClick = { removing = null }) { Text(stringResource(R.string.cancel)) } })
     }
 }
 
@@ -355,7 +358,7 @@ internal fun FilesScreen(dev: String, state: PhoneState, onBack: () -> Unit) {
     // Progress floats at the bottom while a file moves; its result then shows as a snackbar (DeviceData).
     // Floating at the bottom, so nothing in the list moves: a file transfer's progress (its result then shows
     // as a snackbar, see DeviceData) and, while choosing, the selection bar.
-    Page("Files", back, dev = dev, waitingOn = setOf("files"), overlay = {
+    Page(stringResource(R.string.main_files_title), back, dev = dev, waitingOn = setOf("files"), overlay = {
         Column(Modifier.align(Alignment.BottomCenter).padding(bottom = 12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             transfers[dev]?.takeIf { it.busy }?.let { TransferStatus(it) }
             if (choosing) SelectionBar(chosen, entries,
@@ -368,26 +371,26 @@ internal fun FilesScreen(dev: String, state: PhoneState, onBack: () -> Unit) {
                 onDelete = { deletingChosen = true })
         }
     }) {
-        if (!state.canFiles) Text("The device hasn't allowed file access yet.", style = MaterialTheme.typography.bodySmall)
+        if (!state.canFiles) Text(stringResource(R.string.main_no_file_access), style = MaterialTheme.typography.bodySmall)
         Text("/" + path, style = MaterialTheme.typography.titleSmall)
         // Stays in place while choosing (the selection bar floats at the bottom), just unavailable.
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            OutlinedButton(onClick = { pick.launch(arrayOf("*/*")) }, enabled = !choosing) { Text("Upload here") }
-            OutlinedButton(onClick = { newFolder = true }, enabled = !choosing) { Text("New folder") }
+            OutlinedButton(onClick = { pick.launch(arrayOf("*/*")) }, enabled = !choosing) { Text(stringResource(R.string.main_upload_here)) }
+            OutlinedButton(onClick = { newFolder = true }, enabled = !choosing) { Text(stringResource(R.string.main_new_folder)) }
             // Starting to choose with nothing ticked would look like nothing happened, so this ticks all.
             OutlinedButton(onClick = { chosen = entries.map { it.name }.toSet() }, enabled = !choosing && entries.isNotEmpty()) {
-                Text("Select")
+                Text(stringResource(R.string.main_select))
             }
         }
         folder?.error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
-        Section(if (path.isEmpty()) "Storage" else path.substringAfterLast('/')) {
+        Section(if (path.isEmpty()) stringResource(R.string.main_storage) else path.substringAfterLast('/')) {
             // Opening another folder hides the old one's entries until the new list arrives.
             val opening = folder == null || folder.loading && folder.path != path
-            if (!opening && folder!!.entries.isEmpty()) EmptyNote("This folder is empty.")
-            if (!opening && !choosing && entries.size > 1) Text("Long-press to select several.",
+            if (!opening && folder!!.entries.isEmpty()) EmptyNote(stringResource(R.string.main_folder_empty))
+            if (!opening && !choosing && entries.size > 1) Text(stringResource(R.string.main_long_press_hint),
                 style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             entries.forEach { e ->
-                val detail = (if (e.dir) "Folder" else Formatter.formatShortFileSize(ctx, e.size)) + " · " + dateTime(e.mtime)
+                val detail = (if (e.dir) stringResource(R.string.main_folder) else Formatter.formatShortFileSize(ctx, e.size)) + " · " + dateTime(e.mtime)
                 ListRow(e.name, AnnotatedString(detail),
                     leading = {
                         if (choosing) Box(Modifier.size(40.dp), contentAlignment = Alignment.Center) {
@@ -395,11 +398,11 @@ internal fun FilesScreen(dev: String, state: PhoneState, onBack: () -> Unit) {
                         } else SymbolBadge(fileIcon(e))
                     },
                     actions = if (choosing) emptyList() else listOfNotNull(
-                        if (!e.dir) MenuEntry("Open") { DeviceData.openFile(dev, full(e.name)) } else null,
-                        if (!e.dir) MenuEntry("Save to Downloads") { DeviceData.saveFile(dev, full(e.name)) } else null,
-                        MenuEntry("Select") { toggle(e.name) },
-                        MenuEntry("Rename…") { renaming = e },
-                        MenuEntry("Delete…") {
+                        if (!e.dir) MenuEntry(stringResource(R.string.open)) { DeviceData.openFile(dev, full(e.name)) } else null,
+                        if (!e.dir) MenuEntry(stringResource(R.string.main_save_to_downloads)) { DeviceData.saveFile(dev, full(e.name)) } else null,
+                        MenuEntry(stringResource(R.string.main_select)) { toggle(e.name) },
+                        MenuEntry(stringResource(R.string.main_rename_ellipsis)) { renaming = e },
+                        MenuEntry(stringResource(R.string.main_delete_ellipsis)) {
                             chosen = setOf(e.name)
                             deletingChosen = true
                         },
@@ -419,12 +422,12 @@ internal fun FilesScreen(dev: String, state: PhoneState, onBack: () -> Unit) {
         Spacer(Modifier.height(140.dp))
     }
     renaming?.let { e ->
-        NameDialog("Rename", e.name, onDismiss = { renaming = null }) { n ->
+        NameDialog(stringResource(R.string.main_rename), e.name, onDismiss = { renaming = null }) { n ->
             DeviceData.fileOp(dev, "mv", full(e.name)) { it.put("to", n) }
             renaming = null
         }
     }
-    if (newFolder) NameDialog("New folder", "", onDismiss = { newFolder = false }) { n ->
+    if (newFolder) NameDialog(stringResource(R.string.main_new_folder), "", onDismiss = { newFolder = false }) { n ->
         DeviceData.fileOp(dev, "mkdir", full(n))
         newFolder = false
     }
@@ -433,20 +436,24 @@ internal fun FilesScreen(dev: String, state: PhoneState, onBack: () -> Unit) {
         val folderCount = items.count { it.dir }
         AppDialog(
             onDismissRequest = { deletingChosen = false; if (chosen.size == 1) chosen = emptySet() },
-            title = { Text(if (items.size == 1) "Delete ${items[0].name}?" else "Delete ${items.size} items?") },
+            title = {
+                Text(if (items.size == 1) stringResource(R.string.main_delete_item_title, items[0].name)
+                else pluralStringResource(R.plurals.main_delete_items_title, items.size, items.size))
+            },
             text = {
-                Text(items.take(6).joinToString("\n") { it.name } + (if (items.size > 6) "\nand ${items.size - 6} more" else "") +
-                    "\n\n" + (if (folderCount > 0) "Folders are deleted with everything in them. " else "") +
-                    "They're deleted from their device. This can't be undone.")
+                val more = items.size - 6
+                Text(items.take(6).joinToString("\n") { it.name } +
+                    (if (more > 0) "\n" + pluralStringResource(R.plurals.main_and_more, more, more) else "") +
+                    "\n\n" + stringResource(if (folderCount > 0) R.string.main_delete_folders_body else R.string.main_delete_files_body))
             },
             confirmButton = {
-                DangerButton("Delete") {
+                DangerButton(stringResource(R.string.delete)) {
                     items.forEach { DeviceData.fileOp(dev, "rm", full(it.name)) }
                     chosen = emptySet()
                     deletingChosen = false
                 }
             },
-            dismissButton = { TextButton(onClick = { deletingChosen = false }) { Text("Cancel") } })
+            dismissButton = { TextButton(onClick = { deletingChosen = false }) { Text(stringResource(R.string.cancel)) } })
     }
 }
 
@@ -464,18 +471,18 @@ private fun SelectionBar(chosen: Set<String>, entries: List<FileEntry>, onAll: (
         .background(MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(14.dp))
         .padding(horizontal = 14.dp, vertical = 8.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("${chosen.size} selected", Modifier.weight(1f), style = MaterialTheme.typography.titleSmall,
+            Text(pluralStringResource(R.plurals.main_selected, chosen.size, chosen.size), Modifier.weight(1f), style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onSecondaryContainer)
-            if (chosen.size < entries.size) TextButton(onClick = onAll) { Text("Select all") }
-            TextButton(onClick = onNone) { Text("Cancel") }
+            if (chosen.size < entries.size) TextButton(onClick = onAll) { Text(stringResource(R.string.main_select_all)) }
+            TextButton(onClick = onNone) { Text(stringResource(R.string.cancel)) }
         }
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             OutlinedButton(onClick = onSave, enabled = files > 0) {
-                Text(if (files == 1) "Save 1 file" else "Save $files files")
+                Text(pluralStringResource(R.plurals.main_save_files, files, files))
             }
-            OutlinedButton(onClick = onDelete) { Text("Delete…", color = MaterialTheme.colorScheme.error) }
+            OutlinedButton(onClick = onDelete) { Text(stringResource(R.string.main_delete_ellipsis), color = MaterialTheme.colorScheme.error) }
         }
-        if (folders > 0 && files > 0) Text("Folders aren't saved, only files.", style = MaterialTheme.typography.bodySmall,
+        if (folders > 0 && files > 0) Text(stringResource(R.string.main_folders_not_saved), style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSecondaryContainer)
     }
 }
@@ -491,7 +498,8 @@ private fun TransferStatus(t: Transfer, modifier: Modifier = Modifier) {
         .padding(horizontal = 14.dp, vertical = 10.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             if (t.busy && t.progress == null) CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
-            Text(t.text + (t.progress?.let { if (t.busy) " ${(it * 100).toInt()}%" else "" } ?: ""),
+            val percent = t.progress?.takeIf { t.busy }?.let { (it * 100).toInt() }
+            Text(if (percent != null) stringResource(R.string.main_transfer_progress, t.text, percent) else t.text,
                 style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSecondaryContainer)
         }
         if (t.busy && t.progress != null) LinearProgressIndicator(progress = { t.progress }, Modifier.fillMaxWidth())
@@ -516,18 +524,18 @@ private fun NameDialog(title: String, initial: String, onDismiss: () -> Unit, on
     AppDialog(
         onDismissRequest = onDismiss,
         title = { Text(title) },
-        text = { OutlinedTextField(name, { name = it }, label = { Text("Name") }, singleLine = true) },
-        confirmButton = { TextButton(enabled = ok, onClick = { onSave(name.trim()) }) { Text("OK") } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } })
+        text = { OutlinedTextField(name, { name = it }, label = { Text(stringResource(R.string.main_name)) }, singleLine = true) },
+        confirmButton = { TextButton(enabled = ok, onClick = { onSave(name.trim()) }) { Text(stringResource(R.string.main_ok)) } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } })
 }
 
 /** Row of buttons on the main screen that open Calls, Contacts and Files. */
 @Composable
 internal fun MoreRow(onOpen: (String) -> Unit) {
     Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-        ActionTile(Icons.Default.Call, "Calls", modifier = Modifier.weight(1f)) { onOpen("calls") }
-        ActionTile(Icons.Default.Person, "Contacts", modifier = Modifier.weight(1f)) { onOpen("contacts") }
-        ActionTile(Icons.AutoMirrored.Filled.List, "Files", modifier = Modifier.weight(1f)) { onOpen("files") }
-        ActionTile(ClockIcon, "App time", modifier = Modifier.weight(1f)) { onOpen("apptime") }
+        ActionTile(Icons.Default.Call, stringResource(R.string.main_calls_title), modifier = Modifier.weight(1f)) { onOpen("calls") }
+        ActionTile(Icons.Default.Person, stringResource(R.string.main_contacts_title), modifier = Modifier.weight(1f)) { onOpen("contacts") }
+        ActionTile(Icons.AutoMirrored.Filled.List, stringResource(R.string.main_files_title), modifier = Modifier.weight(1f)) { onOpen("files") }
+        ActionTile(ClockIcon, stringResource(R.string.main_app_time_title), modifier = Modifier.weight(1f)) { onOpen("apptime") }
     }
 }

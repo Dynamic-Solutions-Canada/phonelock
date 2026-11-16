@@ -28,6 +28,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 
@@ -44,27 +45,27 @@ internal fun ScreenAlertsSection(dev: String) {
     if (mine.isEmpty()) return
     var enlarged by remember { mutableStateOf<ImageBitmap?>(null) }
 
-    Section("Unfamiliar screens") {
-        Text("Google screens that aren't known to be safe or blocked. Mark OK to stop hearing about one; " +
-            "Block sends her back whenever it opens.", style = MaterialTheme.typography.bodySmall,
+    Section(stringResource(R.string.alerts_screen_section)) {
+        Text(stringResource(R.string.alerts_screen_section_detail), style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant)
         mine.forEach { a ->
             // Decoded once per report; the files are small JPEGs.
             val image = remember(a.image) { a.image?.let { BitmapFactory.decodeFile(it)?.asImageBitmap() } }
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 if (image != null) {
-                    Image(image, "Screenshot", Modifier.width(72.dp).heightIn(max = 150.dp)
+                    Image(image, stringResource(R.string.alerts_screenshot), Modifier.width(72.dp).heightIn(max = 150.dp)
                         .clip(RoundedCornerShape(8.dp)).clickable { enlarged = image }, contentScale = ContentScale.Fit)
                 }
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Text(a.name, style = MaterialTheme.typography.titleSmall)
-                    val from = if (a.from.isNotEmpty()) "From ${a.from} · " else ""
-                    Text(from + time(a.ts), style = MaterialTheme.typography.bodySmall)
+                    val at = time(a.ts)
+                    val line = if (a.from.isNotEmpty()) stringResource(R.string.alerts_screen_from_at, a.from, at) else at
+                    Text(line, style = MaterialTheme.typography.bodySmall)
                     a.error?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
                     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Button(onClick = { ScreenAlerts.decide(a.id, "ok") }) { Text("Mark OK") }
-                        OutlinedButton(onClick = { ScreenAlerts.decide(a.id, "block") }) { Text("Block") }
-                        TextButton(onClick = { ScreenAlerts.decide(a.id, "dismiss") }) { Text("Dismiss") }
+                        Button(onClick = { ScreenAlerts.decide(a.id, "ok") }) { Text(stringResource(R.string.alerts_screen_mark_ok)) }
+                        OutlinedButton(onClick = { ScreenAlerts.decide(a.id, "block") }) { Text(stringResource(R.string.alerts_block)) }
+                        TextButton(onClick = { ScreenAlerts.decide(a.id, "dismiss") }) { Text(stringResource(R.string.alerts_dismiss)) }
                     }
                 }
             }
@@ -73,8 +74,8 @@ internal fun ScreenAlertsSection(dev: String) {
 
     enlarged?.let { img ->
         AppDialog(onDismissRequest = { enlarged = null },
-            confirmButton = { TextButton(onClick = { enlarged = null }) { Text("Close") } },
-            text = { Image(img, "Screenshot", Modifier.fillMaxWidth(), contentScale = ContentScale.Fit) })
+            confirmButton = { TextButton(onClick = { enlarged = null }) { Text(stringResource(R.string.alerts_close)) } },
+            text = { Image(img, stringResource(R.string.alerts_screenshot), Modifier.fillMaxWidth(), contentScale = ContentScale.Fit) })
     }
 }
 
@@ -93,9 +94,8 @@ internal fun ScreenRulesSection(dev: String, state: PhoneState?) {
     // "Until bedtime" only makes sense when a bedtime is coming up; the device checks again when asked.
     val bedtimeAhead = st.mode != "bedtime" && st.schedule.any { it.mode == "bedtime" }
 
-    Section("Google screens") {
-        Text("Google screens that lead out of the lock. They're blocked unless you allow them; you're told when " +
-            "she's sent back from one.", style = MaterialTheme.typography.bodySmall,
+    Section(stringResource(R.string.alerts_rules_section)) {
+        Text(stringResource(R.string.alerts_rules_section_detail), style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant)
         st.screenAreas.forEach { area ->
             ScreenRuleRow(dev, Hub.AREA_PREFIX + area.key, area.name, st.screenRules[Hub.AREA_PREFIX + area.key],
@@ -119,24 +119,31 @@ private fun ScreenRuleRow(dev: String, key: String, title: String, rule: String?
     val allowed = rule == "ok" || until != null
     val decided = rule == "ok" || rule == "block" || until != null
     val status = when {
-        rule == "ok" -> "Allowed"
-        until != null -> "Allowed until ${time(until)}"
-        rule == "block" -> "Blocked"
-        blockedByDefault -> "Blocked (default)"
-        else -> "Reported when it opens"
+        rule == "ok" -> stringResource(R.string.alerts_rule_allowed)
+        until != null -> stringResource(R.string.alerts_rule_allowed_until, time(until))
+        rule == "block" -> stringResource(R.string.alerts_rule_blocked)
+        blockedByDefault -> stringResource(R.string.alerts_rule_blocked_default)
+        else -> stringResource(R.string.alerts_rule_reported)
     }
+    // Menu labels, read here in composition rather than inside the list builder.
+    val allowLabel = stringResource(R.string.allow)
+    val allow15Label = stringResource(R.string.alerts_rule_allow_15_min)
+    val allowHourLabel = stringResource(R.string.alerts_rule_allow_1_hour)
+    val allowBedtimeLabel = stringResource(R.string.alerts_rule_allow_until_bedtime)
+    val blockLabel = stringResource(R.string.alerts_block)
+    val resetLabel = stringResource(if (blockedByDefault) R.string.alerts_rule_back_to_blocked else R.string.alerts_rule_forget)
 
     /** Sends a decision about this row. */
     fun set(rule: String, minutes: Int = 0, untilBedtime: Boolean = false) =
         Hub.setScreenRule(dev, key, rule, minutes, untilBedtime)
 
     val entries = buildList {
-        if (rule != "ok") add(MenuEntry("Allow") { set("ok") })
-        add(MenuEntry("Allow for 15 min") { set("ok", minutes = 15) })
-        add(MenuEntry("Allow for 1 hour") { set("ok", minutes = 60) })
-        if (bedtimeAhead) add(MenuEntry("Allow until bedtime") { set("ok", untilBedtime = true) })
-        if (rule != "block") add(MenuEntry("Block") { set("block") })
-        if (decided) add(MenuEntry(if (blockedByDefault) "Back to blocked" else "Forget decision") { set("") })
+        if (rule != "ok") add(MenuEntry(allowLabel) { set("ok") })
+        add(MenuEntry(allow15Label) { set("ok", minutes = 15) })
+        add(MenuEntry(allowHourLabel) { set("ok", minutes = 60) })
+        if (bedtimeAhead) add(MenuEntry(allowBedtimeLabel) { set("ok", untilBedtime = true) })
+        if (rule != "block") add(MenuEntry(blockLabel) { set("block") })
+        if (decided) add(MenuEntry(resetLabel) { set("") })
     }
     ListRow(title, AnnotatedString(status), leading = { SymbolBadge(if (allowed) "✓" else "⛔") }, actions = entries)
 }

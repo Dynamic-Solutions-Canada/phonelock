@@ -51,6 +51,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
@@ -172,7 +173,7 @@ private fun MainScreen(devices: List<Device>, dev: String, onSelect: (String) ->
                 FilterChip(selected = d.id == dev, onClick = { onSelect(d.id) },
                     label = { Text(Hub.deviceName(d.id) + if (pending > 0) "  •$pending" else "") })
             }
-            TextButton(onClick = onAdd) { Text("+ Add device") }
+            TextButton(onClick = onAdd) { Text(stringResource(R.string.main_add_device)) }
         }
         val device = devices.firstOrNull { it.id == dev }
         val vitals by Hub.vitals.collectAsState()
@@ -192,20 +193,20 @@ private fun MainScreen(devices: List<Device>, dev: String, onSelect: (String) ->
         SetupHints()
         EmergencySection(dev)
 
-        if (requests.isNotEmpty()) Section("Requests") {
+        if (requests.isNotEmpty()) Section(stringResource(R.string.main_requests_title)) {
             requests.forEach { r ->
                 // The child suggests a length; the parent picks the actual one (preselected to the ask).
                 var mins by remember(r.req) { mutableLongStateOf(r.minutes) }
                 AppName(dev, r.app, r.label)
-                Text("Asked for ${fmtMinutes(r.minutes)} · ${time(r.ts)}", style = MaterialTheme.typography.bodySmall)
+                Text(stringResource(R.string.main_asked_for, fmtMinutes(r.minutes), time(r.ts)), style = MaterialTheme.typography.bodySmall)
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     (GRANT_DURATIONS + r.minutes).distinct().sorted().forEach { m ->
                         FilterChip(selected = mins == m, onClick = { mins = m }, label = { Text(fmtMinutes(m)) })
                     }
                 }
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Button(onClick = { Hub.grant(dev, r.app, mins, r.req) }) { Text("Allow ${fmtMinutes(mins)}") }
-                    OutlinedButton(onClick = { Hub.deny(r) }) { Text("Deny") }
+                    Button(onClick = { Hub.grant(dev, r.app, mins, r.req) }) { Text(stringResource(R.string.main_allow_for, fmtMinutes(mins))) }
+                    OutlinedButton(onClick = { Hub.deny(r) }) { Text(stringResource(R.string.deny)) }
                 }
             }
         }
@@ -222,7 +223,7 @@ private fun MainScreen(devices: List<Device>, dev: String, onSelect: (String) ->
         }
         ScheduleSection(dev, state)
 
-        if (events.isNotEmpty()) Section("Recent events") {
+        if (events.isNotEmpty()) Section(stringResource(R.string.main_recent_events_title)) {
             // A day heading wherever the day changes (events run newest first), so times have a date.
             val rows = events.mapIndexed { i, e ->
                 e to (i == 0 || startOfDay(events[i - 1].ts) != startOfDay(e.ts))
@@ -270,8 +271,9 @@ internal fun Section(title: String, content: @Composable () -> Unit) {
 @Composable
 internal fun time(t: Long): String = DateFormat.getTimeFormat(LocalContext.current).format(Date(t))
 
+/** How long ago [ms] milliseconds was: "just now", "3 min ago" or "2 h ago". */
 internal fun ago(ms: Long): String = when {
-    ms < 60_000 -> "just now"
-    ms < 3600_000 -> "${ms / 60_000} min ago"
-    else -> "${ms / 3600_000} h ago"
+    ms < 60_000 -> Strings.get(R.string.main_ago_just_now)
+    ms < 3600_000 -> (ms / 60_000).toInt().let { Strings.plural(R.plurals.main_ago_minutes, it, it) }
+    else -> (ms / 3600_000).toInt().let { Strings.plural(R.plurals.main_ago_hours, it, it) }
 }

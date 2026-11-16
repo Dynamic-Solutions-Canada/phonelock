@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Adding a child's device: setup over Wi-Fi, Fix setup, adding a shared device, sharing, QR scanning, and their errors. -->
+<resources>
+    <!-- Shared by the setup screens -->
+    <string name="setup_what_to_expect">流程概览</string>
+    <string name="setup_you_need">你需要准备</string>
+    <string name="setup_set_up_new_device">设置新设备</string>
+    <string name="setup_fix_setup">修复设置</string>
+    <string name="setup_device_name_hint">此应用对孩子设备的称呼，例如孩子的名字</string>
+    <string name="setup_add_existing_title">添加其他家长已设置的设备</string>
+
+    <!-- Add a child's device: choosing how -->
+    <string name="setup_add_child_device">添加孩子的设备</string>
+    <string name="setup_already_installed_question">孩子的手机或平板电脑上已经装有 PhoneLock 了吗？</string>
+    <string name="setup_new_device_body">通过 Wi-Fi 从这部手机将 PhoneLock 安装到孩子的设备上。大约需要 10 分钟，不会清除设备上的任何内容。</string>
+    <string name="setup_new_device_when">适用于尚未安装 PhoneLock 的设备。</string>
+    <string name="setup_add_existing_body">扫描其他家长应用中的配对码，你们就可以共同管理该设备。</string>
+    <string name="setup_add_existing_when">适用于已安装 PhoneLock 的设备。</string>
+
+    <!-- Adding a device another parent set up -->
+    <string name="setup_add_a_device">添加设备</string>
+    <string name="setup_get_code_title">获取配对码</string>
+    <!-- ⋮ is the "more options" menu button -->
+    <string name="setup_get_code_detail">其他家长打开 PhoneLock，点按该设备上的 ⋮，然后点按“与其他家长共享”。屏幕上会显示一个 QR 码。</string>
+    <string name="setup_scan_it_title">扫描</string>
+    <string name="setup_scan_it_detail">使用这部手机的相机扫描；如果对方发来了配对链接，也可以粘贴链接。</string>
+    <string name="setup_name_it_title">命名</string>
+    <string name="setup_name_it_detail">选择此应用对该设备的称呼，以及你的名字在设备上如何显示。</string>
+    <string name="setup_need_other_parent">其他家长的手机就在身边，或对方发来的配对链接</string>
+    <string name="setup_scan_code_title">扫描配对码</string>
+    <string name="setup_scan_code_where">在其他家长的手机上：PhoneLock &gt; 设备上的 ⋮ &gt; 与其他家长共享。</string>
+    <string name="setup_scan_qr">扫描 QR 码</string>
+    <string name="setup_paste_link">或粘贴配对链接</string>
+    <string name="setup_code_recognised">已识别配对码</string>
+    <string name="setup_not_a_link">这不是 PhoneLock 配对链接</string>
+    <!-- phonelock://pair is the start of the link itself: keep it as is -->
+    <string name="setup_link_starts_with">以 phonelock://pair 开头</string>
+    <string name="setup_add_device_button">添加设备</string>
+    <!-- An example name for the parent, used when they haven't typed theirs yet -->
+    <string name="setup_example_parent_name">爸爸</string>
+    <!-- %1$s is the parent's name; "Camera" is an example app on the child's device -->
+    <string name="setup_your_name_hint_example">显示在孩子的设备上，例如“%1$s 允许使用相机”</string>
+
+    <!-- Sharing a device with another parent. %1$s is the device's name. -->
+    <string name="setup_share_title">共享 %1$s 的设备</string>
+    <!-- %1$s is the button title the other parent taps (setup_add_existing_title) -->
+    <string name="setup_share_instructions">在其他家长的手机上打开 PhoneLock，点按“%1$s”，然后扫描此码。</string>
+    <string name="setup_share_warning">任何拥有此码的人都能控制该设备。请只向其他家长出示。</string>
+
+    <!-- Scanning a QR code -->
+    <string name="setup_camera_needed">需要相机权限才能扫描配对码。</string>
+    <string name="setup_allow_camera">允许使用相机</string>
+    <string name="setup_point_at_code">将相机对准配对 QR 码</string>
+    <!-- Spoken description of the QR code image -->
+    <string name="setup_qr_code">QR 码</string>
+
+    <!-- Setting up over Wi-Fi. Names of Android's own settings screens and options on the child's device
+         (Settings, About phone, Build number, System, Developer options, Wireless debugging, "Pair device with
+         pairing code", "IP address & Port", Passwords & accounts, Multiple users) must match the names Android
+         itself uses in this language. -->
+    <string name="setup_what_this_does">作用说明</string>
+    <!-- %1$s is the child's device name -->
+    <string name="setup_fix_explanation">“修复设置”会为 %1$s 重新开启 PhoneLock 的各项功能：查看屏幕、通话限制和通话记录、文件、在勿扰模式下响铃，以及待机时保持运行。它不会更改设备的配对、时间表或应用。</string>
+    <string name="setup_need_same_wifi_fix">孩子的设备与这部手机连接同一个 Wi-Fi</string>
+    <string name="setup_need_parent_mode">已在孩子的设备上解锁家长模式（按住时钟 4 秒，输入 PIN 码），以便进入“设置”</string>
+    <string name="setup_need_developer_options">已在孩子的设备上开启“开发者选项”：设置 &gt; 关于手机，点按“Build 号”7 次</string>
+    <string name="setup_outline_prepare_title">准备孩子的设备</string>
+    <string name="setup_outline_prepare_detail">连接同一个 Wi-Fi，暂时移除账号，开启“开发者选项”。大约 5 分钟。</string>
+    <string name="setup_outline_names_title">选择名称和 PIN 码</string>
+    <string name="setup_outline_names_detail">PIN 码用于在孩子的设备上解锁家长模式。</string>
+    <string name="setup_outline_pair_title">与这部手机配对</string>
+    <string name="setup_outline_pair_detail">孩子的设备会显示一个 6 位数代码，你在这里输入。</string>
+    <string name="setup_outline_install_title">PhoneLock 自动完成设置</string>
+    <string name="setup_outline_install_detail">安装应用、将其连接到此应用并开启各项功能。大约 2 分钟。</string>
+    <string name="setup_need_device">孩子的手机或平板电脑，需为 Android 13 或更高版本，已充好电并在你手中</string>
+    <string name="setup_need_same_wifi">两部设备连接同一个 Wi-Fi 网络</string>
+    <string name="setup_need_sign_out">在设置完成前退出设备上的账号（之后在家长模式下重新添加）</string>
+    <string name="setup_nothing_erased">孩子设备上的任何内容都不会被清除。</string>
+    <string name="setup_connect_wifi_title">连接 Wi-Fi</string>
+    <string name="setup_connect_wifi_detail">与这部手机相同的网络。</string>
+    <string name="setup_remove_accounts_title">移除设备上的账号</string>
+    <string name="setup_remove_accounts_detail">设置 &gt; 密码和帐号：逐一移除（Google 及其他账号）。Android 只允许 PhoneLock 接管没有任何账号的设备。最后再重新添加。</string>
+    <string name="setup_developer_options_title">开启“开发者选项”</string>
+    <string name="setup_developer_options_detail">设置 &gt; 关于手机：点按“Build 号”7 次，直到提示你已处于开发者模式。</string>
+    <string name="setup_names_and_pin">名称和 PIN 码</string>
+    <string name="setup_shown_on_device">显示在孩子的设备上</string>
+    <string name="setup_parent_pin">家长 PIN 码（4 到 8 位数字）</string>
+    <string name="setup_pin_unlocks">用于在孩子的设备上解锁家长模式</string>
+    <string name="setup_pin_again">再次输入 PIN 码</string>
+    <string name="setup_pin_mismatch">不一致</string>
+    <string name="setup_pin_confirm">确保输入正确</string>
+    <string name="setup_pair_title">与孩子的设备配对</string>
+    <string name="setup_set_up_button">开始设置</string>
+    <string name="setup_pair_instructions">在孩子的设备上：设置 &gt; 系统 &gt; 开发者选项 &gt; 无线调试。开启后，点按“使用配对码配对设备”。在设置开始前，请保持该界面打开。</string>
+    <string name="setup_looking">正在查找… 显示配对码后，设备就会出现在这里。</string>
+    <string name="setup_wifi_pairing_code">Wi-Fi 配对码</string>
+    <string name="setup_six_digits">孩子屏幕上的 6 位数字</string>
+    <string name="setup_fewer_options">收起选项</string>
+    <string name="setup_more_options">找不到设备，或更多选项</string>
+    <string name="setup_ip_and_port">设备的 IP 地址和端口</string>
+    <!-- The example address must stay as is -->
+    <string name="setup_ip_and_port_hint">显示在配对码下方，例如 192.168.1.20:37755</string>
+    <string name="setup_debugging_port">设备的调试端口</string>
+    <string name="setup_debugging_port_hint">仅在找不到设备时填写：“无线调试”界面上“IP 地址和端口”中冒号后面的端口号</string>
+    <string name="setup_turn_off_debugging_option">完成后关闭调试</string>
+    <string name="setup_turn_off_debugging_detail">建议开启，这样调试就无法被用来解除 PhoneLock。家长模式可以重新开启调试。</string>
+
+    <!-- Setup progress -->
+    <string name="setup_stopped">设置已停止</string>
+    <string name="setup_setting_up">正在设置…</string>
+    <string name="setup_finished_debugging_off">孩子设备上的无线调试现已关闭。请在家长模式下（按住时钟 4 秒）重新添加孩子的账号。</string>
+    <string name="setup_finished_debugging_on">孩子设备上的无线调试仍处于开启状态；确认一切正常后，请在家长模式下将其关闭。请在家长模式下（按住时钟 4 秒）重新添加孩子的账号。</string>
+    <string name="setup_keep_screen_open">在设置完成前，请保持此界面打开。</string>
+
+    <!-- The setup steps, as listed while setup runs -->
+    <string name="setup_step_pair">与设备配对</string>
+    <string name="setup_step_connect">连接</string>
+    <string name="setup_step_check">检查设备</string>
+    <string name="setup_step_download">下载孩子端应用</string>
+    <string name="setup_step_install">安装孩子端应用</string>
+    <string name="setup_step_owner">设为设备所有者</string>
+    <string name="setup_step_connect_app">连接到此应用</string>
+    <string name="setup_step_features">开启功能</string>
+    <string name="setup_step_debugging_off">关闭调试</string>
+
+    <!-- Features turned on during setup, listed when some couldn't be -->
+    <string name="setup_grant_screen_view">查看屏幕</string>
+    <string name="setup_grant_keep_screen_view">保持屏幕查看权限</string>
+    <string name="setup_grant_dnd">在勿扰模式下响铃</string>
+    <string name="setup_grant_screen_calls">过滤来电</string>
+    <string name="setup_grant_limit_calls">限制去电</string>
+    <string name="setup_grant_call_log">向家长提供通话记录</string>
+    <string name="setup_grant_app_use">向家长提供应用使用情况</string>
+    <string name="setup_grant_files">向家长提供文件</string>
+    <string name="setup_grant_idle">待机时保持运行（不受省电限制）</string>
+
+    <!-- Notes and errors shown beside a setup step -->
+    <string name="setup_pairing_refused">配对被拒绝</string>
+    <string name="setup_no_debugging_port">找不到设备的调试端口。请在设备上保持“无线调试”界面打开，然后重试。</string>
+    <string name="setup_device_no_answer">设备没有回应</string>
+    <string name="setup_android_too_old">此设备的 Android 版本低于 13</string>
+    <string name="setup_lock_no_answer">设备上的 PhoneLock 没有回应。请重试。</string>
+    <!-- %1$s is the child's device name -->
+    <string name="setup_wrong_device">这不是 %1$s 的设备。请在正确的设备上打开“无线调试”。</string>
+    <string name="setup_note_checking_features">正在检查其功能</string>
+    <string name="setup_note_already_mine">已连接到此应用：继续</string>
+    <string name="setup_note_other_parent">由其他家长设置：仅检查其功能</string>
+    <string name="setup_note_not_connected">PhoneLock 已安装但未连接：从这里继续</string>
+    <string name="setup_not_set_up">此设备上尚未设置 PhoneLock。请改用“添加孩子的设备”。</string>
+    <string name="setup_remove_accounts_first">请先移除设备上的账号（设置 &gt; 密码和帐号），之后在家长模式下重新添加</string>
+    <string name="setup_remove_users_first">请先移除设备上的其他用户（设置 &gt; 系统 &gt; 多用户）</string>
+    <string name="setup_other_owner">已有其他应用在管理此设备（设备所有者）</string>
+    <string name="setup_already_done">已完成</string>
+    <string name="setup_refused">被拒绝</string>
+    <string name="setup_checking_answers">正在检查设备能否回应…</string>
+    <string name="setup_already_connected">已连接</string>
+    <string name="setup_connected_other_parent">已连接到其他家长</string>
+    <!-- %1$s is a comma-separated list of features (the setup_grant_* names) -->
+    <string name="setup_not_turned_on">未开启：%1$s</string>
+    <string name="setup_debugging_left_on_chosen">按你的选择保持开启</string>
+    <string name="setup_debugging_left_on_other">保持开启：这是其他家长的设备</string>
+    <string name="setup_debugging_left_on_unreachable">保持开启，因为设备尚未通过互联网回应</string>
+    <string name="setup_debugging_not_confirmed">设备没有确认；调试可能仍处于开启状态</string>
+    <string name="setup_not_answering">设备尚未通过互联网回应。请检查它的网络连接；在它回应之前，调试会保持开启。</string>
+    <!-- %1$s is the reply the child's device sent, in English -->
+    <string name="setup_pairing_not_accepted">设备未接受配对：%1$s。请重试。</string>
+    <string name="setup_pairing_no_answer">设备未接受配对：没有回应。请重试。</string>
+    <string name="setup_download_404">下载失败（HTTP 404）</string>
+    <string name="setup_not_genuine">下载的文件不是正版 PhoneLock 孩子端应用</string>
+
+    <!-- How setup ended -->
+    <string name="setup_outcome_fixed">设置已检查并修复。</string>
+    <string name="setup_outcome_other_parent">此设备已由其他家长设置。请让对方与你共享（设备设置 &gt; 与其他家长共享）。</string>
+    <!-- %1$s is the child's device name -->
+    <string name="setup_outcome_done">%1$s 已设置完毕并连接到此应用。</string>
+    <!-- %1$s is one of the setup_outcome_* sentences above -->
+    <string name="setup_outcome_some_features_failed">%1$s部分功能无法开启，详见上方。</string>
+
+    <!-- Wireless debugging errors, shown when setup stops -->
+    <string name="setup_adb_install_failed">安装失败</string>
+    <!-- %1$s is a technical service name, e.g. "shell" -->
+    <string name="setup_adb_service_refused">设备拒绝了“%1$s”</string>
+    <string name="setup_adb_corrupt_message">adb 消息已损坏</string>
+    <string name="setup_adb_message_too_large">adb 消息过大</string>
+    <string name="setup_adb_stopped_answering">设备停止了回应</string>
+    <string name="setup_adb_not_trusted_again">设备不信任这部手机（请重新配对）</string>
+    <string name="setup_adb_not_trusted_yet">设备尚未信任这部手机（请先配对）</string>
+    <string name="setup_adb_usb_auth">设备要求 USB 方式授权；请开启“无线调试”并先完成配对</string>
+    <string name="setup_adb_pairing_insecure">无法建立安全的配对连接</string>
+    <string name="setup_adb_pairing_invalid">设备发送了无效的配对消息</string>
+    <string name="setup_adb_pairing_stopped">设备在配对过程中停止了回应</string>
+    <string name="setup_adb_wrong_code">配对码错误或已过期</string>
+    <!-- %1$d is a version number -->
+    <string name="setup_adb_pairing_version">不支持的配对版本 %1$d</string>
+    <string name="setup_adb_pairing_unexpected">意外的配对消息</string>
+    <string name="setup_adb_pairing_size">配对消息大小有误</string>
+    <!-- %1$s is a file name -->
+    <string name="setup_adb_save_failed">无法保存 %1$s</string>
+
+    <!-- The main screen's prompts for permissions this phone still needs -->
+    <string name="setup_hint_background">允许后台使用，以便及时收到请求。</string>
+    <string name="setup_hint_full_screen">允许紧急警报像来电一样全屏显示。</string>
+
+    <!-- Viewing the child's screen -->
+    <string name="setup_screenshot_no_image">未收到图片</string>
+    <string name="setup_screenshot_unreadable">无法打开屏幕截图</string>
+</resources>

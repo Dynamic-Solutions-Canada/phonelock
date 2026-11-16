@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Activity (location history and map), file transfers, the first-run disclosure, Diagnostics, device Settings and this app's own updates. -->
+<resources>
+    <!-- Activity: page, map and filters -->
+    <string name="device_activity_title">Activité</string>
+    <string name="device_close_full_map">Fermer la carte en plein écran</string>
+    <string name="device_show_map">Afficher la carte</string>
+    <string name="device_hide_map">Masquer la carte</string>
+    <!-- Spoken label of the Refresh button while the child's device is being located -->
+    <string name="device_locating">Localisation en cours</string>
+    <!-- %1$s: a time, e.g. 2:15 p.m. -->
+    <string name="device_no_location_at">Aucune position enregistrée à %1$s</string>
+    <string name="device_nothing_this_day">Rien à afficher pour ce jour.</string>
+    <!-- Filter buttons above the timeline: four must fit across a phone, so keep them short -->
+    <string name="device_filter_places">Lieux</string>
+    <string name="device_filter_calls">Appels</string>
+    <string name="device_filter_apps">Applis</string>
+    <string name="device_filter_events">Événements</string>
+    <string name="device_today">Aujourd’hui</string>
+    <string name="device_yesterday">Hier</string>
+
+    <!-- Activity: timeline rows. Detail facts are joined with " · " and the first letter of the line is capitalised automatically, so they start lowercase. -->
+    <!-- %1$s: a street address or coordinates -->
+    <string name="device_at_place">à %1$s</string>
+    <!-- %1$d: accuracy in metres -->
+    <string name="device_within_metres">à %1$d m près</string>
+    <!-- %1$d: battery level in percent -->
+    <string name="device_battery">batterie à %1$d %%</string>
+    <string name="device_battery_charging">batterie à %1$d %% (en charge)</string>
+    <!-- %1$s: how long ago, e.g. 5 min ago -->
+    <string name="device_seen_ago">vu %1$s</string>
+    <!-- A stretch of time with no location readings from the child's device -->
+    <string name="device_no_readings">Aucune donnée</string>
+    <!-- A call: %1$s arrow symbol, %2$s direction (e.g. Outgoing), %3$s who -->
+    <string name="device_timeline_call">📞 %1$s %2$s : %3$s</string>
+    <!-- As above, with %4$s the call's length (e.g. 2:05) -->
+    <string name="device_timeline_call_length">📞 %1$s %2$s : %3$s · %4$s</string>
+    <!-- App use: %1$s app name, %2$s how long (e.g. 15 min) -->
+    <string name="device_timeline_app">📱 %1$s, %2$s</string>
+    <!-- The time column of the current location row, and the map marker for it -->
+    <string name="device_now">Maintenant</string>
+    <!-- The current location: %1$s is an address, an error from the device, or one of the two lines below -->
+    <string name="device_timeline_now">📍 Maintenant : %1$s</string>
+    <string name="device_now_locating">localisation…</string>
+    <string name="device_now_no_answer">aucune réponse (hors ligne ou éteint)</string>
+    <!-- Map pin on a place where the child stayed a while (when its address is unknown) -->
+    <string name="device_map_stop">Arrêt</string>
+    <!-- A span of times: %1$s start, %2$s end (e.g. 2:15 p.m. – 5:30 p.m.) -->
+    <string name="device_time_range">%1$s – %2$s</string>
+    <!-- A short day name and a time, for spans crossing midnight: %1$s day (e.g. Fri), %2$s time -->
+    <string name="device_day_time">%1$s %2$s</string>
+
+    <!-- File transfers (shown while browsing the child's files). %1$s is a file name. -->
+    <!-- Wraps a status while several files are saved: %1$d this file's number, %2$d how many, %3$s the status -->
+    <string name="device_batch_status">(%1$d sur %2$d) %3$s</string>
+    <!-- %1$d files saved of %2$d -->
+    <plurals name="device_batch_saved">
+        <item quantity="one">%1$d sur %2$d fichier enregistré dans Downloads/PhoneLock</item>
+        <item quantity="many">%1$d sur %2$d fichiers enregistrés dans Downloads/PhoneLock</item>
+        <item quantity="other">%1$d sur %2$d fichiers enregistrés dans Downloads/PhoneLock</item>
+    </plurals>
+    <!-- %1$d files saved of %2$d; %3$d of them failed -->
+    <plurals name="device_batch_saved_some_failed">
+        <item quantity="one">%1$d sur %2$d fichier enregistré dans Downloads/PhoneLock ; échec du téléchargement : %3$d</item>
+        <item quantity="many">%1$d sur %2$d fichiers enregistrés dans Downloads/PhoneLock ; échec du téléchargement : %3$d</item>
+        <item quantity="other">%1$d sur %2$d fichiers enregistrés dans Downloads/PhoneLock ; échec du téléchargement : %3$d</item>
+    </plurals>
+    <!-- %1$s: the child's device name, %2$s: a file name -->
+    <string name="device_file_asking">Demande de %2$s à l’appareil de %1$s…</string>
+    <string name="device_file_no_answer">Aucune réponse de l’appareil de %1$s pour %2$s. Il est peut-être éteint ou hors ligne.</string>
+    <string name="device_file_preparing">Préparation de %1$s…</string>
+    <string name="device_file_cant_read">Impossible de lire %1$s</string>
+    <string name="device_file_too_large">%1$s dépasse 48 Mo</string>
+    <string name="device_file_uploading">Envoi de %1$s…</string>
+    <string name="device_file_sent">%1$s envoyé ; en attente de l’enregistrement sur l’appareil…</string>
+    <!-- %1$d: an HTTP status code -->
+    <string name="device_upload_failed_http">Échec de l’envoi (HTTP %1$d)</string>
+    <!-- %1$s: the reason, as the system words it -->
+    <string name="device_upload_failed">Échec de l’envoi : %1$s</string>
+    <string name="device_file_uploaded">%1$s envoyé</string>
+    <string name="device_file_downloading">Téléchargement de %1$s…</string>
+    <string name="device_file_saved">%1$s enregistré dans Downloads/PhoneLock</string>
+    <string name="device_file_cant_download">Impossible de télécharger %1$s</string>
+    <string name="device_file_opening">Ouverture de %1$s…</string>
+    <string name="device_file_cant_open">Impossible d’ouvrir %1$s</string>
+    <string name="device_file_opened">%1$s ouvert (non enregistré)</string>
+    <string name="device_file_no_viewer">Aucune application de ce téléphone ne peut ouvrir %1$s. Utilisez plutôt Enregistrer dans Téléchargements.</string>
+
+    <!-- First-run disclosure, which the parent must accept before adding a device -->
+    <string name="device_disclosure_title">Avant de commencer</string>
+    <string name="device_disclosure_intro">PhoneLock est une application de contrôle parental. Elle vous permet de gérer le téléphone ou la tablette de votre enfant et d’en consulter certaines informations.</string>
+    <string name="device_disclosure_seen_title">Ce que vous verrez de l’appareil de votre enfant</string>
+    <!-- A bulleted list: keep one item per line -->
+    <string name="device_disclosure_seen">• Sa position : sur demande, et un relevé toutes les 15 minutes (toutes les 2 minutes en déplacement), conservé 7 jours\n• Le niveau de batterie, et quand l’appareil s’éteint ou s’allume\n• Les applications installées, les demandes pour les utiliser, et quelles applications sont utilisées et combien de temps\n• Les réseaux Wi-Fi rejoints et les appareils Bluetooth associés\n• Les appels (journal d’appels) et les contacts\n• Les fichiers, photos et vidéos de son espace de stockage partagé, quand vous les ouvrez\n• Son écran, quand vous appuyez sur Voir l’écran</string>
+    <string name="device_disclosure_readers_title">Qui peut les consulter</string>
+    <string name="device_disclosure_readers">Seulement vous et les autres parents avec qui vous partagez l’appareil. Tout est chiffré de bout en bout sur les appareils ; le serveur relais qui transmet les messages, ainsi que le service de notifications push de Google, ne voient jamais que des données chiffrées. Rien n’est vendu ni utilisé à des fins publicitaires.</string>
+    <string name="device_disclosure_child_title">Votre enfant est informé</string>
+    <string name="device_disclosure_child">Son écran d’accueil indique que la position, la batterie, les appels et l’utilisation des applications vous sont communiqués ; votre enfant reçoit un avis chaque fois qu’un parent consulte son écran, et une notification indique que le contrôle parental est actif. PhoneLock ne peut pas lui être caché.</string>
+    <string name="device_disclosure_consent">En continuant, vous confirmez être le parent ou le tuteur légal de l’enfant dont vous gérerez l’appareil, ou avoir sa permission, et n’utiliser PhoneLock qu’à cette fin.</string>
+    <!-- Opens the privacy policy, which is in English -->
+    <string name="device_privacy_policy">Politique de confidentialité (en anglais)</string>
+    <string name="device_disclosure_agree">J’accepte, continuer</string>
+
+    <!-- Diagnostics. %1$s is the child's device name. -->
+    <string name="device_diag_title">Diagnostic</string>
+    <string name="device_diag_asking">Demande à %1$s…</string>
+    <string name="device_diag_ask_again">Redemander</string>
+    <!-- Subject of the shared report -->
+    <string name="device_diag_subject">Diagnostic de %1$s</string>
+    <string name="device_diag_share_title">Partager le diagnostic</string>
+    <string name="device_diag_share">Partager</string>
+    <string name="device_diag_waiting">En attente de la réponse de %1$s. S’il est hors ligne ou éteint, rien n’arrivera.</string>
+    <string name="device_diag_no_report">Aucun rapport pour le moment.</string>
+    <!-- %1$s: when the report was made -->
+    <string name="device_diag_report_from">Rapport : %1$s</string>
+    <string name="device_diag_checks">Vérifications</string>
+    <string name="device_diag_recent_log">Journal récent</string>
+    <string name="device_diag_show_log">Afficher le journal</string>
+    <string name="device_diag_hide_log">Masquer le journal</string>
+    <!-- Shown when the device sent an empty log -->
+    <string name="device_diag_log_empty">Vide.</string>
+    <!-- First line of the shared report: %1$s device name, %2$s date and time -->
+    <string name="device_diag_report_heading">Diagnostic de %1$s, %2$s</string>
+    <!-- Heading above the log in the shared report -->
+    <string name="device_diag_report_log">Journal récent :</string>
+
+    <!-- Device settings -->
+    <string name="device_settings_title">Paramètres</string>
+    <string name="device_names">Noms</string>
+    <string name="device_your_name_detail">Affiché sur l’appareil de votre enfant</string>
+    <string name="device_names_saved">Noms enregistrés</string>
+    <string name="device_save_names">Enregistrer les noms</string>
+    <string name="device_parent_access">Accès parent</string>
+    <string name="device_parent_mode">Mode parent…</string>
+    <string name="device_parent_mode_detail">Déverrouille temporairement Paramètres et le Play Store sur l’appareil de votre enfant</string>
+    <string name="device_change_pin">Modifier le code PIN parent…</string>
+    <string name="device_change_pin_detail">Utilisé sur l’appareil de votre enfant en maintenant l’horloge enfoncée 4 secondes</string>
+    <string name="device_lock_app">Application de verrouillage</string>
+    <!-- %1$d: the lock app's version number -->
+    <string name="device_lock_version">Version %1$d</string>
+    <string name="device_lock_version_unknown">Version inconnue</string>
+    <!-- %1$d: the installed version, %2$d: the version waiting to install -->
+    <string name="device_lock_version_update_ready">Version %1$d · la version %2$d s’installera à la prochaine mise en veille de l’écran</string>
+    <string name="device_lock_version_unknown_update_ready">Version inconnue · la version %1$d s’installera à la prochaine mise en veille de l’écran</string>
+    <string name="device_check_update_now">Rechercher une mise à jour maintenant</string>
+    <string name="device_check_update_now_detail">S’installe à la prochaine mise en veille de son écran</string>
+    <string name="device_diagnostics_detail">Vérifications et journal récent de l’appareil de votre enfant</string>
+    <string name="device_fix_setup">Réparer la configuration par Wi-Fi</string>
+    <string name="device_fix_setup_detail">Rétablit les autorisations grâce au débogage sans fil</string>
+    <string name="device_recovery">Récupération : activer le débogage…</string>
+    <string name="device_recovery_detail">Pour des réparations depuis un ordinateur</string>
+    <string name="device_sharing">Partage</string>
+    <string name="device_share">Partager avec un autre parent…</string>
+    <string name="device_share_detail">Permet au téléphone d’un autre parent de gérer cet appareil</string>
+    <string name="device_remove">Retirer cet appareil…</string>
+    <!-- %1$s: the child's device name -->
+    <string name="device_remove_title">Retirer %1$s ?</string>
+    <string name="device_remove_text">Cette application cessera de le gérer. L’appareil de votre enfant reste verrouillé tel quel. Pour le gérer de nouveau, un autre parent peut le partager avec vous, ou vous pouvez le configurer de nouveau.</string>
+
+    <!-- This app's own updates (GitHub build). Versions are written 1.0.N; %1$d is N. -->
+    <string name="device_app_section">Cette application</string>
+    <string name="device_app_version">Version 1.0.%1$d</string>
+    <!-- %1$d: the version, %2$d: percent downloaded -->
+    <string name="device_app_downloading">Téléchargement de la version 1.0.%1$d : %2$d %%</string>
+    <string name="device_app_installing">Installation de la version 1.0.%1$d…</string>
+    <string name="device_app_update_to">Mettre à jour vers la version 1.0.%1$d</string>
+    <!-- %1$d: download size in MB -->
+    <string name="device_app_update_detail">Téléchargement de %1$d Mo. Android vous demandera de confirmer l’installation.</string>
+    <string name="device_app_check">Rechercher une mise à jour</string>
+    <string name="device_app_check_detail">Parmi les versions de PhoneLock publiées sur GitHub</string>
+    <string name="device_app_none_published">Aucune mise à jour de cette application n’a encore été publiée</string>
+    <string name="device_app_up_to_date">Cette application est à jour (version 1.0.%1$d)</string>
+    <!-- %1$s: the reason -->
+    <string name="device_app_check_failed">Impossible de rechercher une mise à jour : %1$s</string>
+    <string name="device_app_no_connection">pas de connexion</string>
+    <string name="device_app_available">La version 1.0.%1$d de cette application est disponible</string>
+    <!-- Button on the message above -->
+    <string name="device_app_update">Mettre à jour</string>
+    <!-- %1$s: the reason, one of the lowercase phrases below or one from Android -->
+    <string name="device_app_update_failed">Impossible de mettre à jour cette application : %1$s</string>
+    <string name="device_app_download_failed">échec du téléchargement</string>
+    <string name="device_app_install_failed">échec de l’installation</string>
+    <string name="device_app_no_confirmation">aucun écran de confirmation</string>
+    <string name="device_app_update_cancelled">Mise à jour annulée</string>
+    <!-- Reasons a downloaded update was refused, shown after "Couldn't update this app:" -->
+    <string name="device_app_bad_checksum">le fichier téléchargé ne correspond pas à la version publiée (elle a peut-être changé depuis la vérification)</string>
+    <string name="device_app_not_an_app">le fichier téléchargé n’est pas une application</string>
+    <string name="device_app_different_app">le fichier téléchargé est une autre application</string>
+    <string name="device_app_different_version">le fichier téléchargé est une autre version</string>
+    <string name="device_app_bad_signature">le fichier téléchargé n’est pas signé par PhoneLock</string>
+    <!-- Download errors from GitHub releases (also during child setup). %1$d: an HTTP status code -->
+    <string name="device_download_failed_http">Échec du téléchargement (HTTP %1$d)</string>
+    <string name="device_download_too_large">Le fichier à télécharger est trop volumineux</string>
+</resources>

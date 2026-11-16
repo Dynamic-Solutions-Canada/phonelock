@@ -2,6 +2,7 @@ package home.phonelock.parent
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.time.DayOfWeek
 import java.time.LocalDate
 
 /** The report's arithmetic: which days a period covers, totals, and which parts the chart shows. */
@@ -14,7 +15,7 @@ class UsageReportTest {
 
     @Test
     fun monthCoversEveryDay() {
-        val d = periodDays(Period.MONTH, LocalDate.parse("2026-11-11"))
+        val d = periodDays(Period.MONTH, LocalDate.parse("2026-11-11"), DayOfWeek.SUNDAY)
         assertEquals(30, d.size)
         assertEquals(LocalDate.parse("2026-11-01"), d.first())
         assertEquals(LocalDate.parse("2026-11-30"), d.last())
@@ -23,8 +24,9 @@ class UsageReportTest {
     @Test
     fun weekHasSevenConsecutiveDaysAroundTheAnchor() {
         val anchor = LocalDate.parse("2026-11-11")
-        val d = periodDays(Period.WEEK, anchor)
+        val d = periodDays(Period.WEEK, anchor, DayOfWeek.SUNDAY)
         assertEquals(7, d.size)
+        assertEquals(DayOfWeek.SUNDAY, d.first().dayOfWeek)
         assert(anchor in d)
         (1 until 7).forEach { assertEquals(d[it - 1].plusDays(1), d[it]) }
     }
@@ -38,14 +40,14 @@ class UsageReportTest {
     @Test
     fun mostUsedShowsTopAppsThenOther() {
         val totals = (1..7).associate { "app$it" to it * 10 }
-        val s = seriesFor(emptyList(), totals) { it }
+        val s = seriesFor(emptyList(), totals, "Other") { it }
         assertEquals(listOf("app:app7", "app:app6", "app:app5", "app:app4", "app:app3", "other"), s.map { it.key })
         assertEquals(setOf("app1", "app2"), s.last().apps)
     }
 
     @Test
     fun choosingAppsShowsExactlyThoseInOrder() {
-        val s = seriesFor(listOf("app:game2", "app:yt"), emptyMap()) { it }
+        val s = seriesFor(listOf("app:game2", "app:yt"), emptyMap(), "Other") { it }
         assertEquals(listOf("app:game2", "app:yt"), s.map { it.key })
         assertEquals(45, minutesOn(days, LocalDate.parse("2026-11-10"), s[1]))
     }

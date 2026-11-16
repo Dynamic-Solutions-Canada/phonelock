@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Main screen, device header, Calls, Contacts, Files, and shared building blocks (pages, lists, dialogs, steps, battery and Wi-Fi settings). -->
+<resources>
+    <!-- Main screen -->
+    <!-- Button that adds another child's device -->
+    <string name="main_add_device">+ Adicionar dispositivo</string>
+    <string name="main_requests_title">Pedidos</string>
+    <!-- A child's request for more time. %1$s: length asked for, e.g. "30 min"; %2$s: time it was asked -->
+    <string name="main_asked_for">Pediu %1$s · %2$s</string>
+    <!-- Button. %1$s: a length of time, e.g. "30 min" -->
+    <string name="main_allow_for">Permitir %1$s</string>
+    <string name="main_recent_events_title">Eventos recentes</string>
+
+    <!-- How long ago something happened -->
+    <string name="main_ago_just_now">agora mesmo</string>
+    <plurals name="main_ago_minutes">
+        <item quantity="one">há %1$d min</item>
+        <item quantity="many">há %1$d min</item>
+        <item quantity="other">há %1$d min</item>
+    </plurals>
+    <plurals name="main_ago_hours">
+        <item quantity="one">há %1$d h</item>
+        <item quantity="many">há %1$d h</item>
+        <item quantity="other">há %1$d h</item>
+    </plurals>
+
+    <!-- Device header -->
+    <string name="main_device_settings">Configurações do dispositivo</string>
+    <!-- Button. %1$s: the running situation in lower case, e.g. "bedtime" -->
+    <string name="main_end_limited_now">Encerrar horário limitado agora</string>
+    <string name="main_end_bedtime_now">Encerrar hora de dormir agora</string>
+    <string name="main_start_mode">Iniciar horário limitado ou hora de dormir</string>
+    <!-- Label: the child's phone is ringing (sounding to be found) -->
+    <string name="main_ringing">Tocando</string>
+    <!-- %1$s: a time of day -->
+    <string name="main_parent_mode_until">Modo dos pais até %1$s</string>
+    <string name="main_parent_mode_on">Modo dos pais ativo</string>
+    <string name="main_lock_now">Bloquear agora</string>
+    <!-- What the child is doing. %1$s: app name; %2$s: how long it's been open, e.g. "open 12 min" -->
+    <string name="main_using_app">Usando %1$s · %2$s</string>
+    <!-- As main_using_app, from an older report. %3$s: the time of that report -->
+    <string name="main_using_app_as_of">Usando %1$s · %2$s, às %3$s</string>
+    <string name="main_just_opened">acabou de abrir</string>
+    <!-- %1$s: a length of time, e.g. "12 min" -->
+    <string name="main_open_for">aberto há %1$s</string>
+    <string name="main_home_screen">Na tela inicial</string>
+    <!-- %1$s: a time of day -->
+    <string name="main_home_screen_as_of">Na tela inicial, às %1$s</string>
+    <string name="main_screen_off">Tela desligada</string>
+    <!-- %1$s: a time of day -->
+    <string name="main_screen_off_as_of">Tela desligada, às %1$s</string>
+    <!-- Whether the device is answering. %1$s: the rest of the status line -->
+    <string name="main_status_connecting">Conectando… · %1$s</string>
+    <string name="main_status_no_reply">Nenhuma resposta ainda</string>
+    <!-- %1$s: how long ago, e.g. "18 min ago" -->
+    <string name="main_status_not_answering">Sem resposta · visto por último %1$s</string>
+    <!-- %1$s: how long ago, e.g. "3 min ago" -->
+    <string name="main_status_checking">Verificando… · visto %1$s</string>
+    <!-- %1$s: how long ago, e.g. "3 min ago" -->
+    <string name="main_status_getting_settings">Obtendo configurações… · visto %1$s</string>
+    <!-- %1$s: how long ago, e.g. "3 min ago" -->
+    <string name="main_status_seen">Visto %1$s</string>
+    <!-- %1$s: a time, possibly with its weekday -->
+    <string name="main_started_by_hand_until">Iniciado manualmente, até %1$s</string>
+    <!-- %1$s: a time, possibly with its weekday -->
+    <string name="main_until">Até %1$s</string>
+    <!-- What comes next. %1$s: a situation, e.g. "Bedtime"; %2$s: a time -->
+    <string name="main_mode_at">%1$s às %2$s</string>
+    <!-- Battery level. %1$d: percent -->
+    <string name="main_percent">%1$d%%</string>
+    <string name="main_battery_charging">carregando</string>
+    <!-- Battery is low -->
+    <string name="main_battery_low">fraca</string>
+
+    <!-- Page, lists and steps -->
+    <!-- Accessibility label for a row's menu button. %1$s: the row's title -->
+    <string name="main_more_for">Mais opções para %1$s</string>
+    <!-- Accessibility labels for arrows stepping through days -->
+    <string name="main_earlier">Anterior</string>
+    <string name="main_later">Seguinte</string>
+    <string name="main_get_started">Começar</string>
+    <!-- %1$d: this step; %2$d: number of steps -->
+    <string name="main_step_of">Etapa %1$d de %2$d</string>
+    <!-- %1$d: how many more rows can be shown -->
+    <string name="main_show_more">Mostrar mais (%1$d)</string>
+    <string name="main_show_less">Mostrar menos</string>
+    <string name="main_ok">OK</string>
+    <string name="main_name">Nome</string>
+
+    <!-- Main screen tiles and page titles -->
+    <string name="main_calls_title">Ligações</string>
+    <string name="main_contacts_title">Contatos</string>
+    <string name="main_files_title">Arquivos</string>
+    <string name="main_app_time_title">Tempo de uso</string>
+
+    <!-- Calls -->
+    <!-- %1$s: a phone number -->
+    <string name="main_already_safe">%1$s já está na lista segura</string>
+    <!-- %1$s: a contact's name or number -->
+    <string name="main_removed_from_safe_list">%1$s removido da lista segura</string>
+    <string name="main_limits_title">Limites</string>
+    <string name="main_limit_out">Ligações feitas só para a lista segura</string>
+    <string name="main_limit_out_hint">Números de emergência sempre funcionam.</string>
+    <string name="main_limit_in">Ligações recebidas só da lista segura</string>
+    <string name="main_limit_in_hint">As outras, e as de números ocultos, são recusadas.</string>
+    <string name="main_safe_list_title">Lista segura</string>
+    <string name="main_safe_list_empty">Ainda não há números na lista segura.</string>
+    <string name="main_no_name">Sem nome</string>
+    <string name="main_remove_from_safe_list">Remover da lista segura</string>
+    <string name="main_add_to_safe_list">Adicionar à lista segura</string>
+    <!-- Button: add a number to the safe list from the device's contacts -->
+    <string name="main_from_contacts">Dos contatos</string>
+    <string name="main_add_number">Adicionar um número</string>
+    <string name="main_call_log_title">Registro de chamadas</string>
+    <string name="main_no_call_log_access">O dispositivo ainda não permitiu a leitura do registro de chamadas.</string>
+    <string name="main_no_calls">Nenhuma ligação ainda.</string>
+    <string name="main_hidden_number">Número oculto</string>
+    <!-- Call directions -->
+    <string name="main_call_out">Feita</string>
+    <string name="main_call_in">Recebida</string>
+    <string name="main_call_missed">Perdida</string>
+    <string name="main_call_declined">Recusada</string>
+    <string name="main_call_blocked">Bloqueada</string>
+    <string name="main_call_attempt">Tentativa de ligação bloqueada</string>
+    <string name="main_call_voicemail">Correio de voz</string>
+    <!-- Tag next to a number on the safe list -->
+    <string name="main_safe_tag">Segura</string>
+    <string name="main_phone_number">Número de telefone</string>
+    <string name="main_choose_contact">Escolher um contato</string>
+    <string name="main_no_contacts">Nenhum contato com número de telefone.</string>
+    <string name="main_all_contacts_safe">O número de todos os contatos já está na lista segura.</string>
+
+    <!-- Contacts -->
+    <string name="main_on_device_title">No dispositivo</string>
+    <string name="main_delete_contact">Excluir contato…</string>
+    <string name="main_add_contact">Adicionar um contato</string>
+    <!-- %1$s: a contact's name -->
+    <string name="main_delete_contact_title">Excluir %1$s?</string>
+    <string name="main_delete_contact_body">Ele é excluído do dispositivo da criança e dos contatos do Google dela. A criança recebe um aviso.</string>
+
+    <!-- Files -->
+    <string name="main_no_file_access">O dispositivo ainda não permitiu o acesso aos arquivos.</string>
+    <string name="main_upload_here">Enviar para cá</string>
+    <string name="main_new_folder">Nova pasta</string>
+    <!-- Button: start choosing files -->
+    <string name="main_select">Selecionar</string>
+    <!-- Title of the device's top-level folder -->
+    <string name="main_storage">Armazenamento</string>
+    <string name="main_folder_empty">Esta pasta está vazia.</string>
+    <string name="main_long_press_hint">Toque e segure para selecionar vários.</string>
+    <string name="main_folder">Pasta</string>
+    <string name="main_save_to_downloads">Salvar em Downloads</string>
+    <!-- Menu item that opens a dialog -->
+    <string name="main_rename_ellipsis">Renomear…</string>
+    <!-- Dialog title -->
+    <string name="main_rename">Renomear</string>
+    <!-- Menu item or button that opens a dialog -->
+    <string name="main_delete_ellipsis">Excluir…</string>
+    <!-- %1$s: a file or folder name -->
+    <string name="main_delete_item_title">Excluir %1$s?</string>
+    <plurals name="main_delete_items_title">
+        <item quantity="one">Excluir %1$d item?</item>
+        <item quantity="many">Excluir %1$d itens?</item>
+        <item quantity="other">Excluir %1$d itens?</item>
+    </plurals>
+    <!-- After a list of names, for the ones not listed -->
+    <plurals name="main_and_more">
+        <item quantity="one">e mais %1$d</item>
+        <item quantity="many">e mais %1$d</item>
+        <item quantity="other">e mais %1$d</item>
+    </plurals>
+    <string name="main_delete_files_body">Eles são excluídos do dispositivo da criança. Não é possível desfazer.</string>
+    <string name="main_delete_folders_body">As pastas são excluídas com tudo o que há nelas, do dispositivo da criança. Não é possível desfazer.</string>
+    <plurals name="main_selected">
+        <item quantity="one">%1$d selecionado</item>
+        <item quantity="many">%1$d selecionados</item>
+        <item quantity="other">%1$d selecionados</item>
+    </plurals>
+    <string name="main_select_all">Selecionar tudo</string>
+    <plurals name="main_save_files">
+        <item quantity="one">Salvar %1$d arquivo</item>
+        <item quantity="many">Salvar %1$d arquivos</item>
+        <item quantity="other">Salvar %1$d arquivos</item>
+    </plurals>
+    <string name="main_folders_not_saved">Pastas não são salvas, só arquivos.</string>
+    <!-- A file transfer's progress. %1$s: what is happening, e.g. "Downloading photo.jpg"; %2$d: percent done -->
+    <string name="main_transfer_progress">%1$s %2$d%%</string>
+
+    <!-- Device settings: alerts -->
+    <string name="main_quiet_alert_title">Avisar quando ficar sem notícias do celular por</string>
+    <!-- Choice that turns an alert off -->
+    <string name="main_off">Desativado</string>
+    <string name="main_quiet_alert_hint">Só neste celular. Informa onde ele estava por último e a bateria.</string>
+    <string name="main_battery_alert_title">Alerta de bateria fraca</string>
+    <string name="main_battery_alert_waiting">Aguardando o dispositivo informar a configuração.</string>
+
+    <!-- Wi-Fi and Bluetooth -->
+    <string name="main_wifi_settings">Configurações de Wi-Fi</string>
+    <string name="main_bluetooth_settings">Configurações de Bluetooth</string>
+    <string name="main_controls_title">Wi-Fi e Bluetooth</string>
+    <!-- "Ask for an app" is the name of a button on the main screen; keep it matching that button's translation -->
+    <string name="main_controls_hint">Quando a criança pode entrar em redes e parear dispositivos sozinha, pelo botão ⋮ ao lado de \"Pedir um app\". As Configurações continuam bloqueadas de qualquer forma.</string>
+</resources>

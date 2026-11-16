@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Wording for the app sections, app time, usage report, schedule, parent mode, app picker and debugging dialogs. -->
+<resources>
+    <!-- Allowed / not allowed right now -->
+    <string name="apps_allowed_now_title">現在許可中</string>
+    <string name="apps_allowed_now_empty">現在許可しているものはありません。下のリストからアプリを一時的に許可できます。</string>
+    <string name="apps_tap_to_pause">アプリをタップすると一時停止できます。</string>
+    <string name="apps_allowed_for_a_while">一時的に許可中</string>
+    <string name="apps_paused_for_a_while">一時停止中</string>
+    <!-- Small note under an app icon; %1$s is a clock time such as 7:00 PM -->
+    <string name="apps_until_time">%1$s まで</string>
+    <!-- Wi-Fi or Bluetooth pill; %1$s is "Wi-Fi" or "Bluetooth", %2$s a clock time -->
+    <string name="apps_control_until">%1$s · %2$s まで</string>
+    <string name="apps_control_paused_until">%1$s · %2$s まで一時停止</string>
+    <!-- %1$s is an app name -->
+    <string name="apps_pause_how_long">%1$s を一時停止する時間</string>
+    <string name="apps_allow_how_long">%1$s を許可する時間</string>
+    <string name="apps_allow_again_now">今すぐ再び許可</string>
+    <!-- Dialog title; %1$s is an app name, %2$s a clock time -->
+    <string name="apps_app_until">%1$s（%2$s まで）</string>
+    <string name="apps_add_30_minutes">30 分追加</string>
+    <string name="apps_stop_now">今すぐ停止</string>
+    <!-- Snackbar; %1$s is an app name -->
+    <string name="apps_app_stopped">%1$s を停止しました</string>
+    <string name="apps_stop_all">一時的に許可中のアプリをすべて停止</string>
+    <string name="apps_all_stopped">一時的に許可中のアプリをすべて停止しました</string>
+    <string name="apps_not_allowed_now_title">現在許可していないアプリ</string>
+    <string name="apps_tap_to_allow">アプリをタップすると一時的に許可できます。</string>
+    <!-- Two-line note under a narrow app icon; %1$s is a clock time -->
+    <string name="apps_paused_until_note">一時停止\n%1$s まで</string>
+
+    <!-- Choosing a length of time -->
+    <string name="apps_until_a_time">時刻を指定…</string>
+    <string name="apps_custom_length">時間を指定…</string>
+    <string name="apps_hours">時間</string>
+    <string name="apps_minutes">分</string>
+    <string name="apps_at_most_24_hours">最大 24 時間です。</string>
+    <!-- Button that confirms a custom length -->
+    <string name="apps_set">設定</string>
+
+    <!-- App time screen -->
+    <string name="apps_app_time_title">アプリの使用時間</string>
+    <string name="apps_app_time_hint">アプリに 1 日の上限を設定するには、メイン画面の「アプリと許可する時間帯」で、そのアプリの横にある ⋮ を使います。</string>
+    <!-- %1$s is the reason the child's device gave, in English -->
+    <string name="apps_usage_error">%1$s。許可するには「Wi-Fi でセットアップを修復」を使ってください。</string>
+
+    <!-- Daily limits; %1$s is the allowance, such as "1 h a day" -->
+    <string name="apps_limit_times_up">%1$s · 今日の時間は終了</string>
+    <string name="apps_limit_no_limit_today">%1$s · 今日は上限なし</string>
+    <string name="apps_limit_not_allowed_today">%1$s · 今日は使用不可</string>
+    <!-- %2$s is a length of time such as "35 min" -->
+    <string name="apps_limit_left">%1$s · 残り %2$s</string>
+    <string name="apps_limit_none">上限なし</string>
+    <string name="apps_limit_not_allowed">使用不可</string>
+    <!-- Lower-case forms, used in the middle of apps_limit_split -->
+    <string name="apps_limit_none_lower">上限なし</string>
+    <string name="apps_limit_not_allowed_lower">使用不可</string>
+    <string name="apps_limit_not_allowed_any_day">毎日使用不可</string>
+    <!-- %1$s is a length of time such as "1 h" -->
+    <string name="apps_limit_per_day">1 日 %1$s</string>
+    <!-- %1$s and %2$s are lengths of time, or "No limit" / "not allowed" -->
+    <string name="apps_limit_split">平日 %1$s、週末 %2$s</string>
+    <string name="apps_limit_varies">曜日ごとに異なる</string>
+    <!-- %1$s is an app name -->
+    <string name="apps_limit_title">%1$s の 1 日の上限</string>
+    <string name="apps_limit_every_day">毎日</string>
+    <string name="apps_limit_weekdays_weekends">平日と週末</string>
+    <string name="apps_limit_each_day">曜日ごと</string>
+    <string name="apps_limit_mon_fri">月曜日～金曜日</string>
+    <string name="apps_limit_sat_sun">土曜日と日曜日</string>
+    <string name="apps_limit_explainer">時間を使い切ると、アプリは翌日まで閉じられます。「一時的に許可」で許可した時間は別枠で、上限には含まれません。</string>
+
+    <!-- App use report -->
+    <string name="apps_app_use_title">アプリの使用状況</string>
+    <string name="apps_no_use_yet">アプリの使用記録はまだありません。</string>
+    <string name="apps_no_use_period">この期間のアプリの使用はありません。</string>
+    <string name="apps_tap_bar">バーをタップするとその日の詳細を表示します。</string>
+    <!-- %1$s is the total time, %2$s the average time per day -->
+    <string name="apps_total_per_day">%1$s · 1 日 %2$s</string>
+    <string name="apps_most_used">よく使うアプリ</string>
+    <string name="apps_include_system">システムアプリを含める</string>
+    <string name="apps_include_system_hint">Google Play 開発者サービスや設定などのバックグラウンド部分</string>
+    <!-- Report periods, on segmented buttons -->
+    <string name="apps_period_day">日</string>
+    <string name="apps_period_week">週</string>
+    <string name="apps_period_month">月</string>
+    <!-- Chart part for all the less used apps together -->
+    <string name="apps_other">その他</string>
+    <!-- Short chart axis labels: minutes, hours, hours and minutes -->
+    <string name="apps_axis_minutes">%1$d分</string>
+    <string name="apps_axis_hours">%1$d時間</string>
+    <string name="apps_axis_hours_minutes">%1$d時間%2$d分</string>
+
+    <!-- Situations -->
+    <string name="apps_mode_bedtime">おやすみ時間</string>
+    <string name="apps_mode_limited">制限時間帯</string>
+    <string name="apps_mode_normal">通常時間帯</string>
+    <!-- Lower-case forms, used inside apps_situation_allowed / apps_situation_not_allowed -->
+    <string name="apps_situation_bedtime">おやすみ時間</string>
+    <string name="apps_situation_limited">制限時間帯</string>
+    <string name="apps_situation_normal">通常時間帯</string>
+    <!-- Snackbar; %1$s is an app name (or Wi-Fi, Bluetooth), %2$s a situation such as "limited hours" -->
+    <string name="apps_situation_allowed">%1$s：%2$s に許可</string>
+    <string name="apps_situation_not_allowed">%1$s：%2$s は許可しない</string>
+    <!-- Column titles over the situation checkboxes; keep short -->
+    <string name="apps_col_normal">通常</string>
+    <string name="apps_col_limited">制限</string>
+    <string name="apps_col_bedtime">おやすみ</string>
+
+    <!-- Apps and when they're allowed -->
+    <string name="apps_table_title">アプリと許可する時間帯</string>
+    <string name="apps_table_hint">チェックを入れたアプリは、その時間帯にお子様のホーム画面に表示されます。チェックのないアプリは一時的な許可でのみ使えます。⋮ で 1 日の使用時間の上限を設定できます。</string>
+    <!-- Read out for an app's menu button; %1$s is an app name -->
+    <string name="apps_more_for">%1$s のその他のオプション</string>
+    <string name="apps_set_limit">1 日の上限を設定…</string>
+    <string name="apps_change_limit">1 日の上限を変更…</string>
+    <string name="apps_remove_limit">1 日の上限を削除</string>
+    <!-- Snackbar; %1$s is an app name -->
+    <string name="apps_limit_removed">%1$s：1 日の上限を削除しました</string>
+    <string name="apps_hide">非表示</string>
+    <string name="apps_hide_untick">非表示（先に 3 つのチェックをすべて外してください）</string>
+    <!-- Snackbars; %1$s is an app name -->
+    <string name="apps_app_hidden">%1$s を非表示にしました</string>
+    <string name="apps_app_shown">%1$s を表示しました</string>
+    <string name="apps_uninstall_menu">アンインストール…</string>
+    <!-- %1$s is an app name -->
+    <string name="apps_uninstall_title">%1$s をアンインストールしますか？</string>
+    <string name="apps_uninstall_body">お子様のデバイスからデータとともに削除されます。この操作は取り消せません。再度インストールする必要があります。</string>
+    <!-- Button -->
+    <string name="apps_uninstall">アンインストール</string>
+    <!-- %1$d is how many apps are hidden -->
+    <string name="apps_hidden_apps">非表示のアプリ（%1$d）</string>
+    <!-- Button that shows a hidden app again -->
+    <string name="apps_show">表示</string>
+
+    <!-- Schedule -->
+    <string name="apps_schedule_title">スケジュール</string>
+    <string name="apps_schedule_empty">制限時間帯やおやすみ時間はまだ設定されていないため、常に通常時間帯です。</string>
+    <string name="apps_days_every_day">毎日</string>
+    <string name="apps_days_weekdays">平日</string>
+    <string name="apps_days_weekends">週末</string>
+    <!-- %1$s is days such as "Weekdays" or "Mon, Wed" -->
+    <string name="apps_rule_all_day">%1$s、終日</string>
+    <!-- %1$s is days, %2$s and %3$s clock times -->
+    <string name="apps_rule_range">%1$s、%2$s～%3$s</string>
+    <!-- Snackbars; %1$s is "Limited hours" or "Bedtime" -->
+    <string name="apps_rule_removed">%1$s を削除しました</string>
+    <string name="apps_rule_added">%1$s を追加しました</string>
+    <string name="apps_rule_changed">%1$s を変更しました</string>
+    <string name="apps_edit">編集…</string>
+    <string name="apps_add_limited">制限時間帯を追加</string>
+    <string name="apps_add_bedtime">おやすみ時間を追加</string>
+    <string name="apps_edit_limited">制限時間帯を編集</string>
+    <string name="apps_edit_bedtime">おやすみ時間を編集</string>
+    <string name="apps_days">曜日</string>
+    <!-- Labels over the start and end times -->
+    <string name="apps_from">開始</string>
+    <string name="apps_until">終了</string>
+    <string name="apps_all_day">終日です。</string>
+    <string name="apps_past_midnight">午前 0 時を過ぎて翌日まで続きます。</string>
+
+    <!-- Parent mode, PIN and starting a situation by hand; %1$s is the child's device name -->
+    <string name="apps_parent_mode_title">%1$s を保護者用にロック解除しますか？</string>
+    <string name="apps_parent_mode_note">お子様のデバイスで設定と Play Store が開けるようになり、手にしている人なら誰でも使えます。時間が終わるか画面がオフになると、再びロックされます。</string>
+    <!-- %1$s is a length of time such as "15 min" -->
+    <string name="apps_for_length">%1$s</string>
+    <string name="apps_pin_title">保護者 PIN を変更</string>
+    <string name="apps_pin_new">新しい PIN（4～8 桁）</string>
+    <string name="apps_pin_again">もう一度入力</string>
+    <string name="apps_pin_hint">お子様のデバイスで使います：時計を 4 秒間長押しします。</string>
+    <!-- %1$s is "Limited hours" or "Bedtime" -->
+    <string name="apps_mode_how_long">%1$s の長さ</string>
+    <string name="apps_start_mode_title">%1$s のデバイスで開始</string>
+    <string name="apps_start_mode_note">その時間帯にチェックを入れたアプリのみ使えます。より厳しいスケジュールがある場合はそちらが優先されます。</string>
+
+    <!-- App picker -->
+    <string name="apps_all_apps">すべてのアプリ</string>
+    <plurals name="apps_count">
+        <item quantity="other">%1$d 個のアプリ</item>
+    </plurals>
+
+    <!-- Debugging; %1$s is the child's device name -->
+    <string name="apps_debugging_title">デバッグをオンにしますか？</string>
+    <string name="apps_debugging_note">修復用：%1$s で USB デバッグとワイヤレス デバッグをオンにします。画面が正常に動作しなくても、パソコンから修復やアップデートができるようになります。一定時間後に自動的にオフになります。\n\nオンの間は、ペア設定済みのパソコンを持つ人なら誰でもデバイスを操作できます。接続先は「最近のイベント」に表示されます。</string>
+    <!-- %1$s is a length of time such as "30 min" -->
+    <string name="apps_debugging_on_for">%1$s オンにする</string>
+    <string name="apps_debugging_off">今すぐオフにする</string>
+</resources>

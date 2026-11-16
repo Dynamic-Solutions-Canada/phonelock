@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
@@ -25,7 +26,8 @@ internal object DeviceControls {
 
     fun isControl(pkg: String) = pkg in ALL
 
-    fun label(id: String) = if (id == BLUETOOTH) "Bluetooth settings" else "Wi-Fi settings"
+    fun label(id: String) =
+        Strings.get(if (id == BLUETOOTH) R.string.main_bluetooth_settings else R.string.main_wifi_settings)
 }
 
 /** [pkgs] without Wi-Fi and Bluetooth, for the app grids and list. */
@@ -57,9 +59,8 @@ internal fun ControlPills(dev: String, ids: List<String>, label: @Composable (St
  */
 @Composable
 internal fun DeviceControlsSection(dev: String, state: PhoneState) {
-    Section("Wi-Fi and Bluetooth") {
-        Text("When they can join networks and pair devices themselves, from the ⋮ button next to " +
-            "\"Ask for an app\". Settings stays locked either way.", style = MaterialTheme.typography.bodySmall)
+    Section(stringResource(R.string.main_controls_title)) {
+        Text(stringResource(R.string.main_controls_hint), style = MaterialTheme.typography.bodySmall)
         SituationHeader()
         DeviceControls.ALL.forEach { id ->
             val mask = if (id in state.home) state.masks[id] ?: (MODE_NORMAL or MODE_LIMITED) else 0

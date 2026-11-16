@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Notifications, alerts and device messages: requests, emergency alerts, unfamiliar screens, quiet-phone alerts, Find and reach. -->
+<resources>
+    <!-- Name shown for a paired device that has no name of its own -->
+    <string name="alerts_device_fallback">Appareil</string>
+
+    <!-- Notification channel names, shown in Android's notification settings -->
+    <string name="alerts_channel_requests">Demandes</string>
+    <string name="alerts_channel_events">Activité de l’appareil</string>
+    <string name="alerts_channel_others">Actions de l’autre parent</string>
+    <string name="alerts_channel_service">Connexion</string>
+    <string name="alerts_channel_emergency">Alertes d’urgence</string>
+    <string name="alerts_channel_emergency_description">Quand un enfant appuie sur SOS. L’alarme sonne à part, comme une alarme.</string>
+    <string name="alerts_channel_emergency_service">Alarme d’urgence en cours</string>
+
+    <!-- Ongoing notification while this app keeps a connection open -->
+    <string name="alerts_service_listening">À l’écoute des appareils associés</string>
+
+    <!-- Short messages after asking a device to do something. %1$s is the child's name. -->
+    <string name="alerts_debugging_on_sent">Activation du débogage demandée à l’appareil de %1$s</string>
+    <string name="alerts_debugging_off_sent">Désactivation du débogage demandée à l’appareil de %1$s</string>
+    <string name="alerts_update_sent">Recherche de mise à jour demandée à l’appareil de %1$s. Les résultats s’affichent dans Événements récents.</string>
+    <!-- %1$s is the child's name, %2$s the app's name -->
+    <string name="alerts_uninstall_sent">Désinstallation de %2$s demandée à l’appareil de %1$s</string>
+    <string name="alerts_pin_sent">Nouveau code PIN parent envoyé à l’appareil de %1$s</string>
+    <string name="alerts_no_answer">Aucune réponse de l’appareil de %1$s. Il est peut-être éteint ou hors ligne ; réessayez plus tard.</string>
+
+    <!-- Activity entries when a message couldn't be sent. %1$d is an HTTP status code; %1$s an error message. -->
+    <string name="alerts_send_failed_http">Envoi impossible (HTTP %1$d)</string>
+    <string name="alerts_send_failed">Envoi impossible : %1$s</string>
+
+    <!-- A request from the child. %1$s is the app or thing asked for, %2$s a length of time such as "30 min". -->
+    <string name="alerts_request_event">A demandé %1$s (%2$s)</string>
+    <string name="alerts_request_notification">Demande %1$s pour %2$s</string>
+
+    <!-- Added to a device notice about low battery or turning off. %1$s is an address, %2$s a time of day. -->
+    <string name="alerts_last_near_at">dernière position près de %1$s à %2$s</string>
+    <string name="alerts_last_near">dernière position près de %1$s</string>
+
+    <!-- Notification buttons: keep them short. %1$s is a length of time such as "30 min". -->
+    <string name="alerts_action_allow_duration">Autoriser %1$s</string>
+    <string name="alerts_action_choose_time">Choisir la durée…</string>
+    <string name="alerts_action_allow_30_min">Autoriser 30 min</string>
+
+    <!-- Quiet-phone alerts. %1$s is a length of time such as "1 h 10 min". -->
+    <string name="alerts_heard_again">Le téléphone donne de nouveau signe de vie</string>
+    <string name="alerts_heard_again_after">Le téléphone donne de nouveau signe de vie après %1$s</string>
+    <string name="alerts_quiet_for">Aucune nouvelle du téléphone depuis %1$s.</string>
+    <!-- %1$s is an address, %2$s a time of day -->
+    <string name="alerts_quiet_last_near">Dernière position près de %1$s à %2$s.</string>
+    <!-- %1$s is a time of day; used when the address is unknown -->
+    <string name="alerts_quiet_last_location">Dernière position connue à %1$s.</string>
+    <!-- %1$d is a battery percentage -->
+    <string name="alerts_battery">Batterie à %1$d %%.</string>
+    <string name="alerts_battery_charging">Batterie à %1$d %%, en charge.</string>
+
+    <!-- Emergency alerts. %1$s is the child's name. -->
+    <string name="alerts_emergency_event">Alerte d’urgence du téléphone de %1$s</string>
+    <string name="alerts_emergency_cancelled_event">Alerte d’urgence annulée : envoyée par erreur</string>
+    <!-- %1$s is the message the child typed -->
+    <string name="alerts_emergency_message_event">Message d’urgence : %1$s</string>
+    <!-- Shown in the list of parents answering an alert when this parent has no name set -->
+    <string name="alerts_a_parent">Un parent</string>
+    <string name="alerts_emergency_title">Urgence : %1$s</string>
+    <string name="alerts_emergency_cancelled_title">Annulée : alerte de %1$s</string>
+    <string name="alerts_emergency_sent_by_mistake">Envoyée par erreur.</string>
+    <!-- %1$s is an address, %2$s a time of day -->
+    <string name="alerts_emergency_near_at">Près de %1$s (%2$s).</string>
+    <string name="alerts_emergency_near">Près de %1$s.</string>
+    <!-- %1$s is a time of day -->
+    <string name="alerts_emergency_location_received">Position reçue (%1$s).</string>
+    <string name="alerts_emergency_waiting_location">En attente de sa position.</string>
+    <!-- %1$s is what the child sent -->
+    <string name="alerts_emergency_she_says">Son message : %1$s.</string>
+    <!-- %1$s is a list of parents' names -->
+    <string name="alerts_emergency_on_it">Pris en charge par : %1$s.</string>
+    <!-- Button: this parent is dealing with the emergency. Also a notification button: keep it short. -->
+    <string name="alerts_emergency_ack">Je m’en occupe</string>
+    <!-- Button: stop the alarm sound without answering. Also a notification button: keep it short. -->
+    <string name="alerts_emergency_silence">Silence</string>
+    <string name="alerts_emergency_alarm">Alarme d’urgence</string>
+    <!-- %1$s is a time of day -->
+    <string name="alerts_emergency_pressed_at">SOS déclenché à %1$s</string>
+    <!-- Map marker for the child's latest position -->
+    <string name="alerts_emergency_latest">Dernière</string>
+    <string name="alerts_emergency_call_her">Appeler</string>
+    <string name="alerts_dismiss">Ignorer</string>
+    <string name="alerts_emergency_none">Aucune alerte d’urgence pour le moment.</string>
+    <string name="alerts_emergency_open_app">Ouvrir PhoneLock</string>
+
+    <!-- Unfamiliar Google screens. %1$s is the app it was opened from, %2$s a short screen name. -->
+    <string name="alerts_screen_shot_failed">Impossible d’ouvrir la capture d’écran</string>
+    <string name="alerts_screen_event_from">A ouvert un écran inconnu des services Google depuis %1$s (%2$s)</string>
+    <!-- %1$s is a short screen name -->
+    <string name="alerts_screen_event">A ouvert un écran inconnu des services Google (%1$s)</string>
+    <!-- %1$s is the app it was opened from -->
+    <string name="alerts_screen_notification_from">A ouvert un écran Google inconnu depuis %1$s</string>
+    <string name="alerts_screen_notification">A ouvert un écran Google inconnu</string>
+    <!-- Button: stop reporting this screen. Also a notification button: keep it short. -->
+    <string name="alerts_screen_mark_ok">Marquer OK</string>
+    <string name="alerts_block">Bloquer</string>
+    <string name="alerts_screen_allowed_message">Autorisé ; vous ne serez plus averti pour cet écran</string>
+    <string name="alerts_screen_blocked_message">Bloqué</string>
+    <string name="alerts_screen_section">Écrans inconnus</string>
+    <string name="alerts_screen_section_detail">Écrans Google qui ne sont ni reconnus comme sûrs ni bloqués. Marquer OK arrête les avertissements pour un écran ; Bloquer ramène votre enfant en arrière dès qu’il s’ouvre.</string>
+    <string name="alerts_screenshot">Capture d’écran</string>
+    <!-- %1$s is the app it was opened from, %2$s a time of day -->
+    <string name="alerts_screen_from_at">Depuis %1$s · %2$s</string>
+    <string name="alerts_close">Fermer</string>
+
+    <!-- Settings > Google screens -->
+    <string name="alerts_rules_section">Écrans Google</string>
+    <string name="alerts_rules_section_detail">Écrans Google qui permettent de sortir du verrouillage. Ils sont bloqués sauf si vous les autorisez ; vous êtes averti quand votre enfant est renvoyé hors de l’un d’eux.</string>
+    <string name="alerts_rule_allowed">Autorisé</string>
+    <!-- %1$s is a time of day -->
+    <string name="alerts_rule_allowed_until">Autorisé jusqu’à %1$s</string>
+    <string name="alerts_rule_blocked">Bloqué</string>
+    <string name="alerts_rule_blocked_default">Bloqué (par défaut)</string>
+    <string name="alerts_rule_reported">Signalé à l’ouverture</string>
+    <string name="alerts_rule_allow_15_min">Autoriser 15 min</string>
+    <string name="alerts_rule_allow_1_hour">Autoriser 1 heure</string>
+    <string name="alerts_rule_allow_until_bedtime">Autoriser jusqu’à l’heure du coucher</string>
+    <string name="alerts_rule_back_to_blocked">Bloquer de nouveau</string>
+    <string name="alerts_rule_forget">Oublier la décision</string>
+
+    <!-- Find and reach card -->
+    <string name="alerts_find_section">Localiser et joindre</string>
+    <string name="alerts_find_activity">Activité</string>
+    <string name="alerts_find_stop_ringing">Arrêter la sonnerie</string>
+    <string name="alerts_find_ringing">Sonnerie…</string>
+    <string name="alerts_find_ring">Faire sonner</string>
+    <string name="alerts_find_capturing">Capture…</string>
+    <string name="alerts_find_view_screen">Voir l’écran</string>
+    <!-- %1$s is the child's name -->
+    <string name="alerts_find_ring_title">Faire sonner le téléphone de %1$s ?</string>
+    <string name="alerts_find_ring_detail">Il sonne à plein volume pendant 2 minutes, même en mode silencieux, jusqu’à ce que quelqu’un appuie sur Arrêter.</string>
+    <string name="alerts_find_device_screen">Écran de l’appareil</string>
+    <string name="alerts_find_keep_refreshing">Actualiser en continu (2 min)</string>
+    <string name="alerts_find_hide">Masquer</string>
+</resources>

@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
@@ -49,9 +50,9 @@ fun QrScanner(onResult: (String) -> Unit, onCancel: () -> Unit) {
 
     if (!granted) {
         Column(Modifier.padding(24.dp)) {
-            Text("Camera access is needed to scan the pairing code.")
-            Button(onClick = { ask.launch(Manifest.permission.CAMERA) }) { Text("Allow camera") }
-            Button(onClick = onCancel) { Text("Cancel") }
+            Text(stringResource(R.string.setup_camera_needed))
+            Button(onClick = { ask.launch(Manifest.permission.CAMERA) }) { Text(stringResource(R.string.setup_allow_camera)) }
+            Button(onClick = onCancel) { Text(stringResource(R.string.cancel)) }
         }
         return
     }
@@ -92,8 +93,8 @@ fun QrScanner(onResult: (String) -> Unit, onCancel: () -> Unit) {
             view
         })
         Column(Modifier.align(Alignment.BottomCenter).padding(32.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("Point at the pairing QR code", color = MaterialTheme.colorScheme.onPrimary)
-            Button(onClick = onCancel) { Text("Cancel") }
+            Text(stringResource(R.string.setup_point_at_code), color = MaterialTheme.colorScheme.onPrimary)
+            Button(onClick = onCancel) { Text(stringResource(R.string.cancel)) }
         }
     }
 }

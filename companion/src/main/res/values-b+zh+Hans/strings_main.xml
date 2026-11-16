@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Main screen, device header, Calls, Contacts, Files, and shared building blocks (pages, lists, dialogs, steps, battery and Wi-Fi settings). -->
+<resources>
+    <!-- Main screen -->
+    <!-- Button that adds another child's device -->
+    <string name="main_add_device">+ 添加设备</string>
+    <string name="main_requests_title">请求</string>
+    <!-- A child's request for more time. %1$s: length asked for, e.g. "30 min"; %2$s: time it was asked -->
+    <string name="main_asked_for">请求 %1$s · %2$s</string>
+    <!-- Button. %1$s: a length of time, e.g. "30 min" -->
+    <string name="main_allow_for">允许 %1$s</string>
+    <string name="main_recent_events_title">最近事件</string>
+
+    <!-- How long ago something happened -->
+    <string name="main_ago_just_now">刚刚</string>
+    <plurals name="main_ago_minutes">
+        <item quantity="other">%1$d 分钟前</item>
+    </plurals>
+    <plurals name="main_ago_hours">
+        <item quantity="other">%1$d 小时前</item>
+    </plurals>
+
+    <!-- Device header -->
+    <string name="main_device_settings">设备设置</string>
+    <!-- Button. %1$s: the running situation in lower case, e.g. "bedtime" -->
+    <string name="main_end_limited_now">立即结束限时时段</string>
+    <string name="main_end_bedtime_now">立即结束就寝时间</string>
+    <string name="main_start_mode">开始限时时段或就寝时间</string>
+    <!-- Label: the child's phone is ringing (sounding to be found) -->
+    <string name="main_ringing">正在响铃</string>
+    <!-- %1$s: a time of day -->
+    <string name="main_parent_mode_until">家长模式至 %1$s</string>
+    <string name="main_parent_mode_on">家长模式已开启</string>
+    <string name="main_lock_now">立即锁定</string>
+    <!-- What the child is doing. %1$s: app name; %2$s: how long it's been open, e.g. "open 12 min" -->
+    <string name="main_using_app">正在使用 %1$s · %2$s</string>
+    <!-- As main_using_app, from an older report. %3$s: the time of that report -->
+    <string name="main_using_app_as_of">正在使用 %1$s · %2$s（截至 %3$s）</string>
+    <string name="main_just_opened">刚打开</string>
+    <!-- %1$s: a length of time, e.g. "12 min" -->
+    <string name="main_open_for">已打开 %1$s</string>
+    <string name="main_home_screen">在主屏幕上</string>
+    <!-- %1$s: a time of day -->
+    <string name="main_home_screen_as_of">在主屏幕上（截至 %1$s）</string>
+    <string name="main_screen_off">屏幕已关闭</string>
+    <!-- %1$s: a time of day -->
+    <string name="main_screen_off_as_of">屏幕已关闭（截至 %1$s）</string>
+    <!-- Whether the device is answering. %1$s: the rest of the status line -->
+    <string name="main_status_connecting">正在连接… · %1$s</string>
+    <string name="main_status_no_reply">尚无回应</string>
+    <!-- %1$s: how long ago, e.g. "18 min ago" -->
+    <string name="main_status_not_answering">无响应 · 最后在线：%1$s</string>
+    <!-- %1$s: how long ago, e.g. "3 min ago" -->
+    <string name="main_status_checking">正在检查… · 最后在线：%1$s</string>
+    <!-- %1$s: how long ago, e.g. "3 min ago" -->
+    <string name="main_status_getting_settings">正在获取设置… · 最后在线：%1$s</string>
+    <!-- %1$s: how long ago, e.g. "3 min ago" -->
+    <string name="main_status_seen">最后在线：%1$s</string>
+    <!-- %1$s: a time, possibly with its weekday -->
+    <string name="main_started_by_hand_until">手动开始，至 %1$s</string>
+    <!-- %1$s: a time, possibly with its weekday -->
+    <string name="main_until">至 %1$s</string>
+    <!-- What comes next. %1$s: a situation, e.g. "Bedtime"; %2$s: a time -->
+    <string name="main_mode_at">%2$s 开始%1$s</string>
+    <!-- Battery level. %1$d: percent -->
+    <string name="main_percent">%1$d%%</string>
+    <string name="main_battery_charging">正在充电</string>
+    <!-- Battery is low -->
+    <string name="main_battery_low">电量低</string>
+
+    <!-- Page, lists and steps -->
+    <!-- Accessibility label for a row's menu button. %1$s: the row's title -->
+    <string name="main_more_for">%1$s 的更多选项</string>
+    <!-- Accessibility labels for arrows stepping through days -->
+    <string name="main_earlier">前一天</string>
+    <string name="main_later">后一天</string>
+    <string name="main_get_started">开始使用</string>
+    <!-- %1$d: this step; %2$d: number of steps -->
+    <string name="main_step_of">第 %1$d 步，共 %2$d 步</string>
+    <!-- %1$d: how many more rows can be shown -->
+    <string name="main_show_more">显示更多（%1$d）</string>
+    <string name="main_show_less">收起</string>
+    <string name="main_ok">确定</string>
+    <string name="main_name">名称</string>
+
+    <!-- Main screen tiles and page titles -->
+    <string name="main_calls_title">通话</string>
+    <string name="main_contacts_title">联系人</string>
+    <string name="main_files_title">文件</string>
+    <string name="main_app_time_title">应用时间</string>
+
+    <!-- Calls -->
+    <!-- %1$s: a phone number -->
+    <string name="main_already_safe">%1$s 已在安全名单中</string>
+    <!-- %1$s: a contact's name or number -->
+    <string name="main_removed_from_safe_list">已将 %1$s 从安全名单中移除</string>
+    <string name="main_limits_title">限制</string>
+    <string name="main_limit_out">仅允许拨打安全名单中的号码</string>
+    <string name="main_limit_out_hint">紧急号码始终可以拨打。</string>
+    <string name="main_limit_in">仅接听安全名单中的来电</string>
+    <string name="main_limit_in_hint">其他号码和隐藏号码的来电会被拒接。</string>
+    <string name="main_safe_list_title">安全名单</string>
+    <string name="main_safe_list_empty">安全名单中还没有号码。</string>
+    <string name="main_no_name">无名称</string>
+    <string name="main_remove_from_safe_list">从安全名单中移除</string>
+    <string name="main_add_to_safe_list">添加到安全名单</string>
+    <!-- Button: add a number to the safe list from the device's contacts -->
+    <string name="main_from_contacts">从联系人中选择</string>
+    <string name="main_add_number">添加号码</string>
+    <string name="main_call_log_title">通话记录</string>
+    <string name="main_no_call_log_access">该设备尚未允许读取通话记录。</string>
+    <string name="main_no_calls">还没有通话。</string>
+    <string name="main_hidden_number">隐藏号码</string>
+    <!-- Call directions -->
+    <string name="main_call_out">去电</string>
+    <string name="main_call_in">来电</string>
+    <string name="main_call_missed">未接</string>
+    <string name="main_call_declined">已拒接</string>
+    <string name="main_call_blocked">已拦截</string>
+    <string name="main_call_attempt">被拦截的拨号</string>
+    <string name="main_call_voicemail">语音信箱</string>
+    <!-- Tag next to a number on the safe list -->
+    <string name="main_safe_tag">安全</string>
+    <string name="main_phone_number">电话号码</string>
+    <string name="main_choose_contact">选择联系人</string>
+    <string name="main_no_contacts">没有带电话号码的联系人。</string>
+    <string name="main_all_contacts_safe">所有联系人的号码都已在安全名单中。</string>
+
+    <!-- Contacts -->
+    <string name="main_on_device_title">设备上的联系人</string>
+    <string name="main_delete_contact">删除联系人…</string>
+    <string name="main_add_contact">添加联系人</string>
+    <!-- %1$s: a contact's name -->
+    <string name="main_delete_contact_title">要删除 %1$s 吗？</string>
+    <string name="main_delete_contact_body">该联系人会从孩子的设备和 Google 通讯录中删除。孩子会收到提示。</string>
+
+    <!-- Files -->
+    <string name="main_no_file_access">该设备尚未允许访问文件。</string>
+    <string name="main_upload_here">上传到此处</string>
+    <string name="main_new_folder">新建文件夹</string>
+    <!-- Button: start choosing files -->
+    <string name="main_select">选择</string>
+    <!-- Title of the device's top-level folder -->
+    <string name="main_storage">存储空间</string>
+    <string name="main_folder_empty">此文件夹为空。</string>
+    <string name="main_long_press_hint">长按可选择多项。</string>
+    <string name="main_folder">文件夹</string>
+    <string name="main_save_to_downloads">保存到下载</string>
+    <!-- Menu item that opens a dialog -->
+    <string name="main_rename_ellipsis">重命名…</string>
+    <!-- Dialog title -->
+    <string name="main_rename">重命名</string>
+    <!-- Menu item or button that opens a dialog -->
+    <string name="main_delete_ellipsis">删除…</string>
+    <!-- %1$s: a file or folder name -->
+    <string name="main_delete_item_title">要删除 %1$s 吗？</string>
+    <plurals name="main_delete_items_title">
+        <item quantity="other">要删除 %1$d 项吗？</item>
+    </plurals>
+    <!-- After a list of names, for the ones not listed -->
+    <plurals name="main_and_more">
+        <item quantity="other">等另外 %1$d 项</item>
+    </plurals>
+    <string name="main_delete_files_body">这些文件会从孩子的设备上删除。此操作无法撤消。</string>
+    <string name="main_delete_folders_body">文件夹会连同其中的所有内容一起删除。它们会从孩子的设备上删除。此操作无法撤消。</string>
+    <plurals name="main_selected">
+        <item quantity="other">已选择 %1$d 项</item>
+    </plurals>
+    <string name="main_select_all">全选</string>
+    <plurals name="main_save_files">
+        <item quantity="other">保存 %1$d 个文件</item>
+    </plurals>
+    <string name="main_folders_not_saved">只会保存文件，不会保存文件夹。</string>
+    <!-- A file transfer's progress. %1$s: what is happening, e.g. "Downloading photo.jpg"; %2$d: percent done -->
+    <string name="main_transfer_progress">%1$s %2$d%%</string>
+
+    <!-- Device settings: alerts -->
+    <string name="main_quiet_alert_title">设备失联多久后提醒我</string>
+    <!-- Choice that turns an alert off -->
+    <string name="main_off">关闭</string>
+    <string name="main_quiet_alert_hint">仅在这部手机上提醒。会告诉你它最后的位置和电量。</string>
+    <string name="main_battery_alert_title">低电量提醒</string>
+    <string name="main_battery_alert_waiting">正在等待设备报告其设置。</string>
+
+    <!-- Wi-Fi and Bluetooth -->
+    <string name="main_wifi_settings">Wi-Fi 设置</string>
+    <string name="main_bluetooth_settings">Bluetooth 设置</string>
+    <string name="main_controls_title">Wi-Fi 和 Bluetooth</string>
+    <!-- "Ask for an app" is the name of a button on the main screen; keep it matching that button's translation -->
+    <string name="main_controls_hint">孩子何时可以通过“申请应用”旁边的 ⋮ 按钮自行连接网络和配对设备。无论如何，“设置”都会保持锁定。</string>
+</resources>

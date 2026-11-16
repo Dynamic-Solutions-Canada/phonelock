@@ -58,10 +58,11 @@ object ScreenAlerts {
             }
             val a = Alert(id, d.id, m.optLong("ts", System.currentTimeMillis()), m.optString("screen"),
                 m.optString("name"), m.optString("from"), image,
-                m.optString("error").takeIf { it.isNotEmpty() } ?: if (image == null && attachmentUrl != null) "Couldn't open the screenshot" else null)
+                m.optString("error").takeIf { it.isNotEmpty() } ?: if (image == null && attachmentUrl != null) Strings.get(R.string.alerts_screen_shot_failed) else null)
             add(a)
-            val where = if (a.from.isNotEmpty()) " from ${a.from}" else ""
-            Hub.addEvent(a.dev, "Opened an unfamiliar Google services screen$where (${a.name})", a.ts)
+            val text = if (a.from.isNotEmpty()) Strings.get(R.string.alerts_screen_event_from, a.from, a.name)
+                else Strings.get(R.string.alerts_screen_event, a.name)
+            Hub.addEvent(a.dev, text, a.ts)
             notify(a)
         }
     }
@@ -76,7 +77,7 @@ object ScreenAlerts {
             "ok", "block" -> {
                 Hub.setScreenRule(a.dev, a.screen, kind)
                 remove { it.dev == a.dev && it.screen == a.screen }
-                Undo.notify(if (kind == "ok") "Allowed; you won't be told about this screen again" else "Blocked")
+                Undo.notify(Strings.get(if (kind == "ok") R.string.alerts_screen_allowed_message else R.string.alerts_screen_blocked_message))
             }
             else -> remove { it.id == id }
         }
@@ -153,15 +154,16 @@ object ScreenAlerts {
                 Intent(app, ActionReceiver::class.java).putExtra("alert", a.id).putExtra("kind", kind),
                 PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)).build()
 
-        val where = if (a.from.isNotEmpty()) " from ${a.from}" else ""
+        val text = if (a.from.isNotEmpty()) Strings.get(R.string.alerts_screen_notification_from, a.from)
+            else Strings.get(R.string.alerts_screen_notification)
         val b = Notification.Builder(app, "requests")
             .setSmallIcon(android.R.drawable.ic_lock_lock)
             .setContentTitle(Hub.deviceName(a.dev))
-            .setContentText("Opened an unfamiliar Google screen$where")
+            .setContentText(text)
             .setContentIntent(open)
             .setAutoCancel(true)
-            .addAction(action("Mark OK", "ok", a.id.hashCode() + 1))
-            .addAction(action("Block", "block", a.id.hashCode() + 2))
+            .addAction(action(Strings.get(R.string.alerts_screen_mark_ok), "ok", a.id.hashCode() + 1))
+            .addAction(action(Strings.get(R.string.alerts_block), "block", a.id.hashCode() + 2))
         a.image?.let { BitmapFactory.decodeFile(it) }?.let { bmp ->
             b.setLargeIcon(bmp).setStyle(Notification.BigPictureStyle().bigPicture(bmp))
         }

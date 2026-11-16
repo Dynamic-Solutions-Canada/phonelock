@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Wording shared across the app. Each screen or feature keeps its own wording in its own
+     strings_<area>.xml beside this file; every file here needs the same file, with the same names, in each
+     values-<language> folder. Names, app labels and anything typed by a person are never translated. -->
+<resources>
+    <string name="app_name">Phone Lock</string>
+
+    <!-- Common buttons and labels: use these rather than adding another copy -->
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="done">Done</string>
+    <string name="open">Open</string>
+    <string name="remove">Remove</string>
+    <string name="delete">Delete</string>
+    <string name="refresh">Refresh</string>
+    <string name="try_again">Try again</string>
+    <string name="back">Back</string>
+    <string name="next">Next</string>
+    <string name="add">Add</string>
+    <string name="allow">Allow</string>
+    <string name="deny">Deny</string>
+    <string name="undo">Undo</string>
+    <string name="your_name">Your name</string>
+    <string name="child_device_name">Child\'s device name</string>
+
+    <!-- Lengths of time, as fmtMinutes() writes them -->
+    <string name="duration_minutes">%1$d min</string>
+    <string name="duration_hours">%1$d h</string>
+    <string name="duration_hours_minutes">%1$d h %2$d min</string>
+
+    <!-- Settings > Language -->
+    <string name="language_title">Language</string>
+    <string name="language_match_device">Match device</string>
+    <string name="language_detail">The language this app uses on this phone</string>
+</resources>

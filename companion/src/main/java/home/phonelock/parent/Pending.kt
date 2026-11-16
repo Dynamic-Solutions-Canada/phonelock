@@ -64,7 +64,7 @@ object Pending {
                 change(dev, kind, id) { null }
                 _noAnswer.update { it + (dev to (it[dev].orEmpty() + kind)) }
                 // Said in the snackbar, over the page, rather than as a line that pushes content down.
-                Undo.notify("No answer from ${Hub.deviceName(dev)}'s device. It may be off or offline; try again later.")
+                Undo.notify(Strings.get(R.string.alerts_no_answer, Hub.deviceName(dev)))
             }
         }, GIVE_UP_MS)
     }

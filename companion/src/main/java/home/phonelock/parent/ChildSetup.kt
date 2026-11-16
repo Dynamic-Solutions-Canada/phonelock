@@ -83,20 +83,20 @@ object ChildSetup {
     )
 
     /** The features that need a one-time grant over adb, as (what it's for, shell command). */
-    private val GRANTS = listOf(
+    private val GRANTS = listOf<Pair<Int, String>>(
         // Added to whatever accessibility services are on (e.g. TalkBack), not replacing them.
-        "Screen view" to "s=\$(settings get secure enabled_accessibility_services); " +
+        R.string.setup_grant_screen_view to "s=\$(settings get secure enabled_accessibility_services); " +
             "case \"\$s\" in *$LOCK_PACKAGE/*) ;; ''|null) settings put secure enabled_accessibility_services $LOCK_PACKAGE/$LOCK_PACKAGE.ScreenService ;; " +
             "*) settings put secure enabled_accessibility_services \"\$s:$LOCK_PACKAGE/$LOCK_PACKAGE.ScreenService\" ;; esac" +
             " && settings put secure accessibility_enabled 1",
-        "Keeping screen view on" to "pm grant $LOCK_PACKAGE android.permission.WRITE_SECURE_SETTINGS",
-        "Ringing through Do Not Disturb" to "cmd notification allow_dnd $LOCK_PACKAGE",
-        "Screening incoming calls" to "cmd role add-role-holder android.app.role.CALL_SCREENING $LOCK_PACKAGE",
-        "Limiting outgoing calls" to "cmd role add-role-holder android.app.role.CALL_REDIRECTION $LOCK_PACKAGE",
-        "Call log for parents" to "pm grant $LOCK_PACKAGE android.permission.READ_CALL_LOG",
-        "App use for parents" to "appops set $LOCK_PACKAGE GET_USAGE_STATS allow",
-        "Files for parents" to "appops set $LOCK_PACKAGE MANAGE_EXTERNAL_STORAGE allow",
-        "Working while idle (battery saver exemption)" to "dumpsys deviceidle whitelist +$LOCK_PACKAGE",
+        R.string.setup_grant_keep_screen_view to "pm grant $LOCK_PACKAGE android.permission.WRITE_SECURE_SETTINGS",
+        R.string.setup_grant_dnd to "cmd notification allow_dnd $LOCK_PACKAGE",
+        R.string.setup_grant_screen_calls to "cmd role add-role-holder android.app.role.CALL_SCREENING $LOCK_PACKAGE",
+        R.string.setup_grant_limit_calls to "cmd role add-role-holder android.app.role.CALL_REDIRECTION $LOCK_PACKAGE",
+        R.string.setup_grant_call_log to "pm grant $LOCK_PACKAGE android.permission.READ_CALL_LOG",
+        R.string.setup_grant_app_use to "appops set $LOCK_PACKAGE GET_USAGE_STATS allow",
+        R.string.setup_grant_files to "appops set $LOCK_PACKAGE MANAGE_EXTERNAL_STORAGE allow",
+        R.string.setup_grant_idle to "dumpsys deviceidle whitelist +$LOCK_PACKAGE",
     )
 
     /** This phone's adb key and certificate, kept so a later "Fix setup" on the same device may skip pairing. */
@@ -114,7 +114,7 @@ object ChildSetup {
     /** Starts a setup; progress appears in [run]. Ignored while one is already running. */
     fun start(req: Request) {
         if (_run.value?.let { !it.finished } == true) return
-        _run.value = SetupRun(STEPS.map { SetupStep(it) })
+        _run.value = SetupRun(STEPS.map { SetupStep(Strings.get(it)) })
         scope.launch {
             try {
                 perform(req)
@@ -128,15 +128,15 @@ object ChildSetup {
     // ---------- the steps ----------
 
     private val STEPS = listOf(
-        "Pair with the device",
-        "Connect",
-        "Check the device",
-        "Download the lock app",
-        "Install the lock app",
-        "Make it the device owner",
-        "Connect it to this app",
-        "Turn on features",
-        "Turn off debugging",
+        R.string.setup_step_pair,
+        R.string.setup_step_connect,
+        R.string.setup_step_check,
+        R.string.setup_step_download,
+        R.string.setup_step_install,
+        R.string.setup_step_owner,
+        R.string.setup_step_connect_app,
+        R.string.setup_step_features,
+        R.string.setup_step_debugging_off,
     )
 
     private suspend fun perform(req: Request) {
@@ -145,7 +145,7 @@ object ChildSetup {
             try {
                 AdbPairing.pair(identity, req.host, req.pairPort, req.code.trim(), "phonelock@" + Build.MODEL.replace(' ', '-'))
             } catch (e: AdbPairing.PairingRefused) {
-                throw SetupError(e.message ?: "Pairing refused")
+                throw SetupError(e.message ?: Strings.get(R.string.setup_pairing_refused))
             }
             null
         }
@@ -154,12 +154,12 @@ object ChildSetup {
         lateinit var adb: AdbConnection
         step(1) {
             val port = req.connectPort ?: findConnectPort(req.host)
-                ?: throw SetupError("Couldn't find the device's debugging port. Keep Wireless debugging open on it and try again.")
+                ?: throw SetupError(Strings.get(R.string.setup_no_debugging_port))
             adb = AdbConnection.connect(identity, req.host, port)
             val ok = runCatching { adb.shell("echo ok").output.trim() == "ok" }.getOrDefault(false)
             if (!ok) {
                 adb.close()
-                throw SetupError("The device didn't answer")
+                throw SetupError(Strings.get(R.string.setup_device_no_answer))
             }
             null
         }
@@ -173,54 +173,52 @@ object ChildSetup {
             var othersDevice = false
             step(2) {
                 val sdk = device.shell("getprop ro.build.version.sdk").output.trim().toIntOrNull() ?: 0
-                if (sdk < MIN_SDK) throw SetupError("This device runs an Android version older than 13")
+                if (sdk < MIN_SDK) throw SetupError(Strings.get(R.string.setup_android_too_old))
                 when (deviceOwner(device)) {
                     LOCK_PACKAGE -> {
                         owned = true
                         // Fail closed: a missing reply must not be read as "not paired" and overwrite a pairing.
                         val st = status(device)
                         if (!st.contains("owner=true") || !st.contains("paired=")) {
-                            throw SetupError("PhoneLock on the device didn't answer. Try again.")
+                            throw SetupError(Strings.get(R.string.setup_lock_no_answer))
                         }
                         val hash = Regex("topic=(\\w+)").find(st)?.groupValues?.get(1)
                         mine = Hub.devices.value.firstOrNull { topicHash(it.topic) == hash }
                         val paired = st.contains("paired=true")
                         if (req.existing != null && mine?.id != req.existing.id) {
-                            throw SetupError("This isn't ${req.existing.name}'s device. Open Wireless debugging on the right one.")
+                            throw SetupError(Strings.get(R.string.setup_wrong_device, req.existing.name))
                         }
                         othersDevice = paired && mine == null
                         when {
-                            req.existing != null -> "Checking its features"
-                            mine != null -> "Already connected to this app: carrying on"
-                            othersDevice -> "Set up by another parent: checking its features only"
-                            else -> "PhoneLock is installed but wasn't connected: continuing from there"
+                            req.existing != null -> Strings.get(R.string.setup_note_checking_features)
+                            mine != null -> Strings.get(R.string.setup_note_already_mine)
+                            othersDevice -> Strings.get(R.string.setup_note_other_parent)
+                            else -> Strings.get(R.string.setup_note_not_connected)
                         }
                     }
                     null -> {
-                        if (req.existing != null) throw SetupError("PhoneLock isn't set up on this device. " +
-                            "Use Add a child's device instead.")
+                        if (req.existing != null) throw SetupError(Strings.get(R.string.setup_not_set_up))
                         val accounts = Regex("Accounts: (\\d+)").find(device.shell("dumpsys account").output)
                             ?.groupValues?.get(1)?.toIntOrNull() ?: 0
-                        if (accounts > 0) throw SetupError("Remove the accounts on the device first (Settings > " +
-                            "Passwords & accounts); add them back afterwards in parent mode")
+                        if (accounts > 0) throw SetupError(Strings.get(R.string.setup_remove_accounts_first))
                         val users = device.shell("pm list users").output.lines().count { it.contains("UserInfo{") }
-                        if (users > 1) throw SetupError("Remove the device's other users first (Settings > System > Multiple users)")
+                        if (users > 1) throw SetupError(Strings.get(R.string.setup_remove_users_first))
                         null
                     }
-                    else -> throw SetupError("Another app already manages this device (device owner)")
+                    else -> throw SetupError(Strings.get(R.string.setup_other_owner))
                 }
             }
 
             // 4 to 6. Install and take ownership: only for a device PhoneLock doesn't manage yet.
             if (owned) {
-                listOf(3, 4, 5).forEach { skip(it, "Already done") }
+                listOf(3, 4, 5).forEach { skip(it, Strings.get(R.string.setup_already_done)) }
             } else {
                 lateinit var apk: File
                 step(3) { apk = downloadLockApp(); null }
                 step(4) { device.install(apk); null }
                 step(5) {
                     val out = device.shell("dpm set-device-owner $ADMIN")
-                    if (!out.allOutput.contains("Success")) throw SetupError(out.allOutput.trim().lines().lastOrNull() ?: "Refused")
+                    if (!out.allOutput.contains("Success")) throw SetupError(out.allOutput.trim().lines().lastOrNull() ?: Strings.get(R.string.setup_refused))
                     null
                 }
             }
@@ -231,32 +229,33 @@ object ChildSetup {
             var reachable = false
             when {
                 dev != null -> {
-                    set(6, StepState.RUNNING, "Checking it answers…")
+                    set(6, StepState.RUNNING, Strings.get(R.string.setup_checking_answers))
                     reachable = awaitReply(dev)
-                    if (reachable) set(6, StepState.DONE, "Already connected") else set(6, StepState.FAILED, NOT_ANSWERING)
+                    if (reachable) set(6, StepState.DONE, Strings.get(R.string.setup_already_connected))
+                    else set(6, StepState.FAILED, Strings.get(NOT_ANSWERING))
                     _run.update { it?.copy(deviceId = dev) }
                 }
-                othersDevice -> skip(6, "Connected to another parent")
+                othersDevice -> skip(6, Strings.get(R.string.setup_connected_other_parent))
                 else -> {
                     set(6, StepState.RUNNING, null)
                     val id = pair(device, req)
                     reachable = awaitReply(id)
-                    if (reachable) set(6, StepState.DONE, null) else set(6, StepState.FAILED, NOT_ANSWERING)
+                    if (reachable) set(6, StepState.DONE, null) else set(6, StepState.FAILED, Strings.get(NOT_ANSWERING))
                 }
             }
 
             // 8. One-time grants. A refused one is reported but doesn't stop setup (the rest still work).
             set(7, StepState.RUNNING, null)
-            val refused = GRANTS.filter { (_, cmd) -> device.shell(cmd).exitCode != 0 }.map { it.first }
+            val refused = GRANTS.filter { (_, cmd) -> device.shell(cmd).exitCode != 0 }.map { Strings.get(it.first) }
             if (refused.isEmpty()) set(7, StepState.DONE, null)
-            else set(7, StepState.FAILED, "Not turned on: " + refused.joinToString(", "))
+            else set(7, StepState.FAILED, Strings.get(R.string.setup_not_turned_on, refused.joinToString(", ")))
 
             // 9. Lock adb away again (this ends the connection), only once the device has answered this app
             // through the hub, and never on another parent's device.
             when {
-                !req.turnOffDebugging -> skip(8, "Left on, as chosen")
-                othersDevice -> skip(8, "Left on: it's another parent's device")
-                !reachable -> skip(8, "Left on, because the device hasn't answered through the internet yet")
+                !req.turnOffDebugging -> skip(8, Strings.get(R.string.setup_debugging_left_on_chosen))
+                othersDevice -> skip(8, Strings.get(R.string.setup_debugging_left_on_other))
+                !reachable -> skip(8, Strings.get(R.string.setup_debugging_left_on_unreachable))
                 else -> {
                     set(8, StepState.RUNNING, null)
                     // Either the receiver confirms, or the connection drops as adb switches off: both mean done.
@@ -266,7 +265,7 @@ object ChildSetup {
                     if (reply.isFailure || reply.getOrNull()?.startsWith("allow_debugging=false") == true) {
                         set(8, StepState.DONE, null)
                     } else {
-                        set(8, StepState.FAILED, "The device didn't confirm; debugging may still be on")
+                        set(8, StepState.FAILED, Strings.get(R.string.setup_debugging_not_confirmed))
                     }
                 }
             }
@@ -276,17 +275,18 @@ object ChildSetup {
         val r = _run.value
         val debugOff = r?.steps?.getOrNull(8)?.state == StepState.DONE
         val grantsFailed = r?.steps?.getOrNull(7)?.state == StepState.FAILED
+        val outcome = when {
+            req.existing != null -> Strings.get(R.string.setup_outcome_fixed)
+            added == null -> Strings.get(R.string.setup_outcome_other_parent)
+            else -> Strings.get(R.string.setup_outcome_done, req.childName)
+        }
         _run.update {
-            it?.copy(finished = true, failed = false, deviceId = added, debuggingOff = debugOff, outcome = when {
-                req.existing != null -> "Setup checked and fixed."
-                added == null -> "This device was already set up by another parent. Ask them to share it with you " +
-                    "(device settings > Share with another parent)."
-                else -> "${req.childName} is set up and connected to this app."
-            } + if (grantsFailed) " Some features couldn't be turned on; see above." else "")
+            it?.copy(finished = true, failed = false, deviceId = added, debuggingOff = debugOff,
+                outcome = if (grantsFailed) Strings.get(R.string.setup_outcome_some_features_failed, outcome) else outcome)
         }
     }
 
-    private const val NOT_ANSWERING = "It hasn't answered through the internet yet. Check its connection; debugging stays on until it does."
+    private val NOT_ANSWERING = R.string.setup_not_answering
 
     /**
      * Hands the new device its pairing and parent PIN in one go, after first saving it in this app, so the
@@ -308,7 +308,8 @@ object ChildSetup {
                 Hub.removeDevice(d.id)
                 _run.update { it?.copy(deviceId = null) }
             }
-            throw SetupError("The device didn't accept the pairing: ${reply ?: "no answer"}. Try again.")
+            throw SetupError(if (reply != null) Strings.get(R.string.setup_pairing_not_accepted, reply)
+                else Strings.get(R.string.setup_pairing_no_answer))
         }
         return d.id
     }
@@ -371,12 +372,12 @@ object ChildSetup {
         try {
             Releases.download(Setup.LOCK_APK_URL, f, maxBytes = 50L * 1024 * 1024)
         } catch (e: java.io.FileNotFoundException) {
-            throw SetupError("Download failed (HTTP 404)")
+            throw SetupError(Strings.get(R.string.setup_download_404))
         }
         val info = Releases.inspect(app.packageManager, f)
         if (info?.packageName != LOCK_PACKAGE || info.signer != Setup.LOCK_SIGNATURE_SHA256) {
             f.delete()
-            throw SetupError("The download isn't a genuine PhoneLock lock app")
+            throw SetupError(Strings.get(R.string.setup_not_genuine))
         }
         return f
     }

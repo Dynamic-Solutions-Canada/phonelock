@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 
 /**
@@ -22,14 +23,20 @@ internal fun QuietAlertSetting(dev: String) {
     val all by QuietWatch.minutes.collectAsState()
     val current = all[dev] ?: QuietWatch.minutesFor(dev)
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text("Alert me when there's no word from it for", style = MaterialTheme.typography.labelLarge)
+        Text(stringResource(R.string.main_quiet_alert_title), style = MaterialTheme.typography.labelLarge)
         FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
             QuietWatch.CHOICES.forEach { m ->
                 FilterChip(selected = current == m, onClick = { QuietWatch.setMinutes(dev, m) },
-                    label = { Text(if (m == 0) "Off" else if (m < 60) "$m min" else "${m / 60} h") })
+                    label = {
+                        Text(when {
+                            m == 0 -> stringResource(R.string.main_off)
+                            m < 60 -> stringResource(R.string.duration_minutes, m)
+                            else -> stringResource(R.string.duration_hours, m / 60)
+                        })
+                    })
             }
         }
-        Text("Only on this phone. Says where it was last and its battery.", style = MaterialTheme.typography.bodySmall,
+        Text(stringResource(R.string.main_quiet_alert_hint), style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
@@ -46,15 +53,15 @@ private val ALERT_LEVELS = listOf(0, 10, 15, 20, 30)
 internal fun BatteryAlertSetting(dev: String, state: PhoneState?) {
     val current = state?.battAlert ?: -1
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text("Low battery alert", style = MaterialTheme.typography.labelLarge)
+        Text(stringResource(R.string.main_battery_alert_title), style = MaterialTheme.typography.labelLarge)
         if (current < 0) {
-            Text("Waiting for the device to report its setting.", style = MaterialTheme.typography.bodySmall)
+            Text(stringResource(R.string.main_battery_alert_waiting), style = MaterialTheme.typography.bodySmall)
             return@Column
         }
         FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
             ALERT_LEVELS.forEach { level ->
                 FilterChip(selected = current == level, onClick = { Hub.setBatteryAlert(dev, level) },
-                    label = { Text(if (level == 0) "Off" else "$level%") })
+                    label = { Text(if (level == 0) stringResource(R.string.main_off) else stringResource(R.string.main_percent, level)) })
             }
         }
     }

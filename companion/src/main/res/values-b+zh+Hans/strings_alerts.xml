@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Notifications, alerts and device messages: requests, emergency alerts, unfamiliar screens, quiet-phone alerts, Find and reach. -->
+<resources>
+    <!-- Name shown for a paired device that has no name of its own -->
+    <string name="alerts_device_fallback">设备</string>
+
+    <!-- Notification channel names, shown in Android's notification settings -->
+    <string name="alerts_channel_requests">请求</string>
+    <string name="alerts_channel_events">设备动态</string>
+    <string name="alerts_channel_others">其他家长的操作</string>
+    <string name="alerts_channel_service">连接</string>
+    <string name="alerts_channel_emergency">紧急警报</string>
+    <string name="alerts_channel_emergency_description">孩子按下 SOS 时通知。警报声会作为闹钟单独响起。</string>
+    <string name="alerts_channel_emergency_service">紧急警报声正在响起</string>
+
+    <!-- Ongoing notification while this app keeps a connection open -->
+    <string name="alerts_service_listening">正在接收已配对设备的消息</string>
+
+    <!-- Short messages after asking a device to do something. %1$s is the child's name. -->
+    <string name="alerts_debugging_on_sent">已请求 %1$s 的设备开启调试</string>
+    <string name="alerts_debugging_off_sent">已请求 %1$s 的设备关闭调试</string>
+    <string name="alerts_update_sent">已请求 %1$s 的设备检查更新。结果会显示在“最近事件”中。</string>
+    <!-- %1$s is the child's name, %2$s the app's name -->
+    <string name="alerts_uninstall_sent">已请求 %1$s 的设备卸载 %2$s</string>
+    <string name="alerts_pin_sent">新的家长 PIN 码已发送到 %1$s 的设备</string>
+    <string name="alerts_no_answer">%1$s 的设备没有回应。它可能已关机或离线，请稍后重试。</string>
+
+    <!-- Activity entries when a message couldn't be sent. %1$d is an HTTP status code; %1$s an error message. -->
+    <string name="alerts_send_failed_http">无法发送（HTTP %1$d）</string>
+    <string name="alerts_send_failed">无法发送：%1$s</string>
+
+    <!-- A request from the child. %1$s is the app or thing asked for, %2$s a length of time such as "30 min". -->
+    <string name="alerts_request_event">请求使用 %1$s（%2$s）</string>
+    <string name="alerts_request_notification">请求使用 %1$s %2$s</string>
+
+    <!-- Added to a device notice about low battery or turning off. %1$s is an address, %2$s a time of day. -->
+    <string name="alerts_last_near_at">%2$s 时最后位于 %1$s 附近</string>
+    <string name="alerts_last_near">最后位于 %1$s 附近</string>
+
+    <!-- Notification buttons: keep them short. %1$s is a length of time such as "30 min". -->
+    <string name="alerts_action_allow_duration">允许 %1$s</string>
+    <string name="alerts_action_choose_time">选择时长…</string>
+    <string name="alerts_action_allow_30_min">允许 30 分钟</string>
+
+    <!-- Quiet-phone alerts. %1$s is a length of time such as "1 h 10 min". -->
+    <string name="alerts_heard_again">手机已恢复联系</string>
+    <string name="alerts_heard_again_after">手机在失联 %1$s 后恢复联系</string>
+    <string name="alerts_quiet_for">手机已有 %1$s 没有消息。</string>
+    <!-- %1$s is an address, %2$s a time of day -->
+    <string name="alerts_quiet_last_near">%2$s 时最后位于 %1$s 附近。</string>
+    <!-- %1$s is a time of day; used when the address is unknown -->
+    <string name="alerts_quiet_last_location">%1$s 时最后位于上次记录的位置附近。</string>
+    <!-- %1$d is a battery percentage -->
+    <string name="alerts_battery">电量 %1$d%%。</string>
+    <string name="alerts_battery_charging">电量 %1$d%%，正在充电。</string>
+
+    <!-- Emergency alerts. %1$s is the child's name. -->
+    <string name="alerts_emergency_event">来自 %1$s 手机的紧急警报</string>
+    <string name="alerts_emergency_cancelled_event">紧急警报已取消：误发</string>
+    <!-- %1$s is the message the child typed -->
+    <string name="alerts_emergency_message_event">紧急消息：%1$s</string>
+    <!-- Shown in the list of parents answering an alert when this parent has no name set -->
+    <string name="alerts_a_parent">一位家长</string>
+    <string name="alerts_emergency_title">紧急情况：%1$s</string>
+    <string name="alerts_emergency_cancelled_title">已取消：%1$s 的警报</string>
+    <string name="alerts_emergency_sent_by_mistake">误发。</string>
+    <!-- %1$s is an address, %2$s a time of day -->
+    <string name="alerts_emergency_near_at">位于 %1$s 附近（%2$s）。</string>
+    <string name="alerts_emergency_near">位于 %1$s 附近。</string>
+    <!-- %1$s is a time of day -->
+    <string name="alerts_emergency_location_received">已收到位置（%1$s）。</string>
+    <string name="alerts_emergency_waiting_location">正在等待她的位置。</string>
+    <!-- %1$s is what the child sent -->
+    <string name="alerts_emergency_she_says">她说：%1$s。</string>
+    <!-- %1$s is a list of parents' names -->
+    <string name="alerts_emergency_on_it">正在处理：%1$s。</string>
+    <!-- Button: this parent is dealing with the emergency. Also a notification button: keep it short. -->
+    <string name="alerts_emergency_ack">我来处理</string>
+    <!-- Button: stop the alarm sound without answering. Also a notification button: keep it short. -->
+    <string name="alerts_emergency_silence">静音</string>
+    <string name="alerts_emergency_alarm">紧急警报声</string>
+    <!-- %1$s is a time of day -->
+    <string name="alerts_emergency_pressed_at">%1$s 按下了 SOS</string>
+    <!-- Map marker for the child's latest position -->
+    <string name="alerts_emergency_latest">最新位置</string>
+    <string name="alerts_emergency_call_her">给她打电话</string>
+    <string name="alerts_dismiss">关闭</string>
+    <string name="alerts_emergency_none">目前没有紧急警报。</string>
+    <string name="alerts_emergency_open_app">打开 PhoneLock</string>
+
+    <!-- Unfamiliar Google screens. %1$s is the app it was opened from, %2$s a short screen name. -->
+    <string name="alerts_screen_shot_failed">无法打开屏幕截图</string>
+    <string name="alerts_screen_event_from">从 %1$s 打开了一个陌生的 Google 服务界面（%2$s）</string>
+    <!-- %1$s is a short screen name -->
+    <string name="alerts_screen_event">打开了一个陌生的 Google 服务界面（%1$s）</string>
+    <!-- %1$s is the app it was opened from -->
+    <string name="alerts_screen_notification_from">从 %1$s 打开了一个陌生的 Google 界面</string>
+    <string name="alerts_screen_notification">打开了一个陌生的 Google 界面</string>
+    <!-- Button: stop reporting this screen. Also a notification button: keep it short. -->
+    <string name="alerts_screen_mark_ok">标记为正常</string>
+    <string name="alerts_block">屏蔽</string>
+    <string name="alerts_screen_allowed_message">已允许；此界面不会再通知你</string>
+    <string name="alerts_screen_blocked_message">已屏蔽</string>
+    <string name="alerts_screen_section">陌生界面</string>
+    <string name="alerts_screen_section_detail">尚未确认安全或已屏蔽的 Google 界面。点按“标记为正常”可不再收到某个界面的通知；点按“屏蔽”则每次打开都会让她返回。</string>
+    <string name="alerts_screenshot">屏幕截图</string>
+    <!-- %1$s is the app it was opened from, %2$s a time of day -->
+    <string name="alerts_screen_from_at">来自 %1$s · %2$s</string>
+    <string name="alerts_close">关闭</string>
+
+    <!-- Settings > Google screens -->
+    <string name="alerts_rules_section">Google 界面</string>
+    <string name="alerts_rules_section_detail">可能绕过锁定的 Google 界面。除非你允许，否则它们会被屏蔽；她被从某个界面送回时，你会收到通知。</string>
+    <string name="alerts_rule_allowed">已允许</string>
+    <!-- %1$s is a time of day -->
+    <string name="alerts_rule_allowed_until">允许至 %1$s</string>
+    <string name="alerts_rule_blocked">已屏蔽</string>
+    <string name="alerts_rule_blocked_default">已屏蔽（默认）</string>
+    <string name="alerts_rule_reported">打开时通知</string>
+    <string name="alerts_rule_allow_15_min">允许 15 分钟</string>
+    <string name="alerts_rule_allow_1_hour">允许 1 小时</string>
+    <string name="alerts_rule_allow_until_bedtime">允许至就寝时间</string>
+    <string name="alerts_rule_back_to_blocked">恢复屏蔽</string>
+    <string name="alerts_rule_forget">清除决定</string>
+
+    <!-- Find and reach card -->
+    <string name="alerts_find_section">查找与联系</string>
+    <string name="alerts_find_activity">动态</string>
+    <string name="alerts_find_stop_ringing">停止响铃</string>
+    <string name="alerts_find_ringing">正在响铃…</string>
+    <string name="alerts_find_ring">响铃</string>
+    <string name="alerts_find_capturing">正在截取…</string>
+    <string name="alerts_find_view_screen">查看屏幕</string>
+    <!-- %1$s is the child's name -->
+    <string name="alerts_find_ring_title">让 %1$s 的手机响铃？</string>
+    <string name="alerts_find_ring_detail">即使处于静音状态，手机也会以最大音量响铃 2 分钟，直到有人点按“停止”。</string>
+    <string name="alerts_find_device_screen">设备屏幕</string>
+    <string name="alerts_find_keep_refreshing">持续刷新（2 分钟）</string>
+    <string name="alerts_find_hide">隐藏</string>
+</resources>

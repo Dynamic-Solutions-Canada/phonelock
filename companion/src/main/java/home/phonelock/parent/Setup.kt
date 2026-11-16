@@ -9,6 +9,13 @@ import java.util.Base64
  * link another parent's app scans to add it too.
  */
 object Setup {
+    /**
+     * Stored name of a device nobody named. Kept as this fixed value (the same in every language, and what
+     * older versions stored) and shown translated by Hub.deviceName, so a language change can't leave a
+     * device called "Dispositivo".
+     */
+    const val UNNAMED_DEVICE = "Device"
+
     /** Public download of the lock app that setup installs. Always the newest release. */
     const val LOCK_APK_URL = Releases.LATEST + "lock-release.apk"
 
@@ -27,7 +34,7 @@ object Setup {
     fun newDevice(name: String): Device {
         val topic = "pl-" + randomBase32(24)
         val secret = b64.encodeToString(ByteArray(32).also(rng::nextBytes))
-        return Device(DEFAULT_SERVER, topic, secret, name.trim().ifBlank { "Device" })
+        return Device(DEFAULT_SERVER, topic, secret, name.trim().ifBlank { UNNAMED_DEVICE })
     }
 
     /** phonelock://pair?s=…&t=…&k=…&n=…, the link [Hub.parsePairing] reads. */

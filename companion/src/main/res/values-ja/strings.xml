@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Wording shared across the app. Each screen or feature keeps its own wording in its own
+     strings_<area>.xml beside this file; every file here needs the same file, with the same names, in each
+     values-<language> folder. Names, app labels and anything typed by a person are never translated. -->
+<!-- Japanese. Glossary: device = デバイス; parent (person) = 保護者; child = お子様; parent mode = 保護者モード;
+     parent PIN = 保護者 PIN; limited hours = 制限時間帯; bedtime = おやすみ時間; normal hours = 通常時間帯;
+     allow = 許可; allow for a while = 一時的に許可; request = リクエスト; safe list = 安全リスト;
+     "Ask for an app" (child's button) = 「アプリをリクエスト」. Android setting names follow stock Android in Japanese. -->
+<resources>
+    <string name="app_name">Phone Lock</string>
+
+    <!-- Common buttons and labels: use these rather than adding another copy -->
+    <string name="cancel">キャンセル</string>
+    <string name="save">保存</string>
+    <string name="done">完了</string>
+    <string name="open">開く</string>
+    <string name="remove">削除</string>
+    <string name="delete">削除</string>
+    <string name="refresh">更新</string>
+    <string name="try_again">再試行</string>
+    <string name="back">戻る</string>
+    <string name="next">次へ</string>
+    <string name="add">追加</string>
+    <string name="allow">許可</string>
+    <string name="deny">拒否</string>
+    <string name="undo">元に戻す</string>
+    <string name="your_name">あなたの名前</string>
+    <string name="child_device_name">お子様のデバイス名</string>
+
+    <!-- Lengths of time, as fmtMinutes() writes them -->
+    <string name="duration_minutes">%1$d 分</string>
+    <string name="duration_hours">%1$d 時間</string>
+    <string name="duration_hours_minutes">%1$d 時間 %2$d 分</string>
+
+    <!-- Settings > Language -->
+    <string name="language_title">言語</string>
+    <string name="language_match_device">デバイスの設定に合わせる</string>
+    <string name="language_detail">このスマートフォンでこのアプリが使用する言語</string>
+</resources>

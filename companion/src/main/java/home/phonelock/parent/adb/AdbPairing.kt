@@ -1,6 +1,8 @@
 package home.phonelock.parent.adb
 
 import android.net.ssl.SSLSockets
+import home.phonelock.parent.R
+import home.phonelock.parent.Strings
 import java.io.DataInputStream
 import java.io.IOException
 import java.io.OutputStream
@@ -59,11 +61,11 @@ internal object AdbPairing {
 
                 // 2. SPAKE2, bound to this TLS session.
                 val exported = SSLSockets.exportKeyingMaterial(tls, EXPORT_LABEL, null, EXPORT_SIZE)
-                    ?: throw IOException("Couldn't secure the pairing connection")
+                    ?: throw IOException(Strings.get(R.string.setup_adb_pairing_insecure))
                 val spake = Spake2(alice = true, myName = CLIENT_NAME, theirName = SERVER_NAME)
                 writePacket(output, TYPE_SPAKE2_MSG, spake.generateMessage(code.toByteArray() + exported))
                 val theirMsg = readPacket(input, TYPE_SPAKE2_MSG)
-                val keyMaterial = spake.processMessage(theirMsg) ?: throw PairingRefused("The device sent an invalid pairing message")
+                val keyMaterial = spake.processMessage(theirMsg) ?: throw PairingRefused(Strings.get(R.string.setup_adb_pairing_invalid))
                 val cipher = PairingCipher(hkdf(keyMaterial, HKDF_INFO, 16))
 
                 // 3. Exchange PeerInfo. Ours: type RSA public key, then the key as text, zero-padded.
@@ -75,12 +77,12 @@ internal object AdbPairing {
                 val theirs = try {
                     readPacket(input, TYPE_PEER_INFO)
                 } catch (e: java.net.SocketTimeoutException) {
-                    throw IOException("The device stopped answering during pairing", e)
+                    throw IOException(Strings.get(R.string.setup_adb_pairing_stopped), e)
                 } catch (e: IOException) {
                     // The device hangs up when it can't decrypt our PeerInfo: the codes didn't match.
-                    throw PairingRefused("Wrong pairing code, or it expired")
+                    throw PairingRefused(Strings.get(R.string.setup_adb_wrong_code))
                 }
-                cipher.decrypt(theirs) ?: throw PairingRefused("Wrong pairing code, or it expired")
+                cipher.decrypt(theirs) ?: throw PairingRefused(Strings.get(R.string.setup_adb_wrong_code))
             }
         }
     }
@@ -97,9 +99,9 @@ internal object AdbPairing {
         val version = input.readUnsignedByte()
         val type = input.readUnsignedByte()
         val size = input.readInt()
-        if (version != PACKET_VERSION) throw IOException("Unsupported pairing version $version")
-        if (type != expectType) throw IOException("Unexpected pairing message")
-        if (size <= 0 || size > MAX_PAYLOAD) throw IOException("Bad pairing message size")
+        if (version != PACKET_VERSION) throw IOException(Strings.get(R.string.setup_adb_pairing_version, version))
+        if (type != expectType) throw IOException(Strings.get(R.string.setup_adb_pairing_unexpected))
+        if (size <= 0 || size > MAX_PAYLOAD) throw IOException(Strings.get(R.string.setup_adb_pairing_size))
         return ByteArray(size).also(input::readFully)
     }
 

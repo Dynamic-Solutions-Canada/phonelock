@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Adding a child's device: setup over Wi-Fi, Fix setup, adding a shared device, sharing, QR scanning, and their errors. -->
+<resources>
+    <!-- Shared by the setup screens -->
+    <string name="setup_what_to_expect">O que esperar</string>
+    <string name="setup_you_need">Você vai precisar de</string>
+    <string name="setup_set_up_new_device">Configurar um novo dispositivo</string>
+    <string name="setup_fix_setup">Corrigir configuração</string>
+    <string name="setup_device_name_hint">Como este app chama o dispositivo da criança, por exemplo, o primeiro nome dela</string>
+    <string name="setup_add_existing_title">Adicionar um dispositivo configurado por outro responsável</string>
+
+    <!-- Add a child's device: choosing how -->
+    <string name="setup_add_child_device">Adicionar o dispositivo de uma criança</string>
+    <string name="setup_already_installed_question">O PhoneLock já está no celular ou tablet da criança?</string>
+    <string name="setup_new_device_body">Instale o PhoneLock no dispositivo da criança a partir deste celular, por Wi-Fi. Leva cerca de 10 minutos, e nada nele é apagado.</string>
+    <string name="setup_new_device_when">Para um dispositivo que ainda não tem o PhoneLock.</string>
+    <string name="setup_add_existing_body">Leia o código de pareamento no app do outro responsável, e vocês dois vão gerenciá-lo.</string>
+    <string name="setup_add_existing_when">Para um dispositivo que já tem o PhoneLock.</string>
+
+    <!-- Adding a device another parent set up -->
+    <string name="setup_add_a_device">Adicionar um dispositivo</string>
+    <string name="setup_get_code_title">Pegue o código de pareamento</string>
+    <!-- ⋮ is the "more options" menu button -->
+    <string name="setup_get_code_detail">O outro responsável abre o PhoneLock, toca em ⋮ no dispositivo e depois em Compartilhar com outro responsável. Um código QR aparece.</string>
+    <string name="setup_scan_it_title">Leia o código</string>
+    <string name="setup_scan_it_detail">Com a câmera deste celular, ou cole o link de pareamento se ele foi enviado para você.</string>
+    <string name="setup_name_it_title">Dê um nome</string>
+    <string name="setup_name_it_detail">Escolha como este app chama o dispositivo e como o seu nome aparece nele.</string>
+    <string name="setup_need_other_parent">O celular do outro responsável por perto, ou um link de pareamento enviado por ele</string>
+    <string name="setup_scan_code_title">Ler o código de pareamento</string>
+    <string name="setup_scan_code_where">No celular do outro responsável: PhoneLock &gt; ⋮ no dispositivo &gt; Compartilhar com outro responsável.</string>
+    <string name="setup_scan_qr">Ler código QR</string>
+    <string name="setup_paste_link">Ou cole um link de pareamento</string>
+    <string name="setup_code_recognised">Código de pareamento reconhecido</string>
+    <string name="setup_not_a_link">Este não é um link de pareamento do PhoneLock</string>
+    <!-- phonelock://pair is the start of the link itself: keep it as is -->
+    <string name="setup_link_starts_with">Começa com phonelock://pair</string>
+    <string name="setup_add_device_button">Adicionar dispositivo</string>
+    <!-- An example name for the parent, used when they haven't typed theirs yet -->
+    <string name="setup_example_parent_name">Pai</string>
+    <!-- %1$s is the parent's name; "Camera" is an example app on the child's device -->
+    <string name="setup_your_name_hint_example">Aparece no dispositivo da criança, por exemplo, \"%1$s permitiu Câmera\"</string>
+
+    <!-- Sharing a device with another parent. %1$s is the device's name. -->
+    <string name="setup_share_title">Compartilhar o dispositivo de %1$s</string>
+    <!-- %1$s is the button title the other parent taps (setup_add_existing_title) -->
+    <string name="setup_share_instructions">No celular do outro responsável, abra o PhoneLock, toque em \"%1$s\" e leia este código.</string>
+    <string name="setup_share_warning">Qualquer pessoa com este código pode controlar o dispositivo. Mostre-o apenas ao outro responsável.</string>
+
+    <!-- Scanning a QR code -->
+    <string name="setup_camera_needed">É preciso acesso à câmera para ler o código de pareamento.</string>
+    <string name="setup_allow_camera">Permitir câmera</string>
+    <string name="setup_point_at_code">Aponte para o código QR de pareamento</string>
+    <!-- Spoken description of the QR code image -->
+    <string name="setup_qr_code">Código QR</string>
+
+    <!-- Setting up over Wi-Fi. Names of Android's own settings screens and options on the child's device
+         (Settings, About phone, Build number, System, Developer options, Wireless debugging, "Pair device with
+         pairing code", "IP address & Port", Passwords & accounts, Multiple users) must match the names Android
+         itself uses in this language. -->
+    <string name="setup_what_this_does">O que isto faz</string>
+    <!-- %1$s is the child's device name -->
+    <string name="setup_fix_explanation">Corrigir configuração reativa os recursos do PhoneLock em %1$s: ver a tela, limites e registro de chamadas, arquivos, tocar mesmo no modo Não perturbe e funcionar em repouso. Não muda o pareamento, a programação nem os apps.</string>
+    <string name="setup_need_same_wifi_fix">O dispositivo da criança no mesmo Wi-Fi que este celular</string>
+    <string name="setup_need_parent_mode">O modo dos pais desbloqueado nele (toque no relógio e segure por 4 segundos, depois digite o PIN), para abrir as Configurações</string>
+    <string name="setup_need_developer_options">As Opções do desenvolvedor ativadas nele: Configurações &gt; Sobre o telefone, toque 7 vezes em Número da versão</string>
+    <string name="setup_outline_prepare_title">Prepare o dispositivo da criança</string>
+    <string name="setup_outline_prepare_detail">Mesmo Wi-Fi, contas removidas por enquanto, Opções do desenvolvedor ativadas. Cerca de 5 minutos.</string>
+    <string name="setup_outline_names_title">Escolha os nomes e um PIN</string>
+    <string name="setup_outline_names_detail">O PIN desbloqueia o modo dos pais no dispositivo da criança.</string>
+    <string name="setup_outline_pair_title">Parear com este celular</string>
+    <string name="setup_outline_pair_detail">O dispositivo da criança mostra um código de 6 dígitos; você o digita aqui.</string>
+    <string name="setup_outline_install_title">O PhoneLock faz a configuração</string>
+    <string name="setup_outline_install_detail">Instala, conecta a este app e ativa os recursos. Cerca de 2 minutos.</string>
+    <string name="setup_need_device">O celular ou tablet da criança, com Android 13 ou mais recente, carregado e nas suas mãos</string>
+    <string name="setup_need_same_wifi">Os dois dispositivos na mesma rede Wi-Fi</string>
+    <string name="setup_need_sign_out">Sair das contas do dispositivo até terminar a configuração (você as adiciona de volta no modo dos pais)</string>
+    <string name="setup_nothing_erased">Nada no dispositivo da criança é apagado.</string>
+    <string name="setup_connect_wifi_title">Conecte ao Wi-Fi</string>
+    <string name="setup_connect_wifi_detail">A mesma rede deste celular.</string>
+    <string name="setup_remove_accounts_title">Remova as contas</string>
+    <string name="setup_remove_accounts_detail">Configurações &gt; Senhas e contas: remova cada uma (Google e outras). O Android só permite que o PhoneLock assuma um dispositivo sem contas. Você as adiciona de volta no final.</string>
+    <string name="setup_developer_options_title">Ative as Opções do desenvolvedor</string>
+    <string name="setup_developer_options_detail">Configurações &gt; Sobre o telefone: toque 7 vezes em Número da versão, até aparecer que você agora é um desenvolvedor.</string>
+    <string name="setup_names_and_pin">Nomes e PIN</string>
+    <string name="setup_shown_on_device">Aparece no dispositivo da criança</string>
+    <string name="setup_parent_pin">PIN dos pais (4 a 8 dígitos)</string>
+    <string name="setup_pin_unlocks">Desbloqueia o modo dos pais no dispositivo da criança</string>
+    <string name="setup_pin_again">Repita o PIN</string>
+    <string name="setup_pin_mismatch">Não confere</string>
+    <string name="setup_pin_confirm">Para ter certeza de que está certo</string>
+    <string name="setup_pair_title">Parear com o dispositivo da criança</string>
+    <string name="setup_set_up_button">Configurar</string>
+    <string name="setup_pair_instructions">No dispositivo da criança: Configurações &gt; Sistema &gt; Opções do desenvolvedor &gt; Depuração por Wi-Fi. Ative a opção e toque em Parear o dispositivo com um código de pareamento. Deixe essa tela aberta até a configuração começar.</string>
+    <string name="setup_looking">Procurando… Ele aparece aqui quando o código de pareamento estiver na tela.</string>
+    <string name="setup_wifi_pairing_code">Código de pareamento por Wi-Fi</string>
+    <string name="setup_six_digits">Os 6 dígitos na tela da criança</string>
+    <string name="setup_fewer_options">Menos opções</string>
+    <string name="setup_more_options">Não encontrado, ou mais opções</string>
+    <string name="setup_ip_and_port">Endereço IP e porta</string>
+    <!-- The example address must stay as is -->
+    <string name="setup_ip_and_port_hint">Aparece abaixo do código de pareamento, por exemplo, 192.168.1.20:37755</string>
+    <string name="setup_debugging_port">Porta de depuração</string>
+    <string name="setup_debugging_port_hint">Só se a configuração não a encontrar: a porta depois de \"Endereço IP e porta\" na tela Depuração por Wi-Fi</string>
+    <string name="setup_turn_off_debugging_option">Desativar a depuração no final</string>
+    <string name="setup_turn_off_debugging_detail">Recomendado, para que ela não possa ser usada para desfazer o PhoneLock. O modo dos pais pode reativá-la.</string>
+
+    <!-- Setup progress -->
+    <string name="setup_stopped">Configuração interrompida</string>
+    <string name="setup_setting_up">Configurando…</string>
+    <string name="setup_finished_debugging_off">A depuração por Wi-Fi agora está desativada no dispositivo da criança. Adicione as contas de volta no modo dos pais (toque no relógio e segure por 4 segundos).</string>
+    <string name="setup_finished_debugging_on">A depuração por Wi-Fi continua ativada no dispositivo da criança; desative-a no modo dos pais quando tudo estiver funcionando. Adicione as contas de volta no modo dos pais (toque no relógio e segure por 4 segundos).</string>
+    <string name="setup_keep_screen_open">Deixe esta tela aberta até a configuração terminar.</string>
+
+    <!-- The setup steps, as listed while setup runs -->
+    <string name="setup_step_pair">Parear com o dispositivo</string>
+    <string name="setup_step_connect">Conectar</string>
+    <string name="setup_step_check">Verificar o dispositivo</string>
+    <string name="setup_step_download">Baixar o app de bloqueio</string>
+    <string name="setup_step_install">Instalar o app de bloqueio</string>
+    <string name="setup_step_owner">Torná-lo proprietário do dispositivo</string>
+    <string name="setup_step_connect_app">Conectá-lo a este app</string>
+    <string name="setup_step_features">Ativar os recursos</string>
+    <string name="setup_step_debugging_off">Desativar a depuração</string>
+
+    <!-- Features turned on during setup, listed when some couldn't be -->
+    <string name="setup_grant_screen_view">Ver a tela</string>
+    <string name="setup_grant_keep_screen_view">Manter a visualização da tela ativa</string>
+    <string name="setup_grant_dnd">Tocar mesmo no modo Não perturbe</string>
+    <string name="setup_grant_screen_calls">Filtrar ligações recebidas</string>
+    <string name="setup_grant_limit_calls">Limitar ligações feitas</string>
+    <string name="setup_grant_call_log">Registro de chamadas para os pais</string>
+    <string name="setup_grant_app_use">Uso de apps para os pais</string>
+    <string name="setup_grant_files">Arquivos para os pais</string>
+    <string name="setup_grant_idle">Funcionar em repouso (exceção da economia de bateria)</string>
+
+    <!-- Notes and errors shown beside a setup step -->
+    <string name="setup_pairing_refused">Pareamento recusado</string>
+    <string name="setup_no_debugging_port">Não foi possível encontrar a porta de depuração do dispositivo. Deixe a Depuração por Wi-Fi aberta nele e tente novamente.</string>
+    <string name="setup_device_no_answer">O dispositivo não respondeu</string>
+    <string name="setup_android_too_old">Este dispositivo usa uma versão do Android anterior à 13</string>
+    <string name="setup_lock_no_answer">O PhoneLock no dispositivo não respondeu. Tente novamente.</string>
+    <!-- %1$s is the child's device name -->
+    <string name="setup_wrong_device">Este não é o dispositivo de %1$s. Abra a Depuração por Wi-Fi no dispositivo certo.</string>
+    <string name="setup_note_checking_features">Verificando os recursos</string>
+    <string name="setup_note_already_mine">Já conectado a este app: continuando</string>
+    <string name="setup_note_other_parent">Configurado por outro responsável: só verificando os recursos</string>
+    <string name="setup_note_not_connected">O PhoneLock está instalado, mas não foi conectado: continuando a partir daí</string>
+    <string name="setup_not_set_up">O PhoneLock não está configurado neste dispositivo. Use Adicionar o dispositivo de uma criança.</string>
+    <string name="setup_remove_accounts_first">Primeiro remova as contas do dispositivo (Configurações &gt; Senhas e contas); adicione-as de volta depois, no modo dos pais</string>
+    <string name="setup_remove_users_first">Primeiro remova os outros usuários do dispositivo (Configurações &gt; Sistema &gt; Vários usuários)</string>
+    <string name="setup_other_owner">Outro app já gerencia este dispositivo (proprietário do dispositivo)</string>
+    <string name="setup_already_done">Já feito</string>
+    <string name="setup_refused">Recusado</string>
+    <string name="setup_checking_answers">Verificando se ele responde…</string>
+    <string name="setup_already_connected">Já conectado</string>
+    <string name="setup_connected_other_parent">Conectado a outro responsável</string>
+    <!-- %1$s is a comma-separated list of features (the setup_grant_* names) -->
+    <string name="setup_not_turned_on">Não ativado: %1$s</string>
+    <string name="setup_debugging_left_on_chosen">Mantida ativada, como escolhido</string>
+    <string name="setup_debugging_left_on_other">Mantida ativada: é o dispositivo de outro responsável</string>
+    <string name="setup_debugging_left_on_unreachable">Mantida ativada, porque o dispositivo ainda não respondeu pela internet</string>
+    <string name="setup_debugging_not_confirmed">O dispositivo não confirmou; a depuração pode continuar ativada</string>
+    <string name="setup_not_answering">Ele ainda não respondeu pela internet. Verifique a conexão dele; a depuração fica ativada até ele responder.</string>
+    <!-- %1$s is the reply the child's device sent, in English -->
+    <string name="setup_pairing_not_accepted">O dispositivo não aceitou o pareamento: %1$s. Tente novamente.</string>
+    <string name="setup_pairing_no_answer">O dispositivo não aceitou o pareamento: sem resposta. Tente novamente.</string>
+    <string name="setup_download_404">Falha no download (HTTP 404)</string>
+    <string name="setup_not_genuine">O download não é um app de bloqueio original do PhoneLock</string>
+
+    <!-- How setup ended -->
+    <string name="setup_outcome_fixed">Configuração verificada e corrigida.</string>
+    <string name="setup_outcome_other_parent">Este dispositivo já foi configurado por outro responsável. Peça para ele compartilhá-lo com você (configurações do dispositivo &gt; Compartilhar com outro responsável).</string>
+    <!-- %1$s is the child's device name -->
+    <string name="setup_outcome_done">%1$s está configurado e conectado a este app.</string>
+    <!-- %1$s is one of the setup_outcome_* sentences above -->
+    <string name="setup_outcome_some_features_failed">%1$s Não foi possível ativar alguns recursos; veja acima.</string>
+
+    <!-- Wireless debugging errors, shown when setup stops -->
+    <string name="setup_adb_install_failed">Falha na instalação</string>
+    <!-- %1$s is a technical service name, e.g. "shell" -->
+    <string name="setup_adb_service_refused">O dispositivo recusou \"%1$s\"</string>
+    <string name="setup_adb_corrupt_message">Mensagem adb corrompida</string>
+    <string name="setup_adb_message_too_large">Mensagem adb grande demais</string>
+    <string name="setup_adb_stopped_answering">O dispositivo parou de responder</string>
+    <string name="setup_adb_not_trusted_again">O dispositivo não confia neste celular (pareie de novo)</string>
+    <string name="setup_adb_not_trusted_yet">O dispositivo ainda não confia neste celular (pareie primeiro)</string>
+    <string name="setup_adb_usb_auth">O dispositivo pediu autorização do tipo USB; ative a Depuração por Wi-Fi e pareie primeiro</string>
+    <string name="setup_adb_pairing_insecure">Não foi possível proteger a conexão de pareamento</string>
+    <string name="setup_adb_pairing_invalid">O dispositivo enviou uma mensagem de pareamento inválida</string>
+    <string name="setup_adb_pairing_stopped">O dispositivo parou de responder durante o pareamento</string>
+    <string name="setup_adb_wrong_code">Código de pareamento errado ou expirado</string>
+    <!-- %1$d is a version number -->
+    <string name="setup_adb_pairing_version">Versão de pareamento %1$d não compatível</string>
+    <string name="setup_adb_pairing_unexpected">Mensagem de pareamento inesperada</string>
+    <string name="setup_adb_pairing_size">Tamanho de mensagem de pareamento inválido</string>
+    <!-- %1$s is a file name -->
+    <string name="setup_adb_save_failed">Não foi possível salvar %1$s</string>
+
+    <!-- The main screen's prompts for permissions this phone still needs -->
+    <string name="setup_hint_background">Permita o uso em segundo plano para os pedidos chegarem na hora.</string>
+    <string name="setup_hint_full_screen">Permita que os alertas de emergência apareçam em tela cheia, como uma ligação recebida.</string>
+
+    <!-- Viewing the child's screen -->
+    <string name="setup_screenshot_no_image">Nenhuma imagem recebida</string>
+    <string name="setup_screenshot_unreadable">Não foi possível abrir a captura de tela</string>
+</resources>

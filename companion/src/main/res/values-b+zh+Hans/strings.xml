@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Wording shared across the app. Each screen or feature keeps its own wording in its own
+     strings_<area>.xml beside this file; every file here needs the same file, with the same names, in each
+     values-<language> folder. Names, app labels and anything typed by a person are never translated. -->
+<!-- Simplified Chinese, addressing the parent as 你. Glossary: device = 设备; parent mode = 家长模式; parent PIN = 家长 PIN 码;
+     limited hours = 限时时段; bedtime = 就寝时间; normal hours = 正常时段; allow = 允许; request = 请求;
+     "Ask for an app" (child's button) = “申请应用”. -->
+<resources>
+    <string name="app_name">Phone Lock</string>
+
+    <!-- Common buttons and labels: use these rather than adding another copy -->
+    <string name="cancel">取消</string>
+    <string name="save">保存</string>
+    <string name="done">完成</string>
+    <string name="open">打开</string>
+    <string name="remove">移除</string>
+    <string name="delete">删除</string>
+    <string name="refresh">刷新</string>
+    <string name="try_again">重试</string>
+    <string name="back">返回</string>
+    <string name="next">下一步</string>
+    <string name="add">添加</string>
+    <string name="allow">允许</string>
+    <string name="deny">拒绝</string>
+    <string name="undo">撤消</string>
+    <string name="your_name">你的名字</string>
+    <string name="child_device_name">孩子的设备名称</string>
+
+    <!-- Lengths of time, as fmtMinutes() writes them -->
+    <string name="duration_minutes">%1$d 分钟</string>
+    <string name="duration_hours">%1$d 小时</string>
+    <string name="duration_hours_minutes">%1$d 小时 %2$d 分钟</string>
+
+    <!-- Settings > Language -->
+    <string name="language_title">语言</string>
+    <string name="language_match_device">跟随系统</string>
+    <string name="language_detail">此应用在这部手机上使用的语言</string>
+</resources>

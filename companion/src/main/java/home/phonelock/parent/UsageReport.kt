@@ -5,6 +5,7 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
+import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
@@ -24,8 +25,10 @@ import java.time.temporal.TemporalAdjusters
 import java.time.temporal.WeekFields
 import java.util.Locale
 
-/** The span a report covers. */
-enum class Period(val label: String) { DAY("Day"), WEEK("Week"), MONTH("Month") }
+/** The span a report covers; [label] is its name on the report's buttons. */
+enum class Period(@StringRes val label: Int) {
+    DAY(R.string.apps_period_day), WEEK(R.string.apps_period_week), MONTH(R.string.apps_period_month)
+}
 
 /**
  * One coloured part of the chart: a single app, or everything else ("Other").
@@ -43,15 +46,17 @@ private val OTHER_COLOR = Color(0xFF9AA0A6)
 /** How many apps "All apps" shows by name before the rest become "Other". */
 private const val TOP_APPS = 5
 
+/** The first day of the week where the phone is (its region), not where the app's language is spoken. */
+fun weekStart(): DayOfWeek = WeekFields.of(AppLanguage.deviceRegion()).firstDayOfWeek
+
 /**
- * The days [period] covers around [anchor]: just that day, its week (starting on the phone's usual first
- * day of the week), or its month.
+ * The days [period] covers around [anchor]: just that day, its week (starting on [firstDay], the phone's
+ * usual first day of the week, see [weekStart]), or its month.
  */
-fun periodDays(period: Period, anchor: LocalDate): List<LocalDate> = when (period) {
+fun periodDays(period: Period, anchor: LocalDate, firstDay: DayOfWeek = weekStart()): List<LocalDate> = when (period) {
     Period.DAY -> listOf(anchor)
     Period.WEEK -> {
-        val first: DayOfWeek = WeekFields.of(Locale.getDefault()).firstDayOfWeek
-        val start = anchor.with(TemporalAdjusters.previousOrSame(first))
+        val start = anchor.with(TemporalAdjusters.previousOrSame(firstDay))
         (0L until 7L).map { start.plusDays(it) }
     }
     Period.MONTH -> {
@@ -79,15 +84,17 @@ fun onlyApps(days: Map<String, Map<String, Int>>, keep: Set<String>): Map<String
     days.mapValues { (_, apps) -> apps.filterKeys { it in keep } }
 
 /**
- * The chart's parts. With nothing [selected], the [TOP_APPS] most used apps over the period and "Other";
- * otherwise the selected apps ("app:<package>"), in the order chosen.
+ * The chart's parts. With nothing [selected], the [TOP_APPS] most used apps over the period and the rest as
+ * [otherLabel] (passed in, already translated, so this stays plain Kotlin); otherwise the selected apps
+ * ("app:<package>"), in the order chosen.
  */
-fun seriesFor(selected: List<String>, totals: Map<String, Int>, label: (String) -> String): List<Series> {
+fun seriesFor(selected: List<String>, totals: Map<String, Int>, otherLabel: String,
+              label: (String) -> String): List<Series> {
     if (selected.isEmpty()) {
         val top = totals.entries.filter { it.value > 0 }.sortedByDescending { it.value }.take(TOP_APPS).map { it.key }
         val parts = top.mapIndexed { i, p -> Series("app:$p", label(p), setOf(p), PALETTE[i % PALETTE.size]) }
         val rest = totals.keys - top.toSet()
-        return if (rest.any { (totals[it] ?: 0) > 0 }) parts + Series("other", "Other", rest, OTHER_COLOR) else parts
+        return if (rest.any { (totals[it] ?: 0) > 0 }) parts + Series("other", otherLabel, rest, OTHER_COLOR) else parts
     }
     return selected.filter { it.startsWith("app:") }.mapIndexed { i, key ->
         key.removePrefix("app:").let { Series(key, label(it), setOf(it), PALETTE[i % PALETTE.size]) }
@@ -168,7 +175,7 @@ private fun niceCeiling(minutes: Int): Int {
 /** "45m", "2h", "1h30" for axis labels. */
 private fun shortMinutes(m: Int): String = when {
     m == 0 -> "0"
-    m < 60 -> "${m}m"
-    m % 60 == 0 -> "${m / 60}h"
-    else -> "${m / 60}h${m % 60}"
+    m < 60 -> Strings.get(R.string.apps_axis_minutes, m)
+    m % 60 == 0 -> Strings.get(R.string.apps_axis_hours, m / 60)
+    else -> Strings.get(R.string.apps_axis_hours_minutes, m / 60, m % 60)
 }

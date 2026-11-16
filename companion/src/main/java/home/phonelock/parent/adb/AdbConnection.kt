@@ -1,5 +1,7 @@
 package home.phonelock.parent.adb
 
+import home.phonelock.parent.R
+import home.phonelock.parent.Strings
 import java.io.ByteArrayOutputStream
 import java.io.Closeable
 import java.io.DataInputStream
@@ -47,7 +49,7 @@ internal class AdbConnection private constructor(private var socket: Socket) : C
     /** Installs (or updates) [apk] with Android's package installer; throws if it doesn't report Success. */
     fun install(apk: File) {
         val reply = String(runStream("exec:cmd package install -r -S ${apk.length()}", apk))
-        if (!reply.contains("Success")) throw IOException(reply.trim().ifEmpty { "Install failed" })
+        if (!reply.contains("Success")) throw IOException(reply.trim().ifEmpty { Strings.get(R.string.setup_adb_install_failed) })
     }
 
     /**
@@ -65,7 +67,7 @@ internal class AdbConnection private constructor(private var socket: Socket) : C
             val m = read()
             when (m.command) {
                 A_OKAY -> if (m.arg1 == local) remote = m.arg0
-                A_CLSE -> if (m.arg1 == local) throw IOException("The device refused \"${service.substringBefore(':')}\"")
+                A_CLSE -> if (m.arg1 == local) throw IOException(Strings.get(R.string.setup_adb_service_refused, service.substringBefore(':')))
             }
         }
 
@@ -146,8 +148,8 @@ internal class AdbConnection private constructor(private var socket: Socket) : C
         val arg1 = b.int
         val length = b.int
         b.int // checksum
-        if (b.int != command.inv()) throw IOException("Corrupt adb message")
-        if (length < 0 || length > MAX_PAYLOAD) throw IOException("adb message too large")
+        if (b.int != command.inv()) throw IOException(Strings.get(R.string.setup_adb_corrupt_message))
+        if (length < 0 || length > MAX_PAYLOAD) throw IOException(Strings.get(R.string.setup_adb_message_too_large))
         return Message(command, arg0, arg1, ByteArray(length).also(input::readFully))
     }
 
@@ -215,9 +217,9 @@ internal class AdbConnection private constructor(private var socket: Socket) : C
             val m = try {
                 read()
             } catch (e: java.net.SocketTimeoutException) {
-                throw IOException("The device stopped answering", e)
+                throw IOException(Strings.get(R.string.setup_adb_stopped_answering), e)
             } catch (e: IOException) {
-                if (upgraded) throw IOException("The device doesn't trust this phone (pair it again)", e)
+                if (upgraded) throw IOException(Strings.get(R.string.setup_adb_not_trusted_again), e)
                 throw e
             }
             when (m.command) {
@@ -226,7 +228,7 @@ internal class AdbConnection private constructor(private var socket: Socket) : C
                     val tls = try {
                         identity.startTls(socket, host, port)
                     } catch (e: Exception) {
-                        throw IOException("The device doesn't trust this phone yet (pair it first)", e)
+                        throw IOException(Strings.get(R.string.setup_adb_not_trusted_yet), e)
                     }
                     socket = tls
                     input = DataInputStream(tls.inputStream.buffered())
@@ -238,7 +240,7 @@ internal class AdbConnection private constructor(private var socket: Socket) : C
                     features = String(m.data).substringAfter("features=", "").substringBefore(';').split(',').toSet()
                     return
                 }
-                A_AUTH -> throw IOException("The device asked for USB-style authorization; turn on Wireless debugging and pair first")
+                A_AUTH -> throw IOException(Strings.get(R.string.setup_adb_usb_auth))
             }
         }
     }

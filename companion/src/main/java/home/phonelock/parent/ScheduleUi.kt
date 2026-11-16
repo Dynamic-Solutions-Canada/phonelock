@@ -40,11 +40,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.json.JSONArray
 import org.json.JSONObject
+import java.time.DayOfWeek
+import java.time.format.TextStyle
 import java.util.Calendar
+import java.util.Locale
 
 /** Situation bits, matching lock/.../Schedule.java. */
 const val MODE_NORMAL = 1
@@ -92,30 +96,41 @@ fun List<ScheduleRule>.modeAt(ms: Long): String {
     }
 }
 
-/** Two-letter day names for the day toggles, Monday first (bit 0), as the schedule stores them. */
-private val DAY_SHORT = listOf("Mo", "Tu", "We", "Th", "Fr", "Sa", "Su")
-private val DAY_NAMES = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+/**
+ * Two-letter day names for the day toggles ("Mo", "Tu" in English), Monday first (bit 0), as the schedule
+ * stores them, in the app's language. ICU's SHORT width is the two-letter form; its list starts at index 1
+ * with Sunday.
+ */
+private fun dayShortNames(): List<String> {
+    val names = android.icu.text.DateFormatSymbols.getInstance(Locale.getDefault())
+        .getWeekdays(android.icu.text.DateFormatSymbols.STANDALONE, android.icu.text.DateFormatSymbols.SHORT)
+    return listOf(2, 3, 4, 5, 6, 7, 1).map { names[it] }
+}
+
+/** Short day names ("Mon", "Tue" in English), Monday first (bit 0), in the app's language. */
+private fun dayNames(): List<String> =
+    DayOfWeek.entries.map { it.getDisplayName(TextStyle.SHORT, Locale.getDefault()) }
 
 /** "Limited hours", "Bedtime", "Normal hours" for a mode name from the device. */
 fun modeLabel(mode: String) = when (mode) {
-    "bedtime" -> "Bedtime"
-    "limited" -> "Limited hours"
-    else -> "Normal hours"
+    "bedtime" -> Strings.get(R.string.apps_mode_bedtime)
+    "limited" -> Strings.get(R.string.apps_mode_limited)
+    else -> Strings.get(R.string.apps_mode_normal)
 }
 
 /** "normal hours", "limited hours", "bedtime" for one situation bit, for messages. */
 internal fun situationName(bit: Int) = when (bit) {
-    MODE_BEDTIME -> "bedtime"
-    MODE_LIMITED -> "limited hours"
-    else -> "normal hours"
+    MODE_BEDTIME -> Strings.get(R.string.apps_situation_bedtime)
+    MODE_LIMITED -> Strings.get(R.string.apps_situation_limited)
+    else -> Strings.get(R.string.apps_situation_normal)
 }
 
 /** "Weekdays", "Every day", "Mon, Wed, Fri", … */
 private fun describeDays(days: Int): String = when (days and 0x7f) {
-    0x7f -> "Every day"
-    0x1f -> "Weekdays"
-    0x60 -> "Weekends"
-    else -> DAY_NAMES.filterIndexed { i, _ -> days and (1 shl i) != 0 }.joinToString(", ")
+    0x7f -> Strings.get(R.string.apps_days_every_day)
+    0x1f -> Strings.get(R.string.apps_days_weekdays)
+    0x60 -> Strings.get(R.string.apps_days_weekends)
+    else -> dayNames().filterIndexed { i, _ -> days and (1 shl i) != 0 }.joinToString(", ")
 }
 
 @Composable
@@ -150,23 +165,22 @@ internal fun AppTableSection(dev: String, state: PhoneState) {
             onDelete = {
                 AppTime.removeLimit(dev, l.id)
                 editingLimit = null
-                Undo.offer("${state.label(l.app)}: daily limit removed") { AppTime.saveLimit(dev, l) }
+                Undo.offer(Strings.get(R.string.apps_limit_removed, state.label(l.app))) { AppTime.saveLimit(dev, l) }
             },
             onDismiss = { editingLimit = null })
     }
     uninstalling?.let { p ->
         AppDialog(
             onDismissRequest = { uninstalling = null },
-            title = { Text("Uninstall ${state.label(p)}?") },
-            text = { Text("It's removed from their device with its data. This can't be undone; you'd have to install it again.") },
-            confirmButton = { DangerButton("Uninstall") { Hub.uninstall(dev, p); uninstalling = null } },
-            dismissButton = { TextButton(onClick = { uninstalling = null }) { Text("Cancel") } })
+            title = { Text(stringResource(R.string.apps_uninstall_title, state.label(p))) },
+            text = { Text(stringResource(R.string.apps_uninstall_body)) },
+            confirmButton = { DangerButton(stringResource(R.string.apps_uninstall)) { Hub.uninstall(dev, p); uninstalling = null } },
+            dismissButton = { TextButton(onClick = { uninstalling = null }) { Text(stringResource(R.string.cancel)) } })
     }
     // Every app on the device, Phone first and then A to Z, ticked or not.
     val rows = phoneFirst(state, appsOnly((state.home + state.others).distinct()))
-    Section("Apps and when they're allowed") {
-        Text("Ticked apps are on their home screen during that time. Apps with no ticks are only allowed for a while. " +
-            "Use ⋮ to set a daily time limit.", style = MaterialTheme.typography.bodySmall)
+    Section(stringResource(R.string.apps_table_title)) {
+        Text(stringResource(R.string.apps_table_hint), style = MaterialTheme.typography.bodySmall)
         SituationHeader()
         HorizontalDivider()
         rows.forEach { p ->
@@ -178,23 +192,23 @@ internal fun AppTableSection(dev: String, state: PhoneState) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     AppName(dev, p, state.label(p), Modifier.weight(1f))
                     SituationChecks(dev, p, state.label(p), mask, enabled = state.full)
-                    RowMenu("More for ${state.label(p)}", enabled = state.full, entries = listOfNotNull(
-                        MenuEntry(if (own == null) "Set a daily limit…" else "Change daily limit…") {
+                    RowMenu(stringResource(R.string.apps_more_for, state.label(p)), enabled = state.full, entries = listOfNotNull(
+                        MenuEntry(stringResource(if (own == null) R.string.apps_set_limit else R.string.apps_change_limit)) {
                             editingLimit = own ?: newLimit(p)
                         },
                         own?.let { l ->
-                            MenuEntry("Remove daily limit") {
+                            MenuEntry(stringResource(R.string.apps_remove_limit)) {
                                 AppTime.removeLimit(dev, l.id)
-                                Undo.offer("${state.label(p)}: daily limit removed") { AppTime.saveLimit(dev, l) }
+                                Undo.offer(Strings.get(R.string.apps_limit_removed, state.label(p))) { AppTime.saveLimit(dev, l) }
                             }
                         },
                         // Hiding only apps with no ticks, so hiding never quietly takes an app off the home screen.
-                        MenuEntry(if (mask == 0) "Hide" else "Hide (untick all three first)", enabled = mask == 0) {
+                        MenuEntry(stringResource(if (mask == 0) R.string.apps_hide else R.string.apps_hide_untick), enabled = mask == 0) {
                             Hub.offer(dev, p, false)
-                            Undo.offer("${state.label(p)} hidden") { Hub.offer(dev, p, true) }
+                            Undo.offer(Strings.get(R.string.apps_app_hidden, state.label(p))) { Hub.offer(dev, p, true) }
                         },
                         // Only apps installed on the device, not built in.
-                        if (p in state.removable) MenuEntry("Uninstall…") { uninstalling = p } else null,
+                        if (p in state.removable) MenuEntry(stringResource(R.string.apps_uninstall_menu)) { uninstalling = p } else null,
                     ))
                 }
                 // The daily limit on a line of its own under the row, lined up with the name (icon 32 dp + gap
@@ -210,15 +224,15 @@ internal fun AppTableSection(dev: String, state: PhoneState) {
         val hidden = appsOnly(state.notOffered)
         if (hidden.isNotEmpty()) {
             TextButton(onClick = { showHidden = !showHidden }) {
-                Text("Hidden apps (${hidden.size}) " + if (showHidden) "▴" else "▾")
+                Text(stringResource(R.string.apps_hidden_apps, hidden.size) + if (showHidden) " ▴" else " ▾")
             }
             if (showHidden) phoneFirst(state, hidden).forEach { p ->
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     AppName(dev, p, state.label(p), Modifier.weight(1f))
                     TextButton(enabled = state.full, onClick = {
                         Hub.offer(dev, p, true)
-                        Undo.offer("${state.label(p)} shown") { Hub.offer(dev, p, false) }
-                    }) { Text("Show") }
+                        Undo.offer(Strings.get(R.string.apps_app_shown, state.label(p))) { Hub.offer(dev, p, false) }
+                    }) { Text(stringResource(R.string.apps_show)) }
                 }
             }
         }
@@ -237,7 +251,7 @@ internal val MENU = 40.dp
 internal fun SituationHeader() {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Spacer(Modifier.weight(1f))
-        listOf("Normal", "Limited", "Bedtime").forEach {
+        listOf(R.string.apps_col_normal, R.string.apps_col_limited, R.string.apps_col_bedtime).map { stringResource(it) }.forEach {
             Text(it, Modifier.width(CELL), style = MaterialTheme.typography.labelSmall, textAlign = TextAlign.Center)
         }
         Spacer(Modifier.width(MENU))
@@ -254,7 +268,8 @@ internal fun SituationChecks(dev: String, id: String, label: String, mask: Int, 
         Row(Modifier.width(CELL), horizontalArrangement = Arrangement.Center) {
             Checkbox(checked = mask and bit != 0, enabled = enabled, onCheckedChange = { on ->
                 Hub.appModeBit(dev, id, bit, on)
-                Undo.offer("$label: ${situationName(bit)} ${if (on) "allowed" else "not allowed"}") {
+                val msg = if (on) R.string.apps_situation_allowed else R.string.apps_situation_not_allowed
+                Undo.offer(Strings.get(msg, label, situationName(bit))) {
                     Hub.appModeBit(dev, id, bit, !on)
                 }
             })
@@ -292,33 +307,34 @@ internal fun ScheduleSection(dev: String, state: PhoneState) {
     val now = System.currentTimeMillis()
     // Shown in the order they next happen, a running one first; edits still address the device's list.
     val order = state.schedule.indices.sortedBy { state.schedule[it].nextStart(now) }
-    Section("Schedule") {
+    Section(stringResource(R.string.apps_schedule_title)) {
         // Until the device's schedule arrives, an empty list would wrongly say there's none; the header card
         // says it's getting the settings meanwhile.
-        if (state.full && state.schedule.isEmpty()) EmptyNote("No limited hours or bedtime yet, so it's normal hours all the time.")
+        if (state.full && state.schedule.isEmpty()) EmptyNote(stringResource(R.string.apps_schedule_empty))
         order.forEach { i ->
             val r = state.schedule[i]
             val remove = {
                 val before = state.schedule
                 Hub.setSchedule(dev, before.filterIndexed { j, _ -> j != i })
-                Undo.offer("${modeLabel(r.mode)} removed") { Hub.setSchedule(dev, before) }
+                Undo.offer(Strings.get(R.string.apps_rule_removed, modeLabel(r.mode))) { Hub.setSchedule(dev, before) }
             }
             // Tap to edit; ⋮ for edit or remove. Both wait for the device's current schedule (a full state).
             ListRow(modeLabel(r.mode),
-                AnnotatedString(if (r.start == r.end) "${describeDays(r.days)}, all day"
-                    else "${describeDays(r.days)}, ${clock(r.start)} to ${clock(r.end)}"),
+                AnnotatedString(if (r.start == r.end) stringResource(R.string.apps_rule_all_day, describeDays(r.days))
+                    else stringResource(R.string.apps_rule_range, describeDays(r.days), clock(r.start), clock(r.end))),
                 leading = { SymbolBadge(if (r.mode == "bedtime") "🌙" else "⏳") },
                 actionsEnabled = state.full,
-                actions = listOf(MenuEntry("Edit…") { editing = i to r }, MenuEntry("Remove", onClick = remove)),
+                actions = listOf(MenuEntry(stringResource(R.string.apps_edit)) { editing = i to r },
+                    MenuEntry(stringResource(R.string.remove), onClick = remove)),
                 onClick = if (state.full) ({ editing = i to r }) else null)
         }
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             // Edits replace the whole schedule, so they wait until the device's current one has arrived.
             OutlinedButton(enabled = state.full, onClick = { editing = -1 to ScheduleRule("limited", 0x1f, 8 * 60 + 30, 15 * 60 + 15) }) {
-                Text("Add limited hours")
+                Text(stringResource(R.string.apps_add_limited))
             }
             OutlinedButton(enabled = state.full, onClick = { editing = -1 to ScheduleRule("bedtime", 0x7f, 21 * 60 + 30, 7 * 60) }) {
-                Text("Add bedtime")
+                Text(stringResource(R.string.apps_add_bedtime))
             }
         }
     }
@@ -327,7 +343,8 @@ internal fun ScheduleSection(dev: String, state: PhoneState) {
             val before = state.schedule
             val after = if (index < 0) before + rule else before.mapIndexed { j, r -> if (j == index) rule else r }
             Hub.setSchedule(dev, after)
-            Undo.offer("${modeLabel(rule.mode)} ${if (index < 0) "added" else "changed"}") { Hub.setSchedule(dev, before) }
+            val msg = if (index < 0) R.string.apps_rule_added else R.string.apps_rule_changed
+            Undo.offer(Strings.get(msg, modeLabel(rule.mode))) { Hub.setSchedule(dev, before) }
             editing = null
         }, onDismiss = { editing = null })
     }
@@ -381,40 +398,50 @@ private fun RuleDialog(draft: ScheduleRule, isNew: Boolean, onSave: (ScheduleRul
     }
     AppDialog(
         onDismissRequest = onDismiss,
-        title = { Text(if (isNew) "Add ${modeLabel(mode).lowercase()}" else "Edit ${modeLabel(mode).lowercase()}") },
+        title = {
+            // Whole titles per mode rather than a lower-cased mode name, so each language can word them its own way.
+            val bedtime = mode == "bedtime"
+            Text(stringResource(when {
+                isNew && bedtime -> R.string.apps_add_bedtime
+                isNew -> R.string.apps_add_limited
+                bedtime -> R.string.apps_edit_bedtime
+                else -> R.string.apps_edit_limited
+            }))
+        },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 // Which situation this range is; editable, so a range can switch between the two.
                 SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
-                    listOf("limited" to "Limited hours", "bedtime" to "Bedtime").forEachIndexed { i, (key, label) ->
+                    listOf("limited" to R.string.apps_mode_limited, "bedtime" to R.string.apps_mode_bedtime).forEachIndexed { i, (key, label) ->
                         SegmentedButton(selected = mode == key, onClick = { mode = key },
-                            shape = SegmentedButtonDefaults.itemShape(i, 2)) { Text(label) }
+                            shape = SegmentedButtonDefaults.itemShape(i, 2)) { Text(stringResource(label)) }
                     }
                 }
                 // Days as equal toggles with short names, so the two Ts and two Ss can't be mixed up.
-                Text("Days", style = MaterialTheme.typography.labelLarge)
+                Text(stringResource(R.string.apps_days), style = MaterialTheme.typography.labelLarge)
                 MultiChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
-                    DAY_SHORT.forEachIndexed { i, l ->
+                    val dayShort = dayShortNames()
+                    dayShort.forEachIndexed { i, l ->
                         SegmentedButton(checked = days and (1 shl i) != 0, onCheckedChange = { days = days xor (1 shl i) },
-                            shape = SegmentedButtonDefaults.itemShape(i, DAY_SHORT.size), icon = {}) {
+                            shape = SegmentedButtonDefaults.itemShape(i, dayShort.size), icon = {}) {
                             Text(l, maxLines = 1, softWrap = false)
                         }
                     }
                 }
                 // Times as outlined fields with a clock, so they read as something to tap.
                 Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    TimeField("From", start, Modifier.weight(1f)) { pickTime(start) { start = it } }
-                    TimeField("Until", end, Modifier.weight(1f)) { pickTime(end) { end = it } }
+                    TimeField(stringResource(R.string.apps_from), start, Modifier.weight(1f)) { pickTime(start) { start = it } }
+                    TimeField(stringResource(R.string.apps_until), end, Modifier.weight(1f)) { pickTime(end) { end = it } }
                 }
                 when {
-                    end == start -> Text("All day.", style = MaterialTheme.typography.bodySmall)
-                    end < start -> Text("Runs past midnight into the next day.", style = MaterialTheme.typography.bodySmall)
+                    end == start -> Text(stringResource(R.string.apps_all_day), style = MaterialTheme.typography.bodySmall)
+                    end < start -> Text(stringResource(R.string.apps_past_midnight), style = MaterialTheme.typography.bodySmall)
                 }
             }
         },
         confirmButton = {
             TextButton(onClick = { onSave(draft.copy(mode = mode, days = days, start = start, end = end)) },
-                enabled = days != 0) { Text(if (isNew) "Add" else "Save") }
+                enabled = days != 0) { Text(stringResource(if (isNew) R.string.add else R.string.save)) }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } })
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } })
 }

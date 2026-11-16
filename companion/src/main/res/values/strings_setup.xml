@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Adding a child's device: setup over Wi-Fi, Fix setup, adding a shared device, sharing, QR scanning, and their errors. -->
+<resources>
+    <!-- Shared by the setup screens -->
+    <string name="setup_what_to_expect">What to expect</string>
+    <string name="setup_you_need">You\'ll need</string>
+    <string name="setup_set_up_new_device">Set up a new device</string>
+    <string name="setup_fix_setup">Fix setup</string>
+    <string name="setup_device_name_hint">What this app calls their device, e.g. their first name</string>
+    <string name="setup_add_existing_title">Add a device another parent set up</string>
+
+    <!-- Add a child's device: choosing how -->
+    <string name="setup_add_child_device">Add a child\'s device</string>
+    <string name="setup_already_installed_question">Is PhoneLock already on their phone or tablet?</string>
+    <string name="setup_new_device_body">Install PhoneLock on their device from this phone, over Wi-Fi. Takes about 10 minutes, and nothing on it is erased.</string>
+    <string name="setup_new_device_when">For a device that doesn\'t have PhoneLock yet.</string>
+    <string name="setup_add_existing_body">Scan the pairing code from the other parent\'s app, and you\'ll both manage it.</string>
+    <string name="setup_add_existing_when">For a device that already has PhoneLock.</string>
+
+    <!-- Adding a device another parent set up -->
+    <string name="setup_add_a_device">Add a device</string>
+    <string name="setup_get_code_title">Get the pairing code</string>
+    <!-- ⋮ is the "more options" menu button -->
+    <string name="setup_get_code_detail">The other parent opens PhoneLock, taps ⋮ on the device, then Share with another parent. It shows a QR code.</string>
+    <string name="setup_scan_it_title">Scan it</string>
+    <string name="setup_scan_it_detail">With this phone\'s camera, or paste the pairing link if they sent it to you.</string>
+    <string name="setup_name_it_title">Name it</string>
+    <string name="setup_name_it_detail">Choose what this app calls the device, and how your name appears on it.</string>
+    <string name="setup_need_other_parent">The other parent\'s phone nearby, or a pairing link from them</string>
+    <string name="setup_scan_code_title">Scan the pairing code</string>
+    <string name="setup_scan_code_where">On the other parent\'s phone: PhoneLock &gt; ⋮ on the device &gt; Share with another parent.</string>
+    <string name="setup_scan_qr">Scan QR code</string>
+    <string name="setup_paste_link">Or paste a pairing link</string>
+    <string name="setup_code_recognised">Pairing code recognised</string>
+    <string name="setup_not_a_link">This isn\'t a PhoneLock pairing link</string>
+    <!-- phonelock://pair is the start of the link itself: keep it as is -->
+    <string name="setup_link_starts_with">Starts with phonelock://pair</string>
+    <string name="setup_add_device_button">Add device</string>
+    <!-- An example name for the parent, used when they haven't typed theirs yet -->
+    <string name="setup_example_parent_name">Dad</string>
+    <!-- %1$s is the parent's name; "Camera" is an example app on the child's device -->
+    <string name="setup_your_name_hint_example">Shown on their device, e.g. \"%1$s allowed Camera\"</string>
+
+    <!-- Sharing a device with another parent. %1$s is the device's name. -->
+    <string name="setup_share_title">Share %1$s\'s device</string>
+    <!-- %1$s is the button title the other parent taps (setup_add_existing_title) -->
+    <string name="setup_share_instructions">On the other parent\'s phone, open PhoneLock, tap \"%1$s\" and scan this code.</string>
+    <string name="setup_share_warning">Anyone with this code can control the device. Only show it to the other parent.</string>
+
+    <!-- Scanning a QR code -->
+    <string name="setup_camera_needed">Camera access is needed to scan the pairing code.</string>
+    <string name="setup_allow_camera">Allow camera</string>
+    <string name="setup_point_at_code">Point at the pairing QR code</string>
+    <!-- Spoken description of the QR code image -->
+    <string name="setup_qr_code">QR code</string>
+
+    <!-- Setting up over Wi-Fi. Names of Android's own settings screens and options on the child's device
+         (Settings, About phone, Build number, System, Developer options, Wireless debugging, "Pair device with
+         pairing code", "IP address & Port", Passwords & accounts, Multiple users) must match the names Android
+         itself uses in this language. -->
+    <string name="setup_what_this_does">What this does</string>
+    <!-- %1$s is the child's device name -->
+    <string name="setup_fix_explanation">Fix setup turns PhoneLock\'s features back on for %1$s: screen view, call limits and call log, files, ringing through Do Not Disturb, and working while idle. It doesn\'t change its pairing, schedule or apps.</string>
+    <string name="setup_need_same_wifi_fix">Their device on the same Wi-Fi as this phone</string>
+    <string name="setup_need_parent_mode">Parent mode unlocked on it (hold the clock for 4 seconds, enter the PIN), to reach Settings</string>
+    <string name="setup_need_developer_options">Developer options turned on there: Settings &gt; About phone, tap Build number 7 times</string>
+    <string name="setup_outline_prepare_title">Prepare their device</string>
+    <string name="setup_outline_prepare_detail">Same Wi-Fi, accounts removed for now, Developer options on. About 5 minutes.</string>
+    <string name="setup_outline_names_title">Choose names and a PIN</string>
+    <string name="setup_outline_names_detail">The PIN unlocks parent mode on their device.</string>
+    <string name="setup_outline_pair_title">Pair with this phone</string>
+    <string name="setup_outline_pair_detail">Their device shows a 6-digit code; you type it here.</string>
+    <string name="setup_outline_install_title">PhoneLock sets it up</string>
+    <string name="setup_outline_install_detail">Installs, connects it to this app and turns on its features. About 2 minutes.</string>
+    <string name="setup_need_device">Their phone or tablet, with Android 13 or later, charged and in your hands</string>
+    <string name="setup_need_same_wifi">Both devices on the same Wi-Fi network</string>
+    <string name="setup_need_sign_out">To sign out of its accounts until setup is done (you add them back in parent mode)</string>
+    <string name="setup_nothing_erased">Nothing on their device is erased.</string>
+    <string name="setup_connect_wifi_title">Connect to Wi-Fi</string>
+    <string name="setup_connect_wifi_detail">The same network as this phone.</string>
+    <string name="setup_remove_accounts_title">Remove its accounts</string>
+    <string name="setup_remove_accounts_detail">Settings &gt; Passwords &amp; accounts: remove each one (Google and others). Android only lets PhoneLock take charge of a device with no accounts. You add them back at the end.</string>
+    <string name="setup_developer_options_title">Turn on Developer options</string>
+    <string name="setup_developer_options_detail">Settings &gt; About phone: tap Build number 7 times, until it says you\'re a developer.</string>
+    <string name="setup_names_and_pin">Names and PIN</string>
+    <string name="setup_shown_on_device">Shown on their device</string>
+    <string name="setup_parent_pin">Parent PIN (4 to 8 digits)</string>
+    <string name="setup_pin_unlocks">Unlocks parent mode on their device</string>
+    <string name="setup_pin_again">PIN again</string>
+    <string name="setup_pin_mismatch">Doesn\'t match</string>
+    <string name="setup_pin_confirm">To be sure it\'s right</string>
+    <string name="setup_pair_title">Pair with their device</string>
+    <string name="setup_set_up_button">Set up</string>
+    <string name="setup_pair_instructions">On their device: Settings &gt; System &gt; Developer options &gt; Wireless debugging. Turn it on, then tap Pair device with pairing code. Keep that screen open until setup starts.</string>
+    <string name="setup_looking">Looking for it… It appears here once its pairing code is showing.</string>
+    <string name="setup_wifi_pairing_code">Wi-Fi pairing code</string>
+    <string name="setup_six_digits">The 6 digits on their screen</string>
+    <string name="setup_fewer_options">Fewer options</string>
+    <string name="setup_more_options">Not found, or more options</string>
+    <string name="setup_ip_and_port">Its IP address &amp; port</string>
+    <!-- The example address must stay as is -->
+    <string name="setup_ip_and_port_hint">Shown under the pairing code, e.g. 192.168.1.20:37755</string>
+    <string name="setup_debugging_port">Its debugging port</string>
+    <string name="setup_debugging_port_hint">Only if setup can\'t find it: the port after \"IP address &amp; Port\" on the Wireless debugging screen</string>
+    <string name="setup_turn_off_debugging_option">Turn off debugging when done</string>
+    <string name="setup_turn_off_debugging_detail">Recommended, so it can\'t be used to undo PhoneLock. Parent mode can turn it back on.</string>
+
+    <!-- Setup progress -->
+    <string name="setup_stopped">Setup stopped</string>
+    <string name="setup_setting_up">Setting up…</string>
+    <string name="setup_finished_debugging_off">Wireless debugging is now off on their device. Add their accounts back in parent mode (hold the clock for 4 seconds).</string>
+    <string name="setup_finished_debugging_on">Wireless debugging is still on on their device; turn it off in parent mode once it\'s working. Add their accounts back in parent mode (hold the clock for 4 seconds).</string>
+    <string name="setup_keep_screen_open">Keep this screen open until setup finishes.</string>
+
+    <!-- The setup steps, as listed while setup runs -->
+    <string name="setup_step_pair">Pair with the device</string>
+    <string name="setup_step_connect">Connect</string>
+    <string name="setup_step_check">Check the device</string>
+    <string name="setup_step_download">Download the lock app</string>
+    <string name="setup_step_install">Install the lock app</string>
+    <string name="setup_step_owner">Make it the device owner</string>
+    <string name="setup_step_connect_app">Connect it to this app</string>
+    <string name="setup_step_features">Turn on features</string>
+    <string name="setup_step_debugging_off">Turn off debugging</string>
+
+    <!-- Features turned on during setup, listed when some couldn't be -->
+    <string name="setup_grant_screen_view">Screen view</string>
+    <string name="setup_grant_keep_screen_view">Keeping screen view on</string>
+    <string name="setup_grant_dnd">Ringing through Do Not Disturb</string>
+    <string name="setup_grant_screen_calls">Screening incoming calls</string>
+    <string name="setup_grant_limit_calls">Limiting outgoing calls</string>
+    <string name="setup_grant_call_log">Call log for parents</string>
+    <string name="setup_grant_app_use">App use for parents</string>
+    <string name="setup_grant_files">Files for parents</string>
+    <string name="setup_grant_idle">Working while idle (battery saver exemption)</string>
+
+    <!-- Notes and errors shown beside a setup step -->
+    <string name="setup_pairing_refused">Pairing refused</string>
+    <string name="setup_no_debugging_port">Couldn\'t find the device\'s debugging port. Keep Wireless debugging open on it and try again.</string>
+    <string name="setup_device_no_answer">The device didn\'t answer</string>
+    <string name="setup_android_too_old">This device runs an Android version older than 13</string>
+    <string name="setup_lock_no_answer">PhoneLock on the device didn\'t answer. Try again.</string>
+    <!-- %1$s is the child's device name -->
+    <string name="setup_wrong_device">This isn\'t %1$s\'s device. Open Wireless debugging on the right one.</string>
+    <string name="setup_note_checking_features">Checking its features</string>
+    <string name="setup_note_already_mine">Already connected to this app: carrying on</string>
+    <string name="setup_note_other_parent">Set up by another parent: checking its features only</string>
+    <string name="setup_note_not_connected">PhoneLock is installed but wasn\'t connected: continuing from there</string>
+    <string name="setup_not_set_up">PhoneLock isn\'t set up on this device. Use Add a child\'s device instead.</string>
+    <string name="setup_remove_accounts_first">Remove the accounts on the device first (Settings &gt; Passwords &amp; accounts); add them back afterwards in parent mode</string>
+    <string name="setup_remove_users_first">Remove the device\'s other users first (Settings &gt; System &gt; Multiple users)</string>
+    <string name="setup_other_owner">Another app already manages this device (device owner)</string>
+    <string name="setup_already_done">Already done</string>
+    <string name="setup_refused">Refused</string>
+    <string name="setup_checking_answers">Checking it answers…</string>
+    <string name="setup_already_connected">Already connected</string>
+    <string name="setup_connected_other_parent">Connected to another parent</string>
+    <!-- %1$s is a comma-separated list of features (the setup_grant_* names) -->
+    <string name="setup_not_turned_on">Not turned on: %1$s</string>
+    <string name="setup_debugging_left_on_chosen">Left on, as chosen</string>
+    <string name="setup_debugging_left_on_other">Left on: it\'s another parent\'s device</string>
+    <string name="setup_debugging_left_on_unreachable">Left on, because the device hasn\'t answered through the internet yet</string>
+    <string name="setup_debugging_not_confirmed">The device didn\'t confirm; debugging may still be on</string>
+    <string name="setup_not_answering">It hasn\'t answered through the internet yet. Check its connection; debugging stays on until it does.</string>
+    <!-- %1$s is the reply the child's device sent, in English -->
+    <string name="setup_pairing_not_accepted">The device didn\'t accept the pairing: %1$s. Try again.</string>
+    <string name="setup_pairing_no_answer">The device didn\'t accept the pairing: no answer. Try again.</string>
+    <string name="setup_download_404">Download failed (HTTP 404)</string>
+    <string name="setup_not_genuine">The download isn\'t a genuine PhoneLock lock app</string>
+
+    <!-- How setup ended -->
+    <string name="setup_outcome_fixed">Setup checked and fixed.</string>
+    <string name="setup_outcome_other_parent">This device was already set up by another parent. Ask them to share it with you (device settings &gt; Share with another parent).</string>
+    <!-- %1$s is the child's device name -->
+    <string name="setup_outcome_done">%1$s is set up and connected to this app.</string>
+    <!-- %1$s is one of the setup_outcome_* sentences above -->
+    <string name="setup_outcome_some_features_failed">%1$s Some features couldn\'t be turned on; see above.</string>
+
+    <!-- Wireless debugging errors, shown when setup stops -->
+    <string name="setup_adb_install_failed">Install failed</string>
+    <!-- %1$s is a technical service name, e.g. "shell" -->
+    <string name="setup_adb_service_refused">The device refused \"%1$s\"</string>
+    <string name="setup_adb_corrupt_message">Corrupt adb message</string>
+    <string name="setup_adb_message_too_large">adb message too large</string>
+    <string name="setup_adb_stopped_answering">The device stopped answering</string>
+    <string name="setup_adb_not_trusted_again">The device doesn\'t trust this phone (pair it again)</string>
+    <string name="setup_adb_not_trusted_yet">The device doesn\'t trust this phone yet (pair it first)</string>
+    <string name="setup_adb_usb_auth">The device asked for USB-style authorization; turn on Wireless debugging and pair first</string>
+    <string name="setup_adb_pairing_insecure">Couldn\'t secure the pairing connection</string>
+    <string name="setup_adb_pairing_invalid">The device sent an invalid pairing message</string>
+    <string name="setup_adb_pairing_stopped">The device stopped answering during pairing</string>
+    <string name="setup_adb_wrong_code">Wrong pairing code, or it expired</string>
+    <!-- %1$d is a version number -->
+    <string name="setup_adb_pairing_version">Unsupported pairing version %1$d</string>
+    <string name="setup_adb_pairing_unexpected">Unexpected pairing message</string>
+    <string name="setup_adb_pairing_size">Bad pairing message size</string>
+    <!-- %1$s is a file name -->
+    <string name="setup_adb_save_failed">Couldn\'t save %1$s</string>
+
+    <!-- The main screen's prompts for permissions this phone still needs -->
+    <string name="setup_hint_background">Allow background use so requests arrive right away.</string>
+    <string name="setup_hint_full_screen">Allow emergency alerts to show full screen, like an incoming call.</string>
+
+    <!-- Viewing the child's screen -->
+    <string name="setup_screenshot_no_image">No image received</string>
+    <string name="setup_screenshot_unreadable">Couldn\'t open the screenshot</string>
+</resources>

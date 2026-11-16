@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Wording for the app sections, app time, usage report, schedule, parent mode, app picker and debugging dialogs. -->
+<resources>
+    <!-- Allowed / not allowed right now -->
+    <string name="apps_allowed_now_title">当前允许</string>
+    <string name="apps_allowed_now_empty">当前没有允许使用的应用。可以从下方列表中临时允许某个应用。</string>
+    <string name="apps_tap_to_pause">点按某个应用可暂停一段时间。</string>
+    <string name="apps_allowed_for_a_while">临时允许</string>
+    <string name="apps_paused_for_a_while">临时暂停</string>
+    <!-- Small note under an app icon; %1$s is a clock time such as 7:00 PM -->
+    <string name="apps_until_time">至 %1$s</string>
+    <!-- Wi-Fi or Bluetooth pill; %1$s is "Wi-Fi" or "Bluetooth", %2$s a clock time -->
+    <string name="apps_control_until">%1$s · 至 %2$s</string>
+    <string name="apps_control_paused_until">%1$s · 暂停至 %2$s</string>
+    <!-- %1$s is an app name -->
+    <string name="apps_pause_how_long">将 %1$s 暂停多久？</string>
+    <string name="apps_allow_how_long">允许使用 %1$s 多久？</string>
+    <string name="apps_allow_again_now">立即重新允许</string>
+    <!-- Dialog title; %1$s is an app name, %2$s a clock time -->
+    <string name="apps_app_until">%1$s 至 %2$s</string>
+    <string name="apps_add_30_minutes">增加 30 分钟</string>
+    <string name="apps_stop_now">立即停止</string>
+    <!-- Snackbar; %1$s is an app name -->
+    <string name="apps_app_stopped">已停止 %1$s</string>
+    <string name="apps_stop_all">停止所有临时允许的应用</string>
+    <string name="apps_all_stopped">已停止所有临时允许的应用</string>
+    <string name="apps_not_allowed_now_title">当前不允许</string>
+    <string name="apps_tap_to_allow">点按某个应用可临时允许使用。</string>
+    <!-- Two-line note under a narrow app icon; %1$s is a clock time -->
+    <string name="apps_paused_until_note">暂停至\n%1$s</string>
+
+    <!-- Choosing a length of time -->
+    <string name="apps_until_a_time">直到某个时间…</string>
+    <string name="apps_custom_length">自定义时长…</string>
+    <string name="apps_hours">小时</string>
+    <string name="apps_minutes">分钟</string>
+    <string name="apps_at_most_24_hours">最长 24 小时。</string>
+    <!-- Button that confirms a custom length -->
+    <string name="apps_set">确定</string>
+
+    <!-- App time screen -->
+    <string name="apps_app_time_title">应用时间</string>
+    <string name="apps_app_time_hint">如需为应用设置每日限额，请在主界面的“应用及允许使用的时间”中点按应用旁边的 ⋮。</string>
+    <!-- %1$s is the reason the child's device gave, in English -->
+    <string name="apps_usage_error">%1$s。请使用“通过 Wi-Fi 修复设置”来允许此权限。</string>
+
+    <!-- Daily limits; %1$s is the allowance, such as "1 h a day" -->
+    <string name="apps_limit_times_up">%1$s · 今天的时间已用完</string>
+    <string name="apps_limit_no_limit_today">%1$s · 今天不限时</string>
+    <string name="apps_limit_not_allowed_today">%1$s · 今天不允许</string>
+    <!-- %2$s is a length of time such as "35 min" -->
+    <string name="apps_limit_left">%1$s · 剩余 %2$s</string>
+    <string name="apps_limit_none">不限时</string>
+    <string name="apps_limit_not_allowed">不允许</string>
+    <!-- Lower-case forms, used in the middle of apps_limit_split -->
+    <string name="apps_limit_none_lower">不限时</string>
+    <string name="apps_limit_not_allowed_lower">不允许</string>
+    <string name="apps_limit_not_allowed_any_day">每天都不允许</string>
+    <!-- %1$s is a length of time such as "1 h" -->
+    <string name="apps_limit_per_day">每天 %1$s</string>
+    <!-- %1$s and %2$s are lengths of time, or "No limit" / "not allowed" -->
+    <string name="apps_limit_split">工作日：%1$s，周末：%2$s</string>
+    <string name="apps_limit_varies">每天不同</string>
+    <!-- %1$s is an app name -->
+    <string name="apps_limit_title">%1$s 的每日限额</string>
+    <string name="apps_limit_every_day">每天</string>
+    <string name="apps_limit_weekdays_weekends">工作日和周末</string>
+    <string name="apps_limit_each_day">逐日设置</string>
+    <string name="apps_limit_mon_fri">周一至周五</string>
+    <string name="apps_limit_sat_sun">周六和周日</string>
+    <string name="apps_limit_explainer">时间用完后，该应用会关闭到明天。通过“临时允许”给予的时间是额外的，不计入限额。</string>
+
+    <!-- App use report -->
+    <string name="apps_app_use_title">应用使用情况</string>
+    <string name="apps_no_use_yet">还没有应用使用记录。</string>
+    <string name="apps_no_use_period">这段时间内没有应用使用记录。</string>
+    <string name="apps_tap_bar">点按某个柱形可查看当天的情况。</string>
+    <!-- %1$s is the total time, %2$s the average time per day -->
+    <string name="apps_total_per_day">%1$s · 每天 %2$s</string>
+    <string name="apps_most_used">最常用的应用</string>
+    <string name="apps_include_system">包括系统应用</string>
+    <string name="apps_include_system_hint">Google Play 服务和“设置”等后台组件</string>
+    <!-- Report periods, on segmented buttons -->
+    <string name="apps_period_day">日</string>
+    <string name="apps_period_week">周</string>
+    <string name="apps_period_month">月</string>
+    <!-- Chart part for all the less used apps together -->
+    <string name="apps_other">其他</string>
+    <!-- Short chart axis labels: minutes, hours, hours and minutes -->
+    <string name="apps_axis_minutes">%1$d分</string>
+    <string name="apps_axis_hours">%1$d时</string>
+    <string name="apps_axis_hours_minutes">%1$d时%2$d分</string>
+
+    <!-- Situations -->
+    <string name="apps_mode_bedtime">就寝时间</string>
+    <string name="apps_mode_limited">限时时段</string>
+    <string name="apps_mode_normal">正常时段</string>
+    <!-- Lower-case forms, used inside apps_situation_allowed / apps_situation_not_allowed -->
+    <string name="apps_situation_bedtime">就寝时间</string>
+    <string name="apps_situation_limited">限时时段</string>
+    <string name="apps_situation_normal">正常时段</string>
+    <!-- Snackbar; %1$s is an app name (or Wi-Fi, Bluetooth), %2$s a situation such as "limited hours" -->
+    <string name="apps_situation_allowed">%1$s：%2$s内允许使用</string>
+    <string name="apps_situation_not_allowed">%1$s：%2$s内不允许使用</string>
+    <!-- Column titles over the situation checkboxes; keep short -->
+    <string name="apps_col_normal">正常</string>
+    <string name="apps_col_limited">限时</string>
+    <string name="apps_col_bedtime">就寝</string>
+
+    <!-- Apps and when they're allowed -->
+    <string name="apps_table_title">应用及允许使用的时间</string>
+    <string name="apps_table_hint">勾选的应用会在对应时间内显示在孩子的主屏幕上。未勾选的应用只能临时允许。使用 ⋮ 设置每日时间限额。</string>
+    <!-- Read out for an app's menu button; %1$s is an app name -->
+    <string name="apps_more_for">%1$s 的更多选项</string>
+    <string name="apps_set_limit">设置每日限额…</string>
+    <string name="apps_change_limit">更改每日限额…</string>
+    <string name="apps_remove_limit">移除每日限额</string>
+    <!-- Snackbar; %1$s is an app name -->
+    <string name="apps_limit_removed">%1$s：已移除每日限额</string>
+    <string name="apps_hide">隐藏</string>
+    <string name="apps_hide_untick">隐藏（请先取消全部三项勾选）</string>
+    <!-- Snackbars; %1$s is an app name -->
+    <string name="apps_app_hidden">已隐藏 %1$s</string>
+    <string name="apps_app_shown">已显示 %1$s</string>
+    <string name="apps_uninstall_menu">卸载…</string>
+    <!-- %1$s is an app name -->
+    <string name="apps_uninstall_title">要卸载 %1$s 吗？</string>
+    <string name="apps_uninstall_body">该应用及其数据会从孩子的设备上移除。此操作无法撤消，之后需要重新安装。</string>
+    <!-- Button -->
+    <string name="apps_uninstall">卸载</string>
+    <!-- %1$d is how many apps are hidden -->
+    <string name="apps_hidden_apps">已隐藏的应用（%1$d）</string>
+    <!-- Button that shows a hidden app again -->
+    <string name="apps_show">显示</string>
+
+    <!-- Schedule -->
+    <string name="apps_schedule_title">时间表</string>
+    <string name="apps_schedule_empty">还没有设置限时时段或就寝时间，所以一直是正常时段。</string>
+    <string name="apps_days_every_day">每天</string>
+    <string name="apps_days_weekdays">工作日</string>
+    <string name="apps_days_weekends">周末</string>
+    <!-- %1$s is days such as "Weekdays" or "Mon, Wed" -->
+    <string name="apps_rule_all_day">%1$s，全天</string>
+    <!-- %1$s is days, %2$s and %3$s clock times -->
+    <string name="apps_rule_range">%1$s，%2$s 至 %3$s</string>
+    <!-- Snackbars; %1$s is "Limited hours" or "Bedtime" -->
+    <string name="apps_rule_removed">已移除%1$s</string>
+    <string name="apps_rule_added">已添加%1$s</string>
+    <string name="apps_rule_changed">已更改%1$s</string>
+    <string name="apps_edit">编辑…</string>
+    <string name="apps_add_limited">添加限时时段</string>
+    <string name="apps_add_bedtime">添加就寝时间</string>
+    <string name="apps_edit_limited">编辑限时时段</string>
+    <string name="apps_edit_bedtime">编辑就寝时间</string>
+    <string name="apps_days">星期</string>
+    <!-- Labels over the start and end times -->
+    <string name="apps_from">开始</string>
+    <string name="apps_until">结束</string>
+    <string name="apps_all_day">全天。</string>
+    <string name="apps_past_midnight">跨过午夜，持续到第二天。</string>
+
+    <!-- Parent mode, PIN and starting a situation by hand; %1$s is the child's device name -->
+    <string name="apps_parent_mode_title">要为家长解锁 %1$s 吗？</string>
+    <string name="apps_parent_mode_note">孩子的设备上会开放“设置”和 Play Store，任何拿着设备的人都能使用。时间结束或屏幕关闭后会重新锁定。</string>
+    <!-- %1$s is a length of time such as "15 min" -->
+    <string name="apps_for_length">持续 %1$s</string>
+    <string name="apps_pin_title">更改家长 PIN 码</string>
+    <string name="apps_pin_new">新 PIN 码（4 到 8 位数字）</string>
+    <string name="apps_pin_again">再输入一次</string>
+    <string name="apps_pin_hint">在孩子的设备上使用：按住时钟 4 秒。</string>
+    <!-- %1$s is "Limited hours" or "Bedtime" -->
+    <string name="apps_mode_how_long">%1$s要持续多久？</string>
+    <string name="apps_start_mode_title">在 %1$s 的设备上开始</string>
+    <string name="apps_start_mode_note">只有为此勾选的应用可以使用。更严格的时间表仍然有效。</string>
+
+    <!-- App picker -->
+    <string name="apps_all_apps">所有应用</string>
+    <plurals name="apps_count">
+        <item quantity="other">%1$d 个应用</item>
+    </plurals>
+
+    <!-- Debugging; %1$s is the child's device name -->
+    <string name="apps_debugging_title">要开启调试吗？</string>
+    <string name="apps_debugging_note">用于维修：在 %1$s 上开启 USB 调试和无线调试，这样即使它的界面无法正常使用，也能通过电脑修复或更新。之后会自动关闭。\n\n开启期间，任何已配对的电脑都能控制该设备。“最近事件”中会显示连接方式。</string>
+    <!-- %1$s is a length of time such as "30 min" -->
+    <string name="apps_debugging_on_for">开启 %1$s</string>
+    <string name="apps_debugging_off">立即关闭</string>
+</resources>

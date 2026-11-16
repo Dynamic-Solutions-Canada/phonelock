@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Notifications, alerts and device messages: requests, emergency alerts, unfamiliar screens, quiet-phone alerts, Find and reach. -->
+<resources>
+    <!-- Name shown for a paired device that has no name of its own -->
+    <string name="alerts_device_fallback">デバイス</string>
+
+    <!-- Notification channel names, shown in Android's notification settings -->
+    <string name="alerts_channel_requests">リクエスト</string>
+    <string name="alerts_channel_events">デバイスのアクティビティ</string>
+    <string name="alerts_channel_others">他の保護者の操作</string>
+    <string name="alerts_channel_service">接続</string>
+    <string name="alerts_channel_emergency">緊急アラート</string>
+    <string name="alerts_channel_emergency_description">お子様が SOS を押したときに通知します。アラーム音はアラームとして別に鳴ります。</string>
+    <string name="alerts_channel_emergency_service">緊急アラームを再生中</string>
+
+    <!-- Ongoing notification while this app keeps a connection open -->
+    <string name="alerts_service_listening">ペア設定済みのデバイスを待機中</string>
+
+    <!-- Short messages after asking a device to do something. %1$s is the child's name. -->
+    <string name="alerts_debugging_on_sent">%1$s のデバイスにデバッグをオンにするよう依頼しました</string>
+    <string name="alerts_debugging_off_sent">%1$s のデバイスにデバッグをオフにするよう依頼しました</string>
+    <string name="alerts_update_sent">%1$s のデバイスにアップデートの確認を依頼しました。結果は「最近のイベント」に表示されます。</string>
+    <!-- %1$s is the child's name, %2$s the app's name -->
+    <string name="alerts_uninstall_sent">%1$s のデバイスに %2$s のアンインストールを依頼しました</string>
+    <string name="alerts_pin_sent">新しい保護者 PIN を %1$s のデバイスに送信しました</string>
+    <string name="alerts_no_answer">%1$s のデバイスから応答がありません。電源が切れているか、オフラインの可能性があります。しばらくしてから再試行してください。</string>
+
+    <!-- Activity entries when a message couldn't be sent. %1$d is an HTTP status code; %1$s an error message. -->
+    <string name="alerts_send_failed_http">送信できませんでした（HTTP %1$d）</string>
+    <string name="alerts_send_failed">送信できませんでした：%1$s</string>
+
+    <!-- A request from the child. %1$s is the app or thing asked for, %2$s a length of time such as "30 min". -->
+    <string name="alerts_request_event">%1$s をリクエスト（%2$s）</string>
+    <string name="alerts_request_notification">%1$s を %2$s 使いたいとリクエストしています</string>
+
+    <!-- Added to a device notice about low battery or turning off. %1$s is an address, %2$s a time of day. -->
+    <string name="alerts_last_near_at">最終位置：%1$s 付近（%2$s）</string>
+    <string name="alerts_last_near">最終位置：%1$s 付近</string>
+
+    <!-- Notification buttons: keep them short. %1$s is a length of time such as "30 min". -->
+    <string name="alerts_action_allow_duration">%1$s 許可</string>
+    <string name="alerts_action_choose_time">時間を選択…</string>
+    <string name="alerts_action_allow_30_min">30 分許可</string>
+
+    <!-- Quiet-phone alerts. %1$s is a length of time such as "1 h 10 min". -->
+    <string name="alerts_heard_again">スマートフォンから再び応答がありました</string>
+    <string name="alerts_heard_again_after">%1$s ぶりにスマートフォンから応答がありました</string>
+    <string name="alerts_quiet_for">スマートフォンから %1$s 応答がありません。</string>
+    <!-- %1$s is an address, %2$s a time of day -->
+    <string name="alerts_quiet_last_near">最終位置：%1$s 付近（%2$s）。</string>
+    <!-- %1$s is a time of day; used when the address is unknown -->
+    <string name="alerts_quiet_last_location">%1$s 時点で最後に記録された位置付近にいました。</string>
+    <!-- %1$d is a battery percentage -->
+    <string name="alerts_battery">バッテリー %1$d%%。</string>
+    <string name="alerts_battery_charging">バッテリー %1$d%%、充電中。</string>
+
+    <!-- Emergency alerts. %1$s is the child's name. -->
+    <string name="alerts_emergency_event">%1$s のスマートフォンからの緊急アラート</string>
+    <string name="alerts_emergency_cancelled_event">緊急アラートは取り消されました：誤送信</string>
+    <!-- %1$s is the message the child typed -->
+    <string name="alerts_emergency_message_event">緊急メッセージ：%1$s</string>
+    <!-- Shown in the list of parents answering an alert when this parent has no name set -->
+    <string name="alerts_a_parent">保護者</string>
+    <string name="alerts_emergency_title">緊急：%1$s</string>
+    <string name="alerts_emergency_cancelled_title">取り消し：%1$s のアラート</string>
+    <string name="alerts_emergency_sent_by_mistake">誤って送信されました。</string>
+    <!-- %1$s is an address, %2$s a time of day -->
+    <string name="alerts_emergency_near_at">%1$s 付近（%2$s）。</string>
+    <string name="alerts_emergency_near">%1$s 付近。</string>
+    <!-- %1$s is a time of day -->
+    <string name="alerts_emergency_location_received">位置情報を受信しました（%1$s）。</string>
+    <string name="alerts_emergency_waiting_location">お子様の位置情報を待っています。</string>
+    <!-- %1$s is what the child sent -->
+    <string name="alerts_emergency_she_says">お子様からのメッセージ：%1$s。</string>
+    <!-- %1$s is a list of parents' names -->
+    <string name="alerts_emergency_on_it">対応中：%1$s。</string>
+    <!-- Button: this parent is dealing with the emergency. Also a notification button: keep it short. -->
+    <string name="alerts_emergency_ack">対応します</string>
+    <!-- Button: stop the alarm sound without answering. Also a notification button: keep it short. -->
+    <string name="alerts_emergency_silence">消音</string>
+    <string name="alerts_emergency_alarm">緊急アラーム</string>
+    <!-- %1$s is a time of day -->
+    <string name="alerts_emergency_pressed_at">%1$s に SOS が押されました</string>
+    <!-- Map marker for the child's latest position -->
+    <string name="alerts_emergency_latest">最新</string>
+    <string name="alerts_emergency_call_her">電話する</string>
+    <string name="alerts_dismiss">閉じる</string>
+    <string name="alerts_emergency_none">現在、緊急アラートはありません。</string>
+    <string name="alerts_emergency_open_app">PhoneLock を開く</string>
+
+    <!-- Unfamiliar Google screens. %1$s is the app it was opened from, %2$s a short screen name. -->
+    <string name="alerts_screen_shot_failed">スクリーンショットを開けませんでした</string>
+    <string name="alerts_screen_event_from">%1$s から見慣れない Google サービスの画面を開きました（%2$s）</string>
+    <!-- %1$s is a short screen name -->
+    <string name="alerts_screen_event">見慣れない Google サービスの画面を開きました（%1$s）</string>
+    <!-- %1$s is the app it was opened from -->
+    <string name="alerts_screen_notification_from">%1$s から見慣れない Google の画面を開きました</string>
+    <string name="alerts_screen_notification">見慣れない Google の画面を開きました</string>
+    <!-- Button: stop reporting this screen. Also a notification button: keep it short. -->
+    <string name="alerts_screen_mark_ok">問題なし</string>
+    <string name="alerts_block">ブロック</string>
+    <string name="alerts_screen_allowed_message">許可しました。今後この画面については通知されません</string>
+    <string name="alerts_screen_blocked_message">ブロックしました</string>
+    <string name="alerts_screen_section">見慣れない画面</string>
+    <string name="alerts_screen_section_detail">安全ともブロック対象とも判明していない Google の画面です。「問題なし」にすると今後通知されなくなります。「ブロック」にすると、開くたびにお子様は元の画面に戻されます。</string>
+    <string name="alerts_screenshot">スクリーンショット</string>
+    <!-- %1$s is the app it was opened from, %2$s a time of day -->
+    <string name="alerts_screen_from_at">%1$s から · %2$s</string>
+    <string name="alerts_close">閉じる</string>
+
+    <!-- Settings > Google screens -->
+    <string name="alerts_rules_section">Google の画面</string>
+    <string name="alerts_rules_section_detail">ロックの外に出られてしまう Google の画面です。許可しない限りブロックされます。お子様がこれらの画面から戻されたときは通知されます。</string>
+    <string name="alerts_rule_allowed">許可済み</string>
+    <!-- %1$s is a time of day -->
+    <string name="alerts_rule_allowed_until">%1$s まで許可</string>
+    <string name="alerts_rule_blocked">ブロック中</string>
+    <string name="alerts_rule_blocked_default">ブロック中（デフォルト）</string>
+    <string name="alerts_rule_reported">開いたときに通知</string>
+    <string name="alerts_rule_allow_15_min">15 分許可</string>
+    <string name="alerts_rule_allow_1_hour">1 時間許可</string>
+    <string name="alerts_rule_allow_until_bedtime">おやすみ時間まで許可</string>
+    <string name="alerts_rule_back_to_blocked">ブロックに戻す</string>
+    <string name="alerts_rule_forget">設定をリセット</string>
+
+    <!-- Find and reach card -->
+    <string name="alerts_find_section">探す・連絡する</string>
+    <string name="alerts_find_activity">アクティビティ</string>
+    <string name="alerts_find_stop_ringing">鳴動を停止</string>
+    <string name="alerts_find_ringing">鳴らしています…</string>
+    <string name="alerts_find_ring">鳴らす</string>
+    <string name="alerts_find_capturing">取得中…</string>
+    <string name="alerts_find_view_screen">画面を表示</string>
+    <!-- %1$s is the child's name -->
+    <string name="alerts_find_ring_title">%1$s のデバイスを鳴らしますか？</string>
+    <string name="alerts_find_ring_detail">マナーモード中でも最大音量で 2 分間、または誰かが「停止」をタップするまで鳴ります。</string>
+    <string name="alerts_find_device_screen">デバイスの画面</string>
+    <string name="alerts_find_keep_refreshing">自動更新を続ける（2 分）</string>
+    <string name="alerts_find_hide">非表示</string>
+</resources>

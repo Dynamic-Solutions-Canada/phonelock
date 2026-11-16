@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Notifications, alerts and device messages: requests, emergency alerts, unfamiliar screens, quiet-phone alerts, Find and reach. -->
+<resources>
+    <!-- Name shown for a paired device that has no name of its own -->
+    <string name="alerts_device_fallback">Gerät</string>
+
+    <!-- Notification channel names, shown in Android's notification settings -->
+    <string name="alerts_channel_requests">Anfragen</string>
+    <string name="alerts_channel_events">Geräteaktivität</string>
+    <string name="alerts_channel_others">Aktionen des anderen Elternteils</string>
+    <string name="alerts_channel_service">Verbindung</string>
+    <string name="alerts_channel_emergency">Notfallalarme</string>
+    <string name="alerts_channel_emergency_description">Wenn ein Kind SOS drückt. Der Alarmton wird separat als Wecker abgespielt.</string>
+    <string name="alerts_channel_emergency_service">Notfallalarm läuft</string>
+
+    <!-- Ongoing notification while this app keeps a connection open -->
+    <string name="alerts_service_listening">Wartet auf gekoppelte Geräte</string>
+
+    <!-- Short messages after asking a device to do something. %1$s is the child's name. -->
+    <string name="alerts_debugging_on_sent">Gerät von %1$s gebeten, Debugging einzuschalten</string>
+    <string name="alerts_debugging_off_sent">Gerät von %1$s gebeten, Debugging auszuschalten</string>
+    <string name="alerts_update_sent">Gerät von %1$s gebeten, nach Updates zu suchen. Ergebnisse erscheinen unter „Letzte Ereignisse“.</string>
+    <!-- %1$s is the child's name, %2$s the app's name -->
+    <string name="alerts_uninstall_sent">Gerät von %1$s gebeten, %2$s zu deinstallieren</string>
+    <string name="alerts_pin_sent">Neue Eltern-PIN an das Gerät von %1$s gesendet</string>
+    <string name="alerts_no_answer">Keine Antwort vom Gerät von %1$s. Es ist vielleicht aus oder offline; versuch es später noch mal.</string>
+
+    <!-- Activity entries when a message couldn't be sent. %1$d is an HTTP status code; %1$s an error message. -->
+    <string name="alerts_send_failed_http">Senden fehlgeschlagen (HTTP %1$d)</string>
+    <string name="alerts_send_failed">Senden fehlgeschlagen: %1$s</string>
+
+    <!-- A request from the child. %1$s is the app or thing asked for, %2$s a length of time such as "30 min". -->
+    <string name="alerts_request_event">Hat %1$s angefragt (%2$s)</string>
+    <string name="alerts_request_notification">Fragt %1$s für %2$s an</string>
+
+    <!-- Added to a device notice about low battery or turning off. %1$s is an address, %2$s a time of day. -->
+    <string name="alerts_last_near_at">zuletzt in der Nähe von %1$s um %2$s</string>
+    <string name="alerts_last_near">zuletzt in der Nähe von %1$s</string>
+
+    <!-- Notification buttons: keep them short. %1$s is a length of time such as "30 min". -->
+    <string name="alerts_action_allow_duration">%1$s erlauben</string>
+    <string name="alerts_action_choose_time">Zeit wählen …</string>
+    <string name="alerts_action_allow_30_min">30 Min. erlauben</string>
+
+    <!-- Quiet-phone alerts. %1$s is a length of time such as "1 h 10 min". -->
+    <string name="alerts_heard_again">Das Smartphone meldet sich wieder</string>
+    <string name="alerts_heard_again_after">Das Smartphone meldet sich nach %1$s wieder</string>
+    <string name="alerts_quiet_for">Seit %1$s keine Meldung vom Smartphone.</string>
+    <!-- %1$s is an address, %2$s a time of day -->
+    <string name="alerts_quiet_last_near">Zuletzt in der Nähe von %1$s um %2$s.</string>
+    <!-- %1$s is a time of day; used when the address is unknown -->
+    <string name="alerts_quiet_last_location">Zuletzt am letzten bekannten Standort um %1$s.</string>
+    <!-- %1$d is a battery percentage -->
+    <string name="alerts_battery">Akku %1$d\u00A0%%.</string>
+    <string name="alerts_battery_charging">Akku %1$d\u00A0%%, wird geladen.</string>
+
+    <!-- Emergency alerts. %1$s is the child's name. -->
+    <string name="alerts_emergency_event">Notfallalarm vom Smartphone von %1$s</string>
+    <string name="alerts_emergency_cancelled_event">Notfallalarm abgebrochen: versehentlich gesendet</string>
+    <!-- %1$s is the message the child typed -->
+    <string name="alerts_emergency_message_event">Notfallnachricht: %1$s</string>
+    <!-- Shown in the list of parents answering an alert when this parent has no name set -->
+    <string name="alerts_a_parent">Ein Elternteil</string>
+    <string name="alerts_emergency_title">Notfall: %1$s</string>
+    <string name="alerts_emergency_cancelled_title">Abgebrochen: Alarm von %1$s</string>
+    <string name="alerts_emergency_sent_by_mistake">Versehentlich gesendet.</string>
+    <!-- %1$s is an address, %2$s a time of day -->
+    <string name="alerts_emergency_near_at">In der Nähe von %1$s (%2$s).</string>
+    <string name="alerts_emergency_near">In der Nähe von %1$s.</string>
+    <!-- %1$s is a time of day -->
+    <string name="alerts_emergency_location_received">Standort empfangen (%1$s).</string>
+    <string name="alerts_emergency_waiting_location">Warte auf ihren Standort.</string>
+    <!-- %1$s is what the child sent -->
+    <string name="alerts_emergency_she_says">Sie schreibt: %1$s.</string>
+    <!-- %1$s is a list of parents' names -->
+    <string name="alerts_emergency_on_it">Kümmert sich: %1$s.</string>
+    <!-- Button: this parent is dealing with the emergency. Also a notification button: keep it short. -->
+    <string name="alerts_emergency_ack">Ich kümmere mich</string>
+    <!-- Button: stop the alarm sound without answering. Also a notification button: keep it short. -->
+    <string name="alerts_emergency_silence">Stummschalten</string>
+    <string name="alerts_emergency_alarm">Notfallalarm</string>
+    <!-- %1$s is a time of day -->
+    <string name="alerts_emergency_pressed_at">SOS gedrückt um %1$s</string>
+    <!-- Map marker for the child's latest position -->
+    <string name="alerts_emergency_latest">Zuletzt</string>
+    <string name="alerts_emergency_call_her">Anrufen</string>
+    <string name="alerts_dismiss">Schließen</string>
+    <string name="alerts_emergency_none">Gerade kein Notfallalarm.</string>
+    <string name="alerts_emergency_open_app">PhoneLock öffnen</string>
+
+    <!-- Unfamiliar Google screens. %1$s is the app it was opened from, %2$s a short screen name. -->
+    <string name="alerts_screen_shot_failed">Screenshot konnte nicht geöffnet werden</string>
+    <string name="alerts_screen_event_from">Unbekannten Google-Dienste-Bildschirm aus %1$s geöffnet (%2$s)</string>
+    <!-- %1$s is a short screen name -->
+    <string name="alerts_screen_event">Unbekannten Google-Dienste-Bildschirm geöffnet (%1$s)</string>
+    <!-- %1$s is the app it was opened from -->
+    <string name="alerts_screen_notification_from">Unbekannten Google-Bildschirm aus %1$s geöffnet</string>
+    <string name="alerts_screen_notification">Unbekannten Google-Bildschirm geöffnet</string>
+    <!-- Button: stop reporting this screen. Also a notification button: keep it short. -->
+    <string name="alerts_screen_mark_ok">Als OK markieren</string>
+    <string name="alerts_block">Blockieren</string>
+    <string name="alerts_screen_allowed_message">Erlaubt; zu diesem Bildschirm bekommst du keine Meldung mehr</string>
+    <string name="alerts_screen_blocked_message">Blockiert</string>
+    <string name="alerts_screen_section">Unbekannte Bildschirme</string>
+    <string name="alerts_screen_section_detail">Google-Bildschirme, die weder als sicher bekannt noch blockiert sind. Mit „Als OK markieren“ hörst du nichts mehr davon; „Blockieren“ schickt sie jedes Mal zurück, wenn er sich öffnet.</string>
+    <string name="alerts_screenshot">Screenshot</string>
+    <!-- %1$s is the app it was opened from, %2$s a time of day -->
+    <string name="alerts_screen_from_at">Aus %1$s · %2$s</string>
+    <string name="alerts_close">Schließen</string>
+
+    <!-- Settings > Google screens -->
+    <string name="alerts_rules_section">Google-Bildschirme</string>
+    <string name="alerts_rules_section_detail">Google-Bildschirme, die aus der Sperre herausführen. Sie sind blockiert, bis du sie erlaubst; du wirst informiert, wenn sie von einem zurückgeschickt wird.</string>
+    <string name="alerts_rule_allowed">Erlaubt</string>
+    <!-- %1$s is a time of day -->
+    <string name="alerts_rule_allowed_until">Erlaubt bis %1$s</string>
+    <string name="alerts_rule_blocked">Blockiert</string>
+    <string name="alerts_rule_blocked_default">Blockiert (Standard)</string>
+    <string name="alerts_rule_reported">Wird beim Öffnen gemeldet</string>
+    <string name="alerts_rule_allow_15_min">15 Min. erlauben</string>
+    <string name="alerts_rule_allow_1_hour">1 Stunde erlauben</string>
+    <string name="alerts_rule_allow_until_bedtime">Bis zur Schlafenszeit erlauben</string>
+    <string name="alerts_rule_back_to_blocked">Wieder blockieren</string>
+    <string name="alerts_rule_forget">Entscheidung vergessen</string>
+
+    <!-- Find and reach card -->
+    <string name="alerts_find_section">Finden und erreichen</string>
+    <string name="alerts_find_activity">Aktivität</string>
+    <string name="alerts_find_stop_ringing">Klingeln beenden</string>
+    <string name="alerts_find_ringing">Klingelt …</string>
+    <string name="alerts_find_ring">Klingeln</string>
+    <string name="alerts_find_capturing">Wird aufgenommen …</string>
+    <string name="alerts_find_view_screen">Bildschirm ansehen</string>
+    <!-- %1$s is the child's name -->
+    <string name="alerts_find_ring_title">%1$s anklingeln?</string>
+    <string name="alerts_find_ring_detail">Es klingelt 2 Minuten lang mit voller Lautstärke, auch im Lautlosmodus, bis jemand auf „Klingeln beenden“ tippt.</string>
+    <string name="alerts_find_device_screen">Gerätebildschirm</string>
+    <string name="alerts_find_keep_refreshing">Weiter aktualisieren (2 Min.)</string>
+    <string name="alerts_find_hide">Ausblenden</string>
+</resources>

@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Activity (location history and map), file transfers, the first-run disclosure, Diagnostics, device Settings and this app's own updates. -->
+<resources>
+    <!-- Activity: page, map and filters -->
+    <string name="device_activity_title">动态</string>
+    <string name="device_close_full_map">关闭全屏地图</string>
+    <string name="device_show_map">显示地图</string>
+    <string name="device_hide_map">隐藏地图</string>
+    <!-- Spoken label of the Refresh button while the child's device is being located -->
+    <string name="device_locating">正在定位</string>
+    <!-- %1$s: a time, e.g. 2:15 p.m. -->
+    <string name="device_no_location_at">%1$s 没有位置记录</string>
+    <string name="device_nothing_this_day">这一天没有可显示的内容。</string>
+    <!-- Filter buttons above the timeline: four must fit across a phone, so keep them short -->
+    <string name="device_filter_places">地点</string>
+    <string name="device_filter_calls">通话</string>
+    <string name="device_filter_apps">应用</string>
+    <string name="device_filter_events">事件</string>
+    <string name="device_today">今天</string>
+    <string name="device_yesterday">昨天</string>
+
+    <!-- Activity: timeline rows. Detail facts are joined with " · " and the first letter of the line is capitalised automatically, so they start lowercase. -->
+    <!-- %1$s: a street address or coordinates -->
+    <string name="device_at_place">位于 %1$s</string>
+    <!-- %1$d: accuracy in metres -->
+    <string name="device_within_metres">误差 %1$d 米以内</string>
+    <!-- %1$d: battery level in percent -->
+    <string name="device_battery">电量 %1$d%%</string>
+    <string name="device_battery_charging">电量 %1$d%%（正在充电）</string>
+    <!-- %1$s: how long ago, e.g. 5 min ago -->
+    <string name="device_seen_ago">最后在线：%1$s</string>
+    <!-- A stretch of time with no location readings from the child's device -->
+    <string name="device_no_readings">无定位数据</string>
+    <!-- A call: %1$s arrow symbol, %2$s direction (e.g. Outgoing), %3$s who -->
+    <string name="device_timeline_call">📞 %1$s %2$s：%3$s</string>
+    <!-- As above, with %4$s the call's length (e.g. 2:05) -->
+    <string name="device_timeline_call_length">📞 %1$s %2$s：%3$s · %4$s</string>
+    <!-- App use: %1$s app name, %2$s how long (e.g. 15 min) -->
+    <string name="device_timeline_app">📱 %1$s，%2$s</string>
+    <!-- The time column of the current location row, and the map marker for it -->
+    <string name="device_now">现在</string>
+    <!-- The current location: %1$s is an address, an error from the device, or one of the two lines below -->
+    <string name="device_timeline_now">📍 现在：%1$s</string>
+    <string name="device_now_locating">正在定位…</string>
+    <string name="device_now_no_answer">无响应（离线或已关机）</string>
+    <!-- Map pin on a place where the child stayed a while (when its address is unknown) -->
+    <string name="device_map_stop">停留点</string>
+    <!-- A span of times: %1$s start, %2$s end (e.g. 2:15 p.m. – 5:30 p.m.) -->
+    <string name="device_time_range">%1$s – %2$s</string>
+    <!-- A short day name and a time, for spans crossing midnight: %1$s day (e.g. Fri), %2$s time -->
+    <string name="device_day_time">%1$s %2$s</string>
+
+    <!-- File transfers (shown while browsing the child's files). %1$s is a file name. -->
+    <!-- Wraps a status while several files are saved: %1$d this file's number, %2$d how many, %3$s the status -->
+    <string name="device_batch_status">（%1$d/%2$d）%3$s</string>
+    <!-- %1$d files saved of %2$d -->
+    <plurals name="device_batch_saved">
+        <item quantity="other">已将 %2$d 个文件中的 %1$d 个保存到 Downloads/PhoneLock</item>
+    </plurals>
+    <!-- %1$d files saved of %2$d; %3$d of them failed -->
+    <plurals name="device_batch_saved_some_failed">
+        <item quantity="other">已将 %2$d 个文件中的 %1$d 个保存到 Downloads/PhoneLock；%3$d 个无法下载</item>
+    </plurals>
+    <!-- %1$s: the child's device name, %2$s: a file name -->
+    <string name="device_file_asking">正在向 %1$s 的设备请求 %2$s…</string>
+    <string name="device_file_no_answer">%1$s 的设备没有回应 %2$s 的请求。它可能已关机或离线。</string>
+    <string name="device_file_preparing">正在准备 %1$s…</string>
+    <string name="device_file_cant_read">无法读取 %1$s</string>
+    <string name="device_file_too_large">%1$s 超过 48 MB</string>
+    <string name="device_file_uploading">正在上传 %1$s…</string>
+    <string name="device_file_sent">已发送 %1$s，正在等待设备保存…</string>
+    <!-- %1$d: an HTTP status code -->
+    <string name="device_upload_failed_http">上传失败（HTTP %1$d）</string>
+    <!-- %1$s: the reason, as the system words it -->
+    <string name="device_upload_failed">上传失败：%1$s</string>
+    <string name="device_file_uploaded">已上传 %1$s</string>
+    <string name="device_file_downloading">正在下载 %1$s…</string>
+    <string name="device_file_saved">已将 %1$s 保存到 Downloads/PhoneLock</string>
+    <string name="device_file_cant_download">无法下载 %1$s</string>
+    <string name="device_file_opening">正在打开 %1$s…</string>
+    <string name="device_file_cant_open">无法打开 %1$s</string>
+    <string name="device_file_opened">已打开 %1$s（未保存）</string>
+    <string name="device_file_no_viewer">这部手机上没有可以打开 %1$s 的应用。请改用“保存到下载”。</string>
+
+    <!-- First-run disclosure, which the parent must accept before adding a device -->
+    <string name="device_disclosure_title">开始之前</string>
+    <string name="device_disclosure_intro">PhoneLock 是一款家长控制应用。它可以让你管理孩子的手机或平板电脑，并查看其中的信息。</string>
+    <string name="device_disclosure_seen_title">你能从孩子的设备上看到什么</string>
+    <!-- A bulleted list: keep one item per line -->
+    <string name="device_disclosure_seen">• 设备位置：按需查询，并每 15 分钟记录一次（移动时每 2 分钟一次），保留 7 天\n• 电量，以及设备何时关机或开机\n• 已安装的应用、使用应用的请求，以及孩子使用了哪些应用、用了多久\n• 孩子连接的 Wi-Fi 网络和配对的 Bluetooth 设备\n• 通话（通话记录）和联系人\n• 共享存储空间中的文件、照片和视频（在你打开时）\n• 设备屏幕（在你点按“查看屏幕”时）</string>
+    <string name="device_disclosure_readers_title">谁能看到这些信息</string>
+    <string name="device_disclosure_readers">只有你和与你共享此设备的其他家长。所有内容都在设备上进行端到端加密；负责转发消息的中继服务器和 Google 推送服务只能看到加密数据。任何内容都不会被出售或用于广告。</string>
+    <string name="device_disclosure_child_title">孩子会知道</string>
+    <string name="device_disclosure_child">孩子的主屏幕上会说明位置、电量、通话和应用使用情况会与你共享；每次家长查看其屏幕时，孩子都会收到提示；还会有一条通知显示家长控制已启用。PhoneLock 无法对孩子隐藏。</string>
+    <string name="device_disclosure_consent">继续即表示你确认自己是所管理设备的孩子的父母或法定监护人，或已获得其许可，并且只会将 PhoneLock 用于此目的。</string>
+    <!-- Opens the privacy policy, which is in English -->
+    <string name="device_privacy_policy">隐私政策</string>
+    <string name="device_disclosure_agree">我同意，继续</string>
+
+    <!-- Diagnostics. %1$s is the child's device name. -->
+    <string name="device_diag_title">诊断</string>
+    <string name="device_diag_asking">正在询问 %1$s…</string>
+    <string name="device_diag_ask_again">重新询问</string>
+    <!-- Subject of the shared report -->
+    <string name="device_diag_subject">%1$s 诊断报告</string>
+    <string name="device_diag_share_title">分享诊断报告</string>
+    <string name="device_diag_share">分享</string>
+    <string name="device_diag_waiting">正在等待 %1$s 回应。如果它离线或已关机，将不会收到回应。</string>
+    <string name="device_diag_no_report">还没有报告。</string>
+    <!-- %1$s: when the report was made -->
+    <string name="device_diag_report_from">%1$s 的报告</string>
+    <string name="device_diag_checks">检查项</string>
+    <string name="device_diag_recent_log">最近日志</string>
+    <string name="device_diag_show_log">显示日志</string>
+    <string name="device_diag_hide_log">隐藏日志</string>
+    <!-- Shown when the device sent an empty log -->
+    <string name="device_diag_log_empty">空。</string>
+    <!-- First line of the shared report: %1$s device name, %2$s date and time -->
+    <string name="device_diag_report_heading">%1$s 诊断报告，%2$s</string>
+    <!-- Heading above the log in the shared report -->
+    <string name="device_diag_report_log">最近日志：</string>
+
+    <!-- Device settings -->
+    <string name="device_settings_title">设置</string>
+    <string name="device_names">名称</string>
+    <string name="device_your_name_detail">显示在孩子的设备上</string>
+    <string name="device_names_saved">名称已保存</string>
+    <string name="device_save_names">保存名称</string>
+    <string name="device_parent_access">家长权限</string>
+    <string name="device_parent_mode">家长模式…</string>
+    <string name="device_parent_mode_detail">在孩子的设备上临时解锁“设置”和 Play Store</string>
+    <string name="device_change_pin">更改家长 PIN 码…</string>
+    <string name="device_change_pin_detail">在孩子的设备上按住时钟 4 秒后使用</string>
+    <string name="device_lock_app">孩子端应用</string>
+    <!-- %1$d: the lock app's version number -->
+    <string name="device_lock_version">版本 %1$d</string>
+    <string name="device_lock_version_unknown">版本未知</string>
+    <!-- %1$d: the installed version, %2$d: the version waiting to install -->
+    <string name="device_lock_version_update_ready">版本 %1$d · 版本 %2$d 将在下次屏幕关闭时安装</string>
+    <string name="device_lock_version_unknown_update_ready">版本未知 · 版本 %1$d 将在下次屏幕关闭时安装</string>
+    <string name="device_check_update_now">立即检查更新</string>
+    <string name="device_check_update_now_detail">在孩子的屏幕下次关闭时安装</string>
+    <string name="device_diagnostics_detail">孩子设备的检查项和最近日志</string>
+    <string name="device_fix_setup">通过 Wi-Fi 修复设置</string>
+    <string name="device_fix_setup_detail">使用无线调试修复权限</string>
+    <string name="device_recovery">恢复：开启调试…</string>
+    <string name="device_recovery_detail">用于通过电脑维修</string>
+    <string name="device_sharing">共享</string>
+    <string name="device_share">与其他家长共享…</string>
+    <string name="device_share_detail">让其他家长的手机也能管理此设备</string>
+    <string name="device_remove">移除此设备…</string>
+    <!-- %1$s: the child's device name -->
+    <string name="device_remove_title">要移除 %1$s 吗？</string>
+    <string name="device_remove_text">此应用将不再管理该设备。孩子的设备会保持当前的锁定状态。如需重新管理，可以让其他家长与你共享，或重新设置。</string>
+
+    <!-- This app's own updates (GitHub build). Versions are written 1.0.N; %1$d is N. -->
+    <string name="device_app_section">此应用</string>
+    <string name="device_app_version">版本 1.0.%1$d</string>
+    <!-- %1$d: the version, %2$d: percent downloaded -->
+    <string name="device_app_downloading">正在下载版本 1.0.%1$d：%2$d%%</string>
+    <string name="device_app_installing">正在安装版本 1.0.%1$d…</string>
+    <string name="device_app_update_to">更新到版本 1.0.%1$d</string>
+    <!-- %1$d: download size in MB -->
+    <string name="device_app_update_detail">需下载 %1$d MB。Android 会请你确认安装。</string>
+    <string name="device_app_check">检查更新</string>
+    <string name="device_app_check_detail">来自 GitHub 上的 PhoneLock 发布版本</string>
+    <string name="device_app_none_published">此应用尚未发布任何更新</string>
+    <string name="device_app_up_to_date">此应用已是最新版本（版本 1.0.%1$d）</string>
+    <!-- %1$s: the reason -->
+    <string name="device_app_check_failed">无法检查更新：%1$s</string>
+    <string name="device_app_no_connection">没有网络连接</string>
+    <string name="device_app_available">此应用有新版本 1.0.%1$d 可用</string>
+    <!-- Button on the message above -->
+    <string name="device_app_update">更新</string>
+    <!-- %1$s: the reason, one of the lowercase phrases below or one from Android -->
+    <string name="device_app_update_failed">无法更新此应用：%1$s</string>
+    <string name="device_app_download_failed">下载失败</string>
+    <string name="device_app_install_failed">安装失败</string>
+    <string name="device_app_no_confirmation">没有出现确认界面</string>
+    <string name="device_app_update_cancelled">更新已取消</string>
+    <!-- Reasons a downloaded update was refused, shown after "Couldn't update this app:" -->
+    <string name="device_app_bad_checksum">下载的文件与发布版本不一致（检查后可能已发生变化）</string>
+    <string name="device_app_not_an_app">下载的文件不是应用</string>
+    <string name="device_app_different_app">下载的是另一个应用</string>
+    <string name="device_app_different_version">下载的是另一个版本</string>
+    <string name="device_app_bad_signature">下载的文件不是由 PhoneLock 签名的</string>
+    <!-- Download errors from GitHub releases (also during child setup). %1$d: an HTTP status code -->
+    <string name="device_download_failed_http">下载失败（HTTP %1$d）</string>
+    <string name="device_download_too_large">下载的文件过大</string>
+</resources>

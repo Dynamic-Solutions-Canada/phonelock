@@ -68,13 +68,13 @@ object AppUpdate {
                 prefs.edit().putLong("checked", System.currentTimeMillis()).apply()
                 if (v == null) {
                     // Releases from before this updater have no version file for this app.
-                    if (asked) Undo.notify("No update for this app has been published yet")
+                    if (asked) Undo.notify(Strings.get(R.string.device_app_none_published))
                     return@launch
                 }
                 remember(v)
                 val st = _state.value
                 when {
-                    !st.available -> if (asked) Undo.notify("This app is up to date (version 1.0.${st.installed})")
+                    !st.available -> if (asked) Undo.notify(Strings.get(R.string.device_app_up_to_date, st.installed))
                     asked -> offer(st.latest)
                     prefs.getInt("announced", 0) != st.latest -> {
                         prefs.edit().putInt("announced", st.latest).apply()
@@ -83,7 +83,7 @@ object AppUpdate {
                 }
             } catch (e: Exception) {
                 Log.w(TAG, "check: $e")
-                if (asked) Undo.notify("Couldn't check for an update: ${e.message ?: "no connection"}")
+                if (asked) Undo.notify(Strings.get(R.string.device_app_check_failed, e.message ?: Strings.get(R.string.device_app_no_connection)))
             }
         }
     }
@@ -100,7 +100,7 @@ object AppUpdate {
                 // Android now shows its confirmation; the result comes to [Result].
             } catch (e: Exception) {
                 Log.w(TAG, "install: $e")
-                failed(e.message ?: "download failed")
+                failed(e.message ?: Strings.get(R.string.device_app_download_failed))
             }
         }
     }
@@ -129,7 +129,8 @@ object AppUpdate {
     }
 
     /** Announces version [latest] with an Update button. */
-    private fun offer(latest: Int) = Undo.action("Version 1.0.$latest of this app is available", "Update") { install() }
+    private fun offer(latest: Int) =
+        Undo.action(Strings.get(R.string.device_app_available, latest), Strings.get(R.string.device_app_update)) { install() }
 
     /** Downloads the advertised APK and returns it only if every check passes; otherwise deletes it and throws. */
     private fun downloadVerified(): File {
@@ -143,11 +144,11 @@ object AppUpdate {
         val ownSigner = Releases.installedSigner(app.packageManager, app.packageName)
         val problem = when {
             !sha.equals(prefs.getString("sha256", ""), ignoreCase = true) ->
-                "the download doesn't match the release (it may have changed since the check)"
-            info == null -> "the download isn't an app"
-            info.packageName != app.packageName -> "the download is a different app"
-            info.versionCode.toInt() != latest || latest <= installedVersion() -> "the download is a different version"
-            ownSigner == null || info.signer != ownSigner -> "the download isn't signed by PhoneLock"
+                Strings.get(R.string.device_app_bad_checksum)
+            info == null -> Strings.get(R.string.device_app_not_an_app)
+            info.packageName != app.packageName -> Strings.get(R.string.device_app_different_app)
+            info.versionCode.toInt() != latest || latest <= installedVersion() -> Strings.get(R.string.device_app_different_version)
+            ownSigner == null || info.signer != ownSigner -> Strings.get(R.string.device_app_bad_signature)
             else -> null
         }
         if (problem != null) {
@@ -187,7 +188,7 @@ object AppUpdate {
     /** Ends a failed or cancelled update and says why. */
     private fun failed(why: String) {
         _state.update { it.copy(busy = false, progress = null) }
-        Undo.notify("Couldn't update this app: $why")
+        Undo.notify(Strings.get(R.string.device_app_update_failed, why))
     }
 
     private fun installedVersion(): Int =
@@ -203,15 +204,15 @@ object AppUpdate {
             when (intent.getIntExtra(PackageInstaller.EXTRA_STATUS, PackageInstaller.STATUS_FAILURE)) {
                 PackageInstaller.STATUS_PENDING_USER_ACTION -> {
                     @Suppress("DEPRECATION")
-                    val confirm = intent.getParcelableExtra<Intent>(Intent.EXTRA_INTENT) ?: return failed("no confirmation screen")
+                    val confirm = intent.getParcelableExtra<Intent>(Intent.EXTRA_INTENT) ?: return failed(Strings.get(R.string.device_app_no_confirmation))
                     context.startActivity(confirm.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
                 }
                 PackageInstaller.STATUS_SUCCESS -> {}
                 PackageInstaller.STATUS_FAILURE_ABORTED -> {
                     _state.update { it.copy(busy = false, progress = null) }
-                    Undo.notify("Update cancelled")
+                    Undo.notify(Strings.get(R.string.device_app_update_cancelled))
                 }
-                else -> failed(intent.getStringExtra(PackageInstaller.EXTRA_STATUS_MESSAGE) ?: "install failed")
+                else -> failed(intent.getStringExtra(PackageInstaller.EXTRA_STATUS_MESSAGE) ?: Strings.get(R.string.device_app_install_failed))
             }
         }
     }

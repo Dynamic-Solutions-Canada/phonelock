@@ -33,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 
@@ -68,21 +69,21 @@ internal fun FindAndReach(dev: String, name: String, state: PhoneState, now: Lon
     val capturing by PhoneTools.capturing.collectAsState()
     var confirmRing by remember { mutableStateOf(false) }
 
-    Section("Find and reach") {
+    Section(stringResource(R.string.alerts_find_section)) {
         // Three equal tonal tiles: icon above label, easy to hit with a thumb.
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             // Activity opens the map page, which finds the device and shows where it has been and what it did.
-            ActionTile(Icons.Default.LocationOn, "Activity", modifier = Modifier.weight(1f)) { onOpen("history") }
+            ActionTile(Icons.Default.LocationOn, stringResource(R.string.alerts_find_activity), modifier = Modifier.weight(1f)) { onOpen("history") }
             if (state.ringing) {
-                ActionTile(Icons.Default.Notifications, "Stop ringing", highlighted = true,
+                ActionTile(Icons.Default.Notifications, stringResource(R.string.alerts_find_stop_ringing), highlighted = true,
                     modifier = Modifier.weight(1f)) { PhoneTools.stopRinging(dev) }
             } else {
                 // Waiting shows in the tile itself, so nothing on the page moves.
                 val asking = isWaiting(dev, "ring")
-                ActionTile(Icons.Default.Notifications, if (asking) "Ringing…" else "Ring", enabled = !asking,
+                ActionTile(Icons.Default.Notifications, stringResource(if (asking) R.string.alerts_find_ringing else R.string.alerts_find_ring), enabled = !asking,
                     modifier = Modifier.weight(1f)) { confirmRing = true }
             }
-            ActionTile(Icons.Default.Face, if (dev in capturing) "Capturing…" else "View screen",
+            ActionTile(Icons.Default.Face, stringResource(if (dev in capturing) R.string.alerts_find_capturing else R.string.alerts_find_view_screen),
                 enabled = dev !in capturing, modifier = Modifier.weight(1f)) { PhoneTools.viewScreen(dev) }
         }
         // Ringing is confirmed by the device's state rather than a reply to the request.
@@ -95,12 +96,12 @@ internal fun FindAndReach(dev: String, name: String, state: PhoneState, now: Lon
 
     if (confirmRing) AppDialog(
         onDismissRequest = { confirmRing = false },
-        title = { Text("Ring $name?") },
-        text = { Text("It rings at full volume for 2 minutes, even on silent, until someone taps Stop.") },
+        title = { Text(stringResource(R.string.alerts_find_ring_title, name)) },
+        text = { Text(stringResource(R.string.alerts_find_ring_detail)) },
         confirmButton = {
-            TextButton(onClick = { PhoneTools.ring(dev); confirmRing = false }) { Text("Ring") }
+            TextButton(onClick = { PhoneTools.ring(dev); confirmRing = false }) { Text(stringResource(R.string.alerts_find_ring)) }
         },
-        dismissButton = { TextButton(onClick = { confirmRing = false }) { Text("Cancel") } })
+        dismissButton = { TextButton(onClick = { confirmRing = false }) { Text(stringResource(R.string.cancel)) } })
 }
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -120,14 +121,14 @@ private fun ScreenResult(dev: String, shot: PhoneScreen, capturing: Boolean) {
 
     shot.error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
     shot.image?.let {
-        Image(it, contentDescription = "Device screen", Modifier.fillMaxWidth().heightIn(max = 560.dp),
+        Image(it, contentDescription = stringResource(R.string.alerts_find_device_screen), Modifier.fillMaxWidth().heightIn(max = 560.dp),
             contentScale = ContentScale.Fit)
     }
     Text(listOfNotNull(shot.label, time(shot.ts)).joinToString(" · "), style = MaterialTheme.typography.bodySmall)
     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        TextButton(onClick = { PhoneTools.viewScreen(dev) }, enabled = !capturing) { Text("Refresh") }
+        TextButton(onClick = { PhoneTools.viewScreen(dev) }, enabled = !capturing) { Text(stringResource(R.string.refresh)) }
         FilterChip(selected = refreshing, onClick = { refreshing = !refreshing },
-            label = { Text("Keep refreshing (2 min)") })
-        TextButton(onClick = { refreshing = false; PhoneTools.clearScreen(dev) }) { Text("Hide") }
+            label = { Text(stringResource(R.string.alerts_find_keep_refreshing)) })
+        TextButton(onClick = { refreshing = false; PhoneTools.clearScreen(dev) }) { Text(stringResource(R.string.alerts_find_hide)) }
     }
 }

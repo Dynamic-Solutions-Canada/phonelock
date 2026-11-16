@@ -1,6 +1,8 @@
 package home.phonelock.parent.adb
 
 import android.content.Context
+import home.phonelock.parent.R
+import home.phonelock.parent.Strings
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.math.BigInteger
@@ -156,7 +158,7 @@ internal class AdbIdentity private constructor(val privateKey: PrivateKey, val c
         private fun writeAtomically(f: File, bytes: ByteArray) {
             val tmp = File(f.parentFile, f.name + ".tmp")
             tmp.writeBytes(bytes)
-            if (!tmp.renameTo(f)) throw java.io.IOException("Couldn't save ${f.name}")
+            if (!tmp.renameTo(f)) throw java.io.IOException(Strings.get(R.string.setup_adb_save_failed, f.name))
         }
 
         // ---------- tiny DER encoder ----------

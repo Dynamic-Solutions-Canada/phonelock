@@ -34,6 +34,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.LatLng
@@ -67,32 +68,32 @@ internal fun EmergencyPanel(a: EmergencyAlerts.Sos, onClose: (() -> Unit)?) {
         Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Text(EmergencyAlerts.title(a), style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold,
                 color = onDanger)
-            Text("Pressed SOS at ${time(a.since)}", color = onDanger)
+            Text(stringResource(R.string.alerts_emergency_pressed_at, time(a.since)), color = onDanger)
             Text(EmergencyAlerts.summary(a), style = MaterialTheme.typography.bodyLarge, color = onDanger)
 
             // Her trail since she pressed SOS (readings every minute), with her latest position.
             val trail = places[a.dev].orEmpty().filter { it.to >= a.since }.reversed()
             val latest = a.where?.let { LatLng(it.lat, it.lng) }
             if (trail.isNotEmpty() || latest != null) {
-                TrailMap(trail, marker = latest, markerTitle = "Latest", selection = a.where, addresses = addresses,
+                TrailMap(trail, marker = latest, markerTitle = stringResource(R.string.alerts_emergency_latest), selection = a.where, addresses = addresses,
                     now = latest, modifier = Modifier.fillMaxWidth().height(220.dp))
             }
 
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                if (!a.cancelled && Hub.parentName.value.ifBlank { "A parent" } !in a.acks) {
+                if (!a.cancelled && EmergencyAlerts.me() !in a.acks) {
                     Button(onClick = { EmergencyAlerts.ack(a.id) },
-                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)) { Text("I'm on it") }
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)) { Text(stringResource(R.string.alerts_emergency_ack)) }
                 }
                 a.number?.let { n ->
                     OutlinedButton(onClick = {
                         runCatching { ctx.startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:$n"))) }
-                    }) { Text("Call her") }
+                    }) { Text(stringResource(R.string.alerts_emergency_call_her)) }
                 }
-                if (a.ringing) OutlinedButton(onClick = { EmergencyAlerts.silence(a.id) }) { Text("Silence") }
+                if (a.ringing) OutlinedButton(onClick = { EmergencyAlerts.silence(a.id) }) { Text(stringResource(R.string.alerts_emergency_silence)) }
                 TextButton(onClick = {
                     EmergencyAlerts.dismiss(a.id)
                     onClose?.invoke()
-                }) { Text("Dismiss") }
+                }) { Text(stringResource(R.string.alerts_dismiss)) }
             }
         }
     }
@@ -117,7 +118,7 @@ class EmergencyActivity : ComponentActivity() {
                     Column(Modifier.safeDrawingPadding().padding(16.dp).verticalScroll(rememberScrollState()),
                         verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         if (a == null) {
-                            EmptyNote("No emergency alert right now.")
+                            EmptyNote(stringResource(R.string.alerts_emergency_none))
                         } else {
                             EmergencyPanel(a, onClose = { finish() })
                         }
@@ -125,7 +126,7 @@ class EmergencyActivity : ComponentActivity() {
                             startActivity(Intent(this@EmergencyActivity, MainActivity::class.java)
                                 .putExtra("device", a?.dev).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
                             finish()
-                        }) { Text("Open PhoneLock") }
+                        }) { Text(stringResource(R.string.alerts_emergency_open_app)) }
                     }
                 }
             }

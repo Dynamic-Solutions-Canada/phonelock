@@ -11,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
@@ -76,6 +77,9 @@ internal fun TrailMap(
 
     val line = MaterialTheme.colorScheme.primary
     val area = MaterialTheme.colorScheme.primary.copy(alpha = 0.18f)
+    // Read here, outside the map's own content, which composes map objects rather than UI.
+    val stopTitle = stringResource(R.string.device_map_stop)
+    val nowTitle = stringResource(R.string.device_now)
     GoogleMap(
         modifier = modifier.fillMaxWidth().clip(RoundedCornerShape(20.dp)),
         cameraPositionState = camera,
@@ -95,13 +99,13 @@ internal fun TrailMap(
                 strokeColor = line, strokeWidth = 2f)
             if ((p.to - p.from) / 60_000 >= PIN_MINUTES) {
                 Marker(state = rememberUpdatedMarkerState(position = p.latLng),
-                    title = addresses[p.spot] ?: "Stop",
+                    title = addresses[p.spot] ?: stopTitle,
                     snippet = clockSpan(p.from, p.to),
                     icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
             }
         }
         now?.let {
-            Marker(state = rememberUpdatedMarkerState(position = it), title = "Now", zIndex = 2f,
+            Marker(state = rememberUpdatedMarkerState(position = it), title = nowTitle, zIndex = 2f,
                 icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
         }
         marker?.let {
@@ -147,5 +151,8 @@ internal fun clockSpan(from: Long, to: Long): String {
     if (to - from < 60_000 || a == b) return a
     val day = java.text.SimpleDateFormat("EEE", java.util.Locale.getDefault())
     val sameDay = java.text.SimpleDateFormat("yyyyMMdd", java.util.Locale.US).let { it.format(java.util.Date(from)) == it.format(java.util.Date(to)) }
-    return if (sameDay) "$a – $b" else "${day.format(java.util.Date(from))} $a – ${day.format(java.util.Date(to))} $b"
+    if (sameDay) return Strings.get(R.string.device_time_range, a, b)
+    val start = Strings.get(R.string.device_day_time, day.format(java.util.Date(from)), a)
+    val end = Strings.get(R.string.device_day_time, day.format(java.util.Date(to)), b)
+    return Strings.get(R.string.device_time_range, start, end)
 }

@@ -13,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 
 /**
@@ -37,45 +38,67 @@ internal fun SettingsScreen(dev: String, name: String, onOpen: (String) -> Unit,
     /** One tappable setting: a symbol, what it does, and a line about it. */
     @Composable
     fun Setting(symbol: String, title: String, detail: String, onClick: () -> Unit) =
-        ListRow(title, AnnotatedString(detail), leading = { SymbolBadge(symbol) }, onClick = onClick)
+        ListRow(title, AnnotatedString(detail), leading = { SymbolBadge(symbol) }, onClick = onClick,
+            titleLines = 2)
 
-    Page("Settings", onBack) {
-        Section("Names") {
-            OutlinedTextField(rename, { rename = it }, Modifier.fillMaxWidth(), label = { Text("Child's device name") },
-                singleLine = true)
-            OutlinedTextField(you, { you = it }, Modifier.fillMaxWidth(), label = { Text("Your name") }, singleLine = true,
-                supportingText = { Text("Shown on their device") })
+    // Read here: the Save button's onClick isn't composable.
+    val namesSaved = stringResource(R.string.device_names_saved)
+
+    Page(stringResource(R.string.device_settings_title), onBack) {
+        Section(stringResource(R.string.device_names)) {
+            OutlinedTextField(rename, { rename = it }, Modifier.fillMaxWidth(),
+                label = { Text(stringResource(R.string.child_device_name)) }, singleLine = true)
+            OutlinedTextField(you, { you = it }, Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.your_name)) },
+                singleLine = true, supportingText = { Text(stringResource(R.string.device_your_name_detail)) })
             // Names are typed, so they're saved together on purpose rather than with every key press.
             OutlinedButton(enabled = (rename.isNotBlank() && rename != name) || (you.isNotBlank() && you != parentName),
                 onClick = {
                     if (rename.isNotBlank() && rename != name) Hub.renameDevice(dev, rename)
                     if (you.isNotBlank() && you != parentName) Hub.setParentName(you)
-                    Undo.notify("Names saved")
-                }) { Text("Save names") }
+                    Undo.notify(namesSaved)
+                }) { Text(stringResource(R.string.device_save_names)) }
         }
-        Section("Parent access") {
-            Setting("🔓", "Parent mode…", "Unlock Settings and the Play Store on their device for a while") { parentMode = true }
-            Setting("🔑", "Change parent PIN…", "Used on their device by holding the clock for 4 seconds") { changingPin = true }
+        Section(stringResource(R.string.device_parent_access)) {
+            Setting("🔓", stringResource(R.string.device_parent_mode), stringResource(R.string.device_parent_mode_detail)) {
+                parentMode = true
+            }
+            Setting("🔑", stringResource(R.string.device_change_pin), stringResource(R.string.device_change_pin_detail)) {
+                changingPin = true
+            }
             BatteryAlertSetting(dev, st)
             QuietAlertSetting(dev)
         }
-        Section("Lock app") {
-            Text(buildString {
-                append("Version ${st?.version?.takeIf { it > 0 } ?: "unknown"}")
-                st?.updateReady?.takeIf { it > 0 }?.let { append(" · version $it installs when the screen is next off") }
+        Section(stringResource(R.string.device_lock_app)) {
+            // The lock app's version, if known, and a newer one waiting to install, if any.
+            val version = st?.version?.takeIf { it > 0 }
+            val ready = st?.updateReady?.takeIf { it > 0 }
+            Text(when {
+                version != null && ready != null -> stringResource(R.string.device_lock_version_update_ready, version, ready)
+                version != null -> stringResource(R.string.device_lock_version, version)
+                ready != null -> stringResource(R.string.device_lock_version_unknown_update_ready, ready)
+                else -> stringResource(R.string.device_lock_version_unknown)
             })
-            Setting("⬆", "Check for update now", "Installs the next time their screen is off") { Hub.updateNow(dev) }
-            Setting("🩺", "Diagnostics", "Checks and recent log from their device") { onOpen("diag") }
-            Setting("📶", "Fix setup over Wi-Fi", "Repairs permissions using wireless debugging") { onOpen("fixsetup") }
-            Setting("🛠", "Recovery: turn on debugging…", "For repairs from a computer") { recovery = true }
+            Setting("⬆", stringResource(R.string.device_check_update_now), stringResource(R.string.device_check_update_now_detail)) {
+                Hub.updateNow(dev)
+            }
+            Setting("🩺", stringResource(R.string.device_diag_title), stringResource(R.string.device_diagnostics_detail)) {
+                onOpen("diag")
+            }
+            Setting("📶", stringResource(R.string.device_fix_setup), stringResource(R.string.device_fix_setup_detail)) {
+                onOpen("fixsetup")
+            }
+            Setting("🛠", stringResource(R.string.device_recovery), stringResource(R.string.device_recovery_detail)) {
+                recovery = true
+            }
         }
         ScreenRulesSection(dev, st)
         AppUpdateSection()
-        Section("Sharing") {
-            Setting("👥", "Share with another parent…", "Lets another parent's phone manage this device") { sharing = true }
+        LanguageSection()
+        Section(stringResource(R.string.device_sharing)) {
+            Setting("👥", stringResource(R.string.device_share), stringResource(R.string.device_share_detail)) { sharing = true }
             // Removing is the one destructive setting, so it's a red button rather than a row like the others.
             TextButton(onClick = { confirmRemove = true }) {
-                Text("Remove this device…", color = MaterialTheme.colorScheme.error)
+                Text(stringResource(R.string.device_remove), color = MaterialTheme.colorScheme.error)
             }
         }
     }
@@ -89,11 +112,10 @@ internal fun SettingsScreen(dev: String, name: String, onOpen: (String) -> Unit,
     }
     if (confirmRemove) AppDialog(
         onDismissRequest = { confirmRemove = false },
-        title = { Text("Remove $name?") },
-        text = {
-            Text("This app stops managing it. Their device stays locked as it is. To manage it again, another " +
-                "parent can share it with you, or set it up again.")
+        title = { Text(stringResource(R.string.device_remove_title, name)) },
+        text = { Text(stringResource(R.string.device_remove_text)) },
+        confirmButton = {
+            DangerButton(stringResource(R.string.remove)) { Hub.removeDevice(dev); confirmRemove = false; onBack() }
         },
-        confirmButton = { DangerButton("Remove") { Hub.removeDevice(dev); confirmRemove = false; onBack() } },
-        dismissButton = { TextButton(onClick = { confirmRemove = false }) { Text("Cancel") } })
+        dismissButton = { TextButton(onClick = { confirmRemove = false }) { Text(stringResource(R.string.cancel)) } })
 }
