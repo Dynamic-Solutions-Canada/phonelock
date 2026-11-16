@@ -117,7 +117,7 @@ final class Battery {
 
         p.edit().putBoolean("batt_alerted", true).apply();
         // Where she last was goes with it, in case the phone dies before the parents look.
-        Outbox.alert(c, "Battery low: " + level + "%", LocationLog.lastPlace(c));
+        Outbox.alert(c, c.getString(R.string.events_battery_low, level), LocationLog.lastPlace(c));
     }
 
     /**
@@ -145,9 +145,14 @@ final class Battery {
     private static void sendShutdown(Context c) {
         try {
             int level = level(c);
-            String text = level >= 0 && level <= 2 && !charging(sticky(c))
-                    ? "Turning off: the battery is empty"
-                    : "Turning off" + (level >= 0 ? " (battery " + level + "%)" : "");
+            String text;
+            if (level >= 0 && level <= 2 && !charging(sticky(c))) {
+                text = c.getString(R.string.events_turning_off_empty);
+            } else if (level >= 0) {
+                text = c.getString(R.string.events_turning_off_level, level);
+            } else {
+                text = c.getString(R.string.events_turning_off);
+            }
             JSONObject o = Remote.msg("event");
             o.put("text", text);
             // Tells parents' apps the silence that follows is the phone being off, not lost signal.

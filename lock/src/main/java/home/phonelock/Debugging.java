@@ -26,7 +26,7 @@ final class Debugging {
     /** Turns debugging on for {@code minutes} and tells the parents where to connect. Blocks briefly. */
     static void enable(Context c, long minutes, String who) {
         if (!ScreenViewGuard.canRestore(c)) {
-            Remote.event(c, "Couldn't turn on debugging: the device needs Fix setup over Wi-Fi first", who, false);
+            Remote.event(c, c.getString(R.string.tools_debug_needs_fix_setup), who, false);
             return;
         }
         android.content.SharedPreferences p = Policy.prefs(c);
@@ -44,17 +44,19 @@ final class Debugging {
             Settings.Global.putInt(c.getContentResolver(), "adb_wifi_enabled", 1);
         } catch (Exception ex) {
             Log.w(Policy.TAG, "debugging on: " + ex);
-            Remote.event(c, "Couldn't turn on debugging: " + ex.getMessage(), who, false);
+            Remote.event(c, c.getString(R.string.tools_debug_failed, ex.getMessage()), who, false);
             return;
         }
         // Wireless debugging picks its port when it starts; give it a moment, then report where it is.
         try { Thread.sleep(3_000); } catch (InterruptedException ignored) {}
         String port = prop("service.adb.tls.port");
         String ip = wifiAddress(c);
-        String where = ip != null && port != null && !port.isEmpty() && !port.equals("0")
-                ? " Wireless debugging: " + ip + ":" + port + "." : " Wireless debugging is starting.";
-        Remote.event(c, who + " turned on USB and wireless debugging until " + Remote.time(c, p.getLong("debug_until", 0))
-                + "." + where, who, false);
+        String until = Remote.time(c, p.getLong("debug_until", 0));
+        boolean listening = ip != null && port != null && !port.isEmpty() && !port.equals("0");
+        String text = listening
+                ? c.getString(R.string.tools_debug_on_with_address, who, until, ip, port)
+                : c.getString(R.string.tools_debug_on_starting, who, until);
+        Remote.event(c, text, who, false);
     }
 
     /** Called on the service's timer: turns debugging off once the time a parent gave has run out. */
@@ -63,7 +65,7 @@ final class Debugging {
         long until = p.getLong("debug_until", 0);
         if (until == 0 || System.currentTimeMillis() < until) return;
         disable(c);
-        Remote.event(c, "Debugging turned off again", null, true);
+        Remote.event(c, c.getString(R.string.tools_debug_off), null, true);
     }
 
     /** Turns USB and wireless debugging off and puts the policy choice back. */

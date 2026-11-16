@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Wording for the home screen, the ring screen, the emergency (SOS) screen and the events they send to parents. -->
+<resources>
+
+    <!-- Audience: child. The home screen. -->
+    <!-- Small line under the date, always shown: what her parents can see -->
+    <string name="home_shared_with_parents">你的位置、电量、通话和应用使用情况会与家长共享</string>
+    <!-- Pill under the date during a scheduled situation. %1$s is the situation's name (e.g. "Bedtime"), %2$s a time such as "7:00 AM" -->
+    <string name="home_mode_until">%1$s，到 %2$s</string>
+    <!-- Red pill under the date. %1$d is the battery level in percent -->
+    <string name="home_battery_low">电量低（%1$d%%）。快去充电吧。</string>
+    <!-- Section titles above icon grids -->
+    <string name="home_section_allowed">现在可以用</string>
+    <string name="home_section_paused">现在暂停中</string>
+    <!-- Second line under an app's icon (keep very short, it is cut off). %1$s is a time such as "6:22 PM" -->
+    <string name="home_app_until">到 %1$s</string>
+    <!-- Toast after tapping a paused app. %1$s is the app's name, %2$s a time such as "6:22 PM" -->
+    <string name="home_app_paused_until">%1$s 暂停到 %2$s</string>
+    <!-- Bottom button: opens the list of apps she can ask a parent for -->
+    <string name="home_ask_for_app">申请应用</string>
+    <!-- Screen reader label for the ⋮ button next to "Ask for an app" -->
+    <string name="home_quick_menu_description">Wi-Fi、Bluetooth 和电源</string>
+    <!-- Item in the ⋮ menu: turning the device off or restarting it -->
+    <string name="home_power">电源</string>
+    <!-- Round red emergency button (about 4 characters fit; most languages keep "SOS") -->
+    <string name="home_sos">SOS</string>
+    <!-- Screen reader label for the SOS button -->
+    <string name="home_sos_description">紧急求助：按住可通知你的家长</string>
+    <!-- Toast after only tapping (not holding) the SOS button -->
+    <string name="home_sos_hold">按住 SOS 才能通知你的家长</string>
+    <!-- Toast when SOS is held but the phone was never connected to the parents -->
+    <string name="home_sos_not_set_up">还没有设置好：请用电话应用拨打 %1$s</string>
+    <string name="home_not_set_up">还没有设置好</string>
+    <string name="home_nothing_to_ask">没有可以申请的应用</string>
+    <!-- Title of the app picker for asking -->
+    <string name="home_which_app">哪个应用？</string>
+    <!-- Title of the duration list after picking an app. %1$s is the app's name -->
+    <string name="home_for_how_long">%1$s 要用多久？</string>
+    <!-- Choices in the duration list -->
+    <plurals name="home_minutes">
+        <item quantity="other">%1$d 分钟</item>
+    </plurals>
+    <plurals name="home_hours">
+        <item quantity="other">%1$d 小时</item>
+    </plurals>
+    <string name="home_asked">已发送申请。有结果会通知你。</string>
+    <string name="home_ask_wait">请等一分钟再申请</string>
+    <!-- Toasts after tapping an app that can't open right now -->
+    <string name="home_not_available">现在不能用</string>
+    <string name="home_blocked">已屏蔽</string>
+    <!-- Fallback dialog from the Power item -->
+    <string name="home_restart_title">要重启这台设备吗？</string>
+    <string name="home_restart_message">如果想关机，请按住电源按钮。</string>
+    <!-- Button -->
+    <string name="home_restart">重启</string>
+    <string name="home_restart_failed">无法重启</string>
+
+    <!-- Audience: parent. Parent mode on the home screen and the PIN prompt. -->
+    <!-- Buttons in the parent mode bar -->
+    <string name="home_parent_settings">设置</string>
+    <string name="home_parent_play_store">Play Store</string>
+    <string name="home_parent_lock_now">立即锁定</string>
+    <!-- Text of the parent mode bar. %1$s is a time such as "4:15 PM" -->
+    <string name="home_parent_mode_until">家长模式。将在 %1$s 或屏幕关闭时重新锁定。</string>
+    <!-- Bottom button in parent mode: opens every app -->
+    <string name="home_all_apps">所有应用</string>
+    <string name="home_open_an_app">打开应用</string>
+    <string name="home_no_other_apps">没有其他应用</string>
+    <string name="home_no_pin">未设置 PIN 码</string>
+    <string name="home_pin_title">家长 PIN 码</string>
+    <!-- Hint inside the PIN field (keep short) -->
+    <string name="home_pin_hint">PIN 码</string>
+    <!-- Button -->
+    <string name="home_unlock">解锁</string>
+    <string name="home_pin_wrong">PIN 码错误</string>
+    <!-- Toast after too many wrong PINs. %1$d is a number of seconds -->
+    <string name="home_pin_try_again">请在 %1$d 秒后重试</string>
+
+    <!-- Audience: parent. Events this phone sends to the parent app's Activity and alerts. -->
+    <!-- %1$s is an app's name -->
+    <string name="home_event_not_available">尝试打开 %1$s（当前不可用）</string>
+    <string name="home_event_blocked">尝试打开 %1$s（已屏蔽）</string>
+    <!-- %1$s is an app's name, %2$s a time such as "6:22 PM" -->
+    <string name="home_event_paused">尝试打开 %1$s（暂停至 %2$s）</string>
+    <string name="home_event_parent_mode_ended">手机上的家长模式已结束</string>
+    <!-- %1$s is a time such as "4:15 PM" -->
+    <string name="home_event_pin_unlocked">已在手机上用 PIN 码解锁家长模式，至 %1$s</string>
+    <!-- %1$d is how many wrong tries in a row (3 or more), %2$d a number of minutes -->
+    <plurals name="home_event_pin_wrong">
+        <item quantity="other">手机上连续 %1$d 次输入错误的家长 PIN 码；已锁定 %2$d 分钟</item>
+    </plurals>
+    <!-- Sent after the phone starts up. Pairs with a "Turning off" event -->
+    <string name="home_event_turned_on">已开机</string>
+    <!-- %1$d is the battery level in percent -->
+    <string name="home_event_turned_on_battery">已开机（电量 %1$d%%）</string>
+    <!-- %1$s is the phone's name as the parents set it -->
+    <string name="home_event_ring_stopped_by">%1$s 停止了响铃</string>
+    <!-- Used instead of the one above when the phone has no name -->
+    <string name="home_event_ring_stopped_by_device">设备停止了响铃</string>
+    <string name="home_event_ring_timed_out">时间已到，响铃已停止</string>
+
+    <!-- Audience: child. The ring screen, shown while a parent rings the phone. -->
+    <!-- Big title. %1$s is the parent's name -->
+    <string name="home_ring_title">%1$s 正在找你</string>
+    <!-- Used instead of the one above when the parent's name is unknown -->
+    <string name="home_ring_title_unknown">家长正在找你</string>
+    <string name="home_ring_hint">点按“停止”，然后联系家长。</string>
+    <!-- Big button that stops the ringing; must match "Stop" in home_ring_hint -->
+    <string name="home_ring_stop">停止</string>
+
+    <!-- Audience: child. The emergency screen, opened by holding SOS. -->
+    <string name="home_sos_title">紧急情况</string>
+    <!-- Biggest button: opens the dialer with the local emergency number filled in. %1$s is that number (911, 112, 999, 110, ...), in this and the other SOS strings -->
+    <string name="home_sos_call">拨打 %1$s</string>
+    <string name="home_sos_not_paired">这部手机还不能联系你的家长。需要帮助请拨打 %1$s。</string>
+    <string name="home_sos_cancelled">警报已取消。已告诉家长这是误发。</string>
+    <string name="home_sos_alerted">已通知你的家长。</string>
+    <string name="home_sos_all_sent">已通知你的家长，他们能看到你在哪里。</string>
+    <string name="home_sos_sending">正在发送给家长… 没有信号时会一直尝试。</string>
+    <!-- One line per parent who answered. %1$s is the parent's name -->
+    <string name="home_sos_on_it">%1$s 收到了，正在帮你。</string>
+    <!-- Heading above the one-tap messages -->
+    <string name="home_sos_tell_more">告诉他们更多</string>
+    <!-- One-tap messages: buttons, two per row, sent to the parents as written here -->
+    <string name="home_sos_quick_hurt">我受伤了</string>
+    <string name="home_sos_quick_scared">我很害怕</string>
+    <string name="home_sos_quick_lost">我迷路了</string>
+    <string name="home_sos_quick_come">来接我</string>
+    <string name="home_sos_quick_call">给我打电话</string>
+    <string name="home_sos_type_hint">输入消息</string>
+    <!-- Button that sends the typed message -->
+    <string name="home_sos_send">发送</string>
+    <!-- %1$s is the messages she sent, joined with " · " -->
+    <string name="home_sos_sent">已发送：%1$s</string>
+    <!-- Button, offered for the first two minutes -->
+    <string name="home_sos_mistake">按错了</string>
+    <string name="home_sos_back_home">返回主屏幕</string>
+    <string name="home_sos_no_alert">现在没有警报：请再按住 SOS</string>
+    <string name="home_sos_cancel_title">要取消警报吗？</string>
+    <string name="home_sos_cancel_message">家长会知道这是误发。</string>
+    <!-- Buttons of the dialog above -->
+    <string name="home_sos_cancel_yes">是，取消</string>
+    <string name="home_sos_cancel_no">否</string>
+    <string name="home_sos_no_dialer">无法打开拨号程序</string>
+    <!-- Notification. %1$s is the parent's name -->
+    <string name="home_sos_acked">%1$s 收到了你的紧急警报，正在帮你</string>
+</resources>

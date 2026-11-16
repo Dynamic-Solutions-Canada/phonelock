@@ -21,6 +21,6 @@ public class IncomingCallGuard extends CallScreeningService {
         if (block) r.setDisallowCall(true).setRejectCall(true).setSkipNotification(false).setSkipCallLog(false);
         respondToCall(details, r.build());
 
-        if (block) Remote.event(this, "Blocked a call from " + CallGuard.describe(this, number), null, true);
+        if (block) Remote.event(this, getString(R.string.events_call_blocked, CallGuard.describe(this, number)), null, true);
     }
 }

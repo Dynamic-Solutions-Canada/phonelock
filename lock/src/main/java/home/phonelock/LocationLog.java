@@ -363,6 +363,7 @@ final class LocationLog {
                 lastTo = Math.max(lastTo, e.optLong("to"));
             }
         }
+        // Part of the diagnostics report, which stays in English for support.
         return count + " entries"
                 + (lastTo > 0 ? ", last reading " + Diagnostics.ago(now - lastTo) + " ago" : "")
                 + (tick > 0 ? ", last tick " + Diagnostics.ago(now - tick) + " ago" : ", no tick yet")

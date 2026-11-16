@@ -31,19 +31,19 @@ final class Locator {
     static void locate(Context c, String req) {
         LocationManager lm = c.getSystemService(LocationManager.class);
         if (!lm.isLocationEnabled()) {
-            reply(c, req, null, "Location is turned off on the device");
+            reply(c, req, null, c.getString(R.string.events_location_off));
             return;
         }
         if (pickProvider(lm) == null) {
-            reply(c, req, null, "No location provider on the device");
+            reply(c, req, null, c.getString(R.string.events_location_no_provider));
             return;
         }
         if (c.checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)
                 != android.content.pm.PackageManager.PERMISSION_GRANTED) {
-            reply(c, req, null, "The device has no location permission");
+            reply(c, req, null, c.getString(R.string.events_location_no_permission));
             return;
         }
-        fix(c, true, loc -> reply(c, req, loc, loc == null ? "No location fix yet" : null));
+        fix(c, true, loc -> reply(c, req, loc, loc == null ? c.getString(R.string.events_location_no_fix) : null));
     }
 
     /**

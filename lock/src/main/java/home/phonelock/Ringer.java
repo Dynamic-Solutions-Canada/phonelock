@@ -33,7 +33,9 @@ final class Ringer {
     private static String caller = "";
     /** Application context captured by {@link #start}, for the auto-stop timer. */
     private static Context appCtx;
-    private static final Runnable AUTO_STOP = () -> stop(null, "Ringing stopped after the time ran out", null);
+    /** Worded when it runs (not at class load), so the event follows the app's current language. */
+    private static final Runnable AUTO_STOP =
+            () -> stop(null, appCtx.getString(R.string.home_event_ring_timed_out), null);
 
     private Ringer() {}
 

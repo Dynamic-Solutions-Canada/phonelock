@@ -88,12 +88,13 @@ final class Schedule {
         return 0;
     }
 
-    /** What the child sees, e.g. "Bedtime". */
-    static String modeLabel(int mode) {
-        if (mode == BEDTIME) return "Bedtime";
-        if (mode == LIMITED) return "Limited hours";
-        return "Normal";
+    /** What the child sees, e.g. "Bedtime", in the app's current language. */
+    static String modeLabel(Context c, int mode) {
+        if (mode == BEDTIME) return c.getString(R.string.events_mode_label_bedtime);
+        if (mode == LIMITED) return c.getString(R.string.events_mode_label_limited);
+        return c.getString(R.string.events_mode_label_normal);
     }
+
 
     // ---------- storage ----------
 

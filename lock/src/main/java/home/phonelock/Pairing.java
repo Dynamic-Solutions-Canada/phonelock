@@ -18,6 +18,8 @@ final class Pairing {
     /** Sets the 32-byte base64url secret (empty clears it) and reconnects. Throws if it isn't a valid key. */
     static void setSecret(Context c, String secret) {
         storeSecret(c, secret);
+        // Paired by a lock app that has languages: later updates must not pin it to English.
+        Language.markSetUp(c);
         RemoteService.restart(c);
     }
 

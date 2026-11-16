@@ -58,7 +58,7 @@ final class AppGrid extends LinearLayout {
         List<Entry> out = new ArrayList<>();
         for (String p : pkgs) {
             if (BuiltInApps.is(p)) {
-                out.add(new Entry(p, BuiltInApps.label(p), BuiltInApps.icon(c, p)));
+                out.add(new Entry(p, BuiltInApps.label(c, p), BuiltInApps.icon(c, p)));
                 continue;
             }
             if (launchableOnly && pm.getLaunchIntentForPackage(p) == null) continue;

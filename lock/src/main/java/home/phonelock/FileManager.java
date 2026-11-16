@@ -9,6 +9,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -81,12 +82,12 @@ final class FileManager {
             String path = m.optString("path");
             try {
                 if (!permitted()) {
-                    reply(c, req, op, path, "The device hasn't allowed file access yet", null);
+                    reply(c, req, op, path, c.getString(R.string.tools_files_not_permitted), null);
                     return;
                 }
                 File f = resolve(path);
                 if (f == null) {
-                    reply(c, req, op, path, "That location isn't available", null);
+                    reply(c, req, op, path, c.getString(R.string.tools_files_location_unavailable), null);
                     return;
                 }
                 switch (op) {
@@ -97,8 +98,8 @@ final class FileManager {
                         sendFile(c, req, f);
                         break;
                     case "mkdir":
-                        if (!f.mkdirs() && !f.isDirectory()) throw new Exception("Couldn't create the folder");
-                        log(c, who, "created folder " + rel(f));
+                        if (!f.mkdirs() && !f.isDirectory()) throw new Exception(c.getString(R.string.tools_files_create_folder_failed));
+                        log(c, who, c.getString(R.string.tools_files_created_folder, who, rel(f)));
                         reply(c, req, op, rel(f), null, f.getParentFile());
                         break;
                     case "rm":
@@ -106,35 +107,35 @@ final class FileManager {
                         File parentDir = f.getParentFile();
                         if (f.equals(root().getCanonicalFile())
                                 || (parentDir != null && parentDir.equals(root().getCanonicalFile()) && f.isDirectory())) {
-                            throw new Exception("Top-level folders can't be deleted; open it and delete what's inside");
+                            throw new Exception(c.getString(R.string.tools_files_top_level));
                         }
-                        deleteTree(f);
+                        deleteTree(c, f);
                         scan(c, f);
-                        log(c, who, "deleted " + rel(f));
+                        log(c, who, c.getString(R.string.tools_files_deleted, who, rel(f)));
                         reply(c, req, op, rel(f), null, f.getParentFile());
                         break;
                     case "mv": {
                         String to = m.optString("to").trim();
-                        if (to.isEmpty() || to.contains("/")) throw new Exception("Not a valid name");
+                        if (to.isEmpty() || to.contains("/")) throw new Exception(c.getString(R.string.tools_files_invalid_name));
                         File dest = resolve(rel(f.getParentFile()) + "/" + to);
-                        if (dest == null || dest.exists()) throw new Exception("That name is taken");
-                        if (!f.renameTo(dest)) throw new Exception("Couldn't rename it");
+                        if (dest == null || dest.exists()) throw new Exception(c.getString(R.string.tools_files_name_taken));
+                        if (!f.renameTo(dest)) throw new Exception(c.getString(R.string.tools_files_rename_failed));
                         scan(c, f);
                         scan(c, dest);
-                        log(c, who, "renamed " + rel(f) + " to " + to);
+                        log(c, who, c.getString(R.string.tools_files_renamed, who, rel(f), to));
                         reply(c, req, op, rel(dest), null, dest.getParentFile());
                         break;
                     }
                     case "put": {
                         // path is the folder; the name comes with the upload.
                         String name = m.optString("name").trim();
-                        if (name.isEmpty() || name.contains("/")) throw new Exception("Not a valid name");
+                        if (name.isEmpty() || name.contains("/")) throw new Exception(c.getString(R.string.tools_files_invalid_name));
                         File dest = freeName(resolve(rel(f) + "/" + name));
-                        if (dest == null) throw new Exception("That location isn't available");
-                        if (attachmentUrl == null) throw new Exception("No file came with the upload");
+                        if (dest == null) throw new Exception(c.getString(R.string.tools_files_location_unavailable));
+                        if (attachmentUrl == null) throw new Exception(c.getString(R.string.tools_files_no_upload));
                         receive(c, attachmentUrl, m.optString("id"), dest);
                         scan(c, dest);
-                        log(c, who, "added " + rel(dest));
+                        log(c, who, c.getString(R.string.tools_files_added, who, rel(dest)));
                         reply(c, req, op, rel(dest), null, f);
                         break;
                     }
@@ -144,7 +145,7 @@ final class FileManager {
             } catch (Throwable e) {
                 // Throwable, so even running out of memory reports back instead of killing the lock app.
                 Log.w(Policy.TAG, "files " + op + ": " + e);
-                reply(c, req, op, path, e.getMessage() == null ? "Something went wrong" : e.getMessage(), null);
+                reply(c, req, op, path, e.getMessage() == null ? c.getString(R.string.tools_files_generic_error) : e.getMessage(), null);
             }
         });
     }
@@ -156,18 +157,21 @@ final class FileManager {
     private static final java.util.concurrent.ExecutorService WORKER =
             java.util.concurrent.Executors.newSingleThreadExecutor();
 
-    /** Child gets a notice and parents a list entry for each change, like other parent actions. */
-    private static void log(Context c, String who, String what) {
-        Remote.notifyKid(c, who + " " + what);
-        Remote.event(c, who + " " + what, who, false);
+    /**
+     * Child gets a notice and parents a list entry for each change, like other parent actions.
+     * {@code text} is the whole sentence, naming {@code who} (the parent who made the change).
+     */
+    private static void log(Context c, String who, String text) {
+        Remote.notifyKid(c, text);
+        Remote.event(c, text, who, false);
     }
 
     /** Deletes {@code f} and, for a real folder, its contents; links are removed, never followed. */
-    private static void deleteTree(File f) throws Exception {
+    private static void deleteTree(Context c, File f) throws Exception {
         boolean link = java.nio.file.Files.isSymbolicLink(f.toPath());
         File[] kids = !link && f.isDirectory() ? f.listFiles() : null;
-        if (kids != null) for (File k : kids) deleteTree(k);
-        if (!f.delete() && f.exists()) throw new Exception("Couldn't delete " + f.getName());
+        if (kids != null) for (File k : kids) deleteTree(c, k);
+        if (!f.delete() && f.exists()) throw new Exception(c.getString(R.string.tools_files_delete_failed, f.getName()));
     }
 
     /** Tells the media index about a changed path, so galleries and music players update. */
@@ -193,7 +197,7 @@ final class FileManager {
      * renamed into place only when complete, so a failure never leaves a broken file behind.
      */
     private static void receive(Context c, String url, String msgId, File dest) throws Exception {
-        if (!url.startsWith(RemoteService.server(c) + "/")) throw new Exception("Upload came from an unknown server");
+        if (!url.startsWith(RemoteService.server(c) + "/")) throw new Exception(c.getString(R.string.tools_files_unknown_server));
         File parent = dest.getParentFile();
         if (parent != null) parent.mkdirs();
         File tmp = new File(parent, "." + dest.getName() + ".part");
@@ -203,6 +207,10 @@ final class FileManager {
         try (InputStream in = new java.io.BufferedInputStream(h.getInputStream());
              FileOutputStream out = new FileOutputStream(tmp)) {
             BlobStream.open(Crypto.key(Remote.secret(c)), "phonelock/file/" + msgId, in, out, MAX_BYTES);
+        } catch (IOException e) {
+            // BlobStream's own messages are technical English; the parent sees this one instead.
+            tmp.delete();
+            throw new IOException(c.getString(R.string.tools_files_save_failed), e);
         } catch (Throwable e) {
             tmp.delete();
             throw e;
@@ -211,7 +219,7 @@ final class FileManager {
         }
         if (!tmp.renameTo(dest)) {
             tmp.delete();
-            throw new Exception("Couldn't save the file");
+            throw new Exception(c.getString(R.string.tools_files_save_failed));
         }
     }
 
@@ -220,9 +228,9 @@ final class FileManager {
      * even a 48 MB file needs only about 1 MB of memory.
      */
     private static void sendFile(Context c, String req, File f) throws Exception {
-        if (!f.isFile()) throw new Exception("Not a file");
+        if (!f.isFile()) throw new Exception(c.getString(R.string.tools_files_not_a_file));
         long size = f.length();
-        if (size > MAX_BYTES) throw new Exception("Too large to send (over 48 MB)");
+        if (size > MAX_BYTES) throw new Exception(c.getString(R.string.tools_files_too_large));
         JSONObject o = Remote.msg("file");
         o.put("req", req).put("path", rel(f)).put("name", f.getName()).put("size", size);
         byte[] key = Crypto.key(Remote.secret(c));
@@ -241,7 +249,7 @@ final class FileManager {
         }
         int code = h.getResponseCode();
         h.disconnect();
-        if (code < 200 || code > 299) throw new Exception("Upload to the hub failed (HTTP " + code + ")");
+        if (code < 200 || code > 299) throw new Exception(c.getString(R.string.tools_files_upload_failed, code));
     }
 
     /** Publishes a {@code files} reply; with {@code dir}, includes its listing (folders first, by name). */

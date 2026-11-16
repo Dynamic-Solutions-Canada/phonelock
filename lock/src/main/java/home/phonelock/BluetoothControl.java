@@ -95,7 +95,7 @@ final class BluetoothControl {
 
     /** Called when pairing finishes: tells the parents about a new device. */
     static void onPaired(Context c, BluetoothDevice d) {
-        Outbox.alert(c, "Paired a new Bluetooth device: " + name(d));
+        Outbox.alert(c, c.getString(R.string.tools_bluetooth_paired_event, name(d)));
     }
 
     /** A device's name, or its address when it has none. */

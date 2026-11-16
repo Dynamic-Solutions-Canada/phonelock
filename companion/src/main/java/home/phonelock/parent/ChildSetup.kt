@@ -299,6 +299,9 @@ object ChildSetup {
         _run.update { it?.copy(deviceId = d.id) }
         val pairing = org.json.JSONObject().put("server", d.server).put("topic", d.topic).put("secret", d.secret)
             .put("name", d.name).put("pin", req.pin)
+            // The child's phone starts in this app's language (parents and child are assumed to share one);
+            // a parent can change it later in that device's Settings.
+            .put("lang", AppLanguage.currentTag(app))
         val reply = runCatching {
             broadcastReply(device.shell("am broadcast $CONFIG --es cmd pair --es value ${quote(pairing.toString())}").output)
         }.getOrNull()

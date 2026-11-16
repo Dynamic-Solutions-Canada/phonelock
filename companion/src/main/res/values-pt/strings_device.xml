@@ -191,4 +191,9 @@
     <!-- Download errors from GitHub releases (also during child setup). %1$d: an HTTP status code -->
     <string name="device_download_failed_http">Falha no download (HTTP %1$d)</string>
     <string name="device_download_too_large">O download é grande demais</string>
+
+    <!-- Settings > Lock app: the language PhoneLock uses on the child's device -->
+    <string name="device_language_title">Idioma no dispositivo da criança</string>
+    <string name="device_language_match">Seguir o dispositivo da criança</string>
+    <string name="device_language_note">O PhoneLock no dispositivo da criança e a atividade que ele envia para cá usam este idioma. Os outros apps seguem o idioma do próprio dispositivo.</string>
 </resources>

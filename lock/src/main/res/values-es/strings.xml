@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Wording shared across the lock app (the child's phone). Each screen or feature keeps its own wording in
+     its own strings_<area>.xml beside this file; every file here needs the same file, with the same names,
+     in each values-<language> folder. Two audiences read it: the child (home, ring and emergency screens)
+     and parents (parent mode, connections, diagnostics, and events sent to the parent app); comments say
+     which when it matters. Names, app labels and anything typed by a person are never translated. -->
+<resources>
+    <!-- The app's name as Android shows it (it is the child's home screen) -->
+    <string name="app_name">Inicio</string>
+
+    <!-- Common buttons: use these rather than adding another copy -->
+    <string name="cancel">Cancelar</string>
+    <string name="ok">Aceptar</string>
+    <string name="done">Hecho</string>
+    <string name="close">Cerrar</string>
+
+    <string name="screen_service_label">Vista de pantalla para padres</string>
+    <!-- Accessibility service description, shown to whoever opens Settings > Accessibility (parent) -->
+    <string name="screen_service_description">Permite que un padre o madre vea esta pantalla cuando lo pida y mantiene cerradas las pantallas de Google que permiten salir del bloqueo. Las pantallas de Google desconocidas se envían a tus padres como imagen. Recibes un aviso cada vez.</string>
+</resources>

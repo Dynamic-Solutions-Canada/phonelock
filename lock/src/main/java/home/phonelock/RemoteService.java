@@ -52,11 +52,11 @@ public class RemoteService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         NotificationManager nm = getSystemService(NotificationManager.class);
-        nm.createNotificationChannel(new NotificationChannel("lock", "Parent controls",
+        nm.createNotificationChannel(new NotificationChannel("lock", getString(R.string.events_channel_parent_controls),
                 NotificationManager.IMPORTANCE_MIN));
         Notification n = new Notification.Builder(this, "lock")
                 .setSmallIcon(android.R.drawable.ic_lock_lock)
-                .setContentTitle("Parent controls active")
+                .setContentTitle(getString(R.string.events_parent_controls_active))
                 .setOngoing(true)
                 .build();
         startForeground(1, n, ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE);
@@ -177,13 +177,14 @@ public class RemoteService extends Service {
             if (!grantsEnded.isEmpty()) {
                 List<String> names = new ArrayList<>();
                 for (String p : grantsEnded) names.add(Remote.label(this, p));
-                String txt = "Time's up: " + String.join(", ", names);
                 if (Remote.paired(this)) {
+                    String txt = getString(R.string.events_times_up, String.join(", ", names));
                     Remote.notifyKid(this, txt);
                     Remote.event(this, txt);
                     Remote.sendState(this, false);
                 } else {
-                    replyPlain(this, txt + ". " + Grants.describe(this, grants));
+                    // The legacy plain-text replies (before pairing) stay in English, like their commands.
+                    replyPlain(this, "Time's up: " + String.join(", ", names) + ". " + Grants.describe(this, grants));
                 }
             }
         }
@@ -209,7 +210,7 @@ public class RemoteService extends Service {
         Policy.apply(this);
         List<String> names = new ArrayList<>();
         for (String p : ended) names.add(Remote.label(this, p));
-        String txt = String.join(", ", names) + (ended.size() == 1 ? " is" : " are") + " back";
+        String txt = getResources().getQuantityString(R.plurals.events_apps_back, ended.size(), String.join(", ", names));
         Remote.notifyKid(this, txt);
         if (Remote.paired(this)) {
             Remote.event(this, txt, null, true);
@@ -222,8 +223,16 @@ public class RemoteService extends Service {
         // Apps that are no longer allowed get hidden, which closes them; the home screen re-reads on its tick.
         Policy.apply(this);
         long until = Schedule.currentModeUntil(this);
-        String txt = (mode == Schedule.NORMAL ? "Normal hours" : Schedule.modeLabel(mode))
-                + (until > 0 ? " until " + Remote.time(this, until) : "");
+        String txt;
+        if (until <= 0) {
+            txt = mode == Schedule.NORMAL ? getString(R.string.events_mode_normal) : Schedule.modeLabel(this, mode);
+        } else if (mode == Schedule.BEDTIME) {
+            txt = getString(R.string.events_mode_bedtime_until, Remote.time(this, until));
+        } else if (mode == Schedule.LIMITED) {
+            txt = getString(R.string.events_mode_limited_until, Remote.time(this, until));
+        } else {
+            txt = getString(R.string.events_mode_normal_until, Remote.time(this, until));
+        }
         if (Remote.paired(this)) {
             Remote.event(this, txt, null, true); // routine: activity list only
             Remote.sendState(this, false);

@@ -33,9 +33,10 @@ final class BuiltInApps {
     }
 
     /** "Wi-Fi settings" / "Bluetooth settings": what she can change there, not the radio itself. */
-    static String label(String id) {
-        return BLUETOOTH.equals(id) ? "Bluetooth settings" : "Wi-Fi settings";
+    static String label(Context c, String id) {
+        return c.getString(BLUETOOTH.equals(id) ? R.string.events_bluetooth_settings : R.string.events_wifi_settings);
     }
+
 
     /** Opens its screen. */
     static Intent launch(Context c, String id) {

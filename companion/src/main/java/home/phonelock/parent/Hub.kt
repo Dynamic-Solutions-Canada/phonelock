@@ -76,6 +76,11 @@ data class PhoneState(
     val screenRules: Map<String, String> = emptyMap(),
     /** The groups of Google screens the device blocks unless a parent allows them (full state). */
     val screenAreas: List<ScreenArea> = emptyList(),
+    /**
+     * The language the lock app on the device uses: a language tag a parent picked ("es-ES"), "" when it
+     * follows the device, or null when the lock app is too old to change language.
+     */
+    val lang: String? = null,
 ) {
     fun label(pkg: String) = labels[pkg] ?: pkg
 }
@@ -441,6 +446,12 @@ object Hub {
         Undo.notify(Strings.get(if (minutes > 0) R.string.alerts_debugging_on_sent else R.string.alerts_debugging_off_sent, deviceName(dev)))
     }
 
+    /** Sets the lock app's language on [dev] to [tag] (e.g. "es-ES"), or "" to follow the device's. */
+    fun setDeviceLanguage(dev: String, tag: String) {
+        editState(dev) { it.copy(lang = tag) }
+        send(dev, msg("lang").put("value", tag))
+    }
+
     /** Asks [dev] to check for a lock app update now; it installs the next time the screen is off. */
     fun updateNow(dev: String) {
         send(dev, msg("update"))
@@ -667,7 +678,8 @@ object Hub {
             m.optJSONObject("screenRules")?.let { o -> o.keys().asSequence().associateWith { o.getString(it) } } ?: emptyMap(),
             m.optJSONArray("screenAreas")?.let { a ->
                 (0 until a.length()).mapNotNull { i -> a.optJSONObject(i)?.let { ScreenArea(it.optString("key"), it.optString("name")) } }
-            } ?: emptyList())
+            } ?: emptyList(),
+            lang = if (m.has("lang")) m.optString("lang") else null)
     }
 
     private fun stateJson(s: PhoneState) = JSONObject().put("ts", s.updated).put("name", s.name)
@@ -685,6 +697,7 @@ object Hub {
         .put("screenAreas", JSONArray(s.screenAreas.map { JSONObject().put("key", it.key).put("name", it.name) }))
         .also { o ->
             s.screenOn?.let { o.put("screenOn", it) }
+            s.lang?.let { o.put("lang", it) }
             if (s.using.isNotEmpty()) o.put("using", JSONObject().put("app", s.using).put("since", s.usingSince))
         }
 

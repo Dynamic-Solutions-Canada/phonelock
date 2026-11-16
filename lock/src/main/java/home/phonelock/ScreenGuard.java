@@ -37,15 +37,17 @@ final class ScreenGuard {
 
     /**
      * A group of screens that lead out of the lock, blocked unless a parent allows the group: {@code key}
-     * names it in decisions ("area:" + key), {@code name} is what parents see, and {@code screens} are class
+     * names it in decisions ("area:" + key), {@code name} is the string resource parents see (resolved when
+     * used, so it follows the app's language), and {@code screens} are class
      * names after "com.google.android.gms" (one ending in "." matches everything under it). Found on a
      * current Pixel; screens not listed here are caught by the alerts instead.
      */
     static final class Area {
-        final String key, name;
+        final String key;
+        final int name;
         final String[] screens;
 
-        Area(String key, String name, String... screens) {
+        Area(String key, int name, String... screens) {
             this.key = key;
             this.name = name;
             this.screens = screens;
@@ -53,13 +55,13 @@ final class ScreenGuard {
     }
 
     static final Area[] AREAS = {
-            new Area("account", "Manage your Google Account", ".accountsettings."),
-            new Area("settings", "Google settings", ".app.settings.",
+            new Area("account", R.string.events_area_account, ".accountsettings."),
+            new Area("settings", R.string.events_area_settings, ".app.settings.",
                     ".quickstart.xos.ui.XosGoogleSettingsActivity",
                     ".trustagent.activeunlock.primary.ui.activity.ActiveUnlockGoogleSettingsEntryPoint"),
-            new Area("help", "Google help pages", ".googlehelp.", ".appfunctions.googlehelp."),
-            new Area("feedback", "Send feedback to Google", ".feedback."),
-            new Area("quickshare", "Quick Share (files from nearby phones)", ".nearby.sharing."),
+            new Area("help", R.string.events_area_help, ".googlehelp.", ".appfunctions.googlehelp."),
+            new Area("feedback", R.string.events_area_feedback, ".feedback."),
+            new Area("quickshare", R.string.events_area_quickshare, ".nearby.sharing."),
     };
 
     /** Prefix of an area's key in the parents' decisions. */
@@ -203,8 +205,7 @@ final class ScreenGuard {
         // Says which screen and area, so the parents' notification can offer to allow it for a while.
         try {
             Area area = areaOf(cls.substring(GMS.length()));
-            String what = area != null ? area.name : "a Google services screen (" + shortName(cls) + ")";
-            String text = "Blocked " + what + openedFrom(c);
+            String text = blockedText(c, area, cls);
             JSONObject o = Remote.msg("event");
             o.put("text", text);
             o.put("screen", cls);
@@ -239,7 +240,7 @@ final class ScreenGuard {
             if (error != null) o.put("error", error);
             if (jpeg == null) Remote.publish(c, o, null);
             else Remote.publishWithBlob(c, o, jpeg);
-            if (jpeg != null) Remote.notifyKid(c, "A picture of this screen was sent to your parents", NOTICE_ID);
+            if (jpeg != null) Remote.notifyKid(c, c.getString(R.string.events_screen_picture_sent), NOTICE_ID);
         } catch (Exception e) {
             Log.w(Policy.TAG, "screen alert: " + e);
         }
@@ -250,9 +251,17 @@ final class ScreenGuard {
         return main;
     }
 
-    private static String openedFrom(Context c) {
+    /** The parents' event for blocked screen {@code cls} (in {@code area}, or null), with the app it was opened from. */
+    private static String blockedText(Context c, Area area, String cls) {
         String from = lastApp;
-        return from.isEmpty() ? "" : ", opened from " + Remote.label(c, from);
+        if (area != null) {
+            return from.isEmpty()
+                    ? c.getString(R.string.events_blocked_area, c.getString(area.name))
+                    : c.getString(R.string.events_blocked_area_from, c.getString(area.name), Remote.label(c, from));
+        }
+        return from.isEmpty()
+                ? c.getString(R.string.events_blocked_screen, shortName(cls))
+                : c.getString(R.string.events_blocked_screen_from, shortName(cls), Remote.label(c, from));
     }
 
     /** True (and records now) if {@code key} wasn't recorded within {@code everyMs}. */
@@ -305,12 +314,12 @@ final class ScreenGuard {
     }
 
     /** What parents call {@code key}: the area's name, or the screen's short name. */
-    static String nameOf(String key) {
+    static String nameOf(Context c, String key) {
         if (key.startsWith(AREA)) {
             Area a = areaByKey(key.substring(AREA.length()));
-            return a != null ? a.name : key;
+            return a != null ? c.getString(a.name) : key;
         }
-        return "the Google services screen " + shortName(key);
+        return c.getString(R.string.events_screen_named, shortName(key));
     }
 
     /** The decisions still in force, for the parents' state, so each parent can see and undo them. */
@@ -327,11 +336,11 @@ final class ScreenGuard {
     }
 
     /** The built-in areas, for the parents' state: [{key, name}], blocked unless a parent allows one. */
-    static org.json.JSONArray areasJson() {
+    static org.json.JSONArray areasJson(Context c) {
         org.json.JSONArray a = new org.json.JSONArray();
         for (Area area : AREAS) {
             try {
-                a.put(new JSONObject().put("key", area.key).put("name", area.name));
+                a.put(new JSONObject().put("key", area.key).put("name", c.getString(area.name)));
             } catch (Exception ignored) {}
         }
         return a;

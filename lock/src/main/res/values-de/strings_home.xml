@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Wording for the home screen, the ring screen, the emergency (SOS) screen and the events they send to parents. -->
+<resources>
+
+    <!-- Audience: child. The home screen. -->
+    <!-- Small line under the date, always shown: what her parents can see -->
+    <string name="home_shared_with_parents">Standort, Akku, Anrufe und App-Nutzung werden mit deinen Eltern geteilt</string>
+    <!-- Pill under the date during a scheduled situation. %1$s is the situation's name (e.g. "Bedtime"), %2$s a time such as "7:00 AM" -->
+    <string name="home_mode_until">%1$s bis %2$s</string>
+    <!-- Red pill under the date. %1$d is the battery level in percent -->
+    <string name="home_battery_low">Akku fast leer (%1$d\u00A0%%). Bitte aufladen.</string>
+    <!-- Section titles above icon grids -->
+    <string name="home_section_allowed">Gerade erlaubt</string>
+    <string name="home_section_paused">Gerade pausiert</string>
+    <!-- Second line under an app's icon (keep very short, it is cut off). %1$s is a time such as "6:22 PM" -->
+    <string name="home_app_until">bis %1$s</string>
+    <!-- Toast after tapping a paused app. %1$s is the app's name, %2$s a time such as "6:22 PM" -->
+    <string name="home_app_paused_until">%1$s ist bis %2$s pausiert</string>
+    <!-- Bottom button: opens the list of apps she can ask a parent for -->
+    <string name="home_ask_for_app">App anfragen</string>
+    <!-- Screen reader label for the ⋮ button next to "Ask for an app" -->
+    <string name="home_quick_menu_description">Wi-Fi, Bluetooth und Ein/Aus</string>
+    <!-- Item in the ⋮ menu: turning the device off or restarting it -->
+    <string name="home_power">Ein/Aus</string>
+    <!-- Round red emergency button (about 4 characters fit; most languages keep "SOS") -->
+    <string name="home_sos">SOS</string>
+    <!-- Screen reader label for the SOS button -->
+    <string name="home_sos_description">Notfall: gedrückt halten, um deine Eltern zu alarmieren</string>
+    <!-- Toast after only tapping (not holding) the SOS button -->
+    <string name="home_sos_hold">Halte SOS gedrückt, um deine Eltern zu alarmieren</string>
+    <!-- Toast when SOS is held but the phone was never connected to the parents -->
+    <string name="home_sos_not_set_up">Noch nicht eingerichtet: Ruf %1$s über die Telefon-App an</string>
+    <string name="home_not_set_up">Noch nicht eingerichtet</string>
+    <string name="home_nothing_to_ask">Nichts zum Anfragen</string>
+    <!-- Title of the app picker for asking -->
+    <string name="home_which_app">Welche App?</string>
+    <!-- Title of the duration list after picking an app. %1$s is the app's name -->
+    <string name="home_for_how_long">%1$s für wie lange?</string>
+    <!-- Choices in the duration list -->
+    <plurals name="home_minutes">
+        <item quantity="one">%1$d Minute</item>
+        <item quantity="other">%1$d Minuten</item>
+    </plurals>
+    <plurals name="home_hours">
+        <item quantity="one">%1$d Stunde</item>
+        <item quantity="other">%1$d Stunden</item>
+    </plurals>
+    <string name="home_asked">Angefragt. Du bekommst eine Benachrichtigung.</string>
+    <string name="home_ask_wait">Warte eine Minute, bevor du noch mal fragst</string>
+    <!-- Toasts after tapping an app that can't open right now -->
+    <string name="home_not_available">Nicht verfügbar</string>
+    <string name="home_blocked">Blockiert</string>
+    <!-- Fallback dialog from the Power item -->
+    <string name="home_restart_title">Gerät neu starten?</string>
+    <string name="home_restart_message">Zum Ausschalten halte stattdessen die Ein/Aus-Taste gedrückt.</string>
+    <!-- Button -->
+    <string name="home_restart">Neu starten</string>
+    <string name="home_restart_failed">Neustart hat nicht geklappt</string>
+
+    <!-- Audience: parent. Parent mode on the home screen and the PIN prompt. -->
+    <!-- Buttons in the parent mode bar -->
+    <string name="home_parent_settings">Einstellungen</string>
+    <string name="home_parent_play_store">Play Store</string>
+    <string name="home_parent_lock_now">Jetzt sperren</string>
+    <!-- Text of the parent mode bar. %1$s is a time such as "4:15 PM" -->
+    <string name="home_parent_mode_until">Elternmodus. Sperrt sich wieder um %1$s oder wenn der Bildschirm ausgeht.</string>
+    <!-- Bottom button in parent mode: opens every app -->
+    <string name="home_all_apps">Alle Apps</string>
+    <string name="home_open_an_app">App öffnen</string>
+    <string name="home_no_other_apps">Keine weiteren Apps</string>
+    <string name="home_no_pin">Keine PIN festgelegt</string>
+    <string name="home_pin_title">Eltern-PIN</string>
+    <!-- Hint inside the PIN field (keep short) -->
+    <string name="home_pin_hint">PIN</string>
+    <!-- Button -->
+    <string name="home_unlock">Entsperren</string>
+    <string name="home_pin_wrong">Falsche PIN</string>
+    <!-- Toast after too many wrong PINs. %1$d is a number of seconds -->
+    <string name="home_pin_try_again">In %1$d s erneut versuchen</string>
+
+    <!-- Audience: parent. Events this phone sends to the parent app's Activity and alerts. -->
+    <!-- %1$s is an app's name -->
+    <string name="home_event_not_available">Hat versucht, %1$s zu öffnen (gerade nicht verfügbar)</string>
+    <string name="home_event_blocked">Hat versucht, %1$s zu öffnen (blockiert)</string>
+    <!-- %1$s is an app's name, %2$s a time such as "6:22 PM" -->
+    <string name="home_event_paused">Hat versucht, %1$s zu öffnen (pausiert bis %2$s)</string>
+    <string name="home_event_parent_mode_ended">Elternmodus auf dem Smartphone beendet</string>
+    <!-- %1$s is a time such as "4:15 PM" -->
+    <string name="home_event_pin_unlocked">Elternmodus auf dem Smartphone mit der PIN entsperrt, bis %1$s</string>
+    <!-- %1$d is how many wrong tries in a row (3 or more), %2$d a number of minutes -->
+    <plurals name="home_event_pin_wrong">
+        <item quantity="one">Eltern-PIN auf dem Smartphone %1$d-mal hintereinander falsch eingegeben; für %2$d Min. gesperrt</item>
+        <item quantity="other">Eltern-PIN auf dem Smartphone %1$d-mal hintereinander falsch eingegeben; für %2$d Min. gesperrt</item>
+    </plurals>
+    <!-- Sent after the phone starts up. Pairs with a "Turning off" event -->
+    <string name="home_event_turned_on">Eingeschaltet</string>
+    <!-- %1$d is the battery level in percent -->
+    <string name="home_event_turned_on_battery">Eingeschaltet (Akku %1$d\u00A0%%)</string>
+    <!-- %1$s is the phone's name as the parents set it -->
+    <string name="home_event_ring_stopped_by">%1$s hat das Klingeln beendet</string>
+    <!-- Used instead of the one above when the phone has no name -->
+    <string name="home_event_ring_stopped_by_device">Das Gerät hat das Klingeln beendet</string>
+    <string name="home_event_ring_timed_out">Klingeln nach Ablauf der Zeit beendet</string>
+
+    <!-- Audience: child. The ring screen, shown while a parent rings the phone. -->
+    <!-- Big title. %1$s is the parent's name -->
+    <string name="home_ring_title">%1$s versucht, dich zu erreichen</string>
+    <!-- Used instead of the one above when the parent's name is unknown -->
+    <string name="home_ring_title_unknown">Ein Elternteil versucht, dich zu erreichen</string>
+    <string name="home_ring_hint">Tippe auf „Klingeln beenden“ und melde dich dann bei ihnen.</string>
+    <!-- Big button that stops the ringing; must match "Stop" in home_ring_hint -->
+    <string name="home_ring_stop">Klingeln beenden</string>
+
+    <!-- Audience: child. The emergency screen, opened by holding SOS. -->
+    <string name="home_sos_title">Notfall</string>
+    <!-- Biggest button: opens the dialer with the local emergency number filled in. %1$s is that number (911, 112, 999, 110, ...), in this and the other SOS strings -->
+    <string name="home_sos_call">%1$s anrufen</string>
+    <string name="home_sos_not_paired">Dieses Handy ist nicht so eingerichtet, dass es deine Eltern erreicht. Ruf %1$s an, wenn du Hilfe brauchst.</string>
+    <string name="home_sos_cancelled">Alarm abgebrochen. Deine Eltern wissen jetzt, dass er aus Versehen gesendet wurde.</string>
+    <string name="home_sos_alerted">Deine Eltern wurden alarmiert.</string>
+    <string name="home_sos_all_sent">Deine Eltern wurden alarmiert und sehen, wo du bist.</string>
+    <string name="home_sos_sending">Wird an deine Eltern gesendet … Ohne Empfang wird es weiter versucht.</string>
+    <!-- One line per parent who answered. %1$s is the parent's name -->
+    <string name="home_sos_on_it">%1$s kümmert sich.</string>
+    <!-- Heading above the one-tap messages -->
+    <string name="home_sos_tell_more">Sag ihnen mehr</string>
+    <!-- One-tap messages: buttons, two per row, sent to the parents as written here -->
+    <string name="home_sos_quick_hurt">Ich bin verletzt</string>
+    <string name="home_sos_quick_scared">Ich habe Angst</string>
+    <string name="home_sos_quick_lost">Ich habe mich verlaufen</string>
+    <string name="home_sos_quick_come">Hol mich ab</string>
+    <string name="home_sos_quick_call">Ruf mich an</string>
+    <string name="home_sos_type_hint">Nachricht schreiben</string>
+    <!-- Button that sends the typed message -->
+    <string name="home_sos_send">Senden</string>
+    <!-- %1$s is the messages she sent, joined with " · " -->
+    <string name="home_sos_sent">Gesendet: %1$s</string>
+    <!-- Button, offered for the first two minutes -->
+    <string name="home_sos_mistake">Aus Versehen gesendet</string>
+    <string name="home_sos_back_home">Zurück zum Startbildschirm</string>
+    <string name="home_sos_no_alert">Gerade kein Alarm: Halte SOS noch mal gedrückt</string>
+    <string name="home_sos_cancel_title">Alarm abbrechen?</string>
+    <string name="home_sos_cancel_message">Deine Eltern erfahren, dass er aus Versehen gesendet wurde.</string>
+    <!-- Buttons of the dialog above -->
+    <string name="home_sos_cancel_yes">Ja, abbrechen</string>
+    <string name="home_sos_cancel_no">Nein</string>
+    <string name="home_sos_no_dialer">Die Telefon-App ließ sich nicht öffnen</string>
+    <!-- Notification. %1$s is the parent's name -->
+    <string name="home_sos_acked">%1$s hat deinen Notfallalarm bekommen und kümmert sich</string>
+</resources>

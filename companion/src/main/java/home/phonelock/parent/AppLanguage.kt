@@ -4,6 +4,7 @@ import android.app.LocaleConfig
 import android.app.LocaleManager
 import android.content.Context
 import android.content.res.Resources
+import android.icu.util.ULocale
 import android.os.LocaleList
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -41,6 +42,22 @@ object AppLanguage {
     fun chosen(c: Context): Locale? {
         val locales = c.getSystemService(LocaleManager::class.java).applicationLocales
         return if (locales.isEmpty) null else locales[0]
+    }
+
+    /**
+     * The offered language this app is showing now, as a tag ("fr-CA"): the one picked, or else the
+     * closest offered match for the device's language (same language and region, then same language).
+     * "" when the device's language isn't offered (the app is then in English by default).
+     */
+    fun currentTag(c: Context): String {
+        chosen(c)?.let { return it.toLanguageTag() }
+        val device = deviceRegion()
+        // Chinese also needs the same script: Traditional Chinese isn't offered and must not become Simplified.
+        val script = { l: Locale -> ULocale.addLikelySubtags(ULocale.forLocale(l)).script }
+        val offered = choices(c).filter { it.language != "zh" || script(it) == script(device) }
+        val match = offered.firstOrNull { it.language == device.language && it.country == device.country }
+            ?: offered.firstOrNull { it.language == device.language }
+        return match?.toLanguageTag() ?: ""
     }
 
     /** Uses [locale] for this app, or the device's language when [locale] is null. */
@@ -86,5 +103,33 @@ internal fun LanguageSection() {
                 MenuEntry(AppLanguage.nameOf(locale)) { AppLanguage.choose(ctx, locale); picking = false }
             }
         OptionsDialog(stringResource(R.string.language_title), onDismiss = { picking = false }, options = options)
+    }
+}
+
+/**
+ * Settings' language row for the lock app on [dev]: which language their device's PhoneLock uses, and a
+ * list to change it. Hidden until the device reports a language, since older lock apps ignore the command.
+ */
+@Composable
+internal fun DeviceLanguageSetting(dev: String, st: PhoneState?) {
+    val lang = st?.lang ?: return
+    val ctx = LocalContext.current
+    var picking by remember { mutableStateOf(false) }
+    val matchDevice = stringResource(R.string.device_language_match)
+    val current = if (lang.isEmpty()) matchDevice else AppLanguage.nameOf(Locale.forLanguageTag(lang))
+
+    ListRow(stringResource(R.string.device_language_title), AnnotatedString(current),
+        leading = { SymbolBadge("🌐") }, onClick = { picking = true }, titleLines = 2)
+
+    if (picking) {
+        val options = listOf(MenuEntry(matchDevice) { Hub.setDeviceLanguage(dev, ""); picking = false }) +
+            AppLanguage.choices(ctx).map { locale ->
+                MenuEntry(AppLanguage.nameOf(locale)) {
+                    Hub.setDeviceLanguage(dev, locale.toLanguageTag())
+                    picking = false
+                }
+            }
+        OptionsDialog(stringResource(R.string.device_language_title), onDismiss = { picking = false },
+            note = stringResource(R.string.device_language_note), options = options)
     }
 }

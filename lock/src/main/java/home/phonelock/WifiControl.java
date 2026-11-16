@@ -58,7 +58,7 @@ final class WifiControl {
     static boolean setOn(Context c, boolean on) {
         try {
             boolean ok = wifi(c).setWifiEnabled(on);
-            if (ok && !on) Outbox.note(c, "Wi-Fi was switched off on the phone");
+            if (ok && !on) Outbox.note(c, c.getString(R.string.tools_wifi_switched_off_event));
             return ok;
         } catch (Exception e) {
             Log.w(Policy.TAG, "wifi on/off: " + e);
@@ -189,7 +189,7 @@ final class WifiControl {
             pendingSsid = null;
             pendingId = -1;
         }
-        Outbox.alert(c, "Joined a new Wi-Fi network: " + ssid);
+        Outbox.alert(c, c.getString(R.string.tools_wifi_joined_event, ssid));
     }
 
     /**
@@ -212,7 +212,7 @@ final class WifiControl {
         WifiConfiguration w = saved(c, ssid);
         if (w == null) return false;
         boolean ok = wifi(c).removeNetwork(w.networkId);
-        if (ok) Outbox.note(c, "Forgot the Wi-Fi network " + ssid);
+        if (ok) Outbox.note(c, c.getString(R.string.tools_wifi_forgot_event, ssid));
         return ok;
     }
 

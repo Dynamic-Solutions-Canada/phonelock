@@ -48,7 +48,7 @@ public class RingActivity extends Activity {
         root.addView(title, new LinearLayout.LayoutParams(-1, -2));
 
         TextView hint = new TextView(this);
-        hint.setText("Tap Stop, then check in with them.");
+        hint.setText(R.string.home_ring_hint);
         hint.setTextColor(Color.rgb(255, 210, 210));
         hint.setTextSize(18);
         hint.setGravity(Gravity.CENTER);
@@ -57,11 +57,14 @@ public class RingActivity extends Activity {
         root.addView(hint, hl);
 
         Button stop = new Button(this);
-        stop.setText("Stop");
+        stop.setText(R.string.home_ring_stop);
         stop.setTextSize(24);
         stop.setOnClickListener(v -> {
-            String name = Policy.prefs(this).getString("device_name", "The device");
-            Ringer.stop(this, name + " stopped the ringing", null);
+            String name = Policy.prefs(this).getString("device_name", "");
+            String event = name.isEmpty()
+                    ? getString(R.string.home_event_ring_stopped_by_device)
+                    : getString(R.string.home_event_ring_stopped_by, name);
+            Ringer.stop(this, event, null);
             finish();
         });
         LinearLayout.LayoutParams sl = new LinearLayout.LayoutParams(dp(220), dp(88));
@@ -96,7 +99,9 @@ public class RingActivity extends Activity {
 
     private void bind() {
         String who = Ringer.caller();
-        title.setText((who.isEmpty() ? "A parent" : who) + " is trying to reach you");
+        title.setText(who.isEmpty()
+                ? getString(R.string.home_ring_title_unknown)
+                : getString(R.string.home_ring_title, who));
     }
 
     private int dp(int v) {

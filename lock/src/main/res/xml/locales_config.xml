@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Languages the lock app (the child's phone) offers. Keep this the same as the parent app's list in
+     companion/src/main/res/xml/locales_config.xml: the parent app offers those languages for each child's
+     device, and this app only accepts the ones listed here.
+     Canadian English uses the default (English) wording and Canadian French the French wording; they are
+     listed separately so dates and numbers follow the region. Traditional Chinese is not offered, and Android
+     never picks the Simplified wording for it (values-b+zh+Hans). -->
+<locale-config xmlns:android="http://schemas.android.com/apk/res/android">
+    <locale android:name="en-US" />
+    <locale android:name="en-CA" />
+    <locale android:name="es-ES" />
+    <locale android:name="fr-FR" />
+    <locale android:name="fr-CA" />
+    <locale android:name="de-DE" />
+    <locale android:name="zh-CN" />
+    <locale android:name="pt-BR" />
+    <locale android:name="ja-JP" />
+</locale-config>

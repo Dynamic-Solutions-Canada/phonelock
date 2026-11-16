@@ -20,7 +20,9 @@ It follows the phone's language unless the parent picks one in a device's Settin
 
 Release builds fail if a language is missing a string, has an extra one, or has mismatched placeholders, so new wording needs all six translations before a release. The translations were written with AI assistance and have not been reviewed by native speakers yet. Names, app labels and what people type are never translated. The privacy policy stays in English. Entries already in Recent events keep the language they were written in. Phone number layout and the first day of the week follow the phone's region, not the language picked in the app.
 
-The lock app (the child's phone) is still English only; it follows in a later change.
+The lock app on the child's phone offers the same languages (`lock/src/main/res/xml/locales_config.xml`; keep the two lists the same). A parent sets it per device in that device's Settings > Lock app > language, and phone-to-phone setup starts it in the parent app's language. The activity it reports to parents is written in that language, on the assumption that parents and child share one. Wording the child reads uses the informal "you" (French "tu", German "du"). The diagnostics report stays in English for support. Phones paired before the lock app had languages stay in English after updating, until a parent picks one; phones set up since follow the setup's language or the device's.
+
+The SOS screen shows and dials the local emergency number from Android's emergency number database: the country's main number (911, 999, 000, 112, and 911 in Canada and 111 in New Zealand, where two are listed), or the ambulance number where there are only separate ones (119 in Japan, 120 in China, 192 in Brazil). Without a SIM, or when the phone doesn't know its country, it shows 911.
 
 ## Build (WSL)
 

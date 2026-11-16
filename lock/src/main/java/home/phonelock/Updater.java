@@ -78,7 +78,7 @@ final class Updater {
             int latest = v.getInt("versionCode");
             int installed = installedVersion(c);
             if (latest <= installed) {
-                if (who != null) Remote.event(c, "Already up to date (version " + installed + ")", who, false);
+                if (who != null) Remote.event(c, c.getString(R.string.tools_update_up_to_date, installed), who, false);
                 return;
             }
             boolean ready = readyVersion(c) == latest;
@@ -91,7 +91,7 @@ final class Updater {
             if (!ready) download(c, latest, v.getString("sha256"));
             // The periodic check reports only a new download; "Update now" always answers.
             if (!ready || who != null) {
-                String txt = "Version " + latest + " downloaded; it installs the next time the screen is off";
+                String txt = c.getString(R.string.tools_update_downloaded, latest);
                 Remote.event(c, txt, who, who == null);
                 Remote.sendState(c, false);
             }
@@ -99,7 +99,7 @@ final class Updater {
         } catch (Exception e) {
             Log.w(Policy.TAG, "update check: " + e);
             prefs.edit().putLong("update_checked", System.currentTimeMillis() - CHECK_EVERY_MS + RETRY_MS).apply();
-            if (who != null) Remote.event(c, "Couldn't check for an update: " + e.getMessage(), who, false);
+            if (who != null) Remote.event(c, c.getString(R.string.tools_update_check_failed, e.getMessage()), who, false);
         }
     }
 
@@ -129,7 +129,7 @@ final class Updater {
             byte[] buf = new byte[64 * 1024];
             for (int n; (n = in.read(buf)) > 0; ) {
                 total += n;
-                if (total > MAX_APK) throw new Exception("Update is too large");
+                if (total > MAX_APK) throw new Exception(c.getString(R.string.tools_update_too_large));
                 md.update(buf, 0, n);
                 out.write(buf, 0, n);
             }
@@ -137,13 +137,13 @@ final class Updater {
             h.disconnect();
         }
         try {
-            if (!toHex(md.digest()).equalsIgnoreCase(sha256)) throw new Exception("Update checksum doesn't match");
+            if (!toHex(md.digest()).equalsIgnoreCase(sha256)) throw new Exception(c.getString(R.string.tools_update_checksum));
             verifyPackage(c, tmp, version);
         } catch (Exception e) {
             tmp.delete();
             throw e;
         }
-        if (!tmp.renameTo(apk(c))) throw new Exception("Couldn't store the update");
+        if (!tmp.renameTo(apk(c))) throw new Exception(c.getString(R.string.tools_update_store_failed));
         Policy.prefs(c).edit().putInt("update_ready", version).apply();
     }
 
@@ -151,12 +151,12 @@ final class Updater {
     private static void verifyPackage(Context c, File f, int version) throws Exception {
         PackageManager pm = c.getPackageManager();
         PackageInfo pi = pm.getPackageArchiveInfo(f.getPath(), PackageManager.GET_SIGNING_CERTIFICATES);
-        if (pi == null || !c.getPackageName().equals(pi.packageName)) throw new Exception("Update isn't this app");
-        if (pi.getLongVersionCode() != version) throw new Exception("Update version doesn't match");
+        if (pi == null || !c.getPackageName().equals(pi.packageName)) throw new Exception(c.getString(R.string.tools_update_wrong_app));
+        if (pi.getLongVersionCode() != version) throw new Exception(c.getString(R.string.tools_update_wrong_version));
         PackageInfo mine = pm.getPackageInfo(c.getPackageName(), PackageManager.GET_SIGNING_CERTIFICATES);
         if (pi.signingInfo == null || mine.signingInfo == null
                 || !Arrays.equals(signers(pi), signers(mine))) {
-            throw new Exception("Update isn't signed with this app's key");
+            throw new Exception(c.getString(R.string.tools_update_wrong_key));
         }
     }
 
@@ -210,7 +210,7 @@ final class Updater {
             Log.i(Policy.TAG, "installing update " + version);
         } catch (Exception e) {
             Log.w(Policy.TAG, "update install: " + e);
-            Remote.event(c, "Couldn't install update " + version + ": " + e.getMessage(), null, true);
+            Remote.event(c, c.getString(R.string.tools_update_install_version_failed, version, e.getMessage()), null, true);
             discard(c, version);
             INSTALLING.set(false);
         }
@@ -222,7 +222,7 @@ final class Updater {
         int now = installedVersion(c);
         Policy.prefs(c).edit().remove("update_from").remove("update_ready").remove("update_failed").apply();
         apk(c).delete();
-        if (from > 0 && now > from) Remote.event(c, "Updated to version " + now, null, true);
+        if (from > 0 && now > from) Remote.event(c, c.getString(R.string.tools_update_updated, now), null, true);
     }
 
     /** Install outcome. A pending user action is never shown (she could answer it); it's a failure. */
@@ -232,12 +232,13 @@ final class Updater {
             int status = i.getIntExtra(PackageInstaller.EXTRA_STATUS, PackageInstaller.STATUS_FAILURE);
             INSTALLING.set(false);
             if (status == PackageInstaller.STATUS_SUCCESS) return; // reported after the restart
-            String msg = status == PackageInstaller.STATUS_PENDING_USER_ACTION
-                    ? "the device wanted to ask first" : i.getStringExtra(PackageInstaller.EXTRA_STATUS_MESSAGE);
             // Drop the download so it isn't retried at every screen-off; "Update now" fetches it again.
             int ready = Policy.prefs(c).getInt("update_ready", 0);
             if (ready > 0) discard(c, ready);
-            Remote.event(c, "Couldn't install the update: " + msg, null, false);
+            String text = status == PackageInstaller.STATUS_PENDING_USER_ACTION
+                    ? c.getString(R.string.tools_update_install_failed_asked)
+                    : c.getString(R.string.tools_update_install_failed, i.getStringExtra(PackageInstaller.EXTRA_STATUS_MESSAGE));
+            Remote.event(c, text, null, false);
         }
     }
 

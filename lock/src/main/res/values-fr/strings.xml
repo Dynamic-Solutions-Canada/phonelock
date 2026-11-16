@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Wording shared across the lock app (the child's phone). Each screen or feature keeps its own wording in
+     its own strings_<area>.xml beside this file; every file here needs the same file, with the same names,
+     in each values-<language> folder. Two audiences read it: the child (home, ring and emergency screens)
+     and parents (parent mode, connections, diagnostics, and events sent to the parent app); comments say
+     which when it matters. Names, app labels and anything typed by a person are never translated. -->
+<!-- French (France and Canada). The child is addressed as "tu"; parent-facing text uses "vous" and the
+     parent app's French terms (appareil, mode parent, code PIN parent, Heures limitées, Heure du coucher,
+     liste de confiance, Réparer la configuration par Wi-Fi). "Ask for an app" = "Demander une application". -->
+<resources>
+    <!-- The app's name as Android shows it (it is the child's home screen) -->
+    <string name="app_name">Accueil</string>
+
+    <!-- Common buttons: use these rather than adding another copy -->
+    <string name="cancel">Annuler</string>
+    <string name="ok">OK</string>
+    <string name="done">Terminé</string>
+    <string name="close">Fermer</string>
+
+    <string name="screen_service_label">Affichage de l’écran pour les parents</string>
+    <!-- Accessibility service description, shown to whoever opens Settings > Accessibility (parent) -->
+    <string name="screen_service_description">Permet à un parent de voir cet écran sur demande, et garde fermés les écrans Google qui permettent de sortir du verrouillage. Les écrans Google inconnus sont envoyés aux parents sous forme d’image. Un avis s’affiche à chaque fois.</string>
+</resources>

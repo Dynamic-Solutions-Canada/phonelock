@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Wording for the Wi-Fi and Bluetooth screens, parent file management, debugging, updates, contacts and the call log. -->
+<resources>
+    <!-- Audience: child. Shown when the Wi-Fi or Bluetooth screen closes because its time is over. %1$s is the
+         screen's name, such as "Wi-Fi settings". -->
+    <string name="tools_not_allowed_now">现在不能使用 %1$s</string>
+
+    <!-- Audience: child. The Wi-Fi screen, opened from its icon on the child's home screen. -->
+    <!-- Title of the on/off card at the top of the Wi-Fi screen -->
+    <string name="tools_wifi">Wi-Fi</string>
+    <!-- State under the card title: the radio is on -->
+    <string name="tools_on">开启</string>
+    <!-- State under the card title: the radio is off -->
+    <string name="tools_off">关闭</string>
+    <string name="tools_wifi_switch_on_failed">无法开启 Wi-Fi</string>
+    <string name="tools_wifi_switch_off_failed">无法关闭 Wi-Fi</string>
+    <!-- Heading above the list of nearby Wi-Fi networks -->
+    <string name="tools_wifi_networks">网络</string>
+    <string name="tools_wifi_looking">正在查找网络…</string>
+    <!-- Detail under a network's name: the phone is on this network now -->
+    <string name="tools_wifi_connected">已连接</string>
+    <!-- Detail under a network's name: the phone has joined it before and remembers it -->
+    <string name="tools_wifi_saved">已保存</string>
+    <!-- Detail under a network's name: it needs a password. Keep the lock symbol at the start. -->
+    <string name="tools_wifi_secured">🔒 需要密码</string>
+    <!-- Detail under a network's name: anyone can join, no password -->
+    <string name="tools_wifi_open">开放</string>
+    <!-- Dialog title. %1$s is the Wi-Fi network's name. -->
+    <string name="tools_wifi_forget_title">要删除 %1$s 吗？</string>
+    <!-- Button: remove a saved Wi-Fi network from the phone -->
+    <string name="tools_wifi_forget">删除</string>
+    <string name="tools_wifi_forget_hint">按住已保存的网络可以删除它。</string>
+    <!-- Hint in the box where the child types the Wi-Fi password -->
+    <string name="tools_wifi_password_hint">密码</string>
+    <!-- Button: join the Wi-Fi network with the password typed -->
+    <string name="tools_wifi_join">连接</string>
+    <!-- %1$s is the Wi-Fi network's name -->
+    <string name="tools_wifi_join_failed">无法连接到 %1$s</string>
+    <!-- %1$s is the Wi-Fi network's name -->
+    <string name="tools_wifi_wrong_password">%1$s 的密码不对</string>
+
+    <!-- Audience: child. The Bluetooth screen, opened from its icon on the child's home screen. -->
+    <!-- Title of the on/off card at the top of the Bluetooth screen -->
+    <string name="tools_bluetooth">Bluetooth</string>
+    <string name="tools_bluetooth_switch_on_failed">无法开启 Bluetooth</string>
+    <string name="tools_bluetooth_switch_off_failed">无法关闭 Bluetooth</string>
+    <!-- Heading above the list of paired Bluetooth devices -->
+    <string name="tools_bluetooth_your_devices">你的设备</string>
+    <!-- Shown under "Your devices" when nothing is paired -->
+    <string name="tools_bluetooth_none_yet">还没有。</string>
+    <!-- Button: start looking for headphones or speakers to pair -->
+    <string name="tools_bluetooth_pair_new">与新设备配对</string>
+    <!-- Heading above Bluetooth devices found nearby -->
+    <string name="tools_bluetooth_nearby">附近的设备</string>
+    <string name="tools_bluetooth_pairing_mode">让耳机或音箱进入配对模式，然后点按它。</string>
+    <!-- Detail under a nearby device's name -->
+    <string name="tools_bluetooth_tap_to_pair">点按即可配对</string>
+    <!-- %1$s is the Bluetooth device's name -->
+    <string name="tools_bluetooth_pairing">正在与 %1$s 配对…</string>
+    <string name="tools_bluetooth_pairing_failed_start">无法开始配对</string>
+    <!-- %1$s is the Bluetooth device's name -->
+    <string name="tools_bluetooth_paired">已与 %1$s 配对</string>
+    <!-- %1$s is the Bluetooth device's name. Devices that show a code are phones and computers; they need Android's pairing screen, which only a parent can open. -->
+    <string name="tools_bluetooth_pair_failed">无法与 %1$s 配对。会显示配对码的设备需要家长帮忙。</string>
+
+    <!-- Audience: parent. News sent to the parent app when the child changes Wi-Fi or Bluetooth. -->
+    <string name="tools_wifi_switched_off_event">手机上的 Wi-Fi 已关闭</string>
+    <!-- %1$s is the Wi-Fi network's name -->
+    <string name="tools_wifi_joined_event">连接了新的 Wi-Fi 网络：%1$s</string>
+    <!-- %1$s is the Wi-Fi network's name -->
+    <string name="tools_wifi_forgot_event">删除了 Wi-Fi 网络 %1$s</string>
+    <!-- %1$s is the Bluetooth device's name -->
+    <string name="tools_bluetooth_paired_event">配对了新的 Bluetooth 设备：%1$s</string>
+
+    <!-- Audience: child and parent. A parent changed files on the device: shown to the child as a notice and to the
+         parents in their activity list. %1$s is the parent's name; %2$s is a file or folder path. -->
+    <string name="tools_files_created_folder">%1$s 创建了文件夹 %2$s</string>
+    <string name="tools_files_deleted">%1$s 删除了 %2$s</string>
+    <!-- %3$s is the new name -->
+    <string name="tools_files_renamed">%1$s 将 %2$s 重命名为 %3$s</string>
+    <string name="tools_files_added">%1$s 添加了 %2$s</string>
+
+    <!-- Audience: parent. Why a file action a parent asked for failed, shown in the parent app's file screen. -->
+    <string name="tools_files_not_permitted">该设备尚未允许访问文件</string>
+    <string name="tools_files_location_unavailable">该位置不可用</string>
+    <string name="tools_files_create_folder_failed">无法创建文件夹</string>
+    <string name="tools_files_top_level">无法删除顶层文件夹；请打开它并删除其中的内容</string>
+    <!-- The new name typed for a file or folder is empty or contains a slash -->
+    <string name="tools_files_invalid_name">名称无效</string>
+    <string name="tools_files_name_taken">该名称已被使用</string>
+    <string name="tools_files_rename_failed">无法重命名</string>
+    <string name="tools_files_no_upload">上传中没有文件</string>
+    <string name="tools_files_generic_error">出了点问题</string>
+    <!-- %1$s is a file name -->
+    <string name="tools_files_delete_failed">无法删除 %1$s</string>
+    <string name="tools_files_unknown_server">上传来自未知服务器</string>
+    <string name="tools_files_save_failed">无法保存文件</string>
+    <!-- The path the parent asked to download is a folder, not a file -->
+    <string name="tools_files_not_a_file">不是文件</string>
+    <string name="tools_files_too_large">文件过大，无法发送（超过 48 MB）</string>
+    <!-- "Hub" is the relay server that carries messages between the phone and the parent app. %1$d is an HTTP status code. -->
+    <string name="tools_files_upload_failed">上传到中继服务器失败（HTTP %1$d）</string>
+
+    <!-- Audience: parent. Answers to a parent's request for the contacts or the call log. -->
+    <string name="tools_contacts_not_permitted">该设备尚未允许读取联系人</string>
+    <string name="tools_calllog_not_permitted">该设备尚未允许读取通话记录</string>
+
+    <!-- Audience: parent. Events about turning on debugging so the phone can be repaired from a computer. -->
+    <!-- "Fix setup over Wi-Fi" is a button in the parent app: use the same wording as that button. -->
+    <string name="tools_debug_needs_fix_setup">无法开启调试：设备需要先使用“通过 Wi-Fi 修复设置”</string>
+    <!-- %1$s is Android's reason, usually in English -->
+    <string name="tools_debug_failed">无法开启调试：%1$s</string>
+    <!-- %1$s is the parent's name; %2$s is a time of day; %3$s is an IP address and %4$s a port number. "Wireless debugging" is an Android setting: use Android's own name for it in this language. -->
+    <string name="tools_debug_on_with_address">%1$s 开启了 USB 调试和无线调试，至 %2$s。无线调试：%3$s:%4$s。</string>
+    <!-- %1$s is the parent's name; %2$s is a time of day. "Wireless debugging" is an Android setting: use Android's own name for it in this language. -->
+    <string name="tools_debug_on_starting">%1$s 开启了 USB 调试和无线调试，至 %2$s。无线调试正在启动。</string>
+    <string name="tools_debug_off">调试已重新关闭</string>
+
+    <!-- Audience: parent. Events about updating the lock app on the phone. -->
+    <!-- %1$d is the app's version number -->
+    <string name="tools_update_up_to_date">已是最新版本（版本 %1$d）</string>
+    <!-- %1$d is the app's version number -->
+    <string name="tools_update_downloaded">版本 %1$d 已下载；将在下次屏幕关闭时安装</string>
+    <!-- %1$s is the reason, sometimes Android's own in English -->
+    <string name="tools_update_check_failed">无法检查更新：%1$s</string>
+    <!-- %1$d is the app's version number; %2$s is the reason, sometimes Android's own in English -->
+    <string name="tools_update_install_version_failed">无法安装版本 %1$d 的更新：%2$s</string>
+    <!-- %1$s is Android's reason, usually in English -->
+    <string name="tools_update_install_failed">无法安装更新：%1$s</string>
+    <!-- Android wanted to show a confirmation on the phone, which the lock app doesn't allow -->
+    <string name="tools_update_install_failed_asked">无法安装更新：设备要求先确认</string>
+    <!-- %1$d is the app's version number -->
+    <string name="tools_update_updated">已更新到版本 %1$d</string>
+    <!-- Reasons a downloaded update was rejected, shown after "Couldn't check for an update:" -->
+    <string name="tools_update_too_large">更新文件过大</string>
+    <string name="tools_update_checksum">更新的校验和不匹配</string>
+    <string name="tools_update_store_failed">无法存储更新</string>
+    <string name="tools_update_wrong_app">更新文件不属于此应用</string>
+    <string name="tools_update_wrong_version">更新版本不一致</string>
+    <string name="tools_update_wrong_key">更新未使用此应用的密钥签名</string>
+</resources>

@@ -44,7 +44,7 @@ final class AppRemover {
     static void uninstall(Context c, String pkg, String who) {
         String label = Remote.label(c, pkg);
         if (!removable(c, pkg)) {
-            Remote.event(c, label + " can't be uninstalled", who, false);
+            Remote.event(c, c.getString(R.string.events_cant_uninstall, label), who, false);
             return;
         }
         try {
@@ -57,7 +57,7 @@ final class AppRemover {
         } catch (Exception e) {
             Log.w(Policy.TAG, "uninstall " + pkg + ": " + e);
             Policy.apply(c);
-            Remote.event(c, "Couldn't uninstall " + label, who, false);
+            Remote.event(c, c.getString(R.string.events_uninstall_failed, label), who, false);
         }
     }
 
@@ -70,15 +70,15 @@ final class AppRemover {
             if (status == PackageInstaller.STATUS_PENDING_USER_ACTION) {
                 // Shouldn't happen for a device owner; never show a prompt the child could answer.
                 Policy.apply(c);
-                Remote.event(c, "Couldn't uninstall " + label + " without asking on the device", who, false);
+                Remote.event(c, c.getString(R.string.events_uninstall_needs_device, label), who, false);
                 return;
             }
             Policy.apply(c);
             if (status == PackageInstaller.STATUS_SUCCESS) {
-                Remote.notifyKid(c, who + " uninstalled " + label);
-                Remote.event(c, who + ": uninstalled " + label, who, false);
+                Remote.notifyKid(c, c.getString(R.string.events_uninstalled_child, who, label));
+                Remote.event(c, c.getString(R.string.events_uninstalled, who, label), who, false);
             } else {
-                Remote.event(c, "Couldn't uninstall " + label, who, false);
+                Remote.event(c, c.getString(R.string.events_uninstall_failed, label), who, false);
             }
             Remote.sendState(c, true);
         }

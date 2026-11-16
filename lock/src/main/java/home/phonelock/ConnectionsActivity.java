@@ -74,7 +74,7 @@ public class ConnectionsActivity extends Activity {
             if (WifiManager.SUPPLICANT_STATE_CHANGED_ACTION.equals(a)
                     && i.getIntExtra(WifiManager.EXTRA_SUPPLICANT_ERROR, 0) == WifiManager.ERROR_AUTHENTICATING) {
                 String ssid = WifiControl.onAuthFailed(c);
-                if (ssid != null) toast("Wrong password for " + ssid);
+                if (ssid != null) toast(c.getString(R.string.tools_wifi_wrong_password, ssid));
             }
             BluetoothDevice d = i.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE, BluetoothDevice.class);
             if (BluetoothDevice.ACTION_FOUND.equals(a) && d != null && found != null
@@ -86,10 +86,9 @@ public class ConnectionsActivity extends Activity {
                 if (state == BluetoothDevice.BOND_BONDED) {
                     BluetoothControl.onPaired(c, d);
                     if (found != null) found.remove(d.getAddress());
-                    btNote = "Paired with " + BluetoothControl.name(d);
+                    btNote = c.getString(R.string.tools_bluetooth_paired, BluetoothControl.name(d));
                 } else if (state == BluetoothDevice.BOND_NONE && prev == BluetoothDevice.BOND_BONDING) {
-                    btNote = "Couldn't pair with " + BluetoothControl.name(d)
-                            + ". Devices that show a code need a parent.";
+                    btNote = c.getString(R.string.tools_bluetooth_pair_failed, BluetoothControl.name(d));
                 }
             }
             show();
@@ -111,7 +110,7 @@ public class ConnectionsActivity extends Activity {
         root.setBackground(new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,
                 new int[]{Color.rgb(28, 34, 52), Color.rgb(12, 13, 18)}));
 
-        root.addView(text(BuiltInApps.label(tab == TAB_BLUETOOTH ? BuiltInApps.BLUETOOTH : BuiltInApps.WIFI), 28, TEXT));
+        root.addView(text(BuiltInApps.label(this, tab == TAB_BLUETOOTH ? BuiltInApps.BLUETOOTH : BuiltInApps.WIFI), 28, TEXT));
 
         content = new LinearLayout(this);
         content.setOrientation(LinearLayout.VERTICAL);
@@ -121,7 +120,7 @@ public class ConnectionsActivity extends Activity {
         sl.topMargin = dp(20);
         root.addView(scroll, sl);
 
-        TextView done = pill("Done", Color.rgb(52, 60, 84));
+        TextView done = pill(getString(R.string.done), Color.rgb(52, 60, 84));
         done.setOnClickListener(v -> finish());
         LinearLayout.LayoutParams dl = new LinearLayout.LayoutParams(-1, dp(52));
         dl.topMargin = dp(12);
@@ -175,7 +174,7 @@ public class ConnectionsActivity extends Activity {
         String id = tab == TAB_BLUETOOTH ? BuiltInApps.BLUETOOTH : BuiltInApps.WIFI;
         if (Policy.inParentMode(this) || Policy.homeApps(this).contains(id)) return true;
         if (!isFinishing()) {
-            toast(BuiltInApps.label(id) + " isn't allowed right now");
+            toast(getString(R.string.tools_not_allowed_now, BuiltInApps.label(this, id)));
             finish();
         }
         return false;
@@ -191,74 +190,83 @@ public class ConnectionsActivity extends Activity {
 
     private void showWifi() {
         boolean on = WifiControl.isOn(this);
-        toggleCard("Wi-Fi", on, value -> {
-            if (!WifiControl.setOn(this, value)) toast("Couldn't switch Wi-Fi " + (value ? "on" : "off"));
+        toggleCard(getString(R.string.tools_wifi), on, value -> {
+            if (!WifiControl.setOn(this, value)) {
+                toast(getString(value ? R.string.tools_wifi_switch_on_failed : R.string.tools_wifi_switch_off_failed));
+            }
             show();
         });
         if (!on) return;
 
         List<WifiControl.Network> nets = WifiControl.nearby(this);
-        heading("Networks");
+        heading(getString(R.string.tools_wifi_networks));
         if (nets.isEmpty()) {
-            note("Looking for networks…");
+            note(getString(R.string.tools_wifi_looking));
             return;
         }
         LinearLayout list = card();
         for (WifiControl.Network n : nets) {
-            String detail = n.connected ? "Connected" : n.saved ? "Saved" : n.secured ? "🔒 Password" : "Open";
+            String detail = getString(n.connected ? R.string.tools_wifi_connected
+                    : n.saved ? R.string.tools_wifi_saved
+                    : n.secured ? R.string.tools_wifi_secured
+                    : R.string.tools_wifi_open);
             View row = listRow(n.ssid, detail, n.connected, signalBars(n.bars));
             row.setOnClickListener(v -> onNetwork(n));
             if (n.saved) row.setOnLongClickListener(v -> {
-                new AlertDialog.Builder(this).setTitle("Forget " + n.ssid + "?")
-                        .setPositiveButton("Forget", (d, w) -> {
+                new AlertDialog.Builder(this).setTitle(getString(R.string.tools_wifi_forget_title, n.ssid))
+                        .setPositiveButton(R.string.tools_wifi_forget, (d, w) -> {
                             if (!allowedNow()) return;
                             WifiControl.forget(this, n.ssid);
                             show();
                         })
-                        .setNegativeButton("Cancel", null).show();
+                        .setNegativeButton(R.string.cancel, null).show();
                 return true;
             });
             list.addView(row);
         }
         content.addView(list);
-        if (nets.stream().anyMatch(n -> n.saved)) note("Hold a saved network to forget it.");
+        if (nets.stream().anyMatch(n -> n.saved)) note(getString(R.string.tools_wifi_forget_hint));
     }
 
     /** Tapping a network: join it, asking for its password the first time. */
     private void onNetwork(WifiControl.Network n) {
         if (n.connected || !allowedNow()) return;
         if (n.saved || !n.secured) {
-            if (!WifiControl.join(this, n.ssid, null)) toast("Couldn't join " + n.ssid);
+            if (!WifiControl.join(this, n.ssid, null)) toast(getString(R.string.tools_wifi_join_failed, n.ssid));
             return;
         }
         EditText pw = new EditText(this);
         pw.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        pw.setHint("Password");
+        pw.setHint(R.string.tools_wifi_password_hint);
         LinearLayout box = new LinearLayout(this);
         box.setPadding(dp(24), dp(8), dp(24), 0);
         box.addView(pw, new LinearLayout.LayoutParams(-1, -2));
         new AlertDialog.Builder(this).setTitle(n.ssid).setView(box)
-                .setPositiveButton("Join", (d, w) -> {
+                .setPositiveButton(R.string.tools_wifi_join, (d, w) -> {
                     if (!allowedNow()) return;
-                    if (!WifiControl.join(this, n.ssid, pw.getText().toString())) toast("Couldn't join " + n.ssid);
+                    if (!WifiControl.join(this, n.ssid, pw.getText().toString())) {
+                        toast(getString(R.string.tools_wifi_join_failed, n.ssid));
+                    }
                 })
-                .setNegativeButton("Cancel", null).show();
+                .setNegativeButton(R.string.cancel, null).show();
     }
 
     // ---------- Bluetooth ----------
 
     private void showBluetooth() {
         boolean on = BluetoothControl.isOn(this);
-        toggleCard("Bluetooth", on, value -> {
-            if (!BluetoothControl.setOn(this, value)) toast("Couldn't switch Bluetooth " + (value ? "on" : "off"));
+        toggleCard(getString(R.string.tools_bluetooth), on, value -> {
+            if (!BluetoothControl.setOn(this, value)) {
+                toast(getString(value ? R.string.tools_bluetooth_switch_on_failed : R.string.tools_bluetooth_switch_off_failed));
+            }
             show();
         });
         if (!on) return;
 
-        heading("Your devices");
+        heading(getString(R.string.tools_bluetooth_your_devices));
         List<BluetoothDevice> paired = BluetoothControl.paired(this);
         if (paired.isEmpty()) {
-            note("None yet.");
+            note(getString(R.string.tools_bluetooth_none_yet));
         } else {
             LinearLayout list = card();
             for (BluetoothDevice d : paired) list.addView(listRow(BluetoothControl.name(d), null, false, null));
@@ -267,7 +275,7 @@ public class ConnectionsActivity extends Activity {
 
         if (btNote != null) note(btNote);
         if (found == null) {
-            TextView pair = pill("Pair a new device", ACCENT);
+            TextView pair = pill(getString(R.string.tools_bluetooth_pair_new), ACCENT);
             pair.setTextColor(Color.rgb(12, 13, 18));
             pair.setOnClickListener(v -> {
                 if (!allowedNow()) return;
@@ -280,16 +288,16 @@ public class ConnectionsActivity extends Activity {
             pl.topMargin = dp(20);
             content.addView(pair, pl);
         } else {
-            heading("Nearby");
-            note("Put the headphones or speaker in pairing mode, then tap it.");
+            heading(getString(R.string.tools_bluetooth_nearby));
+            note(getString(R.string.tools_bluetooth_pairing_mode));
             if (!found.isEmpty()) {
                 LinearLayout list = card();
                 for (BluetoothDevice d : found.values()) {
-                    View row = listRow(BluetoothControl.name(d), "Tap to pair", false, null);
+                    View row = listRow(BluetoothControl.name(d), getString(R.string.tools_bluetooth_tap_to_pair), false, null);
                     row.setOnClickListener(v -> {
                         if (!allowedNow()) return;
-                        btNote = "Pairing with " + BluetoothControl.name(d) + "…";
-                        if (!BluetoothControl.pair(this, d)) btNote = "Couldn't start pairing";
+                        btNote = getString(R.string.tools_bluetooth_pairing, BluetoothControl.name(d));
+                        if (!BluetoothControl.pair(this, d)) btNote = getString(R.string.tools_bluetooth_pairing_failed_start);
                         show();
                     });
                     list.addView(row);
@@ -312,7 +320,7 @@ public class ConnectionsActivity extends Activity {
         LinearLayout words = new LinearLayout(this);
         words.setOrientation(LinearLayout.VERTICAL);
         words.addView(text(title, 20, TEXT));
-        words.addView(text(on ? "On" : "Off", 14, MUTED));
+        words.addView(text(getString(on ? R.string.tools_on : R.string.tools_off), 14, MUTED));
         c.addView(words, new LinearLayout.LayoutParams(0, -2, 1));
         Switch s = new Switch(this);
         s.setChecked(on);

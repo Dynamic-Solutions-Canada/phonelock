@@ -89,7 +89,10 @@ final class CallGuard {
         TelephonyManager tm = c.getSystemService(TelephonyManager.class);
         String iso = tm == null ? null : tm.getNetworkCountryIso();
         if (iso == null || iso.isEmpty()) iso = tm == null ? null : tm.getSimCountryIso();
-        if (iso == null || iso.isEmpty()) iso = Locale.getDefault().getCountry();
+        // The phone's own region, not this app's language (a parent may have picked another country's).
+        if (iso == null || iso.isEmpty()) {
+            iso = android.content.res.Resources.getSystem().getConfiguration().getLocales().get(0).getCountry();
+        }
         return iso.toUpperCase(Locale.ROOT);
     }
 
@@ -99,6 +102,6 @@ final class CallGuard {
         if (e != null && !e.name.isEmpty()) return e.name;
         String contact = Contacts.nameFor(c, number);
         if (contact != null) return contact;
-        return number == null || number.isEmpty() ? "a private number" : number;
+        return number == null || number.isEmpty() ? c.getString(R.string.events_private_number) : number;
     }
 }

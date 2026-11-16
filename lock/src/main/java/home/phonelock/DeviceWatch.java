@@ -43,8 +43,8 @@ final class DeviceWatch {
         airplane = new BroadcastReceiver() {
             @Override public void onReceive(Context ctx, Intent i) {
                 boolean on = i.getBooleanExtra("state", false);
-                if (on) Outbox.alert(ctx, "Airplane mode turned on (no calls or location updates until it's off)");
-                else Outbox.note(ctx, "Airplane mode turned off");
+                if (on) Outbox.alert(ctx, ctx.getString(R.string.events_airplane_on));
+                else Outbox.note(ctx, ctx.getString(R.string.events_airplane_off));
             }
         };
         app.registerReceiver(airplane, new IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED), Context.RECEIVER_EXPORTED);
@@ -55,7 +55,7 @@ final class DeviceWatch {
                 boolean on = Settings.Global.getInt(app.getContentResolver(), "mobile_data", 1) == 1;
                 if (on == Policy.prefs(app).getBoolean("watch_mobile_data", true)) return;
                 Policy.prefs(app).edit().putBoolean("watch_mobile_data", on).apply();
-                Outbox.note(app, on ? "Mobile data turned on" : "Mobile data turned off (only Wi-Fi from now on)");
+                Outbox.note(app, app.getString(on ? R.string.events_mobile_data_on : R.string.events_mobile_data_off));
             }
         };
         app.getContentResolver().registerContentObserver(Settings.Global.getUriFor("mobile_data"), false, mobileData);
@@ -86,8 +86,8 @@ final class DeviceWatch {
                 } catch (Exception e) {
                     return;
                 }
-                String when = Policy.inParentMode(ctx) ? " during parent mode" : "";
-                Outbox.alert(ctx, "Installed " + Remote.label(ctx, pkg) + when);
+                int text = Policy.inParentMode(ctx) ? R.string.events_installed_parent_mode : R.string.events_installed;
+                Outbox.alert(ctx, ctx.getString(text, Remote.label(ctx, pkg)));
             }
         };
         IntentFilter f = new IntentFilter(Intent.ACTION_PACKAGE_ADDED);
@@ -142,8 +142,8 @@ final class DeviceWatch {
         if (now.equals(before)) return;
         p.edit().putString("watch_sims", now).apply();
         if (before == null) return;
-        if (now.isEmpty()) Outbox.alert(c, "SIM card removed (no calls or mobile data)");
-        else if (before.isEmpty()) Outbox.alert(c, "SIM card inserted (" + names + ")");
-        else Outbox.alert(c, "SIM card changed (now " + names + ")");
+        if (now.isEmpty()) Outbox.alert(c, c.getString(R.string.events_sim_removed));
+        else if (before.isEmpty()) Outbox.alert(c, c.getString(R.string.events_sim_inserted, names));
+        else Outbox.alert(c, c.getString(R.string.events_sim_changed, names));
     }
 }

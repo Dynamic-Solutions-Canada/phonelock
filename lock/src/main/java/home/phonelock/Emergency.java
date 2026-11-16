@@ -174,7 +174,7 @@ final class Emergency {
         if (acks.contains(who)) return;
         acks.add(who);
         prefs(c).edit().putString("sos_acks", new JSONArray(acks).toString()).apply();
-        Remote.notifyKid(c, who + " got your emergency alert and is on it");
+        Remote.notifyKid(c, c.getString(R.string.home_sos_acked, who));
         changed(c);
     }
 

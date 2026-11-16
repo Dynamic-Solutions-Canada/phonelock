@@ -76,7 +76,7 @@ final class AppTime {
         /** What the child and parents call it: the group's name, or the app's. */
         String title(Context c) {
             if (name != null && !name.isEmpty()) return name;
-            return apps.isEmpty() ? "Apps" : Remote.label(c, apps.get(0));
+            return apps.isEmpty() ? c.getString(R.string.events_limit_apps) : Remote.label(c, apps.get(0));
         }
 
         /** Minutes allowed on the day of {@code cal}, or -1 for no limit that day. */
@@ -270,7 +270,8 @@ final class AppTime {
                 if (!out.contains(l.id)) ranOut.add(l.title(c));
             } else if (left <= WARN_MS && !warned.contains(l.id) && allowed > 5) {
                 warned.add(l.id);
-                Remote.notifyKid(c, minutesText(left) + " left today for " + l.title(c));
+                int mins = minutesLeft(left);
+                Remote.notifyKid(c, c.getResources().getQuantityString(R.plurals.events_minutes_left_today, mins, mins, l.title(c)));
             }
         }
         saveDayIds(c, "time_warned", warned);
@@ -279,8 +280,8 @@ final class AppTime {
         Policy.applySoon(c);
         if (!ranOut.isEmpty()) {
             String names = String.join(", ", ranOut);
-            Remote.notifyKid(c, "Time's up for today: " + names + ". Ask a parent if you need more time.");
-            if (Remote.paired(c)) Remote.event(c, "Time's up for today: " + names, null, true);
+            Remote.notifyKid(c, c.getString(R.string.events_times_up_today_child, names));
+            if (Remote.paired(c)) Remote.event(c, c.getString(R.string.events_times_up_today, names), null, true);
         }
         if (Remote.paired(c)) Remote.sendState(c, false);
     }
@@ -451,7 +452,7 @@ final class AppTime {
                 }
                 JSONObject o = Remote.msg("usage").put("days", days).put("labels", labels);
                 if (req != null && !req.isEmpty()) o.put("req", req);
-                if (!AppUsage.permitted(c)) o.put("error", "The device hasn't allowed reading app use");
+                if (!AppUsage.permitted(c)) o.put("error", c.getString(R.string.events_usage_not_allowed));
                 Remote.publish(c, o, null);
             } catch (Exception e) {
                 Log.w(Policy.TAG, "usage history: " + e);
@@ -507,8 +508,8 @@ final class AppTime {
         return cal.getTimeInMillis();
     }
 
-    private static String minutesText(long ms) {
-        long m = Math.max(1, (ms + 59_999) / 60_000);
-        return m == 1 ? "1 minute" : m + " minutes";
+    /** Whole minutes in {@code ms}, rounded up and at least 1 (a warning never says "0 minutes"). */
+    private static int minutesLeft(long ms) {
+        return (int) Math.max(1, (ms + 59_999) / 60_000);
     }
 }

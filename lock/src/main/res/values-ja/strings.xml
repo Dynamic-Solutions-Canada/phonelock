@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Wording shared across the lock app (the child's phone). Each screen or feature keeps its own wording in
+     its own strings_<area>.xml beside this file; every file here needs the same file, with the same names,
+     in each values-<language> folder. Two audiences read it: the child (home, ring and emergency screens)
+     and parents (parent mode, connections, diagnostics, and events sent to the parent app); comments say
+     which when it matters. Names, app labels and anything typed by a person are never translated. -->
+<resources>
+    <!-- The app's name as Android shows it (it is the child's home screen) -->
+    <string name="app_name">ホーム</string>
+
+    <!-- Common buttons: use these rather than adding another copy -->
+    <string name="cancel">キャンセル</string>
+    <string name="ok">OK</string>
+    <string name="done">完了</string>
+    <string name="close">閉じる</string>
+
+    <string name="screen_service_label">保護者による画面表示</string>
+    <!-- Accessibility service description, shown to whoever opens Settings > Accessibility (parent) -->
+    <string name="screen_service_description">保護者が求めたときにこの画面を見られるようにし、ロックの外に出てしまう Google の画面を閉じたままにします。見慣れない Google の画面は画像として保護者に送られます。そのたびに通知が表示されます。</string>
+</resources>

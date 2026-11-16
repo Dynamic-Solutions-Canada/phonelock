@@ -112,7 +112,7 @@ public class ConfigReceiver extends BroadcastReceiver {
                 return Grants.command(c, value == null ? "" : value);
             case "pair": {
                 // Everything a new parent pairing needs, applied together (the parent app's phone-to-phone
-                // setup): value = JSON {server, topic, secret, name, pin}. All or nothing, so an interrupted
+                // setup): value = JSON {server, topic, secret, name, pin, lang?}. All or nothing, so an interrupted
                 // setup can't leave a device holding a secret no parent has, or no PIN.
                 org.json.JSONObject o = new org.json.JSONObject(value == null ? "{}" : value);
                 String pin = o.optString("pin");
@@ -123,6 +123,16 @@ public class ConfigReceiver extends BroadcastReceiver {
                 Pairing.setName(c, o.optString("name", "Device"));
                 Pairing.setRemote(c, o.optString("server", "https://ntfy.sh"), o.optString("topic"));
                 Pairing.setSecret(c, o.optString("secret"));
+                // The parent app's language, so the child's phone starts in it; anything not offered is ignored.
+                // Best effort: the pairing above is already stored, so a failure here must not turn the
+                // reply into an error (setup would then drop the device the phone is paired with).
+                if (o.has("lang")) {
+                    try {
+                        Language.apply(c, o.optString("lang"));
+                    } catch (RuntimeException e) {
+                        Log.w(Policy.TAG, "pairing language: " + e);
+                    }
+                }
                 return "paired topic=" + topicHash(o.optString("topic"));
             }
             case "release":

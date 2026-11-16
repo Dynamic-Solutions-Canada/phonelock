@@ -74,9 +74,7 @@ final class ScreenViewGuard {
         boolean restored = canRestore(c) && restore(c);
         if (p.getBoolean("screen_view_reported", false)) return;
         p.edit().putBoolean("screen_view_reported", !restored).apply();
-        Remote.event(c, restored
-                ? "Screen view was switched off on the device (from Android's privacy review) and has been turned back on"
-                : "Screen view was switched off on the device. Use Fix setup over Wi-Fi to turn it back on");
+        Remote.event(c, c.getString(restored ? R.string.events_screen_view_restored : R.string.events_screen_view_off));
     }
 
     /** Puts this app's service back in the enabled list and turns accessibility on. */

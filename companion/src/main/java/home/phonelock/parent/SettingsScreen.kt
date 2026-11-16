@@ -69,6 +69,7 @@ internal fun SettingsScreen(dev: String, name: String, onOpen: (String) -> Unit,
             QuietAlertSetting(dev)
         }
         Section(stringResource(R.string.device_lock_app)) {
+            DeviceLanguageSetting(dev, st)
             // The lock app's version, if known, and a newer one waiting to install, if any.
             val version = st?.version?.takeIf { it > 0 }
             val ready = st?.updateReady?.takeIf { it > 0 }

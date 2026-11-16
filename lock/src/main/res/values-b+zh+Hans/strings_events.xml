@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Events the lock app reports to the parents' app, and the notices it posts on the child's phone about them. -->
+<resources>
+
+    <!-- ========== Shared ========== -->
+
+    <!-- Audience: child and parent. Stands in for a parent's name when a command came without one; used as
+         the parent's name in the strings below. -->
+    <string name="events_a_parent">一位家长</string>
+
+    <!-- Audience: child and parent. Wi-Fi and Bluetooth appear on the home screen and in the parents' app list
+         as if they were apps; these are their names. They open the screens where she can change Wi-Fi or
+         Bluetooth settings. -->
+    <string name="events_wifi_settings">Wi-Fi 设置</string>
+    <string name="events_bluetooth_settings">Bluetooth 设置</string>
+
+    <!-- Audience: child (home screen) and parent. The current schedule mode's name. -->
+    <string name="events_mode_label_normal">正常时段</string>
+    <string name="events_mode_label_limited">限时时段</string>
+    <string name="events_mode_label_bedtime">就寝时间</string>
+
+    <!-- ========== Notifications on the child's phone ========== -->
+
+    <!-- Audience: child. Notification channel names, shown in Android's notification settings. -->
+    <string name="events_channel_from_parents">来自家长</string>
+    <string name="events_channel_parent_controls">家长控制</string>
+    <!-- Audience: child. The permanent notification while the lock is running. -->
+    <string name="events_parent_controls_active">家长控制已启用</string>
+
+    <!-- Audience: child. A parent changed something. In each, the last placeholder in brackets is the parent's
+         name; %1$s is an app's name where there is one; times are already formatted (e.g. 6:00 PM). -->
+    <string name="events_allowed_until_child">%1$s 可以用到 %2$s（%3$s）</string>
+    <string name="events_turned_off_child">%1$s 已关闭</string>
+    <string name="events_all_turned_off_child">临时允许的应用都已关闭</string>
+    <string name="events_paused_until_child">%1$s 暂停到 %2$s（%3$s）</string>
+    <string name="events_back_child">%1$s 又可以用了（%2$s）</string>
+    <!-- %1$s: the app she asked for; %2$s: parent's name -->
+    <string name="events_declined_child">使用 %1$s 的请求没有被同意（%2$s）</string>
+    <!-- %1$s: parent's name -->
+    <string name="events_declined_any_child">应用申请没有被同意（%1$s）</string>
+    <!-- %1$s: time; %2$s: parent's name -->
+    <string name="events_limited_started_child">限时时段开始了，到 %1$s 结束（%2$s）</string>
+    <string name="events_bedtime_started_child">就寝时间开始了，到 %1$s 结束（%2$s）</string>
+    <!-- %1$s: parent's name -->
+    <string name="events_manual_mode_ended_child">手动开始的限时时段或就寝时间已结束（%1$s）</string>
+    <string name="events_parent_mode_ended_child">家长模式已结束（%1$s）</string>
+    <!-- %1$s: time; %2$s: parent's name -->
+    <string name="events_parent_mode_on_child">家长模式已开启，到 %1$s 结束（%2$s）</string>
+    <!-- %1$s: parent's name; %2$s: contact's name -->
+    <string name="events_contact_added_child">%1$s 把 %2$s 添加到了你的联系人</string>
+    <string name="events_contact_removed_child">%1$s 从你的联系人中删除了 %2$s</string>
+    <!-- %1$s: parent's name; %2$s: app name -->
+    <string name="events_uninstalled_child">%1$s 卸载了 %2$s</string>
+    <!-- %1$s: parent's name -->
+    <string name="events_screen_viewed_child">%1$s 查看了你的屏幕</string>
+
+    <!-- Audience: child. A Google services screen she opened was sent to her parents as a picture. -->
+    <string name="events_screen_picture_sent">这个界面的图片已发送给你的家长</string>
+
+    <!-- Audience: child. %1$s: the contact's name or the phone number she tried to call. -->
+    <string name="events_call_not_allowed_child">不能给 %1$s 打电话。请家长把它加到你的安全名单里。</string>
+
+    <!-- Audience: child. A daily app time limit is nearly used up. %1$d: minutes left; %2$s: the limit's name
+         (an app name, or a group name a parent chose). -->
+    <plurals name="events_minutes_left_today">
+        <item quantity="other">今天 %2$s 还剩 %1$d 分钟</item>
+    </plurals>
+    <!-- Audience: child. %1$s: the limits that ran out, as a list of names. -->
+    <string name="events_times_up_today_child">今天的时间用完了：%1$s。如果需要更多时间，可以问问家长。</string>
+
+    <!-- ========== Shown to both ========== -->
+
+    <!-- Audience: child and parent. Apps a parent allowed for a while have run out. %1$s: list of app names. -->
+    <string name="events_times_up">时间到了：%1$s</string>
+    <!-- Audience: child and parent. Apps a parent paused for a while are allowed again. %1$s: list of app
+         names; the count is how many apps. -->
+    <plurals name="events_apps_back">
+        <item quantity="other">%1$s 已恢复可用</item>
+    </plurals>
+
+    <!-- ========== Events sent to the parents' app ========== -->
+
+    <!-- Audience: parent. What a parent did, shown in the other parent's activity list. %1$s is always the
+         parent's name; %2$s an app's name; times are already formatted (e.g. 6:00 PM). -->
+    <string name="events_allowed_until">%1$s：允许使用 %2$s 至 %3$s</string>
+    <string name="events_turned_off">%1$s：已停止 %2$s</string>
+    <string name="events_all_turned_off">%1$s：已停止所有临时允许的应用</string>
+    <string name="events_paused_until">%1$s：已暂停 %2$s 至 %3$s</string>
+    <string name="events_back">%1$s：已重新允许 %2$s</string>
+    <!-- %2$s: the app the child asked for -->
+    <string name="events_declined">%1$s：已拒绝使用 %2$s 的请求</string>
+    <string name="events_declined_any">%1$s：已拒绝应用请求</string>
+    <string name="events_home_added">%1$s：已将 %2$s 添加到主屏幕</string>
+    <string name="events_home_removed">%1$s：已将 %2$s 从主屏幕移除</string>
+    <!-- When an app may be used: in normal hours, limited hours and bedtime (the schedule's three modes), or
+         only when a parent allows it for a while. -->
+    <string name="events_appmode_none">%1$s：%2$s 只能临时允许，其他时间均被屏蔽</string>
+    <string name="events_appmode_all">%1$s：%2$s 始终允许使用</string>
+    <string name="events_appmode_normal">%1$s：%2$s 在正常时段内允许使用</string>
+    <string name="events_appmode_limited">%1$s：%2$s 在限时时段内允许使用</string>
+    <string name="events_appmode_bedtime">%1$s：%2$s 在就寝时间内允许使用</string>
+    <string name="events_appmode_normal_limited">%1$s：%2$s 在正常时段和限时时段内允许使用</string>
+    <string name="events_appmode_normal_bedtime">%1$s：%2$s 在正常时段和就寝时间内允许使用</string>
+    <string name="events_appmode_limited_bedtime">%1$s：%2$s 在限时时段和就寝时间内允许使用</string>
+    <string name="events_schedule_changed">%1$s 更改了时间表</string>
+    <!-- %2$s: time -->
+    <string name="events_limited_started">%1$s：开始限时时段，至 %2$s</string>
+    <string name="events_bedtime_started">%1$s：开始就寝时间，至 %2$s</string>
+    <string name="events_manual_mode_ended">%1$s：手动开始的限时时段或就寝时间已结束</string>
+    <string name="events_limits_changed">%1$s 更改了每日应用时间限额</string>
+    <!-- The list of apps a parent can give access to (and the child can ask for) -->
+    <string name="events_offer_on">%1$s：已在应用列表中重新显示 %2$s</string>
+    <string name="events_offer_off">%1$s：已在应用列表中隐藏 %2$s</string>
+    <string name="events_calls_changed">%1$s 更改了通话设置</string>
+    <string name="events_parent_mode_ended">%1$s：家长模式已结束</string>
+    <!-- %2$s: time -->
+    <string name="events_parent_mode_on">%1$s：家长模式已开启，至 %2$s</string>
+    <string name="events_pin_changed">%1$s 更改了家长 PIN 码</string>
+    <string name="events_battery_alerts_off">%1$s 关闭了低电量提醒</string>
+    <!-- %2$d: battery percentage -->
+    <string name="events_battery_alert_set">%1$s 将低电量提醒设为 %2$d%%</string>
+    <string name="events_debugging_off">%1$s 关闭了调试</string>
+    <!-- %2$s: contact's name -->
+    <string name="events_contact_added">%1$s：添加了联系人 %2$s</string>
+    <string name="events_contact_removed">%1$s：删除了联系人 %2$s</string>
+    <!-- %1$s: contact's name -->
+    <string name="events_contact_add_failed">无法添加联系人 %1$s</string>
+    <string name="events_ringing">%1$s 正在让设备响铃</string>
+    <string name="events_ringing_stopped">%1$s 停止了响铃</string>
+    <string name="events_screen_viewed">%1$s 查看了屏幕</string>
+    <!-- %2$s: app name -->
+    <string name="events_uninstalled">%1$s：卸载了 %2$s</string>
+
+    <!-- Audience: parent. A parent's command couldn't be carried out. %1$s: app name. -->
+    <string name="events_not_installed">%1$s 未安装</string>
+    <string name="events_allowed_while_offline">%1$s 是在设备离线时允许的；允许的时间已过</string>
+    <string name="events_cant_uninstall">%1$s 无法卸载</string>
+    <string name="events_uninstall_failed">无法卸载 %1$s</string>
+    <string name="events_uninstall_needs_device">无法卸载 %1$s：需要在设备上确认</string>
+
+    <!-- Audience: parent. Google services screens that lead out of the lock, which parents can allow or block
+         as a group. Each names what the screens are for. -->
+    <string name="events_area_account">管理你的 Google 账号</string>
+    <string name="events_area_settings">Google 设置</string>
+    <string name="events_area_help">Google 帮助页面</string>
+    <string name="events_area_feedback">向 Google 发送反馈</string>
+    <string name="events_area_quickshare">快速分享（接收附近手机发来的文件）</string>
+    <!-- Audience: parent. Names one Google services screen, used as %2$s in the screen decisions below.
+         %1$s: a technical screen name such as "accountsettings › AccountDetails" (not translated). -->
+    <string name="events_screen_named">Google 服务界面 %1$s</string>
+    <!-- Audience: parent. A parent's decision about a Google services screen or group of screens. %1$s:
+         parent's name; %2$s: the group's name (above) or "the Google services screen …"; %3$s: time. -->
+    <string name="events_screen_rule_allowed">%1$s 允许了 %2$s</string>
+    <string name="events_screen_rule_allowed_until">%1$s 允许了 %2$s，至 %3$s</string>
+    <string name="events_screen_rule_blocked">%1$s 屏蔽了 %2$s</string>
+    <string name="events_screen_rule_reset">%1$s 将 %2$s 恢复为默认设置</string>
+    <!-- %1$s: the group's name or "the Google services screen …" -->
+    <string name="events_screen_rule_no_bedtime">无法允许 %1$s 至就寝时间：接下来没有就寝时间</string>
+    <!-- Audience: parent. The lock sent the child back from a Google services screen. %1$s: a group's name
+         (above), or a technical screen name (not translated); %2$s: the app it was opened from. -->
+    <string name="events_blocked_area">已屏蔽 %1$s</string>
+    <string name="events_blocked_area_from">已屏蔽 %1$s（从 %2$s 打开）</string>
+    <string name="events_blocked_screen">已屏蔽一个 Google 服务界面（%1$s）</string>
+    <string name="events_blocked_screen_from">已屏蔽一个 Google 服务界面（%1$s），从 %2$s 打开</string>
+
+    <!-- Audience: parent. "Parent screen view" (which lets parents see the screen) was switched off. "Fix setup
+         over Wi-Fi" is a button in the parents' app: use the same words as that button. -->
+    <string name="events_screen_view_restored">设备上的屏幕查看功能曾被关闭（来自 Android 的隐私检查），现已重新开启</string>
+    <string name="events_screen_view_off">设备上的屏幕查看功能已被关闭。请使用“通过 Wi-Fi 修复设置”重新开启</string>
+
+    <!-- Audience: parent. Why a screenshot a parent asked for couldn't be taken. "Settings > Accessibility"
+         should match Android's own menu names in this language; "Parent screen view" is this app's
+         accessibility service as listed there. -->
+    <string name="events_shot_no_service">屏幕查看功能未开启。请在设备上解锁家长模式，然后开启“设置 &gt; 无障碍 &gt; 家长查看屏幕”</string>
+    <string name="events_shot_screen_off">屏幕已关闭</string>
+    <string name="events_shot_failed">无法截取屏幕</string>
+    <!-- %1$s: app name -->
+    <string name="events_shot_secure">%1$s 禁止截屏</string>
+    <string name="events_shot_secure_unknown">屏幕上的应用禁止截屏</string>
+    <string name="events_shot_too_soon">距离上次截屏太近，请稍后重试</string>
+    <!-- %1$d: Android's error code -->
+    <string name="events_shot_error">无法截取屏幕（错误 %1$d）</string>
+
+    <!-- Audience: parent. Why the device couldn't say where it is. -->
+    <string name="events_location_off">设备上的位置信息已关闭</string>
+    <string name="events_location_no_provider">设备上没有位置信息提供程序</string>
+    <string name="events_location_no_permission">设备没有位置信息权限</string>
+    <string name="events_location_no_fix">尚未获取到位置</string>
+
+    <!-- Audience: parent. Why a usage report has no data; the parents' app adds advice after it. -->
+    <string name="events_usage_not_allowed">该设备尚未允许读取应用使用情况</string>
+
+    <!-- Audience: parent. Calls. %1$s: the contact's name or the phone number. -->
+    <string name="events_call_attempt">尝试拨打 %1$s（不在安全名单中）</string>
+    <string name="events_call_blocked">已拦截来自 %1$s 的来电</string>
+
+    <!-- Audience: parent. A daily app time limit ran out. %1$s: list of the limits' names. -->
+    <string name="events_times_up_today">今天的时间已用完：%1$s</string>
+
+    <!-- Audience: parent. The schedule moved to another mode. %1$s: time it lasts until. -->
+    <string name="events_mode_normal">正常时段</string>
+    <string name="events_mode_normal_until">正常时段，至 %1$s</string>
+    <string name="events_mode_limited_until">限时时段，至 %1$s</string>
+    <string name="events_mode_bedtime_until">就寝时间，至 %1$s</string>
+
+    <!-- Audience: parent. Battery and power. %1$d: battery percentage. -->
+    <string name="events_battery_low">电量低：%1$d%%</string>
+    <string name="events_turning_off">正在关机</string>
+    <string name="events_turning_off_level">正在关机（电量 %1$d%%）</string>
+    <string name="events_turning_off_empty">正在关机：电池电量已耗尽</string>
+
+    <!-- Audience: parent. Changes on the device that cut it off or get around the lock. -->
+    <string name="events_airplane_on">飞行模式已开启（关闭前无法通话或更新位置）</string>
+    <string name="events_airplane_off">飞行模式已关闭</string>
+    <string name="events_mobile_data_on">移动数据已开启</string>
+    <string name="events_mobile_data_off">移动数据已关闭（此后只能使用 Wi-Fi）</string>
+    <!-- %1$s: app name -->
+    <string name="events_installed">安装了 %1$s</string>
+    <string name="events_installed_parent_mode">在家长模式下安装了 %1$s</string>
+    <string name="events_sim_removed">SIM 卡已移除（无法通话或使用移动数据）</string>
+    <!-- %1$s: the mobile carriers' names -->
+    <string name="events_sim_inserted">已插入 SIM 卡（%1$s）</string>
+    <string name="events_sim_changed">SIM 卡已更换（现在是 %1$s）</string>
+
+    <!-- Audience: parent. An alert that reaches the parents late says when it happened. %1$s: the alert (one of
+         the messages above); %2$s: the time it happened. -->
+    <string name="events_late">%1$s（发生于 %2$s）</string>
+
+    <!-- Audience: child and parent. The name of a daily app time limit that has no name of its own and no apps. -->
+    <string name="events_limit_apps">应用</string>
+
+    <!-- Audience: parent. Stands in for the caller in call events when the number is hidden, e.g.
+         "Blocked a call from a private number" -->
+    <string name="events_private_number">隐藏号码</string>
+</resources>

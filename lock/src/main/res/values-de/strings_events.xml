@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Events the lock app reports to the parents' app, and the notices it posts on the child's phone about them. -->
+<resources>
+
+    <!-- ========== Shared ========== -->
+
+    <!-- Audience: child and parent. Stands in for a parent's name when a command came without one; used as
+         the parent's name in the strings below. -->
+    <string name="events_a_parent">Ein Elternteil</string>
+
+    <!-- Audience: child and parent. Wi-Fi and Bluetooth appear on the home screen and in the parents' app list
+         as if they were apps; these are their names. They open the screens where she can change Wi-Fi or
+         Bluetooth settings. -->
+    <string name="events_wifi_settings">Wi-Fi-Einstellungen</string>
+    <string name="events_bluetooth_settings">Bluetooth-Einstellungen</string>
+
+    <!-- Audience: child (home screen) and parent. The current schedule mode's name. -->
+    <string name="events_mode_label_normal">Normal</string>
+    <string name="events_mode_label_limited">Begrenzte Zeit</string>
+    <string name="events_mode_label_bedtime">Schlafenszeit</string>
+
+    <!-- ========== Notifications on the child's phone ========== -->
+
+    <!-- Audience: child. Notification channel names, shown in Android's notification settings. -->
+    <string name="events_channel_from_parents">Von deinen Eltern</string>
+    <string name="events_channel_parent_controls">Kindersicherung</string>
+    <!-- Audience: child. The permanent notification while the lock is running. -->
+    <string name="events_parent_controls_active">Kindersicherung aktiv</string>
+
+    <!-- Audience: child. A parent changed something. In each, the last placeholder in brackets is the parent's
+         name; %1$s is an app's name where there is one; times are already formatted (e.g. 6:00 PM). -->
+    <string name="events_allowed_until_child">%1$s erlaubt bis %2$s (%3$s)</string>
+    <string name="events_turned_off_child">%1$s beendet</string>
+    <string name="events_all_turned_off_child">Alle zusätzlichen Apps beendet</string>
+    <string name="events_paused_until_child">%1$s pausiert bis %2$s (%3$s)</string>
+    <string name="events_back_child">%1$s ist wieder da (%2$s)</string>
+    <!-- %1$s: the app she asked for; %2$s: parent's name -->
+    <string name="events_declined_child">Anfrage für %1$s wurde abgelehnt (%2$s)</string>
+    <!-- %1$s: parent's name -->
+    <string name="events_declined_any_child">Anfrage für eine App wurde abgelehnt (%1$s)</string>
+    <!-- %1$s: time; %2$s: parent's name -->
+    <string name="events_limited_started_child">Begrenzte Zeit bis %1$s (%2$s)</string>
+    <string name="events_bedtime_started_child">Schlafenszeit bis %1$s (%2$s)</string>
+    <!-- %1$s: parent's name -->
+    <string name="events_manual_mode_ended_child">Von Hand gestartete begrenzte Zeit oder Schlafenszeit beendet (%1$s)</string>
+    <string name="events_parent_mode_ended_child">Elternmodus beendet (%1$s)</string>
+    <!-- %1$s: time; %2$s: parent's name -->
+    <string name="events_parent_mode_on_child">Elternmodus an bis %1$s (%2$s)</string>
+    <!-- %1$s: parent's name; %2$s: contact's name -->
+    <string name="events_contact_added_child">%1$s hat %2$s zu deinen Kontakten hinzugefügt</string>
+    <string name="events_contact_removed_child">%1$s hat %2$s aus deinen Kontakten entfernt</string>
+    <!-- %1$s: parent's name; %2$s: app name -->
+    <string name="events_uninstalled_child">%1$s hat %2$s deinstalliert</string>
+    <!-- %1$s: parent's name -->
+    <string name="events_screen_viewed_child">%1$s hat deinen Bildschirm angesehen</string>
+
+    <!-- Audience: child. A Google services screen she opened was sent to her parents as a picture. -->
+    <string name="events_screen_picture_sent">Ein Bild von diesem Bildschirm wurde an deine Eltern geschickt</string>
+
+    <!-- Audience: child. %1$s: the contact's name or the phone number she tried to call. -->
+    <string name="events_call_not_allowed_child">Anruf nicht erlaubt: %1$s. Frag deine Eltern, ob sie die Nummer auf deine sichere Liste setzen.</string>
+
+    <!-- Audience: child. A daily app time limit is nearly used up. %1$d: minutes left; %2$s: the limit's name
+         (an app name, or a group name a parent chose). -->
+    <plurals name="events_minutes_left_today">
+        <item quantity="one">Heute noch %1$d Minute für %2$s</item>
+        <item quantity="other">Heute noch %1$d Minuten für %2$s</item>
+    </plurals>
+    <!-- Audience: child. %1$s: the limits that ran out, as a list of names. -->
+    <string name="events_times_up_today_child">Zeit für heute vorbei: %1$s. Frag deine Eltern, wenn du mehr Zeit brauchst.</string>
+
+    <!-- ========== Shown to both ========== -->
+
+    <!-- Audience: child and parent. Apps a parent allowed for a while have run out. %1$s: list of app names. -->
+    <string name="events_times_up">Zeit abgelaufen: %1$s</string>
+    <!-- Audience: child and parent. Apps a parent paused for a while are allowed again. %1$s: list of app
+         names; the count is how many apps. -->
+    <plurals name="events_apps_back">
+        <item quantity="one">%1$s ist wieder da</item>
+        <item quantity="other">%1$s sind wieder da</item>
+    </plurals>
+
+    <!-- ========== Events sent to the parents' app ========== -->
+
+    <!-- Audience: parent. What a parent did, shown in the other parent's activity list. %1$s is always the
+         parent's name; %2$s an app's name; times are already formatted (e.g. 6:00 PM). -->
+    <string name="events_allowed_until">%1$s: %2$s erlaubt bis %3$s</string>
+    <string name="events_turned_off">%1$s: %2$s beendet</string>
+    <string name="events_all_turned_off">%1$s: Alle zusätzlichen Apps beendet</string>
+    <string name="events_paused_until">%1$s: %2$s pausiert bis %3$s</string>
+    <string name="events_back">%1$s: %2$s ist wieder da</string>
+    <!-- %2$s: the app the child asked for -->
+    <string name="events_declined">%1$s: Anfrage für %2$s abgelehnt</string>
+    <string name="events_declined_any">%1$s: Anfrage für eine App abgelehnt</string>
+    <string name="events_home_added">%1$s: %2$s zum Startbildschirm hinzugefügt</string>
+    <string name="events_home_removed">%1$s: %2$s vom Startbildschirm entfernt</string>
+    <!-- When an app may be used: in normal hours, limited hours and bedtime (the schedule's three modes), or
+         only when a parent allows it for a while. -->
+    <string name="events_appmode_none">%1$s: %2$s blockiert, außer wenn eine Weile erlaubt</string>
+    <string name="events_appmode_all">%1$s: %2$s immer erlaubt</string>
+    <string name="events_appmode_normal">%1$s: %2$s in normaler Zeit erlaubt</string>
+    <string name="events_appmode_limited">%1$s: %2$s in begrenzter Zeit erlaubt</string>
+    <string name="events_appmode_bedtime">%1$s: %2$s in der Schlafenszeit erlaubt</string>
+    <string name="events_appmode_normal_limited">%1$s: %2$s in normaler und begrenzter Zeit erlaubt</string>
+    <string name="events_appmode_normal_bedtime">%1$s: %2$s in normaler Zeit und Schlafenszeit erlaubt</string>
+    <string name="events_appmode_limited_bedtime">%1$s: %2$s in begrenzter Zeit und Schlafenszeit erlaubt</string>
+    <string name="events_schedule_changed">%1$s hat den Zeitplan geändert</string>
+    <!-- %2$s: time -->
+    <string name="events_limited_started">%1$s: Begrenzte Zeit gestartet bis %2$s</string>
+    <string name="events_bedtime_started">%1$s: Schlafenszeit gestartet bis %2$s</string>
+    <string name="events_manual_mode_ended">%1$s: Von Hand gestartete begrenzte Zeit oder Schlafenszeit beendet</string>
+    <string name="events_limits_changed">%1$s hat die Tageslimits für Apps geändert</string>
+    <!-- The list of apps a parent can give access to (and the child can ask for) -->
+    <string name="events_offer_on">%1$s: %2$s wieder in die App-Liste aufgenommen</string>
+    <string name="events_offer_off">%1$s: %2$s von der App-Liste genommen</string>
+    <string name="events_calls_changed">%1$s hat die Anrufeinstellungen geändert</string>
+    <string name="events_parent_mode_ended">%1$s: Elternmodus beendet</string>
+    <!-- %2$s: time -->
+    <string name="events_parent_mode_on">%1$s: Elternmodus an bis %2$s</string>
+    <string name="events_pin_changed">%1$s hat die Eltern-PIN geändert</string>
+    <string name="events_battery_alerts_off">%1$s hat die Warnung bei niedrigem Akku ausgeschaltet</string>
+    <!-- %2$d: battery percentage -->
+    <string name="events_battery_alert_set">%1$s hat die Warnung bei niedrigem Akku auf %2$d\u00A0%% gesetzt</string>
+    <string name="events_debugging_off">%1$s hat Debugging ausgeschaltet</string>
+    <!-- %2$s: contact's name -->
+    <string name="events_contact_added">%1$s: Kontakt %2$s hinzugefügt</string>
+    <string name="events_contact_removed">%1$s: Kontakt %2$s entfernt</string>
+    <!-- %1$s: contact's name -->
+    <string name="events_contact_add_failed">Kontakt %1$s konnte nicht hinzugefügt werden</string>
+    <string name="events_ringing">%1$s lässt das Gerät klingeln</string>
+    <string name="events_ringing_stopped">%1$s hat das Klingeln beendet</string>
+    <string name="events_screen_viewed">%1$s hat den Bildschirm angesehen</string>
+    <!-- %2$s: app name -->
+    <string name="events_uninstalled">%1$s: %2$s deinstalliert</string>
+
+    <!-- Audience: parent. A parent's command couldn't be carried out. %1$s: app name. -->
+    <string name="events_not_installed">%1$s ist nicht installiert</string>
+    <string name="events_allowed_while_offline">%1$s wurde erlaubt, während das Gerät offline war; diese Zeit ist schon vorbei</string>
+    <string name="events_cant_uninstall">%1$s kann nicht deinstalliert werden</string>
+    <string name="events_uninstall_failed">%1$s konnte nicht deinstalliert werden</string>
+    <string name="events_uninstall_needs_device">%1$s konnte nicht ohne Rückfrage auf dem Gerät deinstalliert werden</string>
+
+    <!-- Audience: parent. Google services screens that lead out of the lock, which parents can allow or block
+         as a group. Each names what the screens are for. -->
+    <string name="events_area_account">Google-Konto verwalten</string>
+    <string name="events_area_settings">Google-Einstellungen</string>
+    <string name="events_area_help">Google-Hilfeseiten</string>
+    <string name="events_area_feedback">Feedback an Google senden</string>
+    <string name="events_area_quickshare">Quick Share (Dateien von Smartphones in der Nähe)</string>
+    <!-- Audience: parent. Names one Google services screen, used as %2$s in the screen decisions below.
+         %1$s: a technical screen name such as "accountsettings › AccountDetails" (not translated). -->
+    <string name="events_screen_named">den Google-Dienste-Bildschirm %1$s</string>
+    <!-- Audience: parent. A parent's decision about a Google services screen or group of screens. %1$s:
+         parent's name; %2$s: the group's name (above) or "the Google services screen …"; %3$s: time. -->
+    <string name="events_screen_rule_allowed">%1$s hat %2$s erlaubt</string>
+    <string name="events_screen_rule_allowed_until">%1$s hat %2$s bis %3$s erlaubt</string>
+    <string name="events_screen_rule_blocked">%1$s hat %2$s blockiert</string>
+    <string name="events_screen_rule_reset">%1$s hat %2$s auf den Standard zurückgesetzt</string>
+    <!-- %1$s: the group's name or "the Google services screen …" -->
+    <string name="events_screen_rule_no_bedtime">Konnte %1$s nicht bis zur Schlafenszeit erlauben: Es steht keine Schlafenszeit an</string>
+    <!-- Audience: parent. The lock sent the child back from a Google services screen. %1$s: a group's name
+         (above), or a technical screen name (not translated); %2$s: the app it was opened from. -->
+    <string name="events_blocked_area">%1$s blockiert</string>
+    <string name="events_blocked_area_from">%1$s blockiert, aus %2$s geöffnet</string>
+    <string name="events_blocked_screen">Google-Dienste-Bildschirm blockiert (%1$s)</string>
+    <string name="events_blocked_screen_from">Google-Dienste-Bildschirm blockiert (%1$s), aus %2$s geöffnet</string>
+
+    <!-- Audience: parent. "Parent screen view" (which lets parents see the screen) was switched off. "Fix setup
+         over Wi-Fi" is a button in the parents' app: use the same words as that button. -->
+    <string name="events_screen_view_restored">Die Bildschirmansicht wurde auf dem Gerät ausgeschaltet (über die Datenschutzprüfung von Android) und wieder eingeschaltet</string>
+    <string name="events_screen_view_off">Die Bildschirmansicht wurde auf dem Gerät ausgeschaltet. Schalte sie mit „Einrichtung per Wi-Fi reparieren“ wieder ein</string>
+
+    <!-- Audience: parent. Why a screenshot a parent asked for couldn't be taken. "Settings > Accessibility"
+         should match Android's own menu names in this language; "Parent screen view" is this app's
+         accessibility service as listed there. -->
+    <string name="events_shot_no_service">Die Bildschirmansicht ist nicht eingeschaltet. Entsperre auf dem Gerät den Elternmodus und schalte Einstellungen &gt; Bedienungshilfen &gt; Bildschirmansicht für Eltern ein</string>
+    <string name="events_shot_screen_off">Der Bildschirm ist aus</string>
+    <string name="events_shot_failed">Bildschirm konnte nicht aufgenommen werden</string>
+    <!-- %1$s: app name -->
+    <string name="events_shot_secure">%1$s blockiert Screenshots</string>
+    <string name="events_shot_secure_unknown">Die App auf dem Bildschirm blockiert Screenshots</string>
+    <string name="events_shot_too_soon">Zu kurz nach dem letzten Screenshot; versuch es noch mal</string>
+    <!-- %1$d: Android's error code -->
+    <string name="events_shot_error">Bildschirm konnte nicht aufgenommen werden (Fehler %1$d)</string>
+
+    <!-- Audience: parent. Why the device couldn't say where it is. -->
+    <string name="events_location_off">Standort ist auf dem Gerät ausgeschaltet</string>
+    <string name="events_location_no_provider">Kein Standortanbieter auf dem Gerät</string>
+    <string name="events_location_no_permission">Das Gerät hat keine Standortberechtigung</string>
+    <string name="events_location_no_fix">Noch kein Standort ermittelt</string>
+
+    <!-- Audience: parent. Why a usage report has no data; the parents' app adds advice after it. -->
+    <string name="events_usage_not_allowed">Das Gerät erlaubt noch nicht, die App-Nutzung zu lesen</string>
+
+    <!-- Audience: parent. Calls. %1$s: the contact's name or the phone number. -->
+    <string name="events_call_attempt">Blockierter Anrufversuch: %1$s (nicht auf der sicheren Liste)</string>
+    <string name="events_call_blocked">Blockierter Anruf: %1$s</string>
+
+    <!-- Audience: parent. A daily app time limit ran out. %1$s: list of the limits' names. -->
+    <string name="events_times_up_today">Zeit für heute abgelaufen: %1$s</string>
+
+    <!-- Audience: parent. The schedule moved to another mode. %1$s: time it lasts until. -->
+    <string name="events_mode_normal">Normale Zeit</string>
+    <string name="events_mode_normal_until">Normale Zeit bis %1$s</string>
+    <string name="events_mode_limited_until">Begrenzte Zeit bis %1$s</string>
+    <string name="events_mode_bedtime_until">Schlafenszeit bis %1$s</string>
+
+    <!-- Audience: parent. Battery and power. %1$d: battery percentage. -->
+    <string name="events_battery_low">Akku niedrig: %1$d\u00A0%%</string>
+    <string name="events_turning_off">Wird ausgeschaltet</string>
+    <string name="events_turning_off_level">Wird ausgeschaltet (Akku %1$d\u00A0%%)</string>
+    <string name="events_turning_off_empty">Wird ausgeschaltet: Der Akku ist leer</string>
+
+    <!-- Audience: parent. Changes on the device that cut it off or get around the lock. -->
+    <string name="events_airplane_on">Flugmodus eingeschaltet (keine Anrufe oder Standortupdates, bis er wieder aus ist)</string>
+    <string name="events_airplane_off">Flugmodus ausgeschaltet</string>
+    <string name="events_mobile_data_on">Mobile Daten eingeschaltet</string>
+    <string name="events_mobile_data_off">Mobile Daten ausgeschaltet (ab jetzt nur Wi-Fi)</string>
+    <!-- %1$s: app name -->
+    <string name="events_installed">%1$s installiert</string>
+    <string name="events_installed_parent_mode">%1$s im Elternmodus installiert</string>
+    <string name="events_sim_removed">SIM-Karte entfernt (keine Anrufe oder mobilen Daten)</string>
+    <!-- %1$s: the mobile carriers' names -->
+    <string name="events_sim_inserted">SIM-Karte eingesetzt (%1$s)</string>
+    <string name="events_sim_changed">SIM-Karte gewechselt (jetzt %1$s)</string>
+
+    <!-- Audience: parent. An alert that reaches the parents late says when it happened. %1$s: the alert (one of
+         the messages above); %2$s: the time it happened. -->
+    <string name="events_late">%1$s (um %2$s)</string>
+
+    <!-- Audience: child and parent. The name of a daily app time limit that has no name of its own and no apps. -->
+    <string name="events_limit_apps">Apps</string>
+
+    <!-- Audience: parent. Stands in for the caller in call events when the number is hidden, e.g.
+         "Blocked a call from a private number" -->
+    <string name="events_private_number">Unterdrückte Nummer</string>
+</resources>

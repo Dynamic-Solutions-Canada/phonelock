@@ -148,7 +148,8 @@ public final class Remote {
     }
 
     private static void dispatch(Context c, JSONObject m, String from, String attachmentUrl) throws Exception {
-        String who = from.isEmpty() ? "A parent" : from;
+        // A parent with no name set signs as "Parent" (or nothing): word it in this phone's language.
+        String who = from.isEmpty() || "Parent".equals(from) ? c.getString(R.string.events_a_parent) : from;
         switch (m.optString("t")) {
             case "status":
                 sendState(c, m.optBoolean("full", false));
@@ -157,7 +158,7 @@ public final class Remote {
                 String pkg = m.optString("app");
                 long mins = Math.max(1, Math.min(24 * 60, m.optLong("minutes", 60)));
                 if (!Policy.isPresent(c, pkg)) {
-                    event(c, label(c, pkg) + " is not installed", null, false);
+                    event(c, c.getString(R.string.events_not_installed, label(c, pkg)), null, false);
                     break;
                 }
                 // Count from when the parent sent it, so a grant can't be saved up by keeping the phone
@@ -165,7 +166,7 @@ public final class Remote {
                 long now = System.currentTimeMillis();
                 long until = Math.min(now, m.optLong("ts", now)) + mins * 60_000L;
                 if (until <= now) {
-                    event(c, label(c, pkg) + " was allowed while the device was offline; that time has passed");
+                    event(c, c.getString(R.string.events_allowed_while_offline, label(c, pkg)));
                     break;
                 }
                 Map<String, Long> g = Grants.load(c);
@@ -175,9 +176,8 @@ public final class Remote {
                 Map<String, Long> b = Grants.loadBlocks(c);
                 if (b.remove(pkg) != null) Grants.saveBlocks(c, b);
                 Policy.apply(c);
-                String txt = label(c, pkg) + " allowed until " + time(c, until);
-                notifyKid(c, txt + " (" + who + ")");
-                event(c, who + ": " + txt, who, false);
+                notifyKid(c, c.getString(R.string.events_allowed_until_child, label(c, pkg), time(c, until), who));
+                event(c, c.getString(R.string.events_allowed_until, who, label(c, pkg), time(c, until)), who, false);
                 sendState(c, false);
                 break;
             }
@@ -187,9 +187,13 @@ public final class Remote {
                 if ("all".equals(pkg)) g.clear(); else g.remove(pkg);
                 Grants.save(c, g);
                 Policy.apply(c);
-                String txt = ("all".equals(pkg) ? "All extra apps" : label(c, pkg)) + " turned off";
-                notifyKid(c, txt);
-                event(c, who + ": " + txt, who, false);
+                if ("all".equals(pkg)) {
+                    notifyKid(c, c.getString(R.string.events_all_turned_off_child));
+                    event(c, c.getString(R.string.events_all_turned_off, who), who, false);
+                } else {
+                    notifyKid(c, c.getString(R.string.events_turned_off_child, label(c, pkg)));
+                    event(c, c.getString(R.string.events_turned_off, who, label(c, pkg)), who, false);
+                }
                 sendState(c, false);
                 break;
             }
@@ -206,9 +210,8 @@ public final class Remote {
                 Map<String, Long> g = Grants.load(c);
                 if (g.remove(pkg) != null) Grants.save(c, g);
                 Policy.apply(c);
-                String txt = label(c, pkg) + " paused until " + time(c, until);
-                notifyKid(c, txt + " (" + who + ")");
-                event(c, who + ": " + txt, who, false);
+                notifyKid(c, c.getString(R.string.events_paused_until_child, label(c, pkg), time(c, until), who));
+                event(c, c.getString(R.string.events_paused_until, who, label(c, pkg), time(c, until)), who, false);
                 sendState(c, false);
                 break;
             }
@@ -218,16 +221,21 @@ public final class Remote {
                 if (b.remove(pkg) == null) break;
                 Grants.saveBlocks(c, b);
                 Policy.apply(c);
-                String txt = label(c, pkg) + " is back";
-                notifyKid(c, txt + " (" + who + ")");
-                event(c, who + ": " + txt, who, false);
+                notifyKid(c, c.getString(R.string.events_back_child, label(c, pkg), who));
+                event(c, c.getString(R.string.events_back, who, label(c, pkg)), who, false);
                 sendState(c, false);
                 break;
             }
             case "deny": {
-                String txt = "Request for " + m.optString("label", "an app") + " was declined";
-                notifyKid(c, txt + " (" + who + ")");
-                event(c, who + ": " + txt, who, false);
+                // The label is the app's name as the request carried it; without one it's just "an app".
+                if (m.isNull("label")) {
+                    notifyKid(c, c.getString(R.string.events_declined_any_child, who));
+                    event(c, c.getString(R.string.events_declined_any, who), who, false);
+                } else {
+                    String app = m.optString("label");
+                    notifyKid(c, c.getString(R.string.events_declined_child, app, who));
+                    event(c, c.getString(R.string.events_declined, who, app), who, false);
+                }
                 break;
             }
             case "home": {
@@ -236,8 +244,8 @@ public final class Remote {
                 if ("add".equals(op) && !Policy.isPresent(c, pkg)) break;
                 Schedule.setMask(c, pkg, "add".equals(op) ? Schedule.DEFAULT_MASK : 0);
                 Policy.apply(c);
-                event(c, who + ": " + label(c, pkg) + ("add".equals(op) ? " added to" : " removed from")
-                        + " the home screen", who, false);
+                int home = "add".equals(op) ? R.string.events_home_added : R.string.events_home_removed;
+                event(c, c.getString(home, who, label(c, pkg)), who, false);
                 sendState(c, true);
                 break;
             }
@@ -256,14 +264,14 @@ public final class Remote {
                 if (mask != 0 && !Policy.isPresent(c, pkg)) break;
                 Schedule.setMask(c, pkg, mask);
                 Policy.apply(c);
-                event(c, who + ": " + label(c, pkg) + " " + describeMask(mask), who, false);
+                event(c, c.getString(describeMask(mask), who, label(c, pkg)), who, false);
                 sendState(c, true);
                 break;
             }
             case "schedule": {
                 Schedule.setRules(c, m.optJSONArray("rules"));
                 Policy.apply(c);
-                event(c, who + " changed the schedule", who, false);
+                event(c, c.getString(R.string.events_schedule_changed, who), who, false);
                 sendState(c, true);
                 break;
             }
@@ -281,18 +289,34 @@ public final class Remote {
                     Schedule.setOverride(c, 0, 0);
                 }
                 Policy.apply(c);
-                String txt = mode == Schedule.LIMITED || mode == Schedule.BEDTIME
-                        ? Schedule.modeLabel(mode) + " started until " + time(c, until)
-                        : "Manual limited hours or bedtime ended";
-                notifyKid(c, txt + " (" + who + ")");
-                event(c, who + ": " + txt, who, false);
+                if (mode == Schedule.LIMITED) {
+                    notifyKid(c, c.getString(R.string.events_limited_started_child, time(c, until), who));
+                    event(c, c.getString(R.string.events_limited_started, who, time(c, until)), who, false);
+                } else if (mode == Schedule.BEDTIME) {
+                    notifyKid(c, c.getString(R.string.events_bedtime_started_child, time(c, until), who));
+                    event(c, c.getString(R.string.events_bedtime_started, who, time(c, until)), who, false);
+                } else {
+                    notifyKid(c, c.getString(R.string.events_manual_mode_ended_child, who));
+                    event(c, c.getString(R.string.events_manual_mode_ended, who), who, false);
+                }
                 sendState(c, false);
                 break;
             }
+            case "lang":
+                // The language this app uses here (and writes events in); "" follows the device.
+                if (Language.apply(c, m.optString("value"))) {
+                    // A full state once the new language has reached this app's resources, so the app and
+                    // screen names parents see are reworded too.
+                    Thread.sleep(1500);
+                    sendState(c, true);
+                } else {
+                    sendState(c, false);
+                }
+                break;
             case "limits":
                 // Daily app time limits, the whole list (a parent's edit replaces it).
                 AppTime.setLimits(c, m.optJSONArray("limits"));
-                event(c, who + " changed the app time limits", who, false);
+                event(c, c.getString(R.string.events_limits_changed, who), who, false);
                 sendState(c, false);
                 break;
             case "usage":
@@ -313,7 +337,7 @@ public final class Remote {
                 String pkg = m.optString("app");
                 boolean on = m.optBoolean("on", true);
                 Policy.setOffered(c, pkg, on);
-                event(c, who + ": " + label(c, pkg) + (on ? " put back on" : " taken off") + " the app list", who, false);
+                event(c, c.getString(on ? R.string.events_offer_on : R.string.events_offer_off, who, label(c, pkg)), who, false);
                 sendState(c, true);
                 break;
             }
@@ -324,7 +348,7 @@ public final class Remote {
                 // Safe list and whether outgoing / incoming calls are limited to it.
                 CallGuard.setLimits(c, m.optBoolean("limitOut"), m.optBoolean("limitIn"));
                 if (m.has("safe")) CallGuard.setSafeList(c, m.optJSONArray("safe"));
-                event(c, who + " changed the call settings", who, false);
+                event(c, c.getString(R.string.events_calls_changed, who), who, false);
                 sendState(c, true);
                 break;
             }
@@ -350,9 +374,13 @@ public final class Remote {
                 // Store it now so the state sent below already shows it; the UI change runs on the main thread.
                 Policy.storeParentUntil(c, until);
                 c.getMainExecutor().execute(() -> Policy.setParentMode(c, until));
-                String txt = mins == 0 ? "Parent mode ended" : "Parent mode on until " + time(c, until);
-                notifyKid(c, txt + " (" + who + ")");
-                event(c, who + ": " + txt, who, false);
+                if (mins == 0) {
+                    notifyKid(c, c.getString(R.string.events_parent_mode_ended_child, who));
+                    event(c, c.getString(R.string.events_parent_mode_ended, who), who, false);
+                } else {
+                    notifyKid(c, c.getString(R.string.events_parent_mode_on_child, time(c, until), who));
+                    event(c, c.getString(R.string.events_parent_mode_on, who, time(c, until)), who, false);
+                }
                 sendState(c, false);
                 break;
             }
@@ -361,15 +389,15 @@ public final class Remote {
                 String pin = m.optString("pin");
                 if (pin.length() < 4 || pin.length() > 8 || !pin.matches("[0-9]+")) break;
                 Policy.setPin(c, pin);
-                event(c, who + " changed the parent PIN", who, false);
+                event(c, c.getString(R.string.events_pin_changed, who), who, false);
                 break;
             }
             case "battery": {
                 // Low-battery alert threshold, in percent (0 = off); shared by both parents.
                 int at = m.optInt("alert", Battery.DEFAULT_ALERT);
                 Battery.setAlertAt(c, at);
-                event(c, at == 0 ? who + " turned off low-battery alerts"
-                        : who + " set the low-battery alert to " + Battery.alertAt(c) + "%", who, false);
+                event(c, at == 0 ? c.getString(R.string.events_battery_alerts_off, who)
+                        : c.getString(R.string.events_battery_alert_set, who, Battery.alertAt(c)), who, false);
                 sendState(c, true);
                 break;
             }
@@ -384,7 +412,7 @@ public final class Remote {
                 long mins = Math.max(0, Math.min(240, m.optLong("minutes", 60)));
                 if (mins == 0) {
                     Debugging.disable(c);
-                    event(c, who + " turned debugging off", who, false);
+                    event(c, c.getString(R.string.events_debugging_off, who), who, false);
                 } else {
                     new Thread(() -> Debugging.enable(c, mins, who), "debug").start();
                 }
@@ -412,7 +440,7 @@ public final class Remote {
                 if ("ok".equals(rule) && m.optBoolean("untilBedtime")) {
                     until = Schedule.nextBedtime(c);
                     if (until == 0) {
-                        event(c, "Couldn't allow " + ScreenGuard.nameOf(key) + " until bedtime: no bedtime is coming up",
+                        event(c, c.getString(R.string.events_screen_rule_no_bedtime, ScreenGuard.nameOf(c, key)),
                                 who, false);
                         break;
                     }
@@ -422,10 +450,17 @@ public final class Remote {
                     if (until <= now) break; // arrived after it would have ended
                 }
                 if (!ScreenGuard.setRule(c, key, rule, until)) break;
-                String name = ScreenGuard.nameOf(key);
-                String txt = "ok".equals(rule) ? who + " allowed " + name + (until > 0 ? " until " + time(c, until) : "")
-                        : "block".equals(rule) ? who + " blocked " + name
-                        : who + " reset " + name + " to the default";
+                String name = ScreenGuard.nameOf(c, key);
+                String txt;
+                if ("ok".equals(rule) && until > 0) {
+                    txt = c.getString(R.string.events_screen_rule_allowed_until, who, name, time(c, until));
+                } else if ("ok".equals(rule)) {
+                    txt = c.getString(R.string.events_screen_rule_allowed, who, name);
+                } else if ("block".equals(rule)) {
+                    txt = c.getString(R.string.events_screen_rule_blocked, who, name);
+                } else {
+                    txt = c.getString(R.string.events_screen_rule_reset, who, name);
+                }
                 event(c, txt, who, false);
                 sendState(c, true);
                 break;
@@ -451,31 +486,46 @@ public final class Remote {
             String name = m.optString("name").trim(), number = m.optString("number").trim();
             if (name.isEmpty() || number.isEmpty()) return;
             if (Contacts.add(c, name, number)) {
-                notifyKid(c, who + " added " + name + " to your contacts");
-                event(c, who + ": added contact " + name, who, false);
+                notifyKid(c, c.getString(R.string.events_contact_added_child, who, name));
+                event(c, c.getString(R.string.events_contact_added, who, name), who, false);
             } else {
-                event(c, "Couldn't add contact " + name, who, false);
+                event(c, c.getString(R.string.events_contact_add_failed, name), who, false);
             }
         } else if ("remove".equals(op)) {
             if (!recent(m)) return;
             String name = Contacts.remove(c, m.optString("key"));
             if (name != null) {
-                notifyKid(c, who + " removed " + name + " from your contacts");
-                event(c, who + ": removed contact " + name, who, false);
+                notifyKid(c, c.getString(R.string.events_contact_removed_child, who, name));
+                event(c, c.getString(R.string.events_contact_removed, who, name), who, false);
             }
         }
         Contacts.sendList(c, m.optString("id"));
     }
 
-    /** "allowed in normal and limited hours", "blocked except when allowed for a while", … */
-    private static String describeMask(int mask) {
-        if (mask == 0) return "blocked except when allowed for a while";
-        if (mask == Schedule.ALL) return "always allowed";
-        List<String> parts = new ArrayList<>();
-        if ((mask & Schedule.NORMAL) != 0) parts.add("normal hours");
-        if ((mask & Schedule.LIMITED) != 0) parts.add("limited hours");
-        if ((mask & Schedule.BEDTIME) != 0) parts.add("bedtime");
-        return "allowed in " + String.join(" and ", parts);
+    /**
+     * The event for an app's new situations {@code mask}, as a string taking the parent's name and the app's
+     * ("Dad: WhatsApp allowed in normal and limited hours"). One whole sentence per combination, so each
+     * language can word it its own way.
+     */
+    private static int describeMask(int mask) {
+        switch (mask & Schedule.ALL) {
+            case 0:
+                return R.string.events_appmode_none;
+            case Schedule.ALL:
+                return R.string.events_appmode_all;
+            case Schedule.NORMAL:
+                return R.string.events_appmode_normal;
+            case Schedule.LIMITED:
+                return R.string.events_appmode_limited;
+            case Schedule.BEDTIME:
+                return R.string.events_appmode_bedtime;
+            case Schedule.NORMAL | Schedule.LIMITED:
+                return R.string.events_appmode_normal_limited;
+            case Schedule.NORMAL | Schedule.BEDTIME:
+                return R.string.events_appmode_normal_bedtime;
+            default: // LIMITED | BEDTIME
+                return R.string.events_appmode_limited_bedtime;
+        }
     }
 
     /** {@code ring} with {@code op} start (default) or stop. Runs on the main thread, as Ringer requires. */
@@ -484,11 +534,11 @@ public final class Remote {
         int seconds = m.optInt("seconds", Ringer.DEFAULT_SECONDS);
         c.getMainExecutor().execute(() -> {
             if (stop) {
-                Ringer.stop(c, who + " stopped the ringing", who);
+                Ringer.stop(c, c.getString(R.string.events_ringing_stopped, who), who);
             } else {
                 boolean was = Ringer.isRinging();
                 Ringer.start(c, who, seconds);
-                if (!was) event(c, who + " is ringing the device", who, false);
+                if (!was) event(c, c.getString(R.string.events_ringing, who), who, false);
             }
         });
     }
@@ -574,6 +624,7 @@ public final class Remote {
             o.put("parentUntil", Policy.inParentMode(c) ? Policy.prefs(c).getLong("parent_until", 0) : 0);
             o.put("ringing", Ringer.isRinging());
             o.put("version", Updater.installedVersion(c));
+            o.put("lang", Language.current(c));
             Battery.put(c, o);
             int ready = Updater.readyVersion(c);
             if (ready > 0) o.put("updateReady", ready);
@@ -607,7 +658,7 @@ public final class Remote {
                 o.put("schedule", Schedule.rulesJson(c));
                 o.put("battAlert", Battery.alertAt(c));
                 o.put("screenRules", ScreenGuard.rulesJson(c));
-                o.put("screenAreas", ScreenGuard.areasJson());
+                o.put("screenAreas", ScreenGuard.areasJson(c));
             }
             // What the child is doing right now, for the parents' status card: screen on or off, and the app in front.
             android.os.PowerManager pm = c.getSystemService(android.os.PowerManager.class);
@@ -670,7 +721,7 @@ public final class Remote {
     }
 
     static String label(Context c, String pkg) {
-        if (BuiltInApps.is(pkg)) return BuiltInApps.label(pkg);
+        if (BuiltInApps.is(pkg)) return BuiltInApps.label(c, pkg);
         try {
             ApplicationInfo ai = c.getPackageManager()
                     .getApplicationInfo(pkg, PackageManager.MATCH_UNINSTALLED_PACKAGES);
@@ -808,7 +859,7 @@ public final class Remote {
     /** Posts a notice to the child under notification {@code id} (reusing an id replaces that notice). */
     static void notifyKid(Context c, String text, int id) {
         NotificationManager nm = c.getSystemService(NotificationManager.class);
-        nm.createNotificationChannel(new NotificationChannel("parent", "From parents",
+        nm.createNotificationChannel(new NotificationChannel("parent", c.getString(R.string.events_channel_from_parents),
                 NotificationManager.IMPORTANCE_DEFAULT));
         Notification n = new Notification.Builder(c, "parent")
                 .setSmallIcon(android.R.drawable.ic_dialog_info)

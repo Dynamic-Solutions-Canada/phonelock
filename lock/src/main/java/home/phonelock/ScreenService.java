@@ -81,12 +81,12 @@ public class ScreenService extends AccessibilityService {
     static void snap(Context c, Shot then) {
         ScreenService s = instance;
         if (s == null) {
-            then.done(null, "Screen view isn't switched on. On the device, unlock parent mode and turn on Settings > Accessibility > Parent screen view");
+            then.done(null, c.getString(R.string.events_shot_no_service));
             return;
         }
         PowerManager pm = c.getSystemService(PowerManager.class);
         if (!pm.isInteractive()) {
-            then.done(null, "The screen is off");
+            then.done(null, c.getString(R.string.events_shot_screen_off));
             return;
         }
         String app = s.foregroundPackage();
@@ -99,7 +99,7 @@ public class ScreenService extends AccessibilityService {
                         jpeg = encode(r.getHardwareBuffer(), r.getColorSpace());
                     } catch (Exception e) {
                         Log.w(Policy.TAG, "shot encode: " + e);
-                        then.done(null, "Couldn't capture the screen");
+                        then.done(null, c.getString(R.string.events_shot_failed));
                         return;
                     }
                     then.done(jpeg, null);
@@ -107,7 +107,7 @@ public class ScreenService extends AccessibilityService {
             }
 
             @Override public void onFailure(int code) {
-                then.done(null, failure(code, app == null ? null : Remote.label(c, app)));
+                then.done(null, failure(c, code, app == null ? null : Remote.label(c, app)));
             }
         });
     }
@@ -118,13 +118,13 @@ public class ScreenService extends AccessibilityService {
      * so auto-refresh doesn't flood either side.
      */
     private static void recordView(Context c, String who) {
-        Remote.notifyKid(c, who + " viewed your screen", NOTICE_ID);
+        Remote.notifyKid(c, c.getString(R.string.events_screen_viewed_child, who), NOTICE_ID);
         android.content.SharedPreferences p = Policy.prefs(c);
         String key = "shot_logged_" + who;
         long now = System.currentTimeMillis();
         if (now - p.getLong(key, 0) < LOG_EVERY_MS) return;
         p.edit().putLong(key, now).apply();
-        Remote.event(c, who + " viewed the screen", who, false);
+        Remote.event(c, c.getString(R.string.events_screen_viewed, who), who, false);
     }
 
     /** Closes the notification shade if it's open (so the ring screen is visible). No-op if not enabled. */
@@ -173,14 +173,16 @@ public class ScreenService extends AccessibilityService {
         }
     }
 
-    private static String failure(int code, String appLabel) {
+    private static String failure(Context c, int code, String appLabel) {
         switch (code) {
             case ERROR_TAKE_SCREENSHOT_SECURE_WINDOW:
-                return (appLabel == null ? "The app on screen" : appLabel) + " blocks screenshots";
+                return appLabel == null
+                        ? c.getString(R.string.events_shot_secure_unknown)
+                        : c.getString(R.string.events_shot_secure, appLabel);
             case ERROR_TAKE_SCREENSHOT_INTERVAL_TIME_SHORT:
-                return "Too soon after the last screenshot; try again";
+                return c.getString(R.string.events_shot_too_soon);
             default:
-                return "Couldn't capture the screen (error " + code + ")";
+                return c.getString(R.string.events_shot_error, code);
         }
     }
 

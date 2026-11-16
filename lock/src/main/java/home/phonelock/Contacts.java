@@ -128,7 +128,7 @@ final class Contacts {
                 JSONObject o = Remote.msg("contacts");
                 if (req != null) o.put("req", req);
                 o.put("list", list(c));
-                if (!canRead(c)) o.put("error", "The device hasn't allowed reading its contacts");
+                if (!canRead(c)) o.put("error", c.getString(R.string.tools_contacts_not_permitted));
                 Remote.publish(c, o, null);
             } catch (Exception e) {
                 Log.w(Policy.TAG, "contacts: " + e);

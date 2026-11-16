@@ -75,7 +75,7 @@ final class CallLogFeed {
             JSONObject o = Remote.msg("calls");
             if (req != null) o.put("req", req);
             o.put("entries", entries);
-            if (!permitted(c)) o.put("error", "The device hasn't allowed reading its call log");
+            if (!permitted(c)) o.put("error", c.getString(R.string.tools_calllog_not_permitted));
             Remote.publish(c, o, null);
         } catch (Exception e) {
             Log.w(Policy.TAG, "calls: " + e);

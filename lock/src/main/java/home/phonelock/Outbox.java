@@ -125,7 +125,8 @@ final class Outbox {
                     if (next.has("id")) o.put("id", next.getString("id"));
                     // A late alert says when it happened, so "Battery low" from an hour ago reads as such.
                     boolean late = System.currentTimeMillis() - at > 2 * 60_000L;
-                    o.put("text", next.optString("text") + (late ? " (at " + Remote.time(c, at) + ")" : ""));
+                    String text = next.optString("text");
+                    o.put("text", late ? c.getString(R.string.events_late, text, Remote.time(c, at)) : text);
                     if (next.optBoolean("quiet")) o.put("quiet", true);
                     if (next.has("where")) o.put("where", next.getJSONObject("where"));
                     sent = Remote.publishNow(c, o, SEND_TIMEOUT_MS);

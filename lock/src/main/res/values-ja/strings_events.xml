@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Events the lock app reports to the parents' app, and the notices it posts on the child's phone about them. -->
+<resources>
+
+    <!-- ========== Shared ========== -->
+
+    <!-- Audience: child and parent. Stands in for a parent's name when a command came without one; used as
+         the parent's name in the strings below. -->
+    <string name="events_a_parent">保護者</string>
+
+    <!-- Audience: child and parent. Wi-Fi and Bluetooth appear on the home screen and in the parents' app list
+         as if they were apps; these are their names. They open the screens where she can change Wi-Fi or
+         Bluetooth settings. -->
+    <string name="events_wifi_settings">Wi-Fi の設定</string>
+    <string name="events_bluetooth_settings">Bluetooth の設定</string>
+
+    <!-- Audience: child (home screen) and parent. The current schedule mode's name. -->
+    <string name="events_mode_label_normal">通常</string>
+    <string name="events_mode_label_limited">制限時間帯</string>
+    <string name="events_mode_label_bedtime">おやすみ時間</string>
+
+    <!-- ========== Notifications on the child's phone ========== -->
+
+    <!-- Audience: child. Notification channel names, shown in Android's notification settings. -->
+    <string name="events_channel_from_parents">おうちの人から</string>
+    <string name="events_channel_parent_controls">ペアレンタル コントロール</string>
+    <!-- Audience: child. The permanent notification while the lock is running. -->
+    <string name="events_parent_controls_active">ペアレンタル コントロールが有効です</string>
+
+    <!-- Audience: child. A parent changed something. In each, the last placeholder in brackets is the parent's
+         name; %1$s is an app's name where there is one; times are already formatted (e.g. 6:00 PM). -->
+    <string name="events_allowed_until_child">%1$s が %2$s まで使えます（%3$s）</string>
+    <string name="events_turned_off_child">%1$s が使えなくなりました</string>
+    <string name="events_all_turned_off_child">追加で使えていたアプリが、すべて使えなくなりました</string>
+    <string name="events_paused_until_child">%1$s は %2$s までお休みです（%3$s）</string>
+    <string name="events_back_child">%1$s がまた使えます（%2$s）</string>
+    <!-- %1$s: the app she asked for; %2$s: parent's name -->
+    <string name="events_declined_child">%1$s のリクエストはことわられました（%2$s）</string>
+    <!-- %1$s: parent's name -->
+    <string name="events_declined_any_child">アプリのリクエストはことわられました（%1$s）</string>
+    <!-- %1$s: time; %2$s: parent's name -->
+    <string name="events_limited_started_child">%1$s まで制限時間帯になりました（%2$s）</string>
+    <string name="events_bedtime_started_child">%1$s までおやすみ時間になりました（%2$s）</string>
+    <!-- %1$s: parent's name -->
+    <string name="events_manual_mode_ended_child">途中から始まった制限時間帯またはおやすみ時間が終わりました（%1$s）</string>
+    <string name="events_parent_mode_ended_child">保護者モードが終わりました（%1$s）</string>
+    <!-- %1$s: time; %2$s: parent's name -->
+    <string name="events_parent_mode_on_child">%1$s まで保護者モードです（%2$s）</string>
+    <!-- %1$s: parent's name; %2$s: contact's name -->
+    <string name="events_contact_added_child">%1$s が %2$s を連絡先に追加しました</string>
+    <string name="events_contact_removed_child">%1$s が %2$s を連絡先から消しました</string>
+    <!-- %1$s: parent's name; %2$s: app name -->
+    <string name="events_uninstalled_child">%1$s が %2$s を消しました</string>
+    <!-- %1$s: parent's name -->
+    <string name="events_screen_viewed_child">%1$s があなたの画面を見ました</string>
+
+    <!-- Audience: child. A Google services screen she opened was sent to her parents as a picture. -->
+    <string name="events_screen_picture_sent">この画面の画像が、おうちの人に送られました</string>
+
+    <!-- Audience: child. %1$s: the contact's name or the phone number she tried to call. -->
+    <string name="events_call_not_allowed_child">%1$s には電話できません。安全リストに入れてもらうよう、おうちの人にたのんでください。</string>
+
+    <!-- Audience: child. A daily app time limit is nearly used up. %1$d: minutes left; %2$s: the limit's name
+         (an app name, or a group name a parent chose). -->
+    <plurals name="events_minutes_left_today">
+        <item quantity="other">%2$s は今日あと %1$d 分です</item>
+    </plurals>
+    <!-- Audience: child. %1$s: the limits that ran out, as a list of names. -->
+    <string name="events_times_up_today_child">今日の時間はおしまいです：%1$s。もっと使いたいときは、おうちの人に聞いてください。</string>
+
+    <!-- ========== Shown to both ========== -->
+
+    <!-- Audience: child and parent. Apps a parent allowed for a while have run out. %1$s: list of app names. -->
+    <string name="events_times_up">時間切れ：%1$s</string>
+    <!-- Audience: child and parent. Apps a parent paused for a while are allowed again. %1$s: list of app
+         names; the count is how many apps. -->
+    <plurals name="events_apps_back">
+        <item quantity="other">%1$s がまた使えるようになりました</item>
+    </plurals>
+
+    <!-- ========== Events sent to the parents' app ========== -->
+
+    <!-- Audience: parent. What a parent did, shown in the other parent's activity list. %1$s is always the
+         parent's name; %2$s an app's name; times are already formatted (e.g. 6:00 PM). -->
+    <string name="events_allowed_until">%1$s：%2$s を %3$s まで許可しました</string>
+    <string name="events_turned_off">%1$s：%2$s を停止しました</string>
+    <string name="events_all_turned_off">%1$s：一時的に許可中のアプリをすべて停止しました</string>
+    <string name="events_paused_until">%1$s：%2$s を %3$s まで一時停止しました</string>
+    <string name="events_back">%1$s：%2$s を再び許可しました</string>
+    <!-- %2$s: the app the child asked for -->
+    <string name="events_declined">%1$s：%2$s のリクエストを拒否しました</string>
+    <string name="events_declined_any">%1$s：アプリのリクエストを拒否しました</string>
+    <string name="events_home_added">%1$s：%2$s をホーム画面に追加しました</string>
+    <string name="events_home_removed">%1$s：%2$s をホーム画面から削除しました</string>
+    <!-- When an app may be used: in normal hours, limited hours and bedtime (the schedule's three modes), or
+         only when a parent allows it for a while. -->
+    <string name="events_appmode_none">%1$s：%2$s を一時的な許可でのみ使えるようにしました</string>
+    <string name="events_appmode_all">%1$s：%2$s を常に許可しました</string>
+    <string name="events_appmode_normal">%1$s：%2$s を通常時間帯に許可しました</string>
+    <string name="events_appmode_limited">%1$s：%2$s を制限時間帯に許可しました</string>
+    <string name="events_appmode_bedtime">%1$s：%2$s をおやすみ時間に許可しました</string>
+    <string name="events_appmode_normal_limited">%1$s：%2$s を通常時間帯と制限時間帯に許可しました</string>
+    <string name="events_appmode_normal_bedtime">%1$s：%2$s を通常時間帯とおやすみ時間に許可しました</string>
+    <string name="events_appmode_limited_bedtime">%1$s：%2$s を制限時間帯とおやすみ時間に許可しました</string>
+    <string name="events_schedule_changed">%1$s がスケジュールを変更しました</string>
+    <!-- %2$s: time -->
+    <string name="events_limited_started">%1$s：%2$s まで制限時間帯を開始しました</string>
+    <string name="events_bedtime_started">%1$s：%2$s までおやすみ時間を開始しました</string>
+    <string name="events_manual_mode_ended">%1$s：手動で開始した制限時間帯またはおやすみ時間を終了しました</string>
+    <string name="events_limits_changed">%1$s がアプリの使用時間の上限を変更しました</string>
+    <!-- The list of apps a parent can give access to (and the child can ask for) -->
+    <string name="events_offer_on">%1$s：%2$s を表示しました</string>
+    <string name="events_offer_off">%1$s：%2$s を非表示にしました</string>
+    <string name="events_calls_changed">%1$s が通話の設定を変更しました</string>
+    <string name="events_parent_mode_ended">%1$s：保護者モードを終了しました</string>
+    <!-- %2$s: time -->
+    <string name="events_parent_mode_on">%1$s：%2$s まで保護者モードをオンにしました</string>
+    <string name="events_pin_changed">%1$s が保護者 PIN を変更しました</string>
+    <string name="events_battery_alerts_off">%1$s がバッテリー低下の通知をオフにしました</string>
+    <!-- %2$d: battery percentage -->
+    <string name="events_battery_alert_set">%1$s がバッテリー低下の通知を %2$d%% に設定しました</string>
+    <string name="events_debugging_off">%1$s がデバッグをオフにしました</string>
+    <!-- %2$s: contact's name -->
+    <string name="events_contact_added">%1$s：連絡先 %2$s を追加しました</string>
+    <string name="events_contact_removed">%1$s：連絡先 %2$s を削除しました</string>
+    <!-- %1$s: contact's name -->
+    <string name="events_contact_add_failed">連絡先 %1$s を追加できませんでした</string>
+    <string name="events_ringing">%1$s がデバイスを鳴らしています</string>
+    <string name="events_ringing_stopped">%1$s が鳴動を停止しました</string>
+    <string name="events_screen_viewed">%1$s が画面を表示しました</string>
+    <!-- %2$s: app name -->
+    <string name="events_uninstalled">%1$s：%2$s をアンインストールしました</string>
+
+    <!-- Audience: parent. A parent's command couldn't be carried out. %1$s: app name. -->
+    <string name="events_not_installed">%1$s はインストールされていません</string>
+    <string name="events_allowed_while_offline">デバイスがオフラインの間に %1$s が許可されましたが、その時間はすでに過ぎています</string>
+    <string name="events_cant_uninstall">%1$s はアンインストールできません</string>
+    <string name="events_uninstall_failed">%1$s をアンインストールできませんでした</string>
+    <string name="events_uninstall_needs_device">デバイス上での確認が必要なため、%1$s をアンインストールできませんでした</string>
+
+    <!-- Audience: parent. Google services screens that lead out of the lock, which parents can allow or block
+         as a group. Each names what the screens are for. -->
+    <string name="events_area_account">Google アカウントの管理</string>
+    <string name="events_area_settings">Google の設定</string>
+    <string name="events_area_help">Google のヘルプページ</string>
+    <string name="events_area_feedback">Google へのフィードバック送信</string>
+    <string name="events_area_quickshare">Quick Share（近くのスマートフォンからのファイル）</string>
+    <!-- Audience: parent. Names one Google services screen, used as %2$s in the screen decisions below.
+         %1$s: a technical screen name such as "accountsettings › AccountDetails" (not translated). -->
+    <string name="events_screen_named">Google サービスの画面 %1$s</string>
+    <!-- Audience: parent. A parent's decision about a Google services screen or group of screens. %1$s:
+         parent's name; %2$s: the group's name (above) or "the Google services screen …"; %3$s: time. -->
+    <string name="events_screen_rule_allowed">%1$s が %2$s を許可しました</string>
+    <string name="events_screen_rule_allowed_until">%1$s が %2$s を %3$s まで許可しました</string>
+    <string name="events_screen_rule_blocked">%1$s が %2$s をブロックしました</string>
+    <string name="events_screen_rule_reset">%1$s が %2$s をデフォルトに戻しました</string>
+    <!-- %1$s: the group's name or "the Google services screen …" -->
+    <string name="events_screen_rule_no_bedtime">予定されているおやすみ時間がないため、%1$s をおやすみ時間まで許可できませんでした</string>
+    <!-- Audience: parent. The lock sent the child back from a Google services screen. %1$s: a group's name
+         (above), or a technical screen name (not translated); %2$s: the app it was opened from. -->
+    <string name="events_blocked_area">%1$s をブロックしました</string>
+    <string name="events_blocked_area_from">%2$s から開かれた %1$s をブロックしました</string>
+    <string name="events_blocked_screen">Google サービスの画面をブロックしました（%1$s）</string>
+    <string name="events_blocked_screen_from">%2$s から開かれた Google サービスの画面をブロックしました（%1$s）</string>
+
+    <!-- Audience: parent. "Parent screen view" (which lets parents see the screen) was switched off. "Fix setup
+         over Wi-Fi" is a button in the parents' app: use the same words as that button. -->
+    <string name="events_screen_view_restored">デバイスで画面の表示がオフにされましたが（Android のプライバシー確認から）、再びオンにしました</string>
+    <string name="events_screen_view_off">デバイスで画面の表示がオフにされました。再びオンにするには「Wi-Fi でセットアップを修復」を使ってください</string>
+
+    <!-- Audience: parent. Why a screenshot a parent asked for couldn't be taken. "Settings > Accessibility"
+         should match Android's own menu names in this language; "Parent screen view" is this app's
+         accessibility service as listed there. -->
+    <string name="events_shot_no_service">画面の表示がオンになっていません。デバイスで保護者モードのロックを解除し、[設定] &gt; [ユーザー補助] &gt; [保護者による画面表示] をオンにしてください</string>
+    <string name="events_shot_screen_off">画面がオフです</string>
+    <string name="events_shot_failed">画面をキャプチャできませんでした</string>
+    <!-- %1$s: app name -->
+    <string name="events_shot_secure">%1$s はスクリーンショットをブロックしています</string>
+    <string name="events_shot_secure_unknown">画面上のアプリがスクリーンショットをブロックしています</string>
+    <string name="events_shot_too_soon">前回のスクリーンショットから間もないため撮れませんでした。もう一度お試しください</string>
+    <!-- %1$d: Android's error code -->
+    <string name="events_shot_error">画面をキャプチャできませんでした（エラー %1$d）</string>
+
+    <!-- Audience: parent. Why the device couldn't say where it is. -->
+    <string name="events_location_off">デバイスの位置情報がオフになっています</string>
+    <string name="events_location_no_provider">デバイスに位置情報プロバイダがありません</string>
+    <string name="events_location_no_permission">デバイスに位置情報の権限がありません</string>
+    <string name="events_location_no_fix">まだ位置を特定できていません</string>
+
+    <!-- Audience: parent. Why a usage report has no data; the parents' app adds advice after it. -->
+    <string name="events_usage_not_allowed">デバイスでアプリの使用状況の読み取りが許可されていません</string>
+
+    <!-- Audience: parent. Calls. %1$s: the contact's name or the phone number. -->
+    <string name="events_call_attempt">%1$s に発信しようとしました（安全リストにありません）</string>
+    <string name="events_call_blocked">%1$s からの着信をブロックしました</string>
+
+    <!-- Audience: parent. A daily app time limit ran out. %1$s: list of the limits' names. -->
+    <string name="events_times_up_today">今日の時間は終了：%1$s</string>
+
+    <!-- Audience: parent. The schedule moved to another mode. %1$s: time it lasts until. -->
+    <string name="events_mode_normal">通常時間帯</string>
+    <string name="events_mode_normal_until">%1$s まで通常時間帯</string>
+    <string name="events_mode_limited_until">%1$s まで制限時間帯</string>
+    <string name="events_mode_bedtime_until">%1$s までおやすみ時間</string>
+
+    <!-- Audience: parent. Battery and power. %1$d: battery percentage. -->
+    <string name="events_battery_low">バッテリー低下：%1$d%%</string>
+    <string name="events_turning_off">電源をオフにしています</string>
+    <string name="events_turning_off_level">電源をオフにしています（バッテリー %1$d%%）</string>
+    <string name="events_turning_off_empty">電源をオフにしています：バッテリー切れ</string>
+
+    <!-- Audience: parent. Changes on the device that cut it off or get around the lock. -->
+    <string name="events_airplane_on">機内モードがオンになりました（オフになるまで通話も位置情報の更新もできません）</string>
+    <string name="events_airplane_off">機内モードがオフになりました</string>
+    <string name="events_mobile_data_on">モバイルデータがオンになりました</string>
+    <string name="events_mobile_data_off">モバイルデータがオフになりました（今後は Wi-Fi のみ）</string>
+    <!-- %1$s: app name -->
+    <string name="events_installed">%1$s がインストールされました</string>
+    <string name="events_installed_parent_mode">保護者モード中に %1$s がインストールされました</string>
+    <string name="events_sim_removed">SIM カードが取り外されました（通話もモバイルデータも使えません）</string>
+    <!-- %1$s: the mobile carriers' names -->
+    <string name="events_sim_inserted">SIM カードが挿入されました（%1$s）</string>
+    <string name="events_sim_changed">SIM カードが変更されました（現在：%1$s）</string>
+
+    <!-- Audience: parent. An alert that reaches the parents late says when it happened. %1$s: the alert (one of
+         the messages above); %2$s: the time it happened. -->
+    <string name="events_late">%1$s（%2$s に発生）</string>
+
+    <!-- Audience: child and parent. The name of a daily app time limit that has no name of its own and no apps. -->
+    <string name="events_limit_apps">アプリ</string>
+
+    <!-- Audience: parent. Stands in for the caller in call events when the number is hidden, e.g.
+         "Blocked a call from a private number" -->
+    <string name="events_private_number">非通知の番号</string>
+</resources>

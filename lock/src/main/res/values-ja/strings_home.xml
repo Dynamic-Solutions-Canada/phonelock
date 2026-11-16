@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Wording for the home screen, the ring screen, the emergency (SOS) screen and the events they send to parents. -->
+<resources>
+
+    <!-- Audience: child. The home screen. -->
+    <!-- Small line under the date, always shown: what her parents can see -->
+    <string name="home_shared_with_parents">いる場所、バッテリー、電話、アプリの使い方は、おうちの人に伝わります</string>
+    <!-- Pill under the date during a scheduled situation. %1$s is the situation's name (e.g. "Bedtime"), %2$s a time such as "7:00 AM" -->
+    <string name="home_mode_until">%1$s（%2$s まで）</string>
+    <!-- Red pill under the date. %1$d is the battery level in percent -->
+    <string name="home_battery_low">バッテリーが少なくなっています（%1$d%%）。充電しましょう。</string>
+    <!-- Section titles above icon grids -->
+    <string name="home_section_allowed">今使えるアプリ</string>
+    <string name="home_section_paused">今はお休み中</string>
+    <!-- Second line under an app's icon (keep very short, it is cut off). %1$s is a time such as "6:22 PM" -->
+    <string name="home_app_until">%1$s まで</string>
+    <!-- Toast after tapping a paused app. %1$s is the app's name, %2$s a time such as "6:22 PM" -->
+    <string name="home_app_paused_until">%1$s は %2$s までお休みです</string>
+    <!-- Bottom button: opens the list of apps she can ask a parent for -->
+    <string name="home_ask_for_app">アプリをリクエスト</string>
+    <!-- Screen reader label for the ⋮ button next to "Ask for an app" -->
+    <string name="home_quick_menu_description">Wi-Fi、Bluetooth、電源</string>
+    <!-- Item in the ⋮ menu: turning the device off or restarting it -->
+    <string name="home_power">電源</string>
+    <!-- Round red emergency button (about 4 characters fit; most languages keep "SOS") -->
+    <string name="home_sos">SOS</string>
+    <!-- Screen reader label for the SOS button -->
+    <string name="home_sos_description">緊急：長押しすると、おうちの人に知らせます</string>
+    <!-- Toast after only tapping (not holding) the SOS button -->
+    <string name="home_sos_hold">SOS を長押しすると、おうちの人に知らせます</string>
+    <!-- Toast when SOS is held but the phone was never connected to the parents -->
+    <string name="home_sos_not_set_up">まだ設定されていません：電話アプリから %1$s にかけてください</string>
+    <string name="home_not_set_up">まだ設定されていません</string>
+    <string name="home_nothing_to_ask">リクエストできるアプリはありません</string>
+    <!-- Title of the app picker for asking -->
+    <string name="home_which_app">どのアプリ？</string>
+    <!-- Title of the duration list after picking an app. %1$s is the app's name -->
+    <string name="home_for_how_long">%1$s をどのくらい？</string>
+    <!-- Choices in the duration list -->
+    <plurals name="home_minutes">
+        <item quantity="other">%1$d 分</item>
+    </plurals>
+    <plurals name="home_hours">
+        <item quantity="other">%1$d 時間</item>
+    </plurals>
+    <string name="home_asked">リクエストしました。返事は通知で届きます。</string>
+    <string name="home_ask_wait">少し待ってから、もう一度リクエストしてください</string>
+    <!-- Toasts after tapping an app that can't open right now -->
+    <string name="home_not_available">今は使えません</string>
+    <string name="home_blocked">ブロックされています</string>
+    <!-- Fallback dialog from the Power item -->
+    <string name="home_restart_title">このデバイスを再起動しますか？</string>
+    <string name="home_restart_message">電源を切るときは、電源ボタンを長押ししてください。</string>
+    <!-- Button -->
+    <string name="home_restart">再起動</string>
+    <string name="home_restart_failed">再起動できませんでした</string>
+
+    <!-- Audience: parent. Parent mode on the home screen and the PIN prompt. -->
+    <!-- Buttons in the parent mode bar -->
+    <string name="home_parent_settings">設定</string>
+    <string name="home_parent_play_store">Play Store</string>
+    <string name="home_parent_lock_now">今すぐロック</string>
+    <!-- Text of the parent mode bar. %1$s is a time such as "4:15 PM" -->
+    <string name="home_parent_mode_until">保護者モード中です。%1$s になるか画面がオフになると、再びロックされます。</string>
+    <!-- Bottom button in parent mode: opens every app -->
+    <string name="home_all_apps">すべてのアプリ</string>
+    <string name="home_open_an_app">アプリを開く</string>
+    <string name="home_no_other_apps">他のアプリはありません</string>
+    <string name="home_no_pin">PIN が設定されていません</string>
+    <string name="home_pin_title">保護者 PIN</string>
+    <!-- Hint inside the PIN field (keep short) -->
+    <string name="home_pin_hint">PIN</string>
+    <!-- Button -->
+    <string name="home_unlock">ロック解除</string>
+    <string name="home_pin_wrong">PIN が違います</string>
+    <!-- Toast after too many wrong PINs. %1$d is a number of seconds -->
+    <string name="home_pin_try_again">%1$d 秒後に再試行してください</string>
+
+    <!-- Audience: parent. Events this phone sends to the parent app's Activity and alerts. -->
+    <!-- %1$s is an app's name -->
+    <string name="home_event_not_available">%1$s を開こうとしました（現在は使用できません）</string>
+    <string name="home_event_blocked">%1$s を開こうとしました（ブロック中）</string>
+    <!-- %1$s is an app's name, %2$s a time such as "6:22 PM" -->
+    <string name="home_event_paused">%1$s を開こうとしました（%2$s まで一時停止中）</string>
+    <string name="home_event_parent_mode_ended">スマートフォンの保護者モードが終了しました</string>
+    <!-- %1$s is a time such as "4:15 PM" -->
+    <string name="home_event_pin_unlocked">スマートフォンで PIN により保護者モードのロックが解除されました（%1$s まで）</string>
+    <!-- %1$d is how many wrong tries in a row (3 or more), %2$d a number of minutes -->
+    <plurals name="home_event_pin_wrong">
+        <item quantity="other">スマートフォンで保護者 PIN が %1$d 回続けて間違って入力されました。%2$d 分間ロックされます</item>
+    </plurals>
+    <!-- Sent after the phone starts up. Pairs with a "Turning off" event -->
+    <string name="home_event_turned_on">電源がオンになりました</string>
+    <!-- %1$d is the battery level in percent -->
+    <string name="home_event_turned_on_battery">電源がオンになりました（バッテリー %1$d%%）</string>
+    <!-- %1$s is the phone's name as the parents set it -->
+    <string name="home_event_ring_stopped_by">%1$s が鳴動を停止しました</string>
+    <!-- Used instead of the one above when the phone has no name -->
+    <string name="home_event_ring_stopped_by_device">デバイスで鳴動が停止されました</string>
+    <string name="home_event_ring_timed_out">時間切れのため鳴動を停止しました</string>
+
+    <!-- Audience: child. The ring screen, shown while a parent rings the phone. -->
+    <!-- Big title. %1$s is the parent's name -->
+    <string name="home_ring_title">%1$s があなたを呼んでいます</string>
+    <!-- Used instead of the one above when the parent's name is unknown -->
+    <string name="home_ring_title_unknown">おうちの人があなたを呼んでいます</string>
+    <string name="home_ring_hint">「停止」をタップしてから、連絡してください。</string>
+    <!-- Big button that stops the ringing; must match "Stop" in home_ring_hint -->
+    <string name="home_ring_stop">停止</string>
+
+    <!-- Audience: child. The emergency screen, opened by holding SOS. -->
+    <string name="home_sos_title">緊急</string>
+    <!-- Biggest button: opens the dialer with the local emergency number filled in. %1$s is that number (911, 112, 999, 110, ...), in this and the other SOS strings -->
+    <string name="home_sos_call">%1$s に電話</string>
+    <string name="home_sos_not_paired">このスマートフォンは、おうちの人に知らせる設定になっていません。助けが必要なときは %1$s に電話してください。</string>
+    <string name="home_sos_cancelled">アラートを取り消しました。まちがいで送ったことが、おうちの人に伝わりました。</string>
+    <string name="home_sos_alerted">おうちの人に知らせました。</string>
+    <string name="home_sos_all_sent">おうちの人に知らせました。あなたがいる場所も見られます。</string>
+    <string name="home_sos_sending">おうちの人に送っています… 電波がなくても、送れるまで続けます。</string>
+    <!-- One line per parent who answered. %1$s is the parent's name -->
+    <string name="home_sos_on_it">%1$s が対応しています。</string>
+    <!-- Heading above the one-tap messages -->
+    <string name="home_sos_tell_more">もっと伝える</string>
+    <!-- One-tap messages: buttons, two per row, sent to the parents as written here -->
+    <string name="home_sos_quick_hurt">けがをした</string>
+    <string name="home_sos_quick_scared">こわい</string>
+    <string name="home_sos_quick_lost">まいごになった</string>
+    <string name="home_sos_quick_come">むかえに来て</string>
+    <string name="home_sos_quick_call">電話して</string>
+    <string name="home_sos_type_hint">メッセージを入力</string>
+    <!-- Button that sends the typed message -->
+    <string name="home_sos_send">送る</string>
+    <!-- %1$s is the messages she sent, joined with " · " -->
+    <string name="home_sos_sent">送ったメッセージ：%1$s</string>
+    <!-- Button, offered for the first two minutes -->
+    <string name="home_sos_mistake">まちがえて送った</string>
+    <string name="home_sos_back_home">ホーム画面にもどる</string>
+    <string name="home_sos_no_alert">アラートは出ていません：もう一度 SOS を長押ししてください</string>
+    <string name="home_sos_cancel_title">アラートを取り消しますか？</string>
+    <string name="home_sos_cancel_message">まちがいで送ったことが、おうちの人に伝わります。</string>
+    <!-- Buttons of the dialog above -->
+    <string name="home_sos_cancel_yes">はい、取り消す</string>
+    <string name="home_sos_cancel_no">いいえ</string>
+    <string name="home_sos_no_dialer">電話アプリを開けませんでした</string>
+    <!-- Notification. %1$s is the parent's name -->
+    <string name="home_sos_acked">%1$s が緊急アラートを受け取って、対応しています</string>
+</resources>

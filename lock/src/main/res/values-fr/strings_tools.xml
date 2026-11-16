@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Wording for the Wi-Fi and Bluetooth screens, parent file management, debugging, updates, contacts and the call log. -->
+<resources>
+    <!-- Audience: child. Shown when the Wi-Fi or Bluetooth screen closes because its time is over. %1$s is the
+         screen's name, such as "Wi-Fi settings". -->
+    <string name="tools_not_allowed_now">Pas autorisé pour l’instant : %1$s</string>
+
+    <!-- Audience: child. The Wi-Fi screen, opened from its icon on the child's home screen. -->
+    <!-- Title of the on/off card at the top of the Wi-Fi screen -->
+    <string name="tools_wifi">Wi-Fi</string>
+    <!-- State under the card title: the radio is on -->
+    <string name="tools_on">Activé</string>
+    <!-- State under the card title: the radio is off -->
+    <string name="tools_off">Désactivé</string>
+    <string name="tools_wifi_switch_on_failed">Impossible d’activer le Wi-Fi</string>
+    <string name="tools_wifi_switch_off_failed">Impossible de désactiver le Wi-Fi</string>
+    <!-- Heading above the list of nearby Wi-Fi networks -->
+    <string name="tools_wifi_networks">Réseaux</string>
+    <string name="tools_wifi_looking">Recherche de réseaux…</string>
+    <!-- Detail under a network's name: the phone is on this network now -->
+    <string name="tools_wifi_connected">Connecté</string>
+    <!-- Detail under a network's name: the phone has joined it before and remembers it -->
+    <string name="tools_wifi_saved">Enregistré</string>
+    <!-- Detail under a network's name: it needs a password. Keep the lock symbol at the start. -->
+    <string name="tools_wifi_secured">🔒 Mot de passe</string>
+    <!-- Detail under a network's name: anyone can join, no password -->
+    <string name="tools_wifi_open">Ouvert</string>
+    <!-- Dialog title. %1$s is the Wi-Fi network's name. -->
+    <string name="tools_wifi_forget_title">Oublier %1$s ?</string>
+    <!-- Button: remove a saved Wi-Fi network from the phone -->
+    <string name="tools_wifi_forget">Oublier</string>
+    <string name="tools_wifi_forget_hint">Appuie longuement sur un réseau enregistré pour l’oublier.</string>
+    <!-- Hint in the box where the child types the Wi-Fi password -->
+    <string name="tools_wifi_password_hint">Mot de passe</string>
+    <!-- Button: join the Wi-Fi network with the password typed -->
+    <string name="tools_wifi_join">Se connecter</string>
+    <!-- %1$s is the Wi-Fi network's name -->
+    <string name="tools_wifi_join_failed">Impossible de se connecter à %1$s</string>
+    <!-- %1$s is the Wi-Fi network's name -->
+    <string name="tools_wifi_wrong_password">Mot de passe incorrect pour %1$s</string>
+
+    <!-- Audience: child. The Bluetooth screen, opened from its icon on the child's home screen. -->
+    <!-- Title of the on/off card at the top of the Bluetooth screen -->
+    <string name="tools_bluetooth">Bluetooth</string>
+    <string name="tools_bluetooth_switch_on_failed">Impossible d’activer le Bluetooth</string>
+    <string name="tools_bluetooth_switch_off_failed">Impossible de désactiver le Bluetooth</string>
+    <!-- Heading above the list of paired Bluetooth devices -->
+    <string name="tools_bluetooth_your_devices">Tes appareils</string>
+    <!-- Shown under "Your devices" when nothing is paired -->
+    <string name="tools_bluetooth_none_yet">Aucun pour l’instant.</string>
+    <!-- Button: start looking for headphones or speakers to pair -->
+    <string name="tools_bluetooth_pair_new">Associer un nouvel appareil</string>
+    <!-- Heading above Bluetooth devices found nearby -->
+    <string name="tools_bluetooth_nearby">À proximité</string>
+    <string name="tools_bluetooth_pairing_mode">Mets le casque ou l’enceinte en mode association, puis appuie dessus.</string>
+    <!-- Detail under a nearby device's name -->
+    <string name="tools_bluetooth_tap_to_pair">Appuie pour associer</string>
+    <!-- %1$s is the Bluetooth device's name -->
+    <string name="tools_bluetooth_pairing">Association avec %1$s…</string>
+    <string name="tools_bluetooth_pairing_failed_start">Impossible de lancer l’association</string>
+    <!-- %1$s is the Bluetooth device's name -->
+    <string name="tools_bluetooth_paired">Associé à %1$s</string>
+    <!-- %1$s is the Bluetooth device's name. Devices that show a code are phones and computers; they need Android's pairing screen, which only a parent can open. -->
+    <string name="tools_bluetooth_pair_failed">Impossible d’associer %1$s. Pour les appareils qui affichent un code, demande à un parent.</string>
+
+    <!-- Audience: parent. News sent to the parent app when the child changes Wi-Fi or Bluetooth. -->
+    <string name="tools_wifi_switched_off_event">Le Wi-Fi a été désactivé sur le téléphone</string>
+    <!-- %1$s is the Wi-Fi network's name -->
+    <string name="tools_wifi_joined_event">Nouveau réseau Wi-Fi rejoint : %1$s</string>
+    <!-- %1$s is the Wi-Fi network's name -->
+    <string name="tools_wifi_forgot_event">Réseau Wi-Fi oublié : %1$s</string>
+    <!-- %1$s is the Bluetooth device's name -->
+    <string name="tools_bluetooth_paired_event">Nouvel appareil Bluetooth associé : %1$s</string>
+
+    <!-- Audience: child and parent. A parent changed files on the device: shown to the child as a notice and to the
+         parents in their activity list. %1$s is the parent's name; %2$s is a file or folder path. -->
+    <string name="tools_files_created_folder">%1$s a créé le dossier %2$s</string>
+    <string name="tools_files_deleted">%1$s a supprimé %2$s</string>
+    <!-- %3$s is the new name -->
+    <string name="tools_files_renamed">%1$s a renommé %2$s en %3$s</string>
+    <string name="tools_files_added">%1$s a ajouté %2$s</string>
+
+    <!-- Audience: parent. Why a file action a parent asked for failed, shown in the parent app's file screen. -->
+    <string name="tools_files_not_permitted">L’appareil n’a pas encore autorisé l’accès aux fichiers</string>
+    <string name="tools_files_location_unavailable">Cet emplacement n’est pas disponible</string>
+    <string name="tools_files_create_folder_failed">Impossible de créer le dossier</string>
+    <string name="tools_files_top_level">Les dossiers de premier niveau ne peuvent pas être supprimés ; ouvrez-le et supprimez son contenu</string>
+    <!-- The new name typed for a file or folder is empty or contains a slash -->
+    <string name="tools_files_invalid_name">Nom non valide</string>
+    <string name="tools_files_name_taken">Ce nom est déjà utilisé</string>
+    <string name="tools_files_rename_failed">Impossible de le renommer</string>
+    <string name="tools_files_no_upload">Aucun fichier reçu avec l’envoi</string>
+    <string name="tools_files_generic_error">Une erreur s’est produite</string>
+    <!-- %1$s is a file name -->
+    <string name="tools_files_delete_failed">Impossible de supprimer %1$s</string>
+    <string name="tools_files_unknown_server">L’envoi provient d’un serveur inconnu</string>
+    <string name="tools_files_save_failed">Impossible d’enregistrer le fichier</string>
+    <!-- The path the parent asked to download is a folder, not a file -->
+    <string name="tools_files_not_a_file">Ce n’est pas un fichier</string>
+    <string name="tools_files_too_large">Trop volumineux pour être envoyé (plus de 48 Mo)</string>
+    <!-- "Hub" is the relay server that carries messages between the phone and the parent app. %1$d is an HTTP status code. -->
+    <string name="tools_files_upload_failed">Échec de l’envoi vers le serveur relais (HTTP %1$d)</string>
+
+    <!-- Audience: parent. Answers to a parent's request for the contacts or the call log. -->
+    <string name="tools_contacts_not_permitted">L’appareil n’a pas autorisé la lecture de ses contacts</string>
+    <string name="tools_calllog_not_permitted">L’appareil n’a pas autorisé la lecture de son journal d’appels</string>
+
+    <!-- Audience: parent. Events about turning on debugging so the phone can be repaired from a computer. -->
+    <!-- "Fix setup over Wi-Fi" is a button in the parent app: use the same wording as that button. -->
+    <string name="tools_debug_needs_fix_setup">Impossible d’activer le débogage : utilisez d’abord Réparer la configuration par Wi-Fi pour cet appareil</string>
+    <!-- %1$s is Android's reason, usually in English -->
+    <string name="tools_debug_failed">Impossible d’activer le débogage : %1$s</string>
+    <!-- %1$s is the parent's name; %2$s is a time of day; %3$s is an IP address and %4$s a port number. "Wireless debugging" is an Android setting: use Android's own name for it in this language. -->
+    <string name="tools_debug_on_with_address">%1$s a activé le débogage USB et le débogage sans fil jusqu’à %2$s. Débogage sans fil : %3$s:%4$s.</string>
+    <!-- %1$s is the parent's name; %2$s is a time of day. "Wireless debugging" is an Android setting: use Android's own name for it in this language. -->
+    <string name="tools_debug_on_starting">%1$s a activé le débogage USB et le débogage sans fil jusqu’à %2$s. Le débogage sans fil démarre.</string>
+    <string name="tools_debug_off">Débogage de nouveau désactivé</string>
+
+    <!-- Audience: parent. Events about updating the lock app on the phone. -->
+    <!-- %1$d is the app's version number -->
+    <string name="tools_update_up_to_date">Déjà à jour (version %1$d)</string>
+    <!-- %1$d is the app's version number -->
+    <string name="tools_update_downloaded">Version %1$d téléchargée ; elle s’installera à la prochaine mise en veille de l’écran</string>
+    <!-- %1$s is the reason, sometimes Android's own in English -->
+    <string name="tools_update_check_failed">Impossible de rechercher une mise à jour : %1$s</string>
+    <!-- %1$d is the app's version number; %2$s is the reason, sometimes Android's own in English -->
+    <string name="tools_update_install_version_failed">Impossible d’installer la mise à jour %1$d : %2$s</string>
+    <!-- %1$s is Android's reason, usually in English -->
+    <string name="tools_update_install_failed">Impossible d’installer la mise à jour : %1$s</string>
+    <!-- Android wanted to show a confirmation on the phone, which the lock app doesn't allow -->
+    <string name="tools_update_install_failed_asked">Impossible d’installer la mise à jour : l’appareil voulait d’abord demander une confirmation</string>
+    <!-- %1$d is the app's version number -->
+    <string name="tools_update_updated">Mis à jour vers la version %1$d</string>
+    <!-- Reasons a downloaded update was rejected, shown after "Couldn't check for an update:" -->
+    <string name="tools_update_too_large">la mise à jour est trop volumineuse</string>
+    <string name="tools_update_checksum">la somme de contrôle de la mise à jour ne correspond pas</string>
+    <string name="tools_update_store_failed">impossible d’enregistrer la mise à jour</string>
+    <string name="tools_update_wrong_app">la mise à jour ne correspond pas à cette application</string>
+    <string name="tools_update_wrong_version">la version de la mise à jour ne correspond pas</string>
+    <string name="tools_update_wrong_key">la mise à jour n’est pas signée avec la clé de cette application</string>
+</resources>

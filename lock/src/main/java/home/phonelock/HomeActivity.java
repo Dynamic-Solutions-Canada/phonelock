@@ -127,8 +127,11 @@ public class HomeActivity extends Activity {
         root.addView(clock, new LinearLayout.LayoutParams(-1, -2));
 
         TextClock date = new TextClock(this);
-        date.setFormat12Hour("EEEE, MMMM d");
-        date.setFormat24Hour("EEEE, MMMM d");
+        // Weekday, month and day in the order and wording of the app's language ("Monday, June 3" in English).
+        String datePattern = DateFormat.getBestDateTimePattern(
+                getResources().getConfiguration().getLocales().get(0), "EEEEMMMMd");
+        date.setFormat12Hour(datePattern);
+        date.setFormat24Hour(datePattern);
         date.setTextColor(Color.rgb(170, 176, 190));
         date.setTextSize(16);
         date.setGravity(Gravity.CENTER);
@@ -136,7 +139,7 @@ public class HomeActivity extends Activity {
 
         // Said plainly on her own screen: her parents can see these.
         TextView shared = new TextView(this);
-        shared.setText("Location, battery, calls and app use are shared with your parents");
+        shared.setText(getString(R.string.home_shared_with_parents));
         shared.setTextColor(Color.rgb(120, 126, 140));
         shared.setTextSize(12);
         shared.setGravity(Gravity.CENTER);
@@ -189,9 +192,9 @@ public class HomeActivity extends Activity {
         parentText.setTextColor(Color.WHITE);
         parentBar.addView(parentText);
         LinearLayout btns = new LinearLayout(this);
-        btns.addView(button("Settings", v -> launch("com.android.settings")));
-        btns.addView(button("Play Store", v -> launch("com.android.vending")));
-        btns.addView(button("Lock now", v -> endParentMode()));
+        btns.addView(button(getString(R.string.home_parent_settings), v -> launch("com.android.settings")));
+        btns.addView(button(getString(R.string.home_parent_play_store), v -> launch("com.android.vending")));
+        btns.addView(button(getString(R.string.home_parent_lock_now), v -> endParentMode()));
         parentBar.addView(btns);
         parentBar.setVisibility(View.GONE);
         LinearLayout.LayoutParams pbl = new LinearLayout.LayoutParams(-1, -2);
@@ -204,10 +207,10 @@ public class HomeActivity extends Activity {
         sections.setOrientation(LinearLayout.VERTICAL);
         homeGrid = new AppGrid(this);
         sections.addView(homeGrid, new LinearLayout.LayoutParams(-1, -2));
-        allowedHeading = sectionHeading(sections, "Allowed for now");
+        allowedHeading = sectionHeading(sections, getString(R.string.home_section_allowed));
         allowedGrid = new AppGrid(this);
         sections.addView(allowedGrid, new LinearLayout.LayoutParams(-1, -2));
-        pausedHeading = sectionHeading(sections, "Paused for now");
+        pausedHeading = sectionHeading(sections, getString(R.string.home_section_paused));
         pausedGrid = new AppGrid(this);
         sections.addView(pausedGrid, new LinearLayout.LayoutParams(-1, -2));
         scroll.addView(sections, new android.widget.FrameLayout.LayoutParams(-1, -2));
@@ -215,7 +218,7 @@ public class HomeActivity extends Activity {
         gl.topMargin = dp(32);
         root.addView(scroll, gl);
 
-        ask = button("Ask for an app", v -> askForApp());
+        ask = button(getString(R.string.home_ask_for_app), v -> askForApp());
         ask.setTextColor(Color.WHITE);
         ask.setBackground(rounded(Color.rgb(52, 60, 84), 28));
         ask.setTextSize(16);
@@ -234,7 +237,7 @@ public class HomeActivity extends Activity {
         quickButton.setTextColor(Color.WHITE);
         quickButton.setGravity(Gravity.CENTER);
         quickButton.setBackground(rounded(Color.rgb(52, 60, 84), 28));
-        quickButton.setContentDescription("Wi-Fi, Bluetooth and power");
+        quickButton.setContentDescription(getString(R.string.home_quick_menu_description));
         quickButton.setOnClickListener(v -> showQuickMenu());
         LinearLayout.LayoutParams ql = new LinearLayout.LayoutParams(dp(56), dp(56));
         ql.leftMargin = dp(10);
@@ -255,14 +258,14 @@ public class HomeActivity extends Activity {
     private void askForApp() {
         boolean parent = Policy.inParentMode(this);
         if (!parent && !Remote.paired(this)) {
-            Toast.makeText(this, "Not set up yet", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.home_not_set_up, Toast.LENGTH_SHORT).show();
             return;
         }
         // Anything she can't use right now: unscheduled apps, and her own apps that are outside their hours
         // or paused (e.g. Phone at bedtime), so she can ask for those too.
         List<String> pkgs = parent ? parentModeApps() : askableApps();
         if (pkgs.isEmpty()) {
-            Toast.makeText(this, parent ? "No other apps" : "Nothing to ask for", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, parent ? R.string.home_no_other_apps : R.string.home_nothing_to_ask, Toast.LENGTH_SHORT).show();
             return;
         }
         // Wi-Fi and Bluetooth aren't apps: offered as pills after the app icons, not in the grid.
@@ -286,9 +289,9 @@ public class HomeActivity extends Activity {
         android.widget.ScrollView scroll = new android.widget.ScrollView(this);
         scroll.addView(body);
         AlertDialog pick = new AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog_Alert)
-                .setTitle(parent ? "Open an app" : "Which app?")
+                .setTitle(parent ? R.string.home_open_an_app : R.string.home_which_app)
                 .setView(scroll)
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(R.string.cancel, null)
                 .create();
         List<AppGrid.Entry> choices = AppGrid.load(this, pkgs, false);
         choices.sort((x, y) -> x.label.toString().compareToIgnoreCase(y.label.toString()));
@@ -306,7 +309,8 @@ public class HomeActivity extends Activity {
             icon.setImageDrawable(e.icon);
             pill.addView(icon, new LinearLayout.LayoutParams(dp(30), dp(30)));
             TextView name = new TextView(this);
-            name.setText(e.label.toString().replace(" settings", "\nsettings"));
+            name.setText(e.label);
+            name.setMaxLines(2);
             name.setTextColor(Color.WHITE);
             name.setTextSize(15);
             name.setLineSpacing(0, 0.9f);
@@ -330,12 +334,12 @@ public class HomeActivity extends Activity {
      */
     private View sosButton() {
         TextView b = new TextView(this);
-        b.setText("SOS");
+        b.setText(R.string.home_sos);
         b.setTextColor(Color.WHITE);
         b.setTextSize(15);
         b.setTypeface(android.graphics.Typeface.DEFAULT_BOLD);
         b.setGravity(Gravity.CENTER);
-        b.setContentDescription("Emergency: hold to alert your parents");
+        b.setContentDescription(getString(R.string.home_sos_description));
         // A dark red circle, with a bright one revealed from the bottom up as the button is held.
         android.graphics.drawable.ClipDrawable fill = new android.graphics.drawable.ClipDrawable(
                 rounded(Color.rgb(230, 50, 45), 28), Gravity.BOTTOM, android.graphics.drawable.ClipDrawable.VERTICAL);
@@ -365,7 +369,7 @@ public class HomeActivity extends Activity {
                     hold.cancel();
                     fill.setLevel(0);
                     if (early && e.getActionMasked() == MotionEvent.ACTION_UP) {
-                        Toast.makeText(this, "Hold SOS to alert your parents", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, R.string.home_sos_hold, Toast.LENGTH_SHORT).show();
                     }
                     return true;
             }
@@ -377,7 +381,7 @@ public class HomeActivity extends Activity {
     /** Starts (or rejoins) an emergency alert and shows its screen. */
     private void startEmergency() {
         if (!Remote.paired(this)) {
-            Toast.makeText(this, "Not set up yet: call 911 from the phone app", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.home_sos_not_set_up, EmergencyNumbers.local(this)), Toast.LENGTH_LONG).show();
         } else {
             Emergency.start(this);
         }
@@ -476,7 +480,7 @@ public class HomeActivity extends Activity {
     private void updateBattery() {
         int level = Battery.level(this);
         boolean low = level >= 0 && level <= Battery.lowAt(this) && !Battery.charging(this);
-        batteryText.setText("Battery low (" + level + "%). Plug in to charge.");
+        batteryText.setText(getString(R.string.home_battery_low, level));
         batteryText.setVisibility(low ? View.VISIBLE : View.GONE);
     }
 
@@ -506,13 +510,12 @@ public class HomeActivity extends Activity {
 
     private void updateParentBar() {
         boolean p = Policy.inParentMode(this);
-        ask.setText(p ? "All apps" : "Ask for an app");
+        ask.setText(p ? R.string.home_all_apps : R.string.home_ask_for_app);
         parentBar.setVisibility(p ? View.VISIBLE : View.GONE);
         if (p) {
             long until = Policy.prefs(this).getLong("parent_until", 0);
-            parentText.setText("Parent mode. Locks again at "
-                    + DateFormat.getTimeFormat(this).format(new java.util.Date(until))
-                    + " or when the screen turns off.");
+            parentText.setText(getString(R.string.home_parent_mode_until,
+                    DateFormat.getTimeFormat(this).format(new java.util.Date(until))));
         }
     }
 
@@ -520,7 +523,7 @@ public class HomeActivity extends Activity {
         Policy.storeParentUntil(this, 0);
         if (Policy.prefs(this).getBoolean("parent_by_pin", false)) {
             Policy.prefs(this).edit().remove("parent_by_pin").apply();
-            Outbox.note(this, "Parent mode on the phone ended");
+            Outbox.note(this, getString(R.string.home_event_parent_mode_ended));
         }
         Policy.applySoon(this);
         startActivity(new Intent(this, HomeActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
@@ -531,28 +534,35 @@ public class HomeActivity extends Activity {
 
     /** Second step of "Ask for an app": how long, then send the request to the parents. */
     private void askHowLong(AppGrid.Entry app) {
-        String[] times = {"30 minutes", "1 hour", "2 hours", "4 hours"};
         long[] mins = {30, 60, 120, 240};
+        // Worded when shown (in the current language): minutes under an hour, whole hours from there.
+        String[] times = new String[mins.length];
+        for (int i = 0; i < mins.length; i++) {
+            int m = (int) mins[i];
+            times[i] = m < 60
+                    ? getResources().getQuantityString(R.plurals.home_minutes, m, m)
+                    : getResources().getQuantityString(R.plurals.home_hours, m / 60, m / 60);
+        }
         new AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog_Alert)
-                .setTitle(app.label + " for how long?")
+                .setTitle(getString(R.string.home_for_how_long, app.label))
                 .setItems(times, (d, w) -> {
                     boolean ok = Remote.request(this, app.pkg, mins[w]);
-                    Toast.makeText(this, ok ? "Asked. You'll get a notification."
-                            : "Wait a minute before asking again", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, ok ? R.string.home_asked : R.string.home_ask_wait,
+                            Toast.LENGTH_LONG).show();
                 })
                 .show();
     }
 
     private void askPin() {
         if (!Policy.hasPin(this)) {
-            Toast.makeText(this, "No PIN set", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.home_no_pin, Toast.LENGTH_SHORT).show();
             return;
         }
         // A clear PIN field: big centred dots, a "PIN" hint, the number keyboard up straight away,
         // and the keyboard's Done key unlocks.
         EditText in = new EditText(this);
         in.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
-        in.setHint("PIN");
+        in.setHint(R.string.home_pin_hint);
         in.setGravity(Gravity.CENTER);
         in.setTextSize(28);
         in.setLetterSpacing(0.3f);
@@ -563,10 +573,10 @@ public class HomeActivity extends Activity {
         box.addView(in, new LinearLayout.LayoutParams(-1, -2));
 
         AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle("Parent PIN")
+                .setTitle(R.string.home_pin_title)
                 .setView(box)
-                .setPositiveButton("Unlock", (d, w) -> unlockWith(in.getText().toString()))
-                .setNegativeButton("Cancel", null)
+                .setPositiveButton(R.string.home_unlock, (d, w) -> unlockWith(in.getText().toString()))
+                .setNegativeButton(R.string.cancel, null)
                 .create();
         in.setOnEditorActionListener((v, action, ev) -> {
             dialog.dismiss();
@@ -605,17 +615,18 @@ public class HomeActivity extends Activity {
             enforceLockTask();
             // Parents always hear about a PIN unlock on the phone itself: if she learned the PIN, they'd know.
             Policy.prefs(this).edit().putBoolean("parent_by_pin", true).apply();
-            Outbox.alert(this, "Parent mode unlocked on the phone with the PIN, until " + Remote.time(this, until));
+            Outbox.alert(this, getString(R.string.home_event_pin_unlocked, Remote.time(this, until)));
         } else if (r > 0) {
-            Toast.makeText(this, "Try again in " + r + " s", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.home_pin_try_again, r), Toast.LENGTH_LONG).show();
         } else {
-            Toast.makeText(this, "Wrong PIN", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.home_pin_wrong, Toast.LENGTH_SHORT).show();
             // Someone guessing: tell the parents from the third wrong try on (each one locks the PIN for a while).
             int fails = Policy.prefs(this).getInt("pin_fails", 0);
             if (fails >= 3) {
                 long wait = Policy.prefs(this).getLong("pin_lock_until", 0) - System.currentTimeMillis();
-                Outbox.alert(this, "Wrong parent PIN entered " + fails + " times in a row on the phone; locked for "
-                        + Math.max(1, wait / 60_000) + " min");
+                long lockedMin = Math.max(1, wait / 60_000);
+                Outbox.alert(this, getResources().getQuantityString(R.plurals.home_event_pin_wrong, fails, fails,
+                        lockedMin));
             }
         }
     }
@@ -629,16 +640,16 @@ public class HomeActivity extends Activity {
         }
         Intent i = getPackageManager().getLaunchIntentForPackage(pkg);
         if (i == null) {
-            Toast.makeText(this, "Not available", Toast.LENGTH_SHORT).show();
-            noteAttempt(pkg, "Tried to open " + Remote.label(this, pkg) + " (not available right now)");
+            Toast.makeText(this, R.string.home_not_available, Toast.LENGTH_SHORT).show();
+            noteAttempt(pkg, getString(R.string.home_event_not_available, Remote.label(this, pkg)));
             return;
         }
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
         try {
             startActivity(i);
         } catch (Exception e) {
-            Toast.makeText(this, "Blocked", Toast.LENGTH_SHORT).show();
-            noteAttempt(pkg, "Tried to open " + Remote.label(this, pkg) + " (blocked)");
+            Toast.makeText(this, R.string.home_blocked, Toast.LENGTH_SHORT).show();
+            noteAttempt(pkg, getString(R.string.home_event_blocked, Remote.label(this, pkg)));
         }
     }
 
@@ -652,7 +663,8 @@ public class HomeActivity extends Activity {
         if (mode == Schedule.NORMAL) {
             modeText.setVisibility(View.GONE);
         } else {
-            modeText.setText(Schedule.modeLabel(mode) + (until > 0 ? " until " + Remote.time(this, until) : ""));
+            String label = Schedule.modeLabel(this, mode);
+            modeText.setText(until > 0 ? getString(R.string.home_mode_until, label, Remote.time(this, until)) : label);
             modeText.setVisibility(View.VISIBLE);
         }
 
@@ -672,7 +684,7 @@ public class HomeActivity extends Activity {
         List<String> extra = new ArrayList<>();
         for (String p : grants.keySet()) if (!scheduled.contains(p) && !QUICK.contains(p)) extra.add(p);
         List<AppGrid.Entry> allowed = AppGrid.load(this, extra, true);
-        for (AppGrid.Entry e : allowed) e.note = "until " + Remote.time(this, grants.get(e.pkg));
+        for (AppGrid.Entry e : allowed) e.note = getString(R.string.home_app_until, Remote.time(this, grants.get(e.pkg)));
         allowedGrid.setApps(allowed, e -> launch(e.pkg));
         showIf(!allowed.isEmpty(), allowedHeading, allowedGrid);
 
@@ -687,13 +699,13 @@ public class HomeActivity extends Activity {
         }
         List<AppGrid.Entry> paused = phoneFirstThenByName(AppGrid.load(this, pausedPkgs, false));
         for (AppGrid.Entry e : paused) {
-            e.note = "until " + Remote.time(this, blocks.get(e.pkg));
+            e.note = getString(R.string.home_app_until, Remote.time(this, blocks.get(e.pkg)));
             e.dimmed = true;
         }
         pausedGrid.setApps(paused, e -> {
             String pausedUntil = Remote.time(this, blocks.get(e.pkg));
-            Toast.makeText(this, e.label + " is paused until " + pausedUntil, Toast.LENGTH_SHORT).show();
-            noteAttempt(e.pkg, "Tried to open " + e.label + " (paused until " + pausedUntil + ")");
+            Toast.makeText(this, getString(R.string.home_app_paused_until, e.label, pausedUntil), Toast.LENGTH_SHORT).show();
+            noteAttempt(e.pkg, getString(R.string.home_event_paused, e.label, pausedUntil));
         });
         showIf(!paused.isEmpty(), pausedHeading, pausedGrid);
     }
@@ -708,7 +720,7 @@ public class HomeActivity extends Activity {
         menu.setGravity(Gravity.END);
         android.widget.PopupWindow popup = new android.widget.PopupWindow(menu, -2, -2, true);
         List<AppGrid.Entry> items = new ArrayList<>(AppGrid.load(this, quickAllowed, false));
-        items.add(new AppGrid.Entry(POWER, "Power", getDrawable(android.R.drawable.ic_lock_power_off)));
+        items.add(new AppGrid.Entry(POWER, getString(R.string.home_power), getDrawable(android.R.drawable.ic_lock_power_off)));
         for (AppGrid.Entry e : items) {
             LinearLayout pill = new LinearLayout(this);
             pill.setGravity(Gravity.CENTER_VERTICAL);
@@ -747,14 +759,14 @@ public class HomeActivity extends Activity {
      */
     private void showPower() {
         if (ScreenService.showPowerMenu()) return;
-        new AlertDialog.Builder(this).setTitle("Restart this device?")
-                .setMessage("To turn it off instead, hold the power button.")
-                .setPositiveButton("Restart", (d, w) -> {
+        new AlertDialog.Builder(this).setTitle(R.string.home_restart_title)
+                .setMessage(R.string.home_restart_message)
+                .setPositiveButton(R.string.home_restart, (d, w) -> {
                     try { Policy.dpm(this).reboot(Policy.admin(this)); } catch (Exception e) {
-                        Toast.makeText(this, "Couldn't restart", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, R.string.home_restart_failed, Toast.LENGTH_SHORT).show();
                     }
                 })
-                .setNegativeButton("Cancel", null).show();
+                .setNegativeButton(R.string.cancel, null).show();
     }
 
     private static void showIf(boolean show, View... views) {
