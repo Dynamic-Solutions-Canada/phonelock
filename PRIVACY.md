@@ -53,7 +53,7 @@ PhoneLock is meant to be set up and used by a parent or legal guardian on a devi
 
 ## Your choices
 
-Parents can stop sharing at any time by removing the device from the parent app, or by removing PhoneLock from the child's device [TODO: needs the planned "Remove PhoneLock" option in parent mode; see play/open-questions.md]. Because we cannot read the data, we cannot look it up or hand it over. The relay server deletes everything it holds within 3 days.
+Parents can stop sharing at any time by removing the device from the parent app. Removing PhoneLock from the child's phone currently needs a factory reset from the phone's recovery mode, or a computer connected over USB debugging; a button for it in the parent app is planned. Because we cannot read the data, we cannot look it up or hand it over. The relay server deletes everything it holds within 3 days.
 
 ## Contact
 
