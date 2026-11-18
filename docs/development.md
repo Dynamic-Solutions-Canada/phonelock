@@ -10,13 +10,38 @@ How to build, set up, control and release PhoneLock. The parent ⇄ phone messag
 
 `build.sh` builds the lock app and the GitHub flavour of the parent app (`companion/build/outputs/apk/github/release/companion-github-release.apk`). The Play flavour is `:companion:assemblePlayRelease`, built only when asked for.
 
-Needs JDK 17, the Android SDK in `~/android-sdk` with the platform set by `compileSdk` in `companion/build.gradle`, and the Gradle version that `build.sh` runs from `~/tools`. Cap memory for every build, as `tools/publish-release.sh` does: one worker and in-process Kotlin.
+Needs JDK 17, Node (the version in `.nvmrc`), Python 3, and the Android SDK with the platform set by `compileSdk` in `companion/build.gradle`, in `ANDROID_HOME` or `~/android-sdk`. Gradle comes from the committed wrapper (`./gradlew`), which downloads the pinned version.
 
 Signing key and secrets live in `.secrets/` (git-ignored). Keep `.secrets/phonelock.keystore` safe: updates must be signed with the same key.
 
 Debug builds are signed with the committed debug-only key in `keystore/debug.keystore` (passwords `android`), never the release key. A debug build cannot update over a release one, or the reverse, without an uninstall, and Maps shows only where the Maps key also allows the debug certificate.
 
-The unit tests run with the same Gradle: `:lock:testDebugUnitTest :companion:testGithubDebugUnitTest`.
+## Checks
+
+The root `package.json` holds the entry points. Gradle tasks go through `tools/gradle`, which runs the wrapper under a memory cap (`PHONELOCK_GRADLE_MEMORY`, default 4G, no swap) with one worker; check `free -m` first. In CI it runs the wrapper directly.
+
+| Command | Proves | Does not prove |
+| --- | --- | --- |
+| `npm run validate` | Everything below, as CI runs it on every push and pull request | Device behaviour or the protocol path |
+| `npm run format:check` | Kotlin, Java and Gradle sources match the Spotless format (`npm run format` rewrites them) | Behaviour |
+| `npm run lint` | Android lint passes for the lock app and both parent-app flavours (debug) | Runtime behaviour |
+| `npm run test` | The JVM unit tests pass (emergency numbers, screen guard, usage report, SPAKE2) | Device behaviour |
+| `npm run check:l10n` | Every catalog in both apps has the same keys, placeholders and plurals as English | That the translations read well |
+| `npm run verify:android` | Debug builds of the lock app and both parent-app flavours compile | Release signing |
+| `npm run package:android` | Release APKs and the Play bundle build and sign (needs `.secrets/`) | That they install or run |
+| `npm run install:android` | Installs the debug parent app on the connected phone | Anything on the child's phone |
+
+`tools/test-remote.sh` is a manual check against a paired phone and is not part of `validate`; its header says what a pass looks like.
+
+### Lint baseline
+
+Lint issues already in the code when lint joined `validate` are recorded in `lock/lint-baseline.xml` and `companion/lint-baseline.xml`, so only new issues fail. The baseline only shrinks: fix or deliberately suppress an entry (with a comment saying why), then regenerate it with `tools/gradle :lock:updateLintBaselineDebug :companion:updateLintBaselineGithubDebug`. Open work, largest first:
+
+- **MissingPermission** (lock app): calls that rely on permissions the lock app holds as device owner or checks at runtime; each needs a check or a reasoned suppression.
+- **WrongConstant** (lock app): user restriction keys and a Do Not Disturb filter passed as values lint doesn't recognise.
+- **GestureBackNavigation** (lock app): `onBackPressed` overrides that back gestures no longer call; move to `OnBackPressedDispatcher`.
+- **QueryAllPackagesPermission** (lock app): needed by a launcher that lists every app; suppress with that reason, and justify it if the lock app is ever submitted to a store.
+- The parent app's 5 errors and both apps' warnings (StaticFieldLeak, UseKtx, ApplySharedPref and others): see the baseline files.
 
 ## Hub
 

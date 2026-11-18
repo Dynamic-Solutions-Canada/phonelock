@@ -1,0 +1,22 @@
+{
+  "name": "phonelock",
+  "private": true,
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "packageManager": "npm@11.19.1",
+  "engines": {
+    "node": "24.22.3",
+    "npm": "11.19.1"
+  },
+  "scripts": {
+    "verify:android": "tools/gradle :lock:assembleDebug :companion:assembleGithubDebug :companion:assemblePlayDebug",
+    "build:android": "tools/gradle :lock:assembleDebug :companion:assembleGithubDebug",
+    "package:android": "tools/gradle :lock:assembleRelease :companion:assembleGithubRelease :companion:bundlePlayRelease",
+    "install:android": "adb install -r companion/build/outputs/apk/github/debug/companion-github-debug.apk",
+    "format": "tools/gradle spotlessApply",
+    "format:check": "tools/gradle spotlessCheck",
+    "lint": "tools/gradle :lock:lintDebug :companion:lintGithubDebug :companion:lintPlayDebug",
+    "test": "tools/gradle :lock:testDebugUnitTest :companion:testGithubDebugUnitTest :companion:testPlayDebugUnitTest",
+    "check:l10n": "python3 tools/check-l10n.py",
+    "validate": "npm run format:check && npm run lint && npm run test && npm run check:l10n && npm run verify:android"
+  }
+}

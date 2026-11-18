@@ -52,6 +52,9 @@ android {
     // Every language must have every string, and the same placeholders, before a release builds
     // (release builds run these checks; see docs/development.md "Languages").
     lint {
+        // Issues already in the code when lint joined the gate (validate); new issues fail. Shrink it, never
+        // grow it: regenerate with updateLintBaseline only after fixing entries.
+        baseline = file('lint-baseline.xml')
         fatal 'MissingTranslation', 'ExtraTranslation', 'StringFormatInvalid', 'StringFormatCount',
                 'StringFormatMatches', 'MissingQuantity', 'UnusedQuantity'
     }

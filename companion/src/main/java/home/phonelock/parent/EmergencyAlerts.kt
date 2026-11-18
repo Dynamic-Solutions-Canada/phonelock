@@ -1,5 +1,6 @@
 package home.phonelock.parent
 
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -177,6 +178,10 @@ object EmergencyAlerts {
     // ---------- notification ----------
 
     /** The alert's notification: full screen while ringing (where allowed), with I'm on it / Silence. */
+    // The Play build has no USE_FULL_SCREEN_INTENT on purpose (Play allows it only for calling and alarm
+    // apps; see companion/src/github/AndroidManifest.xml). There Android ignores the full-screen intent and
+    // shows the alarm notification instead, so the call is safe without the permission.
+    @SuppressLint("MissingPermission")
     private fun notify(a: Sos) {
         val nm = app.getSystemService(NotificationManager::class.java)
         nm.createNotificationChannel(

@@ -1,0 +1,44 @@
+name: CI
+
+# The push and pull request gate: the same `npm run validate` developers run locally (CI-1).
+# No emulator job: the tests are JVM unit tests, and device behaviour is checked on a phone before a
+# release (D-052).
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    # Cold Gradle caches dominate the first run; later runs are much shorter.
+    timeout-minutes: 45
+    env:
+      # tools/gradle runs ./gradlew directly when CI is set (the runner has the memory).
+      CI: true
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          # No lockfile (no dependencies), so nothing to cache; setup-node would fail looking for one.
+          package-manager-cache: false
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          # Must match the JDK in docs/development.md and the Java 17 target in both build.gradle files.
+          java-version: '17'
+      - uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
+      # Explicit, so a runner image without the platform can't fail the build. Must match compileSdk in
+      # companion/build.gradle and lock/build.gradle.
+      - name: Install SDK platform 37
+        run: sdkmanager "platforms;android-37"
+      - name: Validate
+        run: npm run validate

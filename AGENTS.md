@@ -24,6 +24,7 @@ This repo follows the shared standards at https://github.com/Dynamic-Solutions-C
 | Languages | `res/xml/locales_config.xml` and `res/values*/` in each app |
 | Hub server | `server/` (see `server/README.md`) |
 | Release, hub deploy, adb and test scripts | `tools/` |
+| Command entry points, the capped Gradle runner and the translation check | `package.json`, `tools/gradle`, `tools/check-l10n.py` |
 | Play listing drafts and open questions | `play/` |
 
 ## Behaviour
@@ -48,12 +49,13 @@ This repo follows the shared standards at https://github.com/Dynamic-Solutions-C
 
 | Command | Proves | Does not prove |
 | --- | --- | --- |
+| `npm run validate` | Format, lint, unit tests, the translation check and debug builds, as CI runs it | Device behaviour or the protocol path |
+| `npm run verify:android` | Debug builds of the lock app and both parent-app flavours compile, with no secrets needed | Release signing |
+| `npm run test` | The JVM unit tests pass | Device behaviour |
 | `./build.sh` | Both release APKs compile, pass the translation lint, and are signed (needs the signing files in `.secrets/`) | That they install or run |
-| `:lock:assembleDebug :companion:assembleGithubDebug`, with the Gradle `build.sh` runs | Debug builds compile, with no secrets needed | Release lint or signing |
-| `:lock:testDebugUnitTest :companion:testGithubDebugUnitTest`, with the same Gradle | The JUnit tests pass (emergency numbers, screen guard, usage report, adb) | Device behaviour |
-| `tools/test-remote.sh` | A paired phone answers encrypted commands over the topic | Anything without a paired test phone |
+| `tools/test-remote.sh` | A paired phone answers encrypted commands over the topic (manual, not in `validate`) | Anything without a paired test phone |
 
-Cap memory for every build, as `tools/publish-release.sh` does: one worker and in-process Kotlin.
+Gradle tasks go through `tools/gradle`, which caps memory locally; the full list and what each proves is under **Checks** in `docs/development.md`.
 
 ## Release
 
@@ -81,4 +83,5 @@ Cap memory for every build, as `tools/publish-release.sh` does: one worker and i
 | User-visible features or setup steps | `README.md` |
 | Interface text or languages | Every `values*/strings*.xml` in that app; Languages in `docs/development.md` and the README |
 | A dependency added | Its `approved:` comment, and `PRIVACY.md` if it talks to a network |
+| A check, test suite or build command added | `package.json` (and `validate` when it is static), **Checks** in `docs/development.md`, Commands above |
 | Hub configuration or deployment | `server/README.md` |

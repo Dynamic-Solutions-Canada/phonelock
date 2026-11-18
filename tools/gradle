@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# Run the committed Gradle wrapper with the given tasks, from any directory.
+#
+# In CI (CI is set) it runs ./gradlew as is: the runner installs the JDK and SDK and has the memory.
+# Locally it runs under a hard memory cap with no swap (PHONELOCK_GRADLE_MEMORY, default 4G), one worker
+# and the Kotlin compiler in-process, the settings that build reliably on a shared machine. Check `free -m`
+# first and keep the cap below what is free.
+# It exits with Gradle's status, or with a clear error when the Android SDK or systemd-run is missing.
+set -euo pipefail
+
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$repo_root"
+
+if [ "$#" -eq 0 ]; then
+  echo "usage: tools/gradle <task> [task...]" >&2
+  exit 2
+fi
+
+if [ -n "${CI:-}" ]; then
+  exec ./gradlew "$@"
+fi
+
+# The SDK location: ANDROID_HOME when set, else ~/android-sdk (where build.sh has always looked).
+export ANDROID_HOME="${ANDROID_HOME:-$HOME/android-sdk}"
+if [ ! -d "$ANDROID_HOME/platforms" ]; then
+  echo "tools/gradle: no Android SDK at $ANDROID_HOME. Set ANDROID_HOME to your SDK." >&2
+  exit 1
+fi
+if ! command -v systemd-run >/dev/null 2>&1; then
+  echo "tools/gradle: systemd-run is not available to cap memory. Set CI=1 to run ./gradlew without a cap." >&2
+  exit 1
+fi
+
+memory="${PHONELOCK_GRADLE_MEMORY:-4G}"
+# The Gradle heap stays well inside the cap, so Gradle fails with an error instead of being killed.
+exec systemd-run --user --scope -q -p MemoryMax="$memory" -p MemorySwapMax=0 \
+  env GRADLE_OPTS=-Xmx512m ./gradlew --no-daemon --max-workers=1 \
+  -Dorg.gradle.jvmargs=-Xmx2g -Pkotlin.compiler.execution.strategy=in-process "$@"

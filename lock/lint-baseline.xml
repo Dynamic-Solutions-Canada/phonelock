@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 9.5.1" type="baseline" client="gradle" dependencies="false" name="AGP (9.5.1)" variant="all" version="9.5.1">
+
+    <issue
+        id="MissingPermission"
+        message="Call requires permission which may be rejected by user: code should explicitly check to see if permission is available (with `checkPermission`) or explicitly handle a potential `SecurityException`"
+        errorLine1="                    &amp;&amp; d.getBondState() != BluetoothDevice.BOND_BONDED) {"
+        errorLine2="                       ~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/home/phonelock/ConnectionsActivity.java"
+            line="86"
+            column="24"/>
+    </issue>
+
+    <issue
+        id="MissingPermission"
+        message="Call requires permission which may be rejected by user: code should explicitly check to see if permission is available (with `checkPermission`) or explicitly handle a potential `SecurityException`"
+        errorLine1="                    c.getSystemService(SubscriptionManager.class).getActiveSubscriptionInfoList();"
+        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/home/phonelock/DeviceWatch.java"
+            line="130"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="MissingPermission"
+        message="Call requires permission which may be rejected by user: code should explicitly check to see if permission is available (with `checkPermission`) or explicitly handle a potential `SecurityException`"
+        errorLine1="            String n = sm != null ? sm.getPhoneNumber(sub) : null;"
+        errorLine2="                                    ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/home/phonelock/Emergency.java"
+            line="278"
+            column="37"/>
+    </issue>
+
+    <issue
+        id="MissingPermission"
+        message="Call requires permission which may be rejected by user: code should explicitly check to see if permission is available (with `checkPermission`) or explicitly handle a potential `SecurityException`"
+        errorLine1="            if ((n == null || n.isEmpty()) &amp;&amp; tm != null) n = tm.getLine1Number();"
+        errorLine2="                                                              ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/home/phonelock/Emergency.java"
+            line="279"
+            column="63"/>
+    </issue>
+
+    <issue
+        id="MissingPermission"
+        message="Call requires permission which may be rejected by user: code should explicitly check to see if permission is available (with `checkPermission`) or explicitly handle a potential `SecurityException`"
+        errorLine1="        Map&lt;Integer, List&lt;EmergencyNumber>> bySim = tm.getEmergencyNumberList();"
+        errorLine2="                                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/home/phonelock/EmergencyNumbers.java"
+            line="132"
+            column="53"/>
+    </issue>
+
+    <issue
+        id="MissingPermission"
+        message="Call requires permission which may be rejected by user: code should explicitly check to see if permission is available (with `checkPermission`) or explicitly handle a potential `SecurityException`"
+        errorLine1="            for (WifiConfiguration w : wifi(c).getConfiguredNetworks()) out.add(unquote(w.SSID));"
+        errorLine2="                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/home/phonelock/WifiControl.java"
+            line="122"
+            column="40"/>
+    </issue>
+
+    <issue
+        id="MissingPermission"
+        message="Call requires permission which may be rejected by user: code should explicitly check to see if permission is available (with `checkPermission`) or explicitly handle a potential `SecurityException`"
+        errorLine1="            for (WifiConfiguration w : wifi(c).getConfiguredNetworks()) {"
+        errorLine2="                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/home/phonelock/WifiControl.java"
+            line="131"
+            column="40"/>
+    </issue>
+
+    <issue
+        id="MissingPermission"
+        message="Call requires permission which may be rejected by user: code should explicitly check to see if permission is available (with `checkPermission`) or explicitly handle a potential `SecurityException`"
+        errorLine1="            for (ScanResult r : wifi(c).getScanResults()) {"
+        errorLine2="                                ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/home/phonelock/WifiControl.java"
+            line="175"
+            column="33"/>
+    </issue>
+
+    <issue
+        id="ScopedStorage"
+        message="The Google Play store has a policy that limits usage of MANAGE_EXTERNAL_STORAGE"
+        errorLine1="    &lt;uses-permission android:name=&quot;android.permission.MANAGE_EXTERNAL_STORAGE&quot; />"
+        errorLine2="                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/AndroidManifest.xml"
+            line="37"
+            column="36"/>
+    </issue>
+
+    <issue
+        id="GestureBackNavigation"
+        message="`onBackPressed` is no longer called for back gestures; migrate to AndroidX&apos;s backward compatible `OnBackPressedDispatcher`"
+        errorLine1="    public void onBackPressed() {"
+        errorLine2="                ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/home/phonelock/HomeActivity.java"
+            line="511"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="GestureBackNavigation"
+        message="`onBackPressed` is no longer called for back gestures; migrate to AndroidX&apos;s backward compatible `OnBackPressedDispatcher`"
+        errorLine1="    public void onBackPressed() {"
+        errorLine2="                ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/home/phonelock/RingActivity.java"
+            line="99"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="ApplySharedPref"
+        message="Consider using `apply()` instead; `commit` writes its data to persistent storage immediately, whereas `apply` will handle it in the background"
+        errorLine1="                .commit();"
+        errorLine2="                 ~~~~~~~~">
+        <location
+            file="src/main/java/home/phonelock/Emergency.java"
+            line="120"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="ApplySharedPref"
+        message="Consider using `apply()` instead; `commit` writes its data to persistent storage immediately, whereas `apply` will handle it in the background"
+        errorLine1="            prefs(c).edit().putString(&quot;sos_queue&quot;, q.toString()).commit();"
+        errorLine2="                                                                 ~~~~~~~~">
+        <location
+            file="src/main/java/home/phonelock/Emergency.java"
+            line="223"
+            column="66"/>
+    </issue>
+
+    <issue
+        id="ApplySharedPref"
+        message="Consider using `apply()` instead; `commit` writes its data to persistent storage immediately, whereas `apply` will handle it in the background"
+        errorLine1="            prefs(c).edit().putString(&quot;sos_queue&quot;, rest.toString()).commit();"
+        errorLine2="                                                                    ~~~~~~~~">
+        <location
+            file="src/main/java/home/phonelock/Emergency.java"
+            line="259"
+            column="69"/>
+    </issue>
+
+    <issue
+        id="ApplySharedPref"
+        message="Consider using `apply()` instead; `commit` writes its data to persistent storage immediately, whereas `apply` will handle it in the background"
+        errorLine1="                    .commit();"
+        errorLine2="                     ~~~~~~~~">
+        <location
+            file="src/main/java/home/phonelock/LocationLog.java"
+            line="303"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="ApplySharedPref"
+        message="Consider using `apply()` instead; `commit` writes its data to persistent storage immediately, whereas `apply` will handle it in the background"
+        errorLine1="                p.edit().putString(&quot;outbox_alerts&quot;, a.toString()).commit();"
+        errorLine2="                                                                  ~~~~~~~~">
+        <location
+            file="src/main/java/home/phonelock/Outbox.java"
+            line="57"
+            column="67"/>
+    </issue>
+
+    <issue
+        id="ApplySharedPref"
+        message="Consider using `apply()` instead; `commit` writes its data to persistent storage immediately, whereas `apply` will handle it in the background"
+        errorLine1="            p.edit().putString(&quot;outbox_alerts&quot;, a.toString()).commit();"
+        errorLine2="                                                              ~~~~~~~~">
+        <location
+            file="src/main/java/home/phonelock/Outbox.java"
+            line="160"
+            column="63"/>
+    </issue>
+
+    <issue
+        id="ApplySharedPref"
+        message="Consider using `apply()` instead; `commit` writes its data to persistent storage immediately, whereas `apply` will handle it in the background"
+        errorLine1="        prefs(c).edit().putLong(&quot;parent_until&quot;, untilMs).commit();"
+        errorLine2="                                                         ~~~~~~~~">
+        <location
+            file="src/main/java/home/phonelock/Policy.java"
+            line="241"
+            column="58"/>
+    </issue>
+
+    <issue
+        id="ApplySharedPref"
+        message="Consider using `apply()` instead; `commit` writes its data to persistent storage immediately, whereas `apply` will handle it in the background"
+        errorLine1="                .commit();"
+        errorLine2="                 ~~~~~~~~">
+        <location
+            file="src/main/java/home/phonelock/Schedule.java"
+            line="225"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="ApplySharedPref"
+        message="Consider using `apply()` instead; `commit` writes its data to persistent storage immediately, whereas `apply` will handle it in the background"
+        errorLine1="                        .commit();"
+        errorLine2="                         ~~~~~~~~">
+        <location
+            file="src/main/java/home/phonelock/Updater.java"
+            line="221"
+            column="26"/>
+    </issue>
+
+    <issue
+        id="InlinedApi"
+        message="Field requires API level 34 (current min is 33): `android.content.pm.ServiceInfo#FOREGROUND_SERVICE_TYPE_SPECIAL_USE`"
+        errorLine1="        startForeground(1, n, ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE);"
+        errorLine2="                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/home/phonelock/RemoteService.java"
+            line="61"
+            column="31"/>
+    </issue>
+
+    <issue
+        id="OldTargetApi"
+        message="Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the `android.os.Build.VERSION_CODES` javadoc for details."
+        errorLine1="        targetSdk 36"
+        errorLine2="        ~~~~~~~~~~~~">
+        <location
+            file="build.gradle"
+            line="17"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="WrongConstant"
+        message="Must be one of: UserManager.ALLOW_PARENT_PROFILE_APP_LINKING, UserManager.DISALLOW_ADD_MANAGED_PROFILE, UserManager.DISALLOW_ADD_PRIVATE_PROFILE, UserManager.DISALLOW_ADD_USER, UserManager.DISALLOW_ADD_WIFI_CONFIG, UserManager.DISALLOW_ADJUST_VOLUME, UserManager.DISALLOW_AIRPLANE_MODE, UserManager.DISALLOW_AMBIENT_DISPLAY, UserManager.DISALLOW_APPS_CONTROL, UserManager.DISALLOW_ASSIST_CONTENT, UserManager.DISALLOW_AUTOFILL, UserManager.DISALLOW_BLUETOOTH, UserManager.DISALLOW_BLUETOOTH_SHARING, UserManager.DISALLOW_CAMERA_TOGGLE, UserManager.DISALLOW_CELLULAR_2G, UserManager.DISALLOW_CHANGE_NEAR_FIELD_COMMUNICATION_RADIO, UserManager.DISALLOW_CHANGE_WIFI_STATE, UserManager.DISALLOW_CONFIG_BLUETOOTH, UserManager.DISALLOW_CONFIG_BRIGHTNESS, UserManager.DISALLOW_CONFIG_CELL_BROADCASTS, UserManager.DISALLOW_CONFIG_CREDENTIALS, UserManager.DISALLOW_CONFIG_DATE_TIME, UserManager.DISALLOW_CONFIG_DEFAULT_APPS, UserManager.DISALLOW_CONFIG_LOCALE, UserManager.DISALLOW_CONFIG_LOCATION, UserManager.DISALLOW_CONFIG_MOBILE_NETWORKS, UserManager.DISALLOW_CONFIG_PRIVATE_DNS, UserManager.DISALLOW_CONFIG_SCREEN_TIMEOUT, UserManager.DISALLOW_CONFIG_TETHERING, UserManager.DISALLOW_CONFIG_VPN, UserManager.DISALLOW_CONFIG_WIFI, UserManager.DISALLOW_CONTENT_CAPTURE, UserManager.DISALLOW_CONTENT_SUGGESTIONS, UserManager.DISALLOW_CREATE_WINDOWS, UserManager.DISALLOW_CROSS_PROFILE_COPY_PASTE, UserManager.DISALLOW_DATA_ROAMING, UserManager.DISALLOW_DEBUGGING_FEATURES, UserManager.DISALLOW_FACTORY_RESET, UserManager.DISALLOW_FUN, UserManager.DISALLOW_GRANT_ADMIN, UserManager.DISALLOW_TASK_CONTINUITY_HANDOFF, UserManager.DISALLOW_INSTALL_APPS, UserManager.DISALLOW_INSTALL_UNKNOWN_SOURCES, UserManager.DISALLOW_INSTALL_UNKNOWN_SOURCES_GLOBALLY, UserManager.DISALLOW_MICROPHONE_TOGGLE, UserManager.DISALLOW_MODIFY_ACCOUNTS, UserManager.DISALLOW_MOUNT_PHYSICAL_MEDIA, UserManager.DISALLOW_NEAR_FIELD_COMMUNICATION_RADIO, UserManager.DISALLOW_NETWORK_RESET, UserManager.DISALLOW_OUTGOING_BEAM, UserManager.DISALLOW_OUTGOING_CALLS, UserManager.DISALLOW_PRINTING, UserManager.DISALLOW_REMOVE_MANAGED_PROFILE, UserManager.DISALLOW_REMOVE_USER, UserManager.DISALLOW_SAFE_BOOT, UserManager.DISALLOW_SET_USER_ICON, UserManager.DISALLOW_SET_WALLPAPER, UserManager.DISALLOW_SHARE_INTO_MANAGED_PROFILE, UserManager.DISALLOW_SHARE_LOCATION, UserManager.DISALLOW_SHARING_ADMIN_CONFIGURED_WIFI, UserManager.DISALLOW_SIM_GLOBALLY, UserManager.DISALLOW_SMS, UserManager.DISALLOW_SYSTEM_ERROR_DIALOGS, UserManager.DISALLOW_THREAD_NETWORK, UserManager.DISALLOW_ULTRA_WIDEBAND_RADIO, UserManager.DISALLOW_UNIFIED_PASSWORD, UserManager.DISALLOW_UNINSTALL_APPS, UserManager.DISALLOW_UNMUTE_MICROPHONE, UserManager.DISALLOW_USB_FILE_TRANSFER, UserManager.DISALLOW_USER_SWITCH, UserManager.DISALLOW_WIFI_DIRECT, UserManager.DISALLOW_WIFI_TETHERING, UserManager.ENSURE_VERIFY_APPS, UserManager.KEY_RESTRICTIONS_PENDING"
+        errorLine1="            Policy.dpm(c).clearUserRestriction(Policy.admin(c), &quot;no_uninstall_apps&quot;);"
+        errorLine2="                                                                ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/home/phonelock/AppRemover.java"
+            line="51"
+            column="65"/>
+    </issue>
+
+    <issue
+        id="WrongConstant"
+        message="Must be one of: UserManager.ALLOW_PARENT_PROFILE_APP_LINKING, UserManager.DISALLOW_ADD_MANAGED_PROFILE, UserManager.DISALLOW_ADD_PRIVATE_PROFILE, UserManager.DISALLOW_ADD_USER, UserManager.DISALLOW_ADD_WIFI_CONFIG, UserManager.DISALLOW_ADJUST_VOLUME, UserManager.DISALLOW_AIRPLANE_MODE, UserManager.DISALLOW_AMBIENT_DISPLAY, UserManager.DISALLOW_APPS_CONTROL, UserManager.DISALLOW_ASSIST_CONTENT, UserManager.DISALLOW_AUTOFILL, UserManager.DISALLOW_BLUETOOTH, UserManager.DISALLOW_BLUETOOTH_SHARING, UserManager.DISALLOW_CAMERA_TOGGLE, UserManager.DISALLOW_CELLULAR_2G, UserManager.DISALLOW_CHANGE_NEAR_FIELD_COMMUNICATION_RADIO, UserManager.DISALLOW_CHANGE_WIFI_STATE, UserManager.DISALLOW_CONFIG_BLUETOOTH, UserManager.DISALLOW_CONFIG_BRIGHTNESS, UserManager.DISALLOW_CONFIG_CELL_BROADCASTS, UserManager.DISALLOW_CONFIG_CREDENTIALS, UserManager.DISALLOW_CONFIG_DATE_TIME, UserManager.DISALLOW_CONFIG_DEFAULT_APPS, UserManager.DISALLOW_CONFIG_LOCALE, UserManager.DISALLOW_CONFIG_LOCATION, UserManager.DISALLOW_CONFIG_MOBILE_NETWORKS, UserManager.DISALLOW_CONFIG_PRIVATE_DNS, UserManager.DISALLOW_CONFIG_SCREEN_TIMEOUT, UserManager.DISALLOW_CONFIG_TETHERING, UserManager.DISALLOW_CONFIG_VPN, UserManager.DISALLOW_CONFIG_WIFI, UserManager.DISALLOW_CONTENT_CAPTURE, UserManager.DISALLOW_CONTENT_SUGGESTIONS, UserManager.DISALLOW_CREATE_WINDOWS, UserManager.DISALLOW_CROSS_PROFILE_COPY_PASTE, UserManager.DISALLOW_DATA_ROAMING, UserManager.DISALLOW_DEBUGGING_FEATURES, UserManager.DISALLOW_FACTORY_RESET, UserManager.DISALLOW_FUN, UserManager.DISALLOW_GRANT_ADMIN, UserManager.DISALLOW_TASK_CONTINUITY_HANDOFF, UserManager.DISALLOW_INSTALL_APPS, UserManager.DISALLOW_INSTALL_UNKNOWN_SOURCES, UserManager.DISALLOW_INSTALL_UNKNOWN_SOURCES_GLOBALLY, UserManager.DISALLOW_MICROPHONE_TOGGLE, UserManager.DISALLOW_MODIFY_ACCOUNTS, UserManager.DISALLOW_MOUNT_PHYSICAL_MEDIA, UserManager.DISALLOW_NEAR_FIELD_COMMUNICATION_RADIO, UserManager.DISALLOW_NETWORK_RESET, UserManager.DISALLOW_OUTGOING_BEAM, UserManager.DISALLOW_OUTGOING_CALLS, UserManager.DISALLOW_PRINTING, UserManager.DISALLOW_REMOVE_MANAGED_PROFILE, UserManager.DISALLOW_REMOVE_USER, UserManager.DISALLOW_SAFE_BOOT, UserManager.DISALLOW_SET_USER_ICON, UserManager.DISALLOW_SET_WALLPAPER, UserManager.DISALLOW_SHARE_INTO_MANAGED_PROFILE, UserManager.DISALLOW_SHARE_LOCATION, UserManager.DISALLOW_SHARING_ADMIN_CONFIGURED_WIFI, UserManager.DISALLOW_SIM_GLOBALLY, UserManager.DISALLOW_SMS, UserManager.DISALLOW_SYSTEM_ERROR_DIALOGS, UserManager.DISALLOW_THREAD_NETWORK, UserManager.DISALLOW_ULTRA_WIDEBAND_RADIO, UserManager.DISALLOW_UNIFIED_PASSWORD, UserManager.DISALLOW_UNINSTALL_APPS, UserManager.DISALLOW_UNMUTE_MICROPHONE, UserManager.DISALLOW_USB_FILE_TRANSFER, UserManager.DISALLOW_USER_SWITCH, UserManager.DISALLOW_WIFI_DIRECT, UserManager.DISALLOW_WIFI_TETHERING, UserManager.ENSURE_VERIFY_APPS, UserManager.KEY_RESTRICTIONS_PENDING"
+        errorLine1="                dpm.clearUserRestriction(a, &quot;no_config_private_dns&quot;);"
+        errorLine2="                                            ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/home/phonelock/ConfigReceiver.java"
+            line="77"
+            column="45"/>
+    </issue>
+
+    <issue
+        id="WrongConstant"
+        message="Must be one of: NotificationManager.INTERRUPTION_FILTER_NONE, NotificationManager.INTERRUPTION_FILTER_PRIORITY, NotificationManager.INTERRUPTION_FILTER_ALARMS, NotificationManager.INTERRUPTION_FILTER_ALL, NotificationManager.INTERRUPTION_FILTER_UNKNOWN"
+        errorLine1="        if (nm.isNotificationPolicyAccessGranted()) nm.setInterruptionFilter(savedFilter);"
+        errorLine2="                                                                             ~~~~~~~~~~~">
+        <location
+            file="src/main/java/home/phonelock/Ringer.java"
+            line="176"
+            column="78"/>
+    </issue>
+
+    <issue
+        id="AppBundleLocaleChanges"
+        message="Found dynamic locale changes, but did not find corresponding Play Core library calls for downloading languages and splitting by language is not disabled in the `bundle` configuration"
+        errorLine1="        conf.setLocales(locales);"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/home/phonelock/Language.java"
+            line="59"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="PluralsCandidate"
+        message="Formatting %d followed by words (&quot;downloaded&quot;): This should probably be a plural rather than a string"
+        errorLine1="    &lt;string name=&quot;tools_update_downloaded&quot;>Version %1$d downloaded; it installs the next time the screen is off&lt;/string>"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings_tools.xml"
+            line="123"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="HardwareIds"
+        message="Using `getLine1Number` to get device identifiers is not recommended"
+        errorLine1="            if ((n == null || n.isEmpty()) &amp;&amp; tm != null) n = tm.getLine1Number();"
+        errorLine2="                                                              ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/home/phonelock/Emergency.java"
+            line="279"
+            column="63"/>
+    </issue>
+
+    <issue
+        id="DataExtractionRules"
+        message="The attribute `android:allowBackup` is deprecated from Android 12 and may be removed in future versions. Consider adding the attribute `android:dataExtractionRules` specifying an `@xml` resource which configures backups and device transfers on Android 12 and higher."
+        errorLine1="        android:allowBackup=&quot;false&quot;>"
+        errorLine2="                             ~~~~~">
+        <location
+            file="src/main/AndroidManifest.xml"
+            line="51"
+            column="30"/>
+    </issue>
+
+    <issue
+        id="QueryAllPackagesPermission"
+        message="A `&lt;queries>` declaration should generally be used instead of QUERY_ALL_PACKAGES; see https://g.co/dev/packagevisibility for details"
+        errorLine1="    &lt;uses-permission android:name=&quot;android.permission.QUERY_ALL_PACKAGES&quot; />"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/AndroidManifest.xml"
+            line="6"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="StaticFieldLeak"
+        message="Do not place Android context classes in static fields; this is a memory leak"
+        errorLine1="    private static Context appCtx;"
+        errorLine2="            ~~~~~~">
+        <location
+            file="src/main/java/home/phonelock/Ringer.java"
+            line="35"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.ok` appears to be unused"
+        errorLine1="    &lt;string name=&quot;ok&quot;>OK&lt;/string>"
+        errorLine2="            ~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="13"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.close` appears to be unused"
+        errorLine1="    &lt;string name=&quot;close&quot;>Close&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="15"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ClickableViewAccessibility"
+        message="Custom view ``TextClock`` has `setOnTouchListener` called on it but does not override `performClick`"
+        errorLine1="        clock.setOnTouchListener(new View.OnTouchListener() {"
+        errorLine2="        ^">
+        <location
+            file="src/main/java/home/phonelock/HomeActivity.java"
+            line="157"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="ClickableViewAccessibility"
+        message="`onTouch` should call `View#performClick` when a click is detected"
+        errorLine1="            public boolean onTouch(View v, MotionEvent e) {"
+        errorLine2="                           ~~~~~~~">
+        <location
+            file="src/main/java/home/phonelock/HomeActivity.java"
+            line="161"
+            column="28"/>
+    </issue>
+
+    <issue
+        id="ClickableViewAccessibility"
+        message="Custom view ``TextView`` has `setOnTouchListener` called on it but does not override `performClick`"
+        errorLine1="        b.setOnTouchListener((v, e) -> {"
+        errorLine2="        ^">
+        <location
+            file="src/main/java/home/phonelock/HomeActivity.java"
+            line="377"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="ClickableViewAccessibility"
+        message="`onTouch` lambda should call `View#performClick` when a click is detected"
+        errorLine1="        b.setOnTouchListener((v, e) -> {"
+        errorLine2="                             ^">
+        <location
+            file="src/main/java/home/phonelock/HomeActivity.java"
+            line="377"
+            column="30"/>
+    </issue>
+
+</issues>

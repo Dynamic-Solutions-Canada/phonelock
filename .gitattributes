@@ -6,3 +6,6 @@
 *.webp binary
 *.jar binary
 *.keystore binary
+
+# Windows batch files need CRLF.
+*.bat eol=crlf
