@@ -8,7 +8,7 @@
      allow for a while = permitir un rato; request = solicitud; safe list = lista de confianza; pairing code (between parents) =
      código de vinculación; Wi-Fi pairing code (Android) = código de sincronización; "Ask for an app" (child's button) = "Pedir una aplicación". -->
 <resources>
-    <string name="app_name">Phone Lock</string>
+    <string name="app_name">PhoneLock</string>
 
     <!-- Common buttons and labels: use these rather than adding another copy -->
     <string name="cancel">Cancelar</string>

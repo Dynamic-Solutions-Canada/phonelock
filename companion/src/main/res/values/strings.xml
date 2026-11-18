@@ -3,7 +3,7 @@
      strings_<area>.xml beside this file; every file here needs the same file, with the same names, in each
      values-<language> folder. Names, app labels and anything typed by a person are never translated. -->
 <resources>
-    <string name="app_name">Phone Lock</string>
+    <string name="app_name">PhoneLock</string>
 
     <!-- Common buttons and labels: use these rather than adding another copy -->
     <string name="cancel">Cancel</string>

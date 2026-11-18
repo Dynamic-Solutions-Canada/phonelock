@@ -30,7 +30,7 @@ The SOS screen shows and dials the local emergency number from Android's emergen
 ./build.sh            # -> lock/build/outputs/apk/release/lock-release.apk
 ```
 
-Needs JDK 17, Android SDK (`~/android-sdk`, platform 36, build-tools 36) and Gradle 8.11.1 in `~/tools`.
+Needs JDK 17, the Android SDK in `~/android-sdk` with the platform set by `compileSdk` in `companion/build.gradle`, and the Gradle version that `build.sh` runs from `~/tools`.
 Signing key and secrets live in `secrets/` (git-ignored). Keep `secrets/phonelock.keystore` safe: updates must be
 signed with the same key.
 Debug builds are signed with the committed debug-only key in `keystore/debug.keystore` (passwords `android`), never the release key. A debug build cannot update over a release one, or the reverse, without an uninstall, and Maps shows only where the Maps key also allows the debug certificate.

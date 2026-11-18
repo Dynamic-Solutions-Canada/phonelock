@@ -19,7 +19,7 @@ import java.util.Locale
 /**
  * This app's language: the device's own, or one the parent picks. Stored by Android as the app's per-app
  * language (Android 13+, which this app requires), so the choice here and the one in Android's settings
- * (Apps > Phone Lock > Language) are the same setting. Android restarts the screens when it changes.
+ * (Apps > PhoneLock > Language) are the same setting. Android restarts the screens when it changes.
  */
 object AppLanguage {
     /**

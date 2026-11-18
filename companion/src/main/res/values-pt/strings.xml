@@ -6,7 +6,7 @@
      parent mode = modo dos pais; parent PIN = PIN dos pais; limited hours = horário limitado; bedtime = hora de dormir;
      normal hours = horário normal; allow = permitir; request = pedido; "Ask for an app" (child's button) = "Pedir um app". -->
 <resources>
-    <string name="app_name">Phone Lock</string>
+    <string name="app_name">PhoneLock</string>
 
     <!-- Common buttons and labels: use these rather than adding another copy -->
     <string name="cancel">Cancelar</string>

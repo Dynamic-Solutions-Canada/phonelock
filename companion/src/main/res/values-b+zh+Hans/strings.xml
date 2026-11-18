@@ -6,7 +6,7 @@
      limited hours = 限时时段; bedtime = 就寝时间; normal hours = 正常时段; allow = 允许; request = 请求;
      "Ask for an app" (child's button) = “申请应用”. -->
 <resources>
-    <string name="app_name">Phone Lock</string>
+    <string name="app_name">PhoneLock</string>
 
     <!-- Common buttons and labels: use these rather than adding another copy -->
     <string name="cancel">取消</string>

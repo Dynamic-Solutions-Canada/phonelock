@@ -7,7 +7,7 @@
      allow = 許可; allow for a while = 一時的に許可; request = リクエスト; safe list = 安全リスト;
      "Ask for an app" (child's button) = 「アプリをリクエスト」. Android setting names follow stock Android in Japanese. -->
 <resources>
-    <string name="app_name">Phone Lock</string>
+    <string name="app_name">PhoneLock</string>
 
     <!-- Common buttons and labels: use these rather than adding another copy -->
     <string name="cancel">キャンセル</string>
