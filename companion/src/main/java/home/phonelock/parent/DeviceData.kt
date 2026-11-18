@@ -75,7 +75,7 @@ data class FileEntry(val name: String, val dir: Boolean, val size: Long, val mti
 data class Folder(val path: String, val entries: List<FileEntry>, val error: String? = null, val loading: Boolean = false)
 
 /**
- * Per-device call log, contacts and file browsing for the parent app (see PROTOCOL.md: calls, calllog,
+ * Per-device call log, contacts and file browsing for the parent app (see docs/protocol.md: calls, calllog,
  * contacts, files, file). The call log is kept on this phone so it survives restarts; the rest is
  * fetched when a screen opens.
  */

@@ -6,7 +6,7 @@ Goal: a parent sets up a child's device with the full feature set without knowin
 
 ## What setup has to do
 
-The same steps as `tools/configure-lock.sh` and the README's adb section, driven over adb:
+The same steps as `tools/configure-lock.sh` and the adb section of docs/development.md, driven over adb:
 
 1. Check the device: Android version, and that no accounts are signed in (`dumpsys account`). Becoming device owner refuses otherwise.
 2. Install the lock app (the signed release APK).

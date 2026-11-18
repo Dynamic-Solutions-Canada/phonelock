@@ -502,7 +502,7 @@ object Hub {
                 h.readTimeout = 30_000
                 if (body.length > MAX_INLINE) {
                     // ntfy turns bodies over 4 KB into files the device wouldn't read: send a small "big"
-                    // message carrying this one as an encrypted attachment (see PROTOCOL.md).
+                    // message carrying this one as an encrypted attachment (see docs/protocol.md).
                     val wrapper = msg("big")
                     val blob = Crypto.sealBytes(key, o.toString().toByteArray(), "phonelock/blob/${wrapper.getString("id")}")
                     h.requestMethod = "PUT"

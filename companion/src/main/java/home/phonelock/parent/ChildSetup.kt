@@ -42,9 +42,9 @@ data class SetupRun(
 
 /**
  * Sets up a child's device from this phone over Android's Wireless debugging, doing what
- * `tools/configure-lock.sh` and the README's adb steps do from a computer: install the lock app, make it
- * device owner, pair it with this app, turn on the features that need a one-time grant, then switch
- * debugging off. Works without a factory reset as long as no accounts are signed in on the device.
+ * `tools/configure-lock.sh` and the adb steps in docs/development.md do from a computer: install the
+ * lock app, make it device owner, pair it with this app, turn on the features that need a one-time grant,
+ * then switch debugging off. Works without a factory reset as long as no accounts are signed in on the device.
  *
  * A device that already runs PhoneLock as device owner is "repaired" instead: only the one-time grants are
  * re-applied (e.g. after an update lost one), and its pairing is left alone.

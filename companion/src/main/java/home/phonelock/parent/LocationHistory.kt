@@ -33,7 +33,7 @@ data class Place(
 data class AppSession(val app: String, val label: String, val from: Long, val to: Long)
 
 /**
- * The parents' copy of each device's location log (see PROTOCOL.md, `track`). The device keeps 7 days and
+ * The parents' copy of each device's location log (see docs/protocol.md, `track`). The device keeps 7 days and
  * sends new readings as it takes them; this keeps the same 7 days on the parent's phone, merged by start
  * time, and asks the device for anything newer when the history page opens (covering a parent phone that
  * was off). Addresses are looked up only for rows on screen, and cached in memory.

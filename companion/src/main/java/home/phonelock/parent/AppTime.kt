@@ -14,7 +14,7 @@ import java.util.UUID
 
 /**
  * A daily time limit on one app. [minutes] has one entry per day of the week, Sunday first; -1 means no
- * limit that day. On the wire (PROTOCOL.md `limits`) a limit carries a list of apps and a name, which the
+ * limit that day. On the wire (docs/protocol.md `limits`) a limit carries a list of apps and a name, which the
  * device can treat as a shared group; this app only ever sends one app and no name, and ignores any
  * multi-app limit a device reports (the next edit drops it).
  */
@@ -43,7 +43,7 @@ data class AppTimeToday(val ts: Long, val day: String, val apps: Map<String, Int
                         val out: Set<String>, val labels: Map<String, String>)
 
 /**
- * The parent side of daily app time limits and app-use reports (PROTOCOL.md: `limits`, `usage`).
+ * The parent side of daily app time limits and app-use reports (docs/protocol.md: `limits`, `usage`).
  *
  * The device enforces the limits and keeps the record; this keeps each device's limits and today's use from
  * its state messages, sends edits, and keeps a copy of the daily record for reports, asking the device only

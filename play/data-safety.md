@@ -2,7 +2,7 @@
 
 ## Basis
 
-Google doesn't count data as "collected" when it leaves the device only end-to-end encrypted, unreadable by the developer or any intermediary, with only the sender and recipient holding keys ([Google: Data safety](https://support.google.com/googleplay/android-developer/answer/10787469?hl=en)). Every PhoneLock message, file and screenshot is encrypted on the child's or parent's device with a key the relay server never has (see PROTOCOL.md), so the child-device data shown in the app is not "collected".
+Google doesn't count data as "collected" when it leaves the device only end-to-end encrypted, unreadable by the developer or any intermediary, with only the sender and recipient holding keys ([Google: Data safety](https://support.google.com/googleplay/android-developer/answer/10787469?hl=en)). Every PhoneLock message, file and screenshot is encrypted on the child's or parent's device with a key the relay server never has (see docs/protocol.md), so the child-device data shown in the app is not "collected".
 
 What does leave the device readable to a service is the push token, through the Firebase Cloud Messaging SDK.
 

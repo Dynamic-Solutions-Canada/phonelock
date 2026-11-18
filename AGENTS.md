@@ -8,7 +8,7 @@ This repo follows the shared standards at https://github.com/Dynamic-Solutions-C
 
 ## Architecture
 
-`PROTOCOL.md` is the source of truth for every message between the parent app and the phone. A protocol change updates it in the same commit as both apps.
+`docs/protocol.md` is the source of truth for every message between the parent app and the phone. A protocol change updates it in the same commit as both apps.
 
 | Area | Files |
 | --- | --- |
@@ -63,8 +63,9 @@ Cap memory for every build, as `tools/publish-release.sh` does: one worker and i
 
 | Guide, doc, or skill | Read or use when | Governs |
 | --- | --- | --- |
-| `PROTOCOL.md` | Any message, field or encryption change | `Remote.java`, `Hub.kt`, `Crypto.*`, `tools/ParentCli.java` |
-| `README.md` | Building, setting up a child's phone, adb control, languages | `build.sh`, `tools/`, `res/values*/` |
+| `docs/protocol.md` | Any message, field or encryption change | `Remote.java`, `Hub.kt`, `Crypto.*`, `tools/ParentCli.java` |
+| `docs/development.md` | Building, the hub settings, languages, releasing, adb install and control | `build.sh`, `tools/`, `res/values*/` |
+| `README.md` | Changing a user-visible feature, requirement or the setup steps | The product as users see it |
 | `server/README.md` | Changing or deploying the hub | `server/`, `tools/deploy-hub.sh` |
 | `PRIVACY.md` | Changing what either app sends, stores or shares | Both apps, `Disclosure.kt` |
 | `play/` | Play listing, data safety and Play-flavour questions | `companion/src/play/`, the `play` flavour |
@@ -74,9 +75,10 @@ Cap memory for every build, as `tools/publish-release.sh` does: one worker and i
 | What changed | Update |
 | --- | --- |
 | A source file, area or script added, moved or removed | The Architecture table above |
-| A message type, field or the encryption | `PROTOCOL.md`, both apps, `tools/ParentCli.java` |
+| A message type, field or the encryption | `docs/protocol.md`, both apps, `tools/ParentCli.java` |
 | What either app sends, stores or who can read it | `PRIVACY.md`, `play/data-safety.md` |
-| Build, setup, adb or release procedure | `README.md`, Commands above |
-| Interface text or languages | Every `values*/strings*.xml` in that app; the README's Languages section |
+| Build, adb or release procedure | `docs/development.md`, Commands above |
+| User-visible features or setup steps | `README.md` |
+| Interface text or languages | Every `values*/strings*.xml` in that app; Languages in `docs/development.md` and the README |
 | A dependency added | Its `approved:` comment, and `PRIVACY.md` if it talks to a network |
 | Hub configuration or deployment | `server/README.md` |

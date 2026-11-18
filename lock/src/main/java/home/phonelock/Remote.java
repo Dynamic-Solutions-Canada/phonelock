@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/** Encrypted parent <-> phone protocol over ntfy. See PROTOCOL.md. */
+/** Encrypted parent <-> phone protocol over ntfy. See docs/protocol.md. */
 public final class Remote {
     static final String FROM = "phone";
     /** Longest sealed body sent inline; ntfy's message limit is 4096 bytes. */

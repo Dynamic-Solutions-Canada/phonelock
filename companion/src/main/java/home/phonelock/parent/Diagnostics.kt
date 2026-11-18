@@ -13,7 +13,7 @@ data class DiagCheck(val name: String, val ok: Boolean?, val value: String?)
 data class DiagReport(val ts: Long, val checks: List<DiagCheck>, val log: String)
 
 /**
- * "Send diagnostics" (see PROTOCOL.md, `diag`): asks a device for its checklist and recent log, and keeps
+ * "Send diagnostics" (see docs/protocol.md, `diag`): asks a device for its checklist and recent log, and keeps
  * the latest answer in memory. Only answers to this app's own requests are kept, so one parent asking
  * doesn't fill the other's phone. The wording of each check comes from the device.
  */

@@ -33,7 +33,7 @@ data class PhoneLocation(
 data class PhoneScreen(val ts: Long, val image: ImageBitmap? = null, val label: String? = null, val error: String? = null)
 
 /**
- * Find, ring and view-screen for paired phones (see PROTOCOL.md). Replies are matched to requests this
+ * Find, ring and view-screen for paired phones (see docs/protocol.md). Replies are matched to requests this
  * app sent, so one parent's auto-refreshing screenshots don't download on the other parent's phone.
  * Screenshots stay in memory only and are never written to storage.
  */

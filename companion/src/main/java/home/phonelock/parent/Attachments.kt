@@ -3,7 +3,7 @@ package home.phonelock.parent
 import java.net.HttpURLConnection
 import java.net.URL
 
-/** Encrypted ntfy attachments from a paired phone (screenshots, icon packs). See PROTOCOL.md. */
+/** Encrypted ntfy attachments from a paired phone (screenshots, icon packs). See docs/protocol.md. */
 object Attachments {
     /** Screenshots and icon packs. */
     private const val MAX_BYTES = 4L * 1024 * 1024

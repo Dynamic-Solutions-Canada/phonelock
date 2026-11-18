@@ -1,86 +1,51 @@
-# PhoneLock
+<h1 align="center">PhoneLock</h1>
 
-Two Android apps for locking down a child's phone:
+<p align="center">
+  A locked-down phone for your child, managed from your own phone.
+</p>
 
-- **lock/** – device-owner app installed on the child's phone. It is the home screen, keeps the phone in
-  lock-task (kiosk) mode with an allowlist of apps, hides everything else, and applies user restrictions
-  (no SMS, no installs from unknown sources, no account changes, no factory reset, no safe mode, …).
-  Parents can grant apps temporarily over [ntfy](https://ntfy.sh).
-- **companion/** – parent app: sets up and pairs child phones, answers requests, grants and revokes apps, finds, rings and views the phone.
+<p align="center">
+  <a href="https://github.com/Dynamic-Solutions-Canada/phonelock/releases/latest">Download the parent app</a>
+</p>
 
-## Hub (server)
+PhoneLock is for parents who want to give a child a phone that does only what they allow. The child's phone shows a simple home screen with the apps you choose and nothing else, and you manage it from the PhoneLock app on your own phone: allow an app for a while, find the phone, ring it, or see its screen.
 
-Both apps talk through an [ntfy](https://ntfy.sh) server. `server/` runs our own (ntfy in Docker behind the apps host's shared nginx, Cloudflare-proxied) with Firebase Cloud Messaging, so parent phones get messages by push instead of a permanent background connection; see `server/README.md`. The parent app reads the hub address and Firebase settings from `secrets/firebase.properties` (`hubUrl`, `appId`, `apiKey`, `projectId`, `senderId`); without it, it uses ntfy.sh and its own connection. Only the parent app is meant for Google Play; the parent app installs the lock app on the child device over Wireless debugging.
+## Features
+
+- **Only the apps you allow:** The child's home screen shows the apps you pick. Everything else is hidden, and settings that would undo the lock (installing apps, adding accounts, factory reset, safe mode, SMS) are switched off.
+- **Answer requests from your phone:** Your child can ask for an app, and you can allow it for a while or turn it off again from anywhere.
+- **Daily app time limits:** Set how long an app may be used each day, or on weekdays and weekends, and see how much time it has had.
+- **Find, ring and view:** See where the phone is, ring it at full volume even on silent, or view its screen. Your child gets a notice whenever a parent views the screen, and every view is recorded in the activity log.
+- **Location history and battery:** The phone logs its location every 15 minutes and keeps it for 7 days, and reports its battery with every message. You choose a low-battery alert, and get "Turning off" and "Turned on" notices, so a dead battery can be told apart from lost signal. The child's home screen says that location and battery are shared.
+- **An SOS button:** The child can call the local emergency number from the home screen at any time.
+- **Set up from your phone:** No computer and no factory reset: your phone sets up the child's phone over Wi-Fi. A second parent can be added from the first parent's app.
+- **Private by design:** Every message between the phones is end-to-end encrypted, so the server that relays them sees only ciphertext. See the [privacy policy](PRIVACY.md).
+
+## Get it
+
+Download `PhoneLock-parent.apk` from the [latest release](https://github.com/Dynamic-Solutions-Canada/phonelock/releases/latest) and install it on your phone. It updates itself from there once installed. You don't download anything for the child's phone: the parent app installs the lock app during setup, and the lock app keeps itself up to date.
+
+You'll need Android 13 or newer on both phones. During setup, the child's phone must be on the same Wi-Fi as yours and have no accounts signed in; you add the accounts back afterwards.
+
+## Set up a child's phone
+
+In the parent app, tap **Set up a child's device** and follow the steps it shows. On the child's phone, turn on Developer options, then Wireless debugging > **Pair device with pairing code**. The parent app finds it, pairs with the code, installs the lock app from the latest release (checking that it is genuine), pairs it with your phone and sets your parent PIN, turns on the features that need a one-time grant, checks that the phone answers, then switches debugging off. Nothing is erased.
+
+Afterwards, add the child's accounts back in parent mode: hold the clock on the home screen for 4 seconds and enter the PIN. A second parent adds the phone from the first parent's app: device settings > **Share with another parent**. **Fix setup over Wi-Fi** in the device settings re-applies the one-time grants on a phone already set up.
 
 ## Languages
 
-The parent app is available in the same languages as Persistent and Little Launcher: English (US and Canada), Spanish (Spain), French (France and Canada), German, Simplified Chinese, Brazilian Portuguese and Japanese. Canadian English and Canadian French use the English and French wording, with their own date and number formats. Other languages fall back to English; Traditional Chinese never gets the Simplified wording.
+PhoneLock is available in English (United States and Canada), Spanish, French (France and Canada), German, Simplified Chinese, Brazilian Portuguese and Japanese. The parent app follows your phone's language unless you pick one in a device's Settings > Language, which is the same setting as Android's per-app language. You set the child's phone's language per device in Settings > Lock app, and a phone set up from your app starts in your app's language. The translations were written with AI assistance and have not been reviewed by native speakers yet. The privacy policy is in English.
 
-It follows the phone's language unless the parent picks one in a device's Settings > Language, which is the same setting as Android's per-app language. The list lives in `companion/src/main/res/xml/locales_config.xml`. English wording is in `companion/src/main/res/values/strings*.xml`, one file per area, and each language has the same files under `values-<language>/` with the same names. Code with no screen to draw on (notifications, services) gets its wording through `Strings`.
+Phones paired before the lock app had languages stay in English after updating, until a parent picks one. Entries already in Recent events keep the language they were written in, and phone number layout and the first day of the week follow the phone's region, not the language picked in the app.
 
-Release builds fail if a language is missing a string, has an extra one, or has mismatched placeholders, so new wording needs all six translations before a release. The translations were written with AI assistance and have not been reviewed by native speakers yet. Names, app labels and what people type are never translated. The privacy policy stays in English. Entries already in Recent events keep the language they were written in. Phone number layout and the first day of the week follow the phone's region, not the language picked in the app.
+## Developers
 
-The lock app on the child's phone offers the same languages (`lock/src/main/res/xml/locales_config.xml`; keep the two lists the same). A parent sets it per device in that device's Settings > Lock app > language, and phone-to-phone setup starts it in the parent app's language. The activity it reports to parents is written in that language, on the assumption that parents and child share one. Wording the child reads uses the informal "you" (French "tu", German "du"). The diagnostics report stays in English for support. Phones paired before the lock app had languages stay in English after updating, until a parent picks one; phones set up since follow the setup's language or the device's.
+- [Development guide](docs/development.md): building, the hub, languages, releases and adb control.
+- [Protocol](docs/protocol.md): the encrypted messages between the parent app and the child's phone.
+- [Hub server](server/README.md): the relay both apps talk through.
+- [Agent instructions](AGENTS.md): behaviour rules and conventions.
 
-The SOS screen shows and dials the local emergency number from Android's emergency number database: the country's main number (911, 999, 000, 112, and 911 in Canada and 111 in New Zealand, where two are listed), or the ambulance number where there are only separate ones (119 in Japan, 120 in China, 192 in Brazil). Without a SIM, or when the phone doesn't know its country, it shows 911.
+## License
 
-## Build (WSL)
-
-```bash
-./build.sh            # -> lock/build/outputs/apk/release/lock-release.apk
-```
-
-Needs JDK 17, the Android SDK in `~/android-sdk` with the platform set by `compileSdk` in `companion/build.gradle`, and the Gradle version that `build.sh` runs from `~/tools`.
-Signing key and secrets live in `secrets/` (git-ignored). Keep `secrets/phonelock.keystore` safe: updates must be
-signed with the same key.
-Debug builds are signed with the committed debug-only key in `keystore/debug.keystore` (passwords `android`), never the release key. A debug build cannot update over a release one, or the reverse, without an uninstall, and Maps shows only where the Maps key also allows the debug certificate.
-
-## Set up a child's device from a parent's phone
-
-In the parent app, tap **Set up a child's device** and follow the steps it shows. On the child's device (Android 13 or later, on the same Wi-Fi, with no accounts signed in): turn on Developer options, then Wireless debugging > **Pair device with pairing code**. The parent app finds it, pairs with the code, installs the lock app from the public release (checking it is signed with our key), makes it device owner, pairs it with the parent app and sets the parent PIN, turns on the features that need a one-time grant (screen view, call roles, call log, files, Do Not Disturb, battery saver exemption), confirms the device answers through the hub, then switches debugging off. Nothing is erased. Add the child's accounts back afterwards in parent mode (hold the clock 4 s, enter the PIN). The second parent adds the device from the first parent's app: device settings > **Share with another parent**. **Fix setup over Wi-Fi** in the device settings re-applies the one-time grants on a device already set up.
-
-Publishing a release (both APKs with `lock-version.json` and `parent-version.json`, to the GitHub releases the setup code downloads from; installed lock apps check a few times a day and update themselves the next time the screen is off, and the parent app (GitHub build) offers its update in Settings):
-
-```bash
-tools/publish-release.sh <version>
-```
-
-## Install on the child's phone with adb
-
-The phone must have **no accounts** when the device owner is set (add them back afterwards).
-
-```bash
-adb install lock-release.apk
-adb shell dpm set-device-owner home.phonelock/.AdminReceiver
-```
-
-Then pair it and switch on screen view and ringing through Do Not Disturb (needs USB debugging, so do it before `debug off`):
-
-```bash
-tools/configure-lock.sh <slug> [adb-serial]
-```
-
-Parents can then find the phone (opens Google Maps), ring it at full volume and view its screen from the parent app. The kid gets a notice whenever a parent views the screen, both parents' activity logs record every view, and location is kept switched on.
-
-The device also logs its location every 15 minutes (kept 7 days, shown in the parent app's Location history, and sent late rather than lost when offline) and reports its battery with every message. Parents choose a low-battery alert level, and get "Turning off" and "Turned on" notices, so a dead battery can be told apart from lost signal. Her home screen says that location and battery are shared. `tools/configure-lock.sh` exempts the lock app from Doze so this keeps working while the device sits still.
-
-## adb control
-
-```bash
-adb shell am broadcast -n home.phonelock/.ConfigReceiver -a home.phonelock.CONFIG --es cmd <cmd> --es value <value>
-```
-
-| cmd | value | |
-|---|---|---|
-| `status` | | current state |
-| `pin` | digits | parent PIN (hold the clock 4 s on the home screen) |
-| `apps` | `pkg1,pkg2,…` | home-screen apps, in order |
-| `support` | `pkg,…` | allowed inside the lock but not shown |
-| `hide` | `pkg,…` | always hidden |
-| `parent` | minutes | parent mode (Settings + Play Store unlocked) |
-| `lock` | | end parent mode |
-| `remote` | topic or `server\|topic` | ntfy topic for remote commands |
-| `say` | command text | run a remote command locally |
-| `dns` | hostname or empty | lock Private DNS |
-| `debug` | `on`/`off` | keep USB debugging while locked |
-| `release` | | remove all policy and stop being device owner |
+Licensed under the [PolyForm Noncommercial License 1.0.0](LICENSE): free for any **personal and other noncommercial use**, including modifying and redistributing it. **Commercial use is not permitted.** Copyright (c) 2026 Dynamic Solutions.
