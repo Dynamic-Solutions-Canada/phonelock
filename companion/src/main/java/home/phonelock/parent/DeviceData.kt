@@ -311,7 +311,7 @@ object DeviceData {
             private fun count(n: Int) {
                 done += n
                 val f = if (total > 0) (done.toFloat() / total).coerceIn(0f, 1f) else 0f
-                if (f - shown >= 0.02f || f >= 1f && shown < 1f) {
+                if (f - shown >= 0.02f || (f >= 1f && shown < 1f)) {
                     shown = f
                     onProgress(f)
                 }

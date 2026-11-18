@@ -753,8 +753,10 @@ object Hub {
         prefs.edit().putString("requests", a.toString()).apply()
     }
 
-    /** Activity entries kept per device; the screen shows a few at a time (CappedList). */
-    /** About a week of events (they also fill Activity's Events), at a few dozen a day. */
+    /**
+     * Activity entries kept per device: about a week of events (they also fill Activity's Events), at a few
+     * dozen a day. The screen shows a few at a time (CappedList).
+     */
     private const val MAX_EVENTS = 1000
 
     fun addEvent(dev: String, text: String, ts: Long = System.currentTimeMillis()) {

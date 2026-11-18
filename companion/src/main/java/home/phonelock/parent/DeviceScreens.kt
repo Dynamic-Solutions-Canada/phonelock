@@ -385,7 +385,7 @@ internal fun FilesScreen(dev: String, state: PhoneState, onBack: () -> Unit) {
         folder?.error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
         Section(if (path.isEmpty()) stringResource(R.string.main_storage) else path.substringAfterLast('/')) {
             // Opening another folder hides the old one's entries until the new list arrives.
-            val opening = folder == null || folder.loading && folder.path != path
+            val opening = folder == null || (folder.loading && folder.path != path)
             if (!opening && folder!!.entries.isEmpty()) EmptyNote(stringResource(R.string.main_folder_empty))
             if (!opening && !choosing && entries.size > 1) Text(stringResource(R.string.main_long_press_hint),
                 style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)

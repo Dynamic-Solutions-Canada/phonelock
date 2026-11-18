@@ -33,7 +33,7 @@ data class UpdateState(
  */
 @Composable
 internal fun AppUpdateSection() {
-    if (!AppUpdate.supported) return
+    if (!AppUpdate.SUPPORTED) return
     val st by AppUpdate.state.collectAsState()
 
     Section(stringResource(R.string.device_app_section)) {

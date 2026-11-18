@@ -1,14 +1,14 @@
 #!/bin/bash
 # Create (once per locked phone) its ntfy topic + shared secret, and the pairing link/QR for the parent apps.
 #   tools/make-pairing.sh <slug> "<Phone name>"
-#   -> secrets/devices/<slug>/{pairing.properties,pairing-link.txt,pairing-qr.png}
+#   -> .secrets/devices/<slug>/{pairing.properties,pairing-link.txt,pairing-qr.png}
 # Then on the locked phone (adb), set the same values:
 #   tools/configure-lock.sh <slug> [adb-serial]
 set -e
 cd "$(dirname "$0")/.."
 slug=${1:?slug, e.g. kid}
 name=${2:-Phone}
-D=secrets/devices/$slug
+D=.secrets/devices/$slug
 mkdir -p "$D"
 P=$D/pairing.properties
 if ! grep -q '^secret=.\{40,\}' "$P" 2>/dev/null; then

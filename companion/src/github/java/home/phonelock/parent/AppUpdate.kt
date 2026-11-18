@@ -29,7 +29,7 @@ import java.io.FileNotFoundException
  * signed with the same key as the installed app; otherwise it is deleted and never installed.
  */
 object AppUpdate {
-    const val supported = true
+    const val SUPPORTED = true
 
     private const val TAG = "AppUpdate"
     private const val VERSION_FILE = "parent-version.json"

@@ -4,7 +4,7 @@
 # Uses WSL adb; set ADB=/path/to/adb(.exe) to use another (e.g. Windows adb for USB).
 set -e
 cd "$(dirname "$0")/.."
-P=secrets/devices/${1:?slug}/pairing.properties
+P=.secrets/devices/${1:?slug}/pairing.properties
 A=${ADB:-$HOME/android-sdk/platform-tools/adb}
 S=${2:+-s $2}
 get() { sed -n "s/^$1=//p" "$P"; }

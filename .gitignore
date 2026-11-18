@@ -1,14 +1,36 @@
-# secrets: signing key, ntfy topic, pairing secret
-secrets/
-*.keystore
-# The debug-only key is committed on purpose (DIST-8); it never signs a release.
-!keystore/debug.keystore
-*.jks
-local.properties
+# Stack template (Android / Gradle)
 .gradle/
 build/
-*/build/
-.idea/
-*.iml
 .kotlin/
-server/.env
+*.iml
+
+# Project rules
+# The old name of the local secrets folder, kept until it has been renamed to .secrets/ (D-038). It also
+# covers server/secrets/ on the hub host, where the Firebase service-account key lives.
+secrets/
+# keystore/debug.keystore is tracked on purpose (DIST-8) although the shared block ignores *.keystore;
+# git keeps tracking it, and a replacement needs `git add -f`. It never signs a release.
+# Personal Claude Code settings (AI-10).
+.claude/settings.local.json
+
+# Shared block (HYG-6), from winui-app-kit build/shared.gitignore. Paste it unchanged as the last part
+# of every repo's .gitignore, so no earlier line can un-ignore what it covers. Change it in the kit.
+/.artifacts/
+/.windows-build/
+.secrets/
+.aws/
+.env
+.env.*
+!.env*.example
+tmp/
+.backups/
+*.pfx
+*.cer
+*.der
+*.keystore
+*.jks
+local.properties
+.vs/
+.idea/
+.DS_Store
+Thumbs.db

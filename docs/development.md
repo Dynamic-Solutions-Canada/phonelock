@@ -12,7 +12,7 @@ How to build, set up, control and release PhoneLock. The parent ⇄ phone messag
 
 Needs JDK 17, the Android SDK in `~/android-sdk` with the platform set by `compileSdk` in `companion/build.gradle`, and the Gradle version that `build.sh` runs from `~/tools`. Cap memory for every build, as `tools/publish-release.sh` does: one worker and in-process Kotlin.
 
-Signing key and secrets live in `secrets/` (git-ignored). Keep `secrets/phonelock.keystore` safe: updates must be signed with the same key.
+Signing key and secrets live in `.secrets/` (git-ignored). Keep `.secrets/phonelock.keystore` safe: updates must be signed with the same key.
 
 Debug builds are signed with the committed debug-only key in `keystore/debug.keystore` (passwords `android`), never the release key. A debug build cannot update over a release one, or the reverse, without an uninstall, and Maps shows only where the Maps key also allows the debug certificate.
 
@@ -20,7 +20,7 @@ The unit tests run with the same Gradle: `:lock:testDebugUnitTest :companion:tes
 
 ## Hub
 
-Both apps talk through an [ntfy](https://ntfy.sh) server. `server/` runs our own (ntfy in Docker behind the apps host's shared nginx, Cloudflare-proxied) with Firebase Cloud Messaging, so parent phones get messages by push instead of a permanent background connection; see [server/README.md](../server/README.md). The parent app reads the hub address and Firebase settings from `secrets/firebase.properties` (`hubUrl`, `appId`, `apiKey`, `projectId`, `senderId`); without it, it uses ntfy.sh and its own connection.
+Both apps talk through an [ntfy](https://ntfy.sh) server. `server/` runs our own (ntfy in Docker behind the apps host's shared nginx, Cloudflare-proxied) with Firebase Cloud Messaging, so parent phones get messages by push instead of a permanent background connection; see [server/README.md](../server/README.md). The parent app reads the hub address and Firebase settings from `.secrets/firebase.properties` (`hubUrl`, `appId`, `apiKey`, `projectId`, `senderId`); without it, it uses ntfy.sh and its own connection.
 
 ## Languages
 

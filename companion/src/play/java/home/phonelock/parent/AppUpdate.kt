@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
  * nothing and Settings shows no update section. The GitHub build's version updates from the releases.
  */
 object AppUpdate {
-    const val supported = false
+    const val SUPPORTED = false
 
     private val _state = MutableStateFlow(UpdateState())
     val state: StateFlow<UpdateState> = _state.asStateFlow()

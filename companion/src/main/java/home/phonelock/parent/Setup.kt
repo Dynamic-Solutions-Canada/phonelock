@@ -20,7 +20,7 @@ object Setup {
     const val LOCK_APK_URL = Releases.LATEST + "lock-release.apk"
 
     /**
-     * URL-safe base64 SHA-256 of the lock app's signing certificate (secrets/phonelock.keystore). Setup
+     * URL-safe base64 SHA-256 of the lock app's signing certificate (.secrets/phonelock.keystore). Setup
      * refuses the download unless it is signed by this key, so a swapped file on the host can't be installed.
      * Debug builds of the parent keep this release pin: setup always downloads the released lock app, never a
      * local build, so a debug-only pin would match nothing.

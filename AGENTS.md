@@ -42,13 +42,13 @@ This repo follows the shared standards at https://github.com/Dynamic-Solutions-C
 - Every string exists in all nine locales with the same placeholders, or release lint fails. Keep the two apps' `locales_config.xml` lists the same. Translations are AI-written and unreviewed.
 - Debug builds are signed with the committed debug-only key in `keystore/debug.keystore` (passwords `android`). The production key signs releases only. A debug build can't update over a release one, or the reverse.
 - The `github` flavour has the self-updater and install permission; the `play` flavour has neither, because Play forbids self-updating.
-- Signing material, Firebase settings and pairing data live in the git-ignored `secrets/` folder. Never open, print or copy anything there.
+- Signing material, Firebase settings and pairing data live in the git-ignored `.secrets/` folder. Never open, print or copy anything there.
 
 ## Commands
 
 | Command | Proves | Does not prove |
 | --- | --- | --- |
-| `./build.sh` | Both release APKs compile, pass the translation lint, and are signed (needs the signing files in `secrets/`) | That they install or run |
+| `./build.sh` | Both release APKs compile, pass the translation lint, and are signed (needs the signing files in `.secrets/`) | That they install or run |
 | `:lock:assembleDebug :companion:assembleGithubDebug`, with the Gradle `build.sh` runs | Debug builds compile, with no secrets needed | Release lint or signing |
 | `:lock:testDebugUnitTest :companion:testGithubDebugUnitTest`, with the same Gradle | The JUnit tests pass (emergency numbers, screen guard, usage report, adb) | Device behaviour |
 | `tools/test-remote.sh` | A paired phone answers encrypted commands over the topic | Anything without a paired test phone |

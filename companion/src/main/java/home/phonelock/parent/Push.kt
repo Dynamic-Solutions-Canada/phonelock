@@ -18,7 +18,7 @@ import kotlin.concurrent.thread
  * Phones on any other server (e.g. ntfy.sh) still use [ParentService]'s connection.
  */
 object Push {
-    /** True when this build has a Firebase project (secrets/firebase.properties) and it initialised. */
+    /** True when this build has a Firebase project (.secrets/firebase.properties) and it initialised. */
     @Volatile var enabled = false
         private set
 
