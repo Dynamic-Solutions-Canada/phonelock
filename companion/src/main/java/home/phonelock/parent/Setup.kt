@@ -22,6 +22,8 @@ object Setup {
     /**
      * URL-safe base64 SHA-256 of the lock app's signing certificate (secrets/phonelock.keystore). Setup
      * refuses the download unless it is signed by this key, so a swapped file on the host can't be installed.
+     * Debug builds of the parent keep this release pin: setup always downloads the released lock app, never a
+     * local build, so a debug-only pin would match nothing.
      */
     internal const val LOCK_SIGNATURE_SHA256 = "iuGxH0rozJJdlt18LabbsCPhxD3R5WTsIs3a7hG5QyM"
     /** New phones use the PhoneLock hub when this build has one, else ntfy.sh. */

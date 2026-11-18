@@ -1,6 +1,8 @@
 # secrets: signing key, ntfy topic, pairing secret
 secrets/
 *.keystore
+# The debug-only key is committed on purpose (DIST-8); it never signs a release.
+!keystore/debug.keystore
 *.jks
 local.properties
 .gradle/

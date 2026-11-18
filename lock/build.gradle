@@ -20,6 +20,14 @@ android {
     }
 
     signingConfigs {
+        // Debug builds use the committed debug-only key (keystore/debug.keystore, standard "android" passwords),
+        // so every machine and container signs them the same way and reinstalls work (DIST-8). It is not a secret.
+        debug {
+            storeFile rootProject.file('keystore/debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
         // Our own key, kept with the project so future updates install over the top.
         lock {
             storeFile file('../secrets/phonelock.keystore')
@@ -34,8 +42,10 @@ android {
             minifyEnabled false
             signingConfig signingConfigs.lock
         }
+        // The production key signs release builds only (SEC-11).
+        // Signed with the debug key, a debug lock app cannot update over a release one, or take its updates.
         debug {
-            signingConfig signingConfigs.lock
+            signingConfig signingConfigs.debug
         }
     }
 
