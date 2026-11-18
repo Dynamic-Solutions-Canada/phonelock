@@ -2,10 +2,9 @@ package home.phonelock;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Test;
-
 import java.util.Arrays;
 import java.util.Collections;
+import org.junit.Test;
 
 /** Cases taken from Android's emergency number database (packages/services/Telephony ecc/input/eccdata.txt). */
 public class EmergencyNumbersTest {
@@ -32,17 +31,23 @@ public class EmergencyNumbersTest {
         assertEquals("999", EmergencyNumbers.pick(Arrays.asList(db("gb", "999", ALL), generic("112"))));
         assertEquals("000", EmergencyNumbers.pick(Collections.singletonList(db("au", "000", ALL))));
         // France: 112 for everything; 15, 17 and 18 are single services; 115 and 116000 are helplines.
-        assertEquals("112", EmergencyNumbers.pick(Arrays.asList(
-                db("fr", "112", ALL), db("fr", "115", 0), db("fr", "116000", 0), db("fr", "15", AMBULANCE),
-                db("fr", "17", POLICE))));
+        assertEquals(
+                "112",
+                EmergencyNumbers.pick(Arrays.asList(
+                        db("fr", "112", ALL),
+                        db("fr", "115", 0),
+                        db("fr", "116000", 0),
+                        db("fr", "15", AMBULANCE),
+                        db("fr", "17", POLICE))));
     }
 
     @Test
     public void whereTwoAreListedTheTaughtOne() {
         // Android sorts by number, so 112 comes first.
         assertEquals("911", EmergencyNumbers.pick(Arrays.asList(db("ca", "112", ALL), db("ca", "911", ALL))));
-        assertEquals("111", EmergencyNumbers.pick(Arrays.asList(
-                db("nz", "111", ALL), db("nz", "112", ALL), db("nz", "911", ALL))));
+        assertEquals(
+                "111",
+                EmergencyNumbers.pick(Arrays.asList(db("nz", "111", ALL), db("nz", "112", ALL), db("nz", "911", ALL))));
         assertEquals("112", EmergencyNumbers.pick(Arrays.asList(db("pt", "112", ALL), db("pt", "911", ALL))));
         assertEquals("112", EmergencyNumbers.pick(Arrays.asList(db("ch", "112", ALL), db("ch", "911", ALL))));
     }
@@ -56,21 +61,35 @@ public class EmergencyNumbersTest {
 
     @Test
     public void serviceOnlyCountriesGetTheAmbulanceNumber() {
-        assertEquals("119", EmergencyNumbers.pick(Arrays.asList(
-                db("jp", "110", POLICE), db("jp", "118", MARINE), db("jp", "119", AMBULANCE | FIRE),
-                generic("112"), generic("911"))));
-        assertEquals("120", EmergencyNumbers.pick(Arrays.asList(
-                db("cn", "110", POLICE), db("cn", "119", FIRE), db("cn", "120", AMBULANCE))));
-        assertEquals("192", EmergencyNumbers.pick(Arrays.asList(
-                db("br", "185", MARINE), db("br", "190", POLICE), db("br", "192", AMBULANCE), db("br", "193", FIRE))));
+        assertEquals(
+                "119",
+                EmergencyNumbers.pick(Arrays.asList(
+                        db("jp", "110", POLICE),
+                        db("jp", "118", MARINE),
+                        db("jp", "119", AMBULANCE | FIRE),
+                        generic("112"),
+                        generic("911"))));
+        assertEquals(
+                "120",
+                EmergencyNumbers.pick(
+                        Arrays.asList(db("cn", "110", POLICE), db("cn", "119", FIRE), db("cn", "120", AMBULANCE))));
+        assertEquals(
+                "192",
+                EmergencyNumbers.pick(Arrays.asList(
+                        db("br", "185", MARINE),
+                        db("br", "190", POLICE),
+                        db("br", "192", AMBULANCE),
+                        db("br", "193", FIRE))));
         assertEquals("110", EmergencyNumbers.pick(Arrays.asList(db("xx", "110", POLICE), db("xx", "118", MARINE))));
     }
 
     @Test
     public void genericListAloneFallsBackTo911() {
         // No SIM or no number database (as on the emulator): the same list everywhere.
-        assertEquals("911", EmergencyNumbers.pick(Arrays.asList(
-                generic("000"), generic("08"), generic("110"), generic("112"), generic("999"))));
+        assertEquals(
+                "911",
+                EmergencyNumbers.pick(
+                        Arrays.asList(generic("000"), generic("08"), generic("110"), generic("112"), generic("999"))));
         assertEquals("911", EmergencyNumbers.pick(Collections.emptyList()));
         assertEquals("911", EmergencyNumbers.pick(Collections.singletonList(carrier("us", "*112#", 0))));
     }

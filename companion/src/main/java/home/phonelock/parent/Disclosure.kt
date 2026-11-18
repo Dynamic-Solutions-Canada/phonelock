@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
  */
 object Disclosure {
     const val PRIVACY_POLICY_URL = "https://github.com/Dynamic-Solutions-Canada/phonelock/blob/main/PRIVACY.md"
+
     /** Bump when the disclosure text changes materially, so parents see and accept the new version. */
     private const val VERSION = 2
 
@@ -39,8 +40,10 @@ object Disclosure {
 @Composable
 internal fun DisclosureScreen(onAccept: () -> Unit) {
     val ctx = LocalContext.current
-    Column(Modifier.safeDrawingPadding().padding(20.dp).verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(14.dp)) {
+    Column(
+        Modifier.safeDrawingPadding().padding(20.dp).verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(14.dp),
+    ) {
         Text(stringResource(R.string.device_disclosure_title), style = MaterialTheme.typography.headlineSmall)
         Text(stringResource(R.string.device_disclosure_intro))
         Section(stringResource(R.string.device_disclosure_seen_title)) {

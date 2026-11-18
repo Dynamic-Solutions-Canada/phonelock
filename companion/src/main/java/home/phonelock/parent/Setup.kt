@@ -26,6 +26,7 @@ object Setup {
      * local build, so a debug-only pin would match nothing.
      */
     internal const val LOCK_SIGNATURE_SHA256 = "iuGxH0rozJJdlt18LabbsCPhxD3R5WTsIs3a7hG5QyM"
+
     /** New phones use the PhoneLock hub when this build has one, else ntfy.sh. */
     private val DEFAULT_SERVER get() = Push.hub.ifEmpty { "https://ntfy.sh" }
 
@@ -40,8 +41,7 @@ object Setup {
     }
 
     /** phonelock://pair?s=…&t=…&k=…&n=…, the link [Hub.parsePairing] reads. */
-    fun pairingLink(d: Device): String =
-        "phonelock://pair?s=${Uri.encode(d.server)}&t=${d.topic}&k=${d.secret}&n=${Uri.encode(d.name)}"
+    fun pairingLink(d: Device): String = "phonelock://pair?s=${Uri.encode(d.server)}&t=${d.topic}&k=${d.secret}&n=${Uri.encode(d.name)}"
 
     private fun randomBase32(n: Int): String {
         val alphabet = "abcdefghijklmnopqrstuvwxyz234567"

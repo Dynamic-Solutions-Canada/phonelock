@@ -32,14 +32,20 @@ class ParentService : Service() {
             runCatching { c.startForegroundService(Intent(c, ParentService::class.java).setAction("restart")) }
                 .onFailure { Log.w(TAG, "start: $it") }
         }
-        fun stop(c: Context) { c.stopService(Intent(c, ParentService::class.java)) }
+        fun stop(c: Context) {
+            c.stopService(Intent(c, ParentService::class.java))
+        }
         fun restart(c: Context) = start(c)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Hub.channels(this)
-        val open = PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java),
-            PendingIntent.FLAG_IMMUTABLE)
+        val open = PendingIntent.getActivity(
+            this,
+            0,
+            Intent(this, MainActivity::class.java),
+            PendingIntent.FLAG_IMMUTABLE,
+        )
         val n = Notification.Builder(this, "service")
             .setSmallIcon(android.R.drawable.ic_lock_lock)
             .setContentTitle(Strings.get(R.string.alerts_service_listening))
@@ -49,7 +55,10 @@ class ParentService : Service() {
         startForeground(1, n, ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
         // (Re)subscribe with the current device list.
         val gen = ++generation
-        synchronized(conns) { conns.forEach { it.disconnect() }; conns.clear() }
+        synchronized(conns) {
+            conns.forEach { it.disconnect() }
+            conns.clear()
+        }
         // Phones on the hub arrive by push (PushService); only the rest need this connection.
         Hub.devices.value.filterNot(Push::covers).groupBy { it.server }.forEach { (server, devs) ->
             val topics = devs.joinToString(",") { it.topic }
@@ -60,7 +69,10 @@ class ParentService : Service() {
 
     override fun onDestroy() {
         generation++
-        synchronized(conns) { conns.forEach { it.disconnect() }; conns.clear() }
+        synchronized(conns) {
+            conns.forEach { it.disconnect() }
+            conns.clear()
+        }
         Hub.connected.value = false
         super.onDestroy()
     }
@@ -83,7 +95,10 @@ class ParentService : Service() {
                 h.inputStream.bufferedReader().use { r ->
                     Hub.connected.value = true
                     backoff = 2_000
-                    if (first) { Hub.refreshAll(); first = false }
+                    if (first) {
+                        Hub.refreshAll()
+                        first = false
+                    }
                     while (gen == generation) {
                         val line = r.readLine() ?: break
                         val o = runCatching { JSONObject(line) }.getOrNull() ?: continue
@@ -117,8 +132,11 @@ class ActionReceiver : BroadcastReceiver() {
             ScreenAlerts.decide(alert, i.getStringExtra("kind") ?: return)
             return
         }
-        Hub.answer(i.getStringExtra("req") ?: return, i.getStringExtra("kind") ?: return,
-            i.getLongExtra("minutes", 60))
+        Hub.answer(
+            i.getStringExtra("req") ?: return,
+            i.getStringExtra("kind") ?: return,
+            i.getLongExtra("minutes", 60),
+        )
     }
 }
 

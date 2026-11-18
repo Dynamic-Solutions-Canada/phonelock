@@ -6,7 +6,6 @@ import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -42,6 +41,7 @@ final class WifiControl {
 
     /** A network saved by {@link #join} that hasn't connected yet: reported on connect, removed on a bad password. */
     private static String pendingSsid;
+
     private static int pendingId = -1;
 
     private WifiControl() {}
@@ -100,8 +100,12 @@ final class WifiControl {
         }
         List<Network> out = new ArrayList<>();
         for (ScanResult r : best.values()) {
-            out.add(new Network(r.SSID, secured(r), WifiManager.calculateSignalLevel(r.level, 5),
-                    saved.contains(r.SSID), r.SSID.equals(connected)));
+            out.add(new Network(
+                    r.SSID,
+                    secured(r),
+                    WifiManager.calculateSignalLevel(r.level, 5),
+                    saved.contains(r.SSID),
+                    r.SSID.equals(connected)));
         }
         out.sort((a, b) -> a.connected != b.connected ? (a.connected ? -1 : 1) : Integer.compare(b.bars, a.bars));
         return out;
@@ -127,7 +131,8 @@ final class WifiControl {
             for (WifiConfiguration w : wifi(c).getConfiguredNetworks()) {
                 if (ssid.equals(unquote(w.SSID))) return w;
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
         return null;
     }
 
@@ -172,7 +177,8 @@ final class WifiControl {
                 String caps = r.capabilities == null ? "" : r.capabilities;
                 return caps.contains("SAE") && !caps.contains("PSK");
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
         return false;
     }
 

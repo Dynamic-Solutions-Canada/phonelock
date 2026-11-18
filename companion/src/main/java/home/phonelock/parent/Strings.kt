@@ -22,6 +22,5 @@ object Strings {
     fun get(@StringRes id: Int, vararg args: Any): String = app.getString(id, *args)
 
     /** The form of plural [id] that suits [count], with [args] filled in (usually [count] itself). */
-    fun plural(@PluralsRes id: Int, count: Int, vararg args: Any): String =
-        app.resources.getQuantityString(id, count, *args)
+    fun plural(@PluralsRes id: Int, count: Int, vararg args: Any): String = app.resources.getQuantityString(id, count, *args)
 }

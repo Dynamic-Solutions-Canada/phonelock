@@ -52,7 +52,11 @@ object BlobStream {
         var total = 0L
         var index = 0
         while (true) {
-            val len = try { din.readInt() } catch (e: EOFException) { throw IOException("File ended early") }
+            val len = try {
+                din.readInt()
+            } catch (e: EOFException) {
+                throw IOException("File ended early")
+            }
             if (len < 28 || len > PIECE + 28) throw IOException("Bad piece")
             val rec = ByteArray(len).also { din.readFully(it) }
             var last = false

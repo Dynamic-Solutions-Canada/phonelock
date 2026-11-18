@@ -8,10 +8,8 @@ import android.os.CancellationSignal;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-
-import org.json.JSONObject;
-
 import java.util.concurrent.atomic.AtomicBoolean;
+import org.json.JSONObject;
 
 /**
  * Answers a parent's "find" request with the phone's current position and battery.
@@ -59,7 +57,8 @@ final class Locator {
         });
         try {
             done.await(TIMEOUT_MS + 5_000, java.util.concurrent.TimeUnit.MILLISECONDS);
-        } catch (InterruptedException ignored) {}
+        } catch (InterruptedException ignored) {
+        }
         return out[0];
     }
 
@@ -126,7 +125,8 @@ final class Locator {
             try {
                 Location l = lm.getLastKnownLocation(p);
                 if (l != null && (best == null || l.getTime() > best.getTime())) best = l;
-            } catch (SecurityException ignored) {}
+            } catch (SecurityException ignored) {
+            }
         }
         return best;
     }

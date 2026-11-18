@@ -10,10 +10,6 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.util.Log;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -24,16 +20,21 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /** Encrypted parent <-> phone protocol over ntfy. See docs/protocol.md. */
 public final class Remote {
     static final String FROM = "phone";
     /** Longest sealed body sent inline; ntfy's message limit is 4096 bytes. */
     private static final int MAX_INLINE = 3800;
+
     private static final long MAX_AGE_MS = 6 * 3600_000L;
     /** Longest a grant or block can last, and so the longest it can be worth applying late. */
     private static final long LONG_MAX_AGE_MS = 24 * 3600_000L;
+
     private static final long MAX_FUTURE_MS = 5 * 60_000L;
+
     private Remote() {}
 
     static String secret(Context c) {
@@ -112,7 +113,8 @@ public final class Remote {
         // overnight still applies the rest of a long one; everything else expires after 6 h.
         String t = m.optString("t");
         long maxAge = ("grant".equals(t) || "block".equals(t) || "mode".equals(t))
-                ? Math.min(LONG_MAX_AGE_MS, m.optLong("minutes", 0) * 60_000L) : MAX_AGE_MS;
+                ? Math.min(LONG_MAX_AGE_MS, m.optLong("minutes", 0) * 60_000L)
+                : MAX_AGE_MS;
         maxAge = Math.max(maxAge, MAX_AGE_MS);
         if (ts <= 0 || now - ts > maxAge || ts - now > MAX_FUTURE_MS) return false;
         String id = m.optString("id");
@@ -123,7 +125,11 @@ public final class Remote {
             int colon = e.lastIndexOf(':');
             if (colon <= 0) continue; // old format without a timestamp: drop
             long seenTs;
-            try { seenTs = Long.parseLong(e.substring(colon + 1)); } catch (NumberFormatException x) { continue; }
+            try {
+                seenTs = Long.parseLong(e.substring(colon + 1));
+            } catch (NumberFormatException x) {
+                continue;
+            }
             if (now - seenTs > LONG_MAX_AGE_MS + MAX_FUTURE_MS) continue;
             if (e.substring(0, colon).equals(id)) return false;
             kept.add(e);
@@ -184,7 +190,8 @@ public final class Remote {
             case "revoke": {
                 String pkg = m.optString("app");
                 Map<String, Long> g = Grants.load(c);
-                if ("all".equals(pkg)) g.clear(); else g.remove(pkg);
+                if ("all".equals(pkg)) g.clear();
+                else g.remove(pkg);
                 Grants.save(c, g);
                 Policy.apply(c);
                 if ("all".equals(pkg)) {
@@ -337,7 +344,11 @@ public final class Remote {
                 String pkg = m.optString("app");
                 boolean on = m.optBoolean("on", true);
                 Policy.setOffered(c, pkg, on);
-                event(c, c.getString(on ? R.string.events_offer_on : R.string.events_offer_off, who, label(c, pkg)), who, false);
+                event(
+                        c,
+                        c.getString(on ? R.string.events_offer_on : R.string.events_offer_off, who, label(c, pkg)),
+                        who,
+                        false);
                 sendState(c, true);
                 break;
             }
@@ -396,8 +407,13 @@ public final class Remote {
                 // Low-battery alert threshold, in percent (0 = off); shared by both parents.
                 int at = m.optInt("alert", Battery.DEFAULT_ALERT);
                 Battery.setAlertAt(c, at);
-                event(c, at == 0 ? c.getString(R.string.events_battery_alerts_off, who)
-                        : c.getString(R.string.events_battery_alert_set, who, Battery.alertAt(c)), who, false);
+                event(
+                        c,
+                        at == 0
+                                ? c.getString(R.string.events_battery_alerts_off, who)
+                                : c.getString(R.string.events_battery_alert_set, who, Battery.alertAt(c)),
+                        who,
+                        false);
                 sendState(c, true);
                 break;
             }
@@ -440,8 +456,11 @@ public final class Remote {
                 if ("ok".equals(rule) && m.optBoolean("untilBedtime")) {
                     until = Schedule.nextBedtime(c);
                     if (until == 0) {
-                        event(c, c.getString(R.string.events_screen_rule_no_bedtime, ScreenGuard.nameOf(c, key)),
-                                who, false);
+                        event(
+                                c,
+                                c.getString(R.string.events_screen_rule_no_bedtime, ScreenGuard.nameOf(c, key)),
+                                who,
+                                false);
                         break;
                     }
                 } else if ("ok".equals(rule) && m.optLong("minutes") > 0) {
@@ -483,7 +502,8 @@ public final class Remote {
     private static void contacts(Context c, JSONObject m, String who) {
         String op = m.optString("op", "list");
         if ("add".equals(op)) {
-            String name = m.optString("name").trim(), number = m.optString("number").trim();
+            String name = m.optString("name").trim(),
+                    number = m.optString("number").trim();
             if (name.isEmpty() || number.isEmpty()) return;
             if (Contacts.add(c, name, number)) {
                 notifyKid(c, c.getString(R.string.events_contact_added_child, who, name));
@@ -572,7 +592,8 @@ public final class Remote {
             if (by != null) o.put("by", by);
             if (quiet) o.put("quiet", true);
             publish(c, o, text);
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
     }
 
     /** Kid tapped "Ask" on the home screen. */
@@ -631,8 +652,11 @@ public final class Remote {
             o.put("mode", Schedule.modeName(Schedule.currentMode(c)));
             int manual = Schedule.overrideMode(c);
             if (manual != 0) {
-                o.put("manual", new JSONObject().put("mode", Schedule.modeName(manual))
-                        .put("until", Schedule.overrideUntil(c)));
+                o.put(
+                        "manual",
+                        new JSONObject()
+                                .put("mode", Schedule.modeName(manual))
+                                .put("until", Schedule.overrideUntil(c)));
             }
             o.put("modeUntil", Schedule.currentModeUntil(c));
             AppTime.putState(c, o);
@@ -652,9 +676,11 @@ public final class Remote {
                 o.put("removable", new JSONArray(AppRemover.removableOf(c, installedOthersAndHome(c))));
                 o.put("masks", new JSONObject(Schedule.masks(c)));
                 o.put("calls", CallGuard.settingsJson(c));
-                o.put("can", new JSONObject()
-                        .put("files", FileManager.permitted())
-                        .put("calllog", CallLogFeed.permitted(c)));
+                o.put(
+                        "can",
+                        new JSONObject()
+                                .put("files", FileManager.permitted())
+                                .put("calllog", CallLogFeed.permitted(c)));
                 o.put("schedule", Schedule.rulesJson(c));
                 o.put("battAlert", Battery.alertAt(c));
                 o.put("screenRules", ScreenGuard.rulesJson(c));
@@ -723,8 +749,8 @@ public final class Remote {
     static String label(Context c, String pkg) {
         if (BuiltInApps.is(pkg)) return BuiltInApps.label(c, pkg);
         try {
-            ApplicationInfo ai = c.getPackageManager()
-                    .getApplicationInfo(pkg, PackageManager.MATCH_UNINSTALLED_PACKAGES);
+            ApplicationInfo ai =
+                    c.getPackageManager().getApplicationInfo(pkg, PackageManager.MATCH_UNINSTALLED_PACKAGES);
             return c.getPackageManager().getApplicationLabel(ai).toString();
         } catch (Exception e) {
             return pkg;
@@ -792,8 +818,8 @@ public final class Remote {
             // ntfy turns bodies over 4 KB into files the apps wouldn't read, so send a small "big"
             // message carrying the real one as an encrypted attachment.
             JSONObject wrapper = msg("big");
-            byte[] enc = Crypto.sealBytes(key, o.toString().getBytes(StandardCharsets.UTF_8),
-                    "phonelock/blob/" + wrapper.getString("id"));
+            byte[] enc = Crypto.sealBytes(
+                    key, o.toString().getBytes(StandardCharsets.UTF_8), "phonelock/blob/" + wrapper.getString("id"));
             return post(c, enc, Crypto.seal(key, wrapper.toString()), urgent(o));
         } catch (Exception e) {
             Log.w(Policy.TAG, "publish: " + e);
@@ -828,8 +854,8 @@ public final class Remote {
      * Returns whether the hub accepted it. Blocks; call off the main thread.
      */
     private static boolean post(Context c, byte[] body, String messageHeader, boolean urgent) throws Exception {
-        HttpURLConnection h = (HttpURLConnection) new URL(
-                RemoteService.server(c) + "/" + RemoteService.topic(c)).openConnection();
+        HttpURLConnection h =
+                (HttpURLConnection) new URL(RemoteService.server(c) + "/" + RemoteService.topic(c)).openConnection();
         h.setRequestMethod(messageHeader == null ? "POST" : "PUT");
         h.setDoOutput(true);
         h.setConnectTimeout(15_000);
@@ -859,8 +885,8 @@ public final class Remote {
     /** Posts a notice to the child under notification {@code id} (reusing an id replaces that notice). */
     static void notifyKid(Context c, String text, int id) {
         NotificationManager nm = c.getSystemService(NotificationManager.class);
-        nm.createNotificationChannel(new NotificationChannel("parent", c.getString(R.string.events_channel_from_parents),
-                NotificationManager.IMPORTANCE_DEFAULT));
+        nm.createNotificationChannel(new NotificationChannel(
+                "parent", c.getString(R.string.events_channel_from_parents), NotificationManager.IMPORTANCE_DEFAULT));
         Notification n = new Notification.Builder(c, "parent")
                 .setSmallIcon(android.R.drawable.ic_dialog_info)
                 .setContentTitle(text)

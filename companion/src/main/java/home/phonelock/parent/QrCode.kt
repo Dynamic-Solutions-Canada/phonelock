@@ -27,9 +27,13 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 @Composable
 internal fun QrCode(text: String, modifier: Modifier = Modifier) {
     val image = remember(text) { encodeQr(text) }
-    Image(image, contentDescription = stringResource(R.string.setup_qr_code), filterQuality = FilterQuality.None,
+    Image(
+        image,
+        contentDescription = stringResource(R.string.setup_qr_code),
+        filterQuality = FilterQuality.None,
         modifier = modifier.fillMaxWidth().aspectRatio(1f).background(androidx.compose.ui.graphics.Color.White)
-            .padding(12.dp))
+            .padding(12.dp),
+    )
 }
 
 /** Encodes [text] as a QR code with one pixel per module; the Image scales it up. */

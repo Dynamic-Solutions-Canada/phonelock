@@ -3,10 +3,6 @@ package home.phonelock;
 import android.content.Context;
 import android.os.PowerManager;
 import android.util.Log;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
@@ -21,6 +17,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * Daily app time limits and the record of time spent in each app.
@@ -45,6 +43,7 @@ final class AppTime {
     private static final long IDLE_MEASURE_MS = 10 * 60_000L;
     /** How often today's totals are written to the record. */
     private static final long SAVE_EVERY_MS = 5 * 60_000L;
+
     private static final int KEEP_DAYS = 400;
     /** Grants and parent-mode stretches older than this aren't needed to measure today. */
     private static final long EXCUSE_KEEP_MS = 48 * 3600_000L;
@@ -53,6 +52,7 @@ final class AppTime {
 
     /** Today's measurement, as last taken: totals per app and counted minutes per limit. */
     private static volatile JSONObject today;
+
     private static long lastMeasured, lastSaved;
 
     private AppTime() {}
@@ -103,7 +103,11 @@ final class AppTime {
         JSONObject toJson() throws Exception {
             JSONArray m = new JSONArray();
             for (int v : minutes) m.put(v);
-            return new JSONObject().put("id", id).put("name", name).put("apps", new JSONArray(apps)).put("min", m);
+            return new JSONObject()
+                    .put("id", id)
+                    .put("name", name)
+                    .put("apps", new JSONArray(apps))
+                    .put("min", m);
         }
     }
 
@@ -136,7 +140,8 @@ final class AppTime {
         JSONArray a = new JSONArray();
         try {
             for (Limit l : limits(c)) a.put(l.toJson());
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
         return a;
     }
 
@@ -165,7 +170,11 @@ final class AppTime {
                 // A new or changed grant: extend the open stretch, or start one.
                 JSONObject open = openExcuse(log, e.getKey(), now);
                 if (open != null) open.put("to", e.getValue());
-                else log.put(new JSONObject().put("app", e.getKey()).put("from", now).put("to", e.getValue()));
+                else
+                    log.put(new JSONObject()
+                            .put("app", e.getKey())
+                            .put("from", now)
+                            .put("to", e.getValue()));
             }
             for (String p : before.keySet()) {
                 if (after.containsKey(p)) continue;
@@ -173,7 +182,8 @@ final class AppTime {
                 JSONObject open = openExcuse(log, p, now);
                 if (open != null) open.put("to", now);
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
         saveExcuses(c, log, now);
     }
 
@@ -185,11 +195,16 @@ final class AppTime {
             JSONObject open = openExcuse(log, ALL_APPS, now);
             if (untilMs > now) {
                 if (open != null) open.put("to", untilMs);
-                else log.put(new JSONObject().put("app", ALL_APPS).put("from", now).put("to", untilMs));
+                else
+                    log.put(new JSONObject()
+                            .put("app", ALL_APPS)
+                            .put("from", now)
+                            .put("to", untilMs));
             } else if (open != null) {
                 open.put("to", now);
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
         saveExcuses(c, log, now);
     }
 
@@ -245,7 +260,8 @@ final class AppTime {
             JSONObject perLimit = new JSONObject();
             for (Limit l : limits(c)) perLimit.put(l.id, sum(counted, l.apps) / 60_000L);
             t.put("used", perLimit);
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
         today = t;
 
         if (now - lastSaved >= SAVE_EVERY_MS || newDay || force) {
@@ -271,7 +287,10 @@ final class AppTime {
             } else if (left <= WARN_MS && !warned.contains(l.id) && allowed > 5) {
                 warned.add(l.id);
                 int mins = minutesLeft(left);
-                Remote.notifyKid(c, c.getResources().getQuantityString(R.plurals.events_minutes_left_today, mins, mins, l.title(c)));
+                Remote.notifyKid(
+                        c,
+                        c.getResources()
+                                .getQuantityString(R.plurals.events_minutes_left_today, mins, mins, l.title(c)));
             }
         }
         saveDayIds(c, "time_warned", warned);
@@ -337,7 +356,8 @@ final class AppTime {
                 JSONObject o = log.optJSONObject(i);
                 if (o == null) continue;
                 String app = o.optString("app");
-                if (app.equals(e.getKey()) || app.equals(ALL_APPS)) excused.add(new long[]{o.optLong("from"), o.optLong("to")});
+                if (app.equals(e.getKey()) || app.equals(ALL_APPS))
+                    excused.add(new long[] {o.optLong("from"), o.optLong("to")});
             }
             long ms = 0;
             for (long[] iv : e.getValue()) ms += iv[1] - iv[0] - overlap(iv, merge(excused));
@@ -355,7 +375,7 @@ final class AppTime {
                 long[] last = out.get(out.size() - 1);
                 last[1] = Math.max(last[1], iv[1]);
             } else {
-                out.add(new long[]{iv[0], iv[1]});
+                out.add(new long[] {iv[0], iv[1]});
             }
         }
         return out;
@@ -432,32 +452,37 @@ final class AppTime {
      * included as measured now, with the apps' names. Off the main thread.
      */
     static void sendHistory(Context c, String since, String req) {
-        new Thread(() -> {
-            try {
-                tick(c, true);
-                JSONObject all = loadDays(c);
-                JSONObject t = today;
-                if (t != null) all.put(t.optString("day"), t.optJSONObject("apps"));
-                JSONObject days = new JSONObject();
-                JSONObject labels = new JSONObject();
-                for (java.util.Iterator<String> it = all.keys(); it.hasNext(); ) {
-                    String k = it.next();
-                    if (since != null && !since.isEmpty() && k.compareTo(since) < 0) continue;
-                    JSONObject apps = all.optJSONObject(k);
-                    days.put(k, apps);
-                    for (java.util.Iterator<String> a = apps.keys(); a.hasNext(); ) {
-                        String p = a.next();
-                        if (!labels.has(p)) labels.put(p, Remote.label(c, p));
-                    }
-                }
-                JSONObject o = Remote.msg("usage").put("days", days).put("labels", labels);
-                if (req != null && !req.isEmpty()) o.put("req", req);
-                if (!AppUsage.permitted(c)) o.put("error", c.getString(R.string.events_usage_not_allowed));
-                Remote.publish(c, o, null);
-            } catch (Exception e) {
-                Log.w(Policy.TAG, "usage history: " + e);
-            }
-        }, "usage").start();
+        new Thread(
+                        () -> {
+                            try {
+                                tick(c, true);
+                                JSONObject all = loadDays(c);
+                                JSONObject t = today;
+                                if (t != null) all.put(t.optString("day"), t.optJSONObject("apps"));
+                                JSONObject days = new JSONObject();
+                                JSONObject labels = new JSONObject();
+                                for (java.util.Iterator<String> it = all.keys(); it.hasNext(); ) {
+                                    String k = it.next();
+                                    if (since != null && !since.isEmpty() && k.compareTo(since) < 0) continue;
+                                    JSONObject apps = all.optJSONObject(k);
+                                    days.put(k, apps);
+                                    for (java.util.Iterator<String> a = apps.keys(); a.hasNext(); ) {
+                                        String p = a.next();
+                                        if (!labels.has(p)) labels.put(p, Remote.label(c, p));
+                                    }
+                                }
+                                JSONObject o =
+                                        Remote.msg("usage").put("days", days).put("labels", labels);
+                                if (req != null && !req.isEmpty()) o.put("req", req);
+                                if (!AppUsage.permitted(c))
+                                    o.put("error", c.getString(R.string.events_usage_not_allowed));
+                                Remote.publish(c, o, null);
+                            } catch (Exception e) {
+                                Log.w(Policy.TAG, "usage history: " + e);
+                            }
+                        },
+                        "usage")
+                .start();
     }
 
     /** Adds the limits and today's use (as last measured) to a state message. */
@@ -491,7 +516,10 @@ final class AppTime {
     }
 
     private static void saveDayIds(Context c, String key, Set<String> ids) {
-        Policy.prefs(c).edit().putString(key, dayKey(System.currentTimeMillis()) + "|" + String.join(",", ids)).apply();
+        Policy.prefs(c)
+                .edit()
+                .putString(key, dayKey(System.currentTimeMillis()) + "|" + String.join(",", ids))
+                .apply();
     }
 
     static String dayKey(long ms) {

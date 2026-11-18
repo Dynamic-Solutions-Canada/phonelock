@@ -16,13 +16,11 @@ import android.os.StatFs;
 import android.os.SystemClock;
 import android.provider.Settings;
 import android.util.Log;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * Answers a parent's "Send diagnostics": a checklist of what the lock app needs (device owner, Doze
@@ -37,25 +35,31 @@ import java.nio.charset.StandardCharsets;
 final class Diagnostics {
     /** Log lines to include, and a cap on their size (the reply travels as an encrypted attachment). */
     private static final int LOG_LINES = 400;
+
     private static final int LOG_MAX_CHARS = 60_000;
 
     private Diagnostics() {}
 
     /** Builds the report and publishes it as {@code diag} for request {@code req}. Returns at once. */
     static void send(Context c, String req) {
-        new Thread(() -> {
-            try {
-                JSONObject o = Remote.msg("diag");
-                o.put("req", req);
-                // The report can be shared as plain text, so the hub topic (half of what reaches this
-                // device) is masked wherever an error message or log line quotes a URL.
-                o.put("checks", new JSONArray(redact(c, checks(c).toString())));
-                o.put("log", redact(c, log()));
-                Remote.publish(c, o, null);
-            } catch (Exception e) {
-                Log.w(Policy.TAG, "diagnostics: " + e);
-            }
-        }, "diag").start();
+        new Thread(
+                        () -> {
+                            try {
+                                JSONObject o = Remote.msg("diag");
+                                o.put("req", req);
+                                // The report can be shared as plain text, so the hub topic (half of what reaches this
+                                // device) is masked wherever an error message or log line quotes a URL.
+                                o.put(
+                                        "checks",
+                                        new JSONArray(redact(c, checks(c).toString())));
+                                o.put("log", redact(c, log()));
+                                Remote.publish(c, o, null);
+                            } catch (Exception e) {
+                                Log.w(Policy.TAG, "diagnostics: " + e);
+                            }
+                        },
+                        "diag")
+                .start();
     }
 
     /** {@code s} with the hub topic replaced by "(topic)". */
@@ -81,7 +85,9 @@ final class Diagnostics {
         // Power and network.
         int level = Battery.level(c);
         info(a, "Battery", (level >= 0 ? level + "%" : "unknown") + (Battery.charging(c) ? ", charging" : ""));
-        check(a, "Exempt from battery saver (Doze)",
+        check(
+                a,
+                "Exempt from battery saver (Doze)",
                 c.getSystemService(PowerManager.class).isIgnoringBatteryOptimizations(c.getPackageName()),
                 "Without it, background work can be delayed while the device sits still");
         info(a, "Network", network(c));
@@ -93,11 +99,18 @@ final class Diagnostics {
         // Location.
         LocationManager lm = c.getSystemService(LocationManager.class);
         check(a, "Location on", lm.isLocationEnabled(), null);
-        check(a, "Location permission (incl. background)",
+        check(
+                a,
+                "Location permission (incl. background)",
                 granted(c, android.Manifest.permission.ACCESS_FINE_LOCATION)
-                        && granted(c, android.Manifest.permission.ACCESS_BACKGROUND_LOCATION), null);
-        info(a, "Location provider", lm.hasProvider(LocationManager.FUSED_PROVIDER) ? "fused (Wi-Fi, cell and GPS)"
-                : lm.hasProvider(LocationManager.GPS_PROVIDER) ? "GPS only" : "none");
+                        && granted(c, android.Manifest.permission.ACCESS_BACKGROUND_LOCATION),
+                null);
+        info(
+                a,
+                "Location provider",
+                lm.hasProvider(LocationManager.FUSED_PROVIDER)
+                        ? "fused (Wi-Fi, cell and GPS)"
+                        : lm.hasProvider(LocationManager.GPS_PROVIDER) ? "GPS only" : "none");
         info(a, "Location log", LocationLog.summary(c));
         info(a, "Alerts waiting to send", String.valueOf(Outbox.pendingAlerts(c)));
 
@@ -110,13 +123,23 @@ final class Diagnostics {
         check(a, "Call log access", CallLogFeed.permitted(c), "Re-run the setup script");
         check(a, "App use access", AppUsage.permitted(c), "Use Fix setup over Wi-Fi");
         check(a, "File access", FileManager.permitted(), "Re-run the setup script");
-        check(a, "Do Not Disturb access (ring)",
-                c.getSystemService(NotificationManager.class).isNotificationPolicyAccessGranted(), "Re-run the setup script");
+        check(
+                a,
+                "Do Not Disturb access (ring)",
+                c.getSystemService(NotificationManager.class).isNotificationPolicyAccessGranted(),
+                "Re-run the setup script");
 
         // Updates and storage.
         long checked = p.getLong("update_checked", 0);
-        info(a, "Update check", checked == 0 ? "never" : ago(now - checked) + " ago"
-                + (Updater.readyVersion(c) > 0 ? ", version " + Updater.readyVersion(c) + " waiting for screen-off" : ""));
+        info(
+                a,
+                "Update check",
+                checked == 0
+                        ? "never"
+                        : ago(now - checked) + " ago"
+                                + (Updater.readyVersion(c) > 0
+                                        ? ", version " + Updater.readyVersion(c) + " waiting for screen-off"
+                                        : ""));
         StatFs fs = new StatFs(Environment.getDataDirectory().getPath());
         info(a, "Free storage", (fs.getAvailableBytes() / (1024 * 1024)) + " MB");
         return a;
@@ -128,14 +151,16 @@ final class Diagnostics {
             JSONObject o = new JSONObject().put("name", name).put("ok", ok);
             if (!ok && hint != null) o.put("value", hint);
             a.put(o);
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
     }
 
     /** Plain information, neither good nor bad. */
     private static void info(JSONArray a, String name, String value) {
         try {
             a.put(new JSONObject().put("name", name).put("value", value));
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
     }
 
     private static boolean granted(Context c, String permission) {
@@ -153,7 +178,8 @@ final class Diagnostics {
         Network n = cm.getActiveNetwork();
         NetworkCapabilities nc = n == null ? null : cm.getNetworkCapabilities(n);
         if (nc == null) return "none";
-        String kind = nc.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ? "Wi-Fi"
+        String kind = nc.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+                ? "Wi-Fi"
                 : nc.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ? "mobile data" : "other";
         boolean works = nc.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED);
         return kind + (works ? ", internet working" : ", no internet");
@@ -177,10 +203,20 @@ final class Diagnostics {
     private static String log() {
         StringBuilder sb = new StringBuilder();
         try {
-            Process proc = new ProcessBuilder("logcat", "-d", "-v", "time", "-t", String.valueOf(LOG_LINES),
-                    "--pid=" + android.os.Process.myPid()).redirectErrorStream(true).start();
-            try (BufferedReader r = new BufferedReader(new InputStreamReader(proc.getInputStream(), StandardCharsets.UTF_8))) {
-                for (String line; (line = r.readLine()) != null; ) sb.append(line).append('\n');
+            Process proc = new ProcessBuilder(
+                            "logcat",
+                            "-d",
+                            "-v",
+                            "time",
+                            "-t",
+                            String.valueOf(LOG_LINES),
+                            "--pid=" + android.os.Process.myPid())
+                    .redirectErrorStream(true)
+                    .start();
+            try (BufferedReader r =
+                    new BufferedReader(new InputStreamReader(proc.getInputStream(), StandardCharsets.UTF_8))) {
+                for (String line; (line = r.readLine()) != null; )
+                    sb.append(line).append('\n');
             }
             proc.waitFor();
         } catch (Exception e) {

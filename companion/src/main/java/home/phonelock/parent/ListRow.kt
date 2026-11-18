@@ -1,10 +1,9 @@
 package home.phonelock.parent
 
-import androidx.compose.foundation.combinedClickable
-import androidx.compose.ui.draw.clip
-import androidx.compose.foundation.clickable
 import android.telephony.PhoneNumberUtils
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -31,16 +31,21 @@ import java.util.Locale
 
 /** Avatar colours: muted enough for white initials, distinct enough to tell neighbours apart. */
 private val AVATAR_COLORS = listOf(
-    Color(0xFF5C6BC0), Color(0xFF26A69A), Color(0xFFEF6C00), Color(0xFF8E24AA),
-    Color(0xFF00897B), Color(0xFFD81B60), Color(0xFF3949AB), Color(0xFF6D4C41),
+    Color(0xFF5C6BC0),
+    Color(0xFF26A69A),
+    Color(0xFFEF6C00),
+    Color(0xFF8E24AA),
+    Color(0xFF00897B),
+    Color(0xFFD81B60),
+    Color(0xFF3949AB),
+    Color(0xFF6D4C41),
 )
 
 /**
  * [number] laid out the usual way for this phone's country ("+1 705-555-1234"), so numbers saved in
  * different styles look alike. Returned unchanged when it can't be formatted.
  */
-internal fun formatNumber(number: String): String =
-    runCatching { PhoneNumberUtils.formatNumber(number, AppLanguage.deviceRegion().country) }.getOrNull() ?: number
+internal fun formatNumber(number: String): String = runCatching { PhoneNumberUtils.formatNumber(number, AppLanguage.deviceRegion().country) }.getOrNull() ?: number
 
 /** A round avatar with [name]'s first letter (or "#" for a bare number), its colour fixed by the name. */
 @Composable
@@ -55,8 +60,10 @@ internal fun InitialAvatar(name: String) {
 /** A round 40 dp badge holding [symbol] (an emoji), on a soft background, for rows that aren't people. */
 @Composable
 internal fun SymbolBadge(symbol: String) {
-    Box(Modifier.size(40.dp).background(MaterialTheme.colorScheme.secondaryContainer, CircleShape),
-        contentAlignment = Alignment.Center) {
+    Box(
+        Modifier.size(40.dp).background(MaterialTheme.colorScheme.secondaryContainer, CircleShape),
+        contentAlignment = Alignment.Center,
+    ) {
         Text(symbol, style = MaterialTheme.typography.titleMedium)
     }
 }
@@ -64,9 +71,13 @@ internal fun SymbolBadge(symbol: String) {
 /** A small rounded tag after a name, such as "Safe". */
 @Composable
 private fun Tag(text: String) {
-    Text(text, Modifier.background(MaterialTheme.colorScheme.tertiaryContainer, RoundedCornerShape(6.dp))
-        .padding(horizontal = 6.dp, vertical = 1.dp),
-        style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onTertiaryContainer)
+    Text(
+        text,
+        Modifier.background(MaterialTheme.colorScheme.tertiaryContainer, RoundedCornerShape(6.dp))
+            .padding(horizontal = 6.dp, vertical = 1.dp),
+        style = MaterialTheme.typography.labelSmall,
+        color = MaterialTheme.colorScheme.onTertiaryContainer,
+    )
 }
 
 /**
@@ -77,23 +88,38 @@ private fun Tag(text: String) {
  * one for names (files, contacts), more for labels that must be read whole, such as settings in long languages.
  */
 @Composable
-internal fun ListRow(title: String, detail: AnnotatedString, leading: @Composable () -> Unit, tag: String? = null,
-                     actions: List<MenuEntry> = emptyList(), actionsEnabled: Boolean = true, onClick: (() -> Unit)? = null,
-                     onLongClick: (() -> Unit)? = null, titleLines: Int = 1) {
+internal fun ListRow(
+    title: String,
+    detail: AnnotatedString,
+    leading: @Composable () -> Unit,
+    tag: String? = null,
+    actions: List<MenuEntry> = emptyList(),
+    actionsEnabled: Boolean = true,
+    onClick: (() -> Unit)? = null,
+    onLongClick: (() -> Unit)? = null,
+    titleLines: Int = 1,
+) {
     val base = Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp))
     val tappable = when {
         onLongClick != null -> base.combinedClickable(onClick = { onClick?.invoke() }, onLongClick = onLongClick)
         onClick != null -> base.clickable(onClick = onClick)
         else -> base
     }
-    Row(tappable.padding(vertical = 4.dp),
-        verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        tappable.padding(vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
         leading()
         Spacer(Modifier.width(14.dp))
         Column(Modifier.weight(1f)) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(title, Modifier.weight(1f, fill = false), fontWeight = FontWeight.Medium, maxLines = titleLines,
-                    overflow = TextOverflow.Ellipsis)
+                Text(
+                    title,
+                    Modifier.weight(1f, fill = false),
+                    fontWeight = FontWeight.Medium,
+                    maxLines = titleLines,
+                    overflow = TextOverflow.Ellipsis,
+                )
                 tag?.let { Tag(it) }
             }
             Text(detail, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -104,6 +130,10 @@ internal fun ListRow(title: String, detail: AnnotatedString, leading: @Composabl
 
 /** A [ListRow] for a person or number, with their initial as the badge. */
 @Composable
-internal fun PersonRow(name: String, detail: AnnotatedString, tag: String? = null,
-                       actions: List<MenuEntry> = emptyList(), actionsEnabled: Boolean = true) =
-    ListRow(name, detail, leading = { InitialAvatar(name) }, tag = tag, actions = actions, actionsEnabled = actionsEnabled)
+internal fun PersonRow(
+    name: String,
+    detail: AnnotatedString,
+    tag: String? = null,
+    actions: List<MenuEntry> = emptyList(),
+    actionsEnabled: Boolean = true,
+) = ListRow(name, detail, leading = { InitialAvatar(name) }, tag = tag, actions = actions, actionsEnabled = actionsEnabled)

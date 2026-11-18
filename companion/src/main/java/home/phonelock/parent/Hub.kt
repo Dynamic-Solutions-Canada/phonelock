@@ -91,11 +91,22 @@ data class PhoneState(
  * last arrived here ([heard], this phone's clock; compared with when this app asked, so a device clock
  * that runs a little behind can't make a reply look older than the question).
  */
-data class Vitals(val seen: Long = 0, val battery: Int = -1, val charging: Boolean = false, val batteryAt: Long = 0,
-                  val heard: Long = 0)
+data class Vitals(
+    val seen: Long = 0,
+    val battery: Int = -1,
+    val charging: Boolean = false,
+    val batteryAt: Long = 0,
+    val heard: Long = 0,
+)
 
-data class Request(val device: String, val req: String, val app: String, val label: String,
-                   val minutes: Long, val ts: Long)
+data class Request(
+    val device: String,
+    val req: String,
+    val app: String,
+    val label: String,
+    val minutes: Long,
+    val ts: Long,
+)
 data class Event(val ts: Long, val text: String)
 
 /** A group of Google services screens the device blocks by default ("account", "Manage your Google Account"). */
@@ -139,11 +150,13 @@ object Hub {
     val connected = MutableStateFlow(false)
     private val _vitals = MutableStateFlow<Map<String, Vitals>>(emptyMap())
     val vitals: StateFlow<Map<String, Vitals>> = _vitals.asStateFlow()
+
     /** When this app last asked each device for its state, to notice a device that doesn't answer. */
     private val _askedAt = MutableStateFlow<Map<String, Long>>(emptyMap())
     val askedAt: StateFlow<Map<String, Long>> = _askedAt.asStateFlow()
 
     private val sentIds = ArrayDeque<String>()
+
     /** Seen message ids with their timestamps, persisted; kept for [MAX_AGE_MS]. */
     private val seenIds = LinkedHashMap<String, Long>()
     private const val MAX_AGE_MS = 12 * 3600_000L
@@ -189,8 +202,13 @@ object Hub {
                 val o = JSONObject(s)
                 _vitals.value = o.keys().asSequence().associateWith { k ->
                     o.getJSONObject(k).let {
-                        Vitals(it.optLong("seen"), it.optInt("battery", -1), it.optBoolean("charging"), it.optLong("batteryAt"),
-                            it.optLong("heard"))
+                        Vitals(
+                            it.optLong("seen"),
+                            it.optInt("battery", -1),
+                            it.optBoolean("charging"),
+                            it.optLong("batteryAt"),
+                            it.optLong("heard"),
+                        )
                     }
                 }
             }
@@ -199,8 +217,14 @@ object Hub {
             runCatching {
                 val a = JSONArray(s)
                 _requests.value = (0 until a.length()).map { a.getJSONObject(it) }.map {
-                    Request(it.getString("device"), it.getString("req"), it.getString("app"),
-                        it.optString("label"), it.optLong("minutes", 60), it.optLong("ts"))
+                    Request(
+                        it.getString("device"),
+                        it.getString("req"),
+                        it.getString("app"),
+                        it.optString("label"),
+                        it.optLong("minutes", 60),
+                        it.optLong("ts"),
+                    )
                 }.filter { System.currentTimeMillis() - it.ts < 12 * 3600_000L }
             }
         }
@@ -215,10 +239,9 @@ object Hub {
         }
     }
 
-    fun deviceName(id: String): String =
-        _states.value[id]?.name?.takeIf { it.isNotBlank() && it != "Phone" && it != Setup.UNNAMED_DEVICE }
-            ?: _devices.value.firstOrNull { it.id == id }?.name?.takeIf { it != Setup.UNNAMED_DEVICE }
-            ?: Strings.get(R.string.alerts_device_fallback)
+    fun deviceName(id: String): String = _states.value[id]?.name?.takeIf { it.isNotBlank() && it != "Phone" && it != Setup.UNNAMED_DEVICE }
+        ?: _devices.value.firstOrNull { it.id == id }?.name?.takeIf { it != Setup.UNNAMED_DEVICE }
+        ?: Strings.get(R.string.alerts_device_fallback)
 
     // ---------- pairing ----------
 
@@ -228,8 +251,12 @@ object Hub {
         if (u.scheme != "phonelock" || u.host != "pair") return null
         val k = u.getQueryParameter("k")!!
         Crypto.key(k)
-        Device((u.getQueryParameter("s") ?: "https://ntfy.sh").trimEnd('/'), u.getQueryParameter("t")!!, k,
-            u.getQueryParameter("n")?.takeIf { it.isNotBlank() } ?: Setup.UNNAMED_DEVICE)
+        Device(
+            (u.getQueryParameter("s") ?: "https://ntfy.sh").trimEnd('/'),
+            u.getQueryParameter("t")!!,
+            k,
+            u.getQueryParameter("n")?.takeIf { it.isNotBlank() } ?: Setup.UNNAMED_DEVICE,
+        )
     }.getOrNull()
 
     fun setParentName(name: String) {
@@ -271,7 +298,11 @@ object Hub {
         QuietWatch.forget(id)
         EmergencyAlerts.forget(id)
         _requests.update { l -> l.filterNot { it.device == id } }
-        saveDevices(); saveStates(); saveEvents(); saveRequests(); saveVitals()
+        saveDevices()
+        saveStates()
+        saveEvents()
+        saveRequests()
+        saveVitals()
         if (_devices.value.isEmpty()) ParentService.stop(app) else ParentService.restart(app)
     }
 
@@ -285,14 +316,19 @@ object Hub {
 
     var lastNtfyTime: Long
         get() = prefs.getLong("ntfy_last_time", 0)
-        set(v) { prefs.edit().putLong("ntfy_last_time", v).apply() }
+        set(v) {
+            prefs.edit().putLong("ntfy_last_time", v).apply()
+        }
 
     // ---------- outgoing ----------
 
     /** A new outgoing message of [type] with the common fields; its id is remembered so echoes are dropped. */
     internal fun msg(type: String): JSONObject {
         val id = Crypto.randomId()
-        synchronized(sentIds) { sentIds.addLast(id); while (sentIds.size > 200) sentIds.removeFirst() }
+        synchronized(sentIds) {
+            sentIds.addLast(id)
+            while (sentIds.size > 200) sentIds.removeFirst()
+        }
         return JSONObject().put("v", 1).put("t", type).put("id", id)
             .put("ts", System.currentTimeMillis()).put("from", _parentName.value.ifBlank { "Parent" })
     }
@@ -479,8 +515,11 @@ object Hub {
     /** Puts [app] on ([on]) or takes it off the phone's "Give access" list and the child's Ask picker. */
     fun offer(dev: String, app: String, on: Boolean) {
         editState(dev) { st ->
-            if (on) st.copy(notOffered = st.notOffered - app, others = (st.others + app).distinct())
-            else st.copy(others = st.others - app, notOffered = (st.notOffered + app).distinct())
+            if (on) {
+                st.copy(notOffered = st.notOffered - app, others = (st.others + app).distinct())
+            } else {
+                st.copy(others = st.others - app, notOffered = (st.notOffered + app).distinct())
+            }
         }
         send(dev, msg("offer").put("app", app).put("on", on))
     }
@@ -556,25 +595,37 @@ object Hub {
                 // parts from it rather than dropping it.
                 if (old != null && s.updated < old.updated) {
                     if (s.full) {
-                        _states.update { it + (dev to old.copy(others = s.others.filterNot { p -> p in old.home },
-                            notOffered = s.notOffered, labels = s.labels + old.labels, masks = s.masks,
-                            schedule = s.schedule, calls = s.calls, canFiles = s.canFiles, canCallLog = s.canCallLog,
-                            removable = s.removable, battAlert = s.battAlert, screenRules = s.screenRules, screenAreas = s.screenAreas, full = true)) }
+                        _states.update {
+                            it + (
+                                dev to old.copy(
+                                    others = s.others.filterNot { p -> p in old.home },
+                                    notOffered = s.notOffered, labels = s.labels + old.labels, masks = s.masks,
+                                    schedule = s.schedule, calls = s.calls, canFiles = s.canFiles, canCallLog = s.canCallLog,
+                                    removable = s.removable, battAlert = s.battAlert, screenRules = s.screenRules, screenAreas = s.screenAreas, full = true,
+                                )
+                                )
+                        }
                         saveStates()
                     }
                     return
                 }
-                val merged = if (s.full || old == null) s
-                    // A partial state carries the home list but not the others: keep the previous others, minus
-                    // anything now on the home list, so an app can't be in both (and listed twice).
-                    else s.copy(others = old.others.filterNot { it in s.home }, notOffered = old.notOffered, labels = old.labels + s.labels,
+                val merged = if (s.full || old == null) {
+                    s
+                } // A partial state carries the home list but not the others: keep the previous others, minus
+                // anything now on the home list, so an app can't be in both (and listed twice).
+                else {
+                    s.copy(
+                        others = old.others.filterNot { it in s.home }, notOffered = old.notOffered, labels = old.labels + s.labels,
                         masks = old.masks, schedule = old.schedule, full = old.full, calls = old.calls,
                         canFiles = old.canFiles, canCallLog = old.canCallLog, removable = old.removable,
-                        battAlert = old.battAlert, screenRules = old.screenRules, screenAreas = old.screenAreas)
+                        battAlert = old.battAlert, screenRules = old.screenRules, screenAreas = old.screenAreas,
+                    )
+                }
                 _states.update { it + (dev to merged) }
                 saveStates()
                 AppIconCache.ensure(d, merged.home + merged.others + merged.notOffered + merged.grants.keys)
             }
+
             "event" -> if (from == "phone") {
                 if (m.optBoolean("off")) QuietWatch.noteOff(dev, ts)
                 // A last-gasp notice (low battery, turning off) says where the phone last was: add the place to
@@ -586,9 +637,16 @@ object Hub {
                     onEvent(dev, m, ts, m.optString("text"))
                 }
             }
+
             "req" -> if (from == "phone") {
-                val r = Request(dev, m.getString("req"), m.getString("app"), m.optString("label"),
-                    m.optLong("minutes", 60), ts)
+                val r = Request(
+                    dev,
+                    m.getString("req"),
+                    m.getString("app"),
+                    m.optString("label"),
+                    m.optLong("minutes", 60),
+                    ts,
+                )
                 if (_requests.value.none { it.req == r.req }) {
                     _requests.update { it + r }
                     saveRequests()
@@ -596,22 +654,35 @@ object Hub {
                     notify(dev, Strings.get(R.string.alerts_request_notification, r.label, fmtMinutes(r.minutes)), r)
                 }
             }
+
             // A message too big for ntfy's 4 KB limit, carried as an encrypted attachment.
-            "big" -> if (from == "phone" && attachmentUrl != null) thread(name = "big") {
-                runCatching { Attachments.fetch(d, attachmentUrl, id) }.getOrNull()
-                    ?.let { runCatching { JSONObject(String(it)) }.getOrNull() }
-                    ?.let { dispatch(d, it, null) }
+            "big" -> if (from == "phone" && attachmentUrl != null) {
+                thread(name = "big") {
+                    runCatching { Attachments.fetch(d, attachmentUrl, id) }.getOrNull()
+                        ?.let { runCatching { JSONObject(String(it)) }.getOrNull() }
+                        ?.let { dispatch(d, it, null) }
+                }
             }
+
             "loc", "shot" -> if (from == "phone") PhoneTools.handle(d, m, attachmentUrl)
+
             "seen" -> if (from == "phone") ScreenAlerts.handle(d, m, attachmentUrl)
+
             "sos" -> if (from == "phone") EmergencyAlerts.handle(d, m)
+
             // Another parent answered an emergency alert (this phone's own answer is already shown).
             "sosack" -> if (from != "phone" && from != _parentName.value) EmergencyAlerts.otherAck(dev, m, from)
+
             "track" -> if (from == "phone") LocationHistory.handle(dev, m)
+
             "diag" -> if (from == "phone") Diagnostics.handle(dev, m)
+
             "usage" -> if (from == "phone") AppTime.handleUsage(dev, m)
+
             "icons" -> if (from == "phone") AppIconCache.handle(d, m, attachmentUrl)
+
             "calls", "contacts", "files", "file" -> if (from == "phone") DeviceData.handle(d, m, attachmentUrl)
+
             // Another parent answered a request.
             "grant", "deny" -> m.optString("req").takeIf { it.isNotEmpty() }?.let(::resolve)
         }
@@ -643,8 +714,11 @@ object Hub {
         val at = where.optLong("at")
         val p = Place(at, at, where.getDouble("lat"), where.getDouble("lng"))
         val address = LocationHistory.addressNow(p) ?: return ""
-        val last = if (at > 0) Strings.get(R.string.alerts_last_near_at, address, LocationHistory.clock(at))
-            else Strings.get(R.string.alerts_last_near, address)
+        val last = if (at > 0) {
+            Strings.get(R.string.alerts_last_near_at, address, LocationHistory.clock(at))
+        } else {
+            Strings.get(R.string.alerts_last_near, address)
+        }
         return " · $last"
     }
 
@@ -655,7 +729,8 @@ object Hub {
             ?: emptyMap()
         fun arr(n: String) = m.optJSONArray(n)?.let { a -> (0 until a.length()).map { a.getString(it) } }
             ?: emptyList()
-        return PhoneState(m.optLong("ts"), m.optString("name"), grants, arr("home"), arr("others"), labels,
+        return PhoneState(
+            m.optLong("ts"), m.optString("name"), grants, arr("home"), arr("others"), labels,
             m.optBoolean("parent"), m.optBoolean("ringing"), arr("notOffered"),
             m.optString("mode", "normal"), m.optLong("modeUntil"),
             m.optJSONObject("masks")?.let { o -> o.keys().asSequence().associateWith { o.getInt(it) } } ?: emptyMap(),
@@ -679,7 +754,8 @@ object Hub {
             m.optJSONArray("screenAreas")?.let { a ->
                 (0 until a.length()).mapNotNull { i -> a.optJSONObject(i)?.let { ScreenArea(it.optString("key"), it.optString("name")) } }
             } ?: emptyList(),
-            lang = if (m.has("lang")) m.optString("lang") else null)
+            lang = if (m.has("lang")) m.optString("lang") else null,
+        )
     }
 
     private fun stateJson(s: PhoneState) = JSONObject().put("ts", s.updated).put("name", s.name)
@@ -732,8 +808,11 @@ object Hub {
     private fun saveVitals() {
         val o = JSONObject()
         _vitals.value.forEach { (k, v) ->
-            o.put(k, JSONObject().put("seen", v.seen).put("battery", v.battery).put("charging", v.charging)
-                .put("batteryAt", v.batteryAt).put("heard", v.heard))
+            o.put(
+                k,
+                JSONObject().put("seen", v.seen).put("battery", v.battery).put("charging", v.charging)
+                    .put("batteryAt", v.batteryAt).put("heard", v.heard),
+            )
         }
         prefs.edit().putString("vitals", o.toString()).apply()
     }
@@ -747,8 +826,10 @@ object Hub {
     private fun saveRequests() {
         val a = JSONArray()
         _requests.value.forEach {
-            a.put(JSONObject().put("device", it.device).put("req", it.req).put("app", it.app)
-                .put("label", it.label).put("minutes", it.minutes).put("ts", it.ts))
+            a.put(
+                JSONObject().put("device", it.device).put("req", it.req).put("app", it.app)
+                    .put("label", it.label).put("minutes", it.minutes).put("ts", it.ts),
+            )
         }
         prefs.edit().putString("requests", a.toString()).apply()
     }
@@ -787,8 +868,12 @@ object Hub {
     /** Posts [text] for [dev]; with a request [r] it gets answer buttons. [channel] overrides the default. */
     internal fun notify(dev: String, text: String, r: Request?, channel: String? = null, allowScreen: String? = null) {
         channels(app)
-        val open = PendingIntent.getActivity(app, dev.hashCode(),
-            Intent(app, MainActivity::class.java).putExtra("device", dev), PendingIntent.FLAG_IMMUTABLE)
+        val open = PendingIntent.getActivity(
+            app,
+            dev.hashCode(),
+            Intent(app, MainActivity::class.java).putExtra("device", dev),
+            PendingIntent.FLAG_IMMUTABLE,
+        )
         val b = Notification.Builder(app, channel ?: if (r != null) "requests" else "events")
             .setSmallIcon(android.R.drawable.ic_lock_lock)
             .setContentTitle(deviceName(dev))
@@ -796,11 +881,17 @@ object Hub {
             .setContentIntent(open)
             .setAutoCancel(true)
         if (r != null) {
-            fun action(label: String, kind: String, minutes: Long, code: Int) =
-                Notification.Action.Builder(null, label, PendingIntent.getBroadcast(app, code,
+            fun action(label: String, kind: String, minutes: Long, code: Int) = Notification.Action.Builder(
+                null,
+                label,
+                PendingIntent.getBroadcast(
+                    app,
+                    code,
                     Intent(app, ActionReceiver::class.java).putExtra("kind", kind).putExtra("req", r.req)
                         .putExtra("minutes", minutes),
-                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)).build()
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+                ),
+            ).build()
             val base = r.req.hashCode()
             b.addAction(action(Strings.get(R.string.alerts_action_allow_duration, fmtMinutes(r.minutes)), "allow", r.minutes, base))
             // Android shows at most 3 actions, so other lengths are picked in the app.
@@ -809,10 +900,19 @@ object Hub {
         }
         val nid = r?.req?.hashCode() ?: (System.currentTimeMillis() and 0x7fffffff).toInt()
         if (allowScreen != null) {
-            b.addAction(Notification.Action.Builder(null, Strings.get(R.string.alerts_action_allow_30_min), PendingIntent.getBroadcast(app, nid,
-                Intent(app, ActionReceiver::class.java).putExtra("kind", "allowscreen").putExtra("device", dev)
-                    .putExtra("screen", allowScreen).putExtra("nid", nid),
-                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)).build())
+            b.addAction(
+                Notification.Action.Builder(
+                    null,
+                    Strings.get(R.string.alerts_action_allow_30_min),
+                    PendingIntent.getBroadcast(
+                        app,
+                        nid,
+                        Intent(app, ActionReceiver::class.java).putExtra("kind", "allowscreen").putExtra("device", dev)
+                            .putExtra("screen", allowScreen).putExtra("nid", nid),
+                        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+                    ),
+                ).build(),
+            )
         }
         try {
             app.getSystemService(NotificationManager::class.java).notify(nid, b.build())
@@ -823,7 +923,8 @@ object Hub {
 
     fun answer(reqId: String, kind: String, minutes: Long) {
         val r = _requests.value.firstOrNull { it.req == reqId } ?: run {
-            app.getSystemService(NotificationManager::class.java).cancel(reqId.hashCode()); return
+            app.getSystemService(NotificationManager::class.java).cancel(reqId.hashCode())
+            return
         }
         if (kind == "allow") grant(r.device, r.app, minutes, r.req) else deny(r)
     }

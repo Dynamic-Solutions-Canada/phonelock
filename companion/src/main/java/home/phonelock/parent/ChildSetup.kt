@@ -1,8 +1,8 @@
 package home.phonelock.parent
 
 import android.content.Context
-import android.util.Log
 import android.os.Build
+import android.util.Log
 import home.phonelock.parent.adb.AdbConnection
 import home.phonelock.parent.adb.AdbDiscovery
 import home.phonelock.parent.adb.AdbEndpoint
@@ -53,10 +53,13 @@ object ChildSetup {
     private const val LOCK_PACKAGE = "home.phonelock"
     private const val ADMIN = "home.phonelock/.AdminReceiver"
     private const val CONFIG = "-n home.phonelock/.ConfigReceiver -a home.phonelock.CONFIG"
+
     /** The lock app needs Android 13 (its minSdk); Wireless debugging itself arrived in 11. */
     private const val MIN_SDK = 33
+
     /** How long to look for the device's debugging port on the network after pairing. */
     private const val FIND_CONNECT_PORT_MS = 20_000L
+
     /** How long to wait for a newly paired device's first message through the hub. */
     private const val FIRST_REPLY_MS = 60_000L
 
@@ -196,6 +199,7 @@ object ChildSetup {
                             else -> Strings.get(R.string.setup_note_not_connected)
                         }
                     }
+
                     null -> {
                         if (req.existing != null) throw SetupError(Strings.get(R.string.setup_not_set_up))
                         val accounts = Regex("Accounts: (\\d+)").find(device.shell("dumpsys account").output)
@@ -205,6 +209,7 @@ object ChildSetup {
                         if (users > 1) throw SetupError(Strings.get(R.string.setup_remove_users_first))
                         null
                     }
+
                     else -> throw SetupError(Strings.get(R.string.setup_other_owner))
                 }
             }
@@ -214,8 +219,14 @@ object ChildSetup {
                 listOf(3, 4, 5).forEach { skip(it, Strings.get(R.string.setup_already_done)) }
             } else {
                 lateinit var apk: File
-                step(3) { apk = downloadLockApp(); null }
-                step(4) { device.install(apk); null }
+                step(3) {
+                    apk = downloadLockApp()
+                    null
+                }
+                step(4) {
+                    device.install(apk)
+                    null
+                }
                 step(5) {
                     val out = device.shell("dpm set-device-owner $ADMIN")
                     if (!out.allOutput.contains("Success")) throw SetupError(out.allOutput.trim().lines().lastOrNull() ?: Strings.get(R.string.setup_refused))
@@ -231,11 +242,16 @@ object ChildSetup {
                 dev != null -> {
                     set(6, StepState.RUNNING, Strings.get(R.string.setup_checking_answers))
                     reachable = awaitReply(dev)
-                    if (reachable) set(6, StepState.DONE, Strings.get(R.string.setup_already_connected))
-                    else set(6, StepState.FAILED, Strings.get(NOT_ANSWERING))
+                    if (reachable) {
+                        set(6, StepState.DONE, Strings.get(R.string.setup_already_connected))
+                    } else {
+                        set(6, StepState.FAILED, Strings.get(NOT_ANSWERING))
+                    }
                     _run.update { it?.copy(deviceId = dev) }
                 }
+
                 othersDevice -> skip(6, Strings.get(R.string.setup_connected_other_parent))
+
                 else -> {
                     set(6, StepState.RUNNING, null)
                     val id = pair(device, req)
@@ -247,15 +263,21 @@ object ChildSetup {
             // 8. One-time grants. A refused one is reported but doesn't stop setup (the rest still work).
             set(7, StepState.RUNNING, null)
             val refused = GRANTS.filter { (_, cmd) -> device.shell(cmd).exitCode != 0 }.map { Strings.get(it.first) }
-            if (refused.isEmpty()) set(7, StepState.DONE, null)
-            else set(7, StepState.FAILED, Strings.get(R.string.setup_not_turned_on, refused.joinToString(", ")))
+            if (refused.isEmpty()) {
+                set(7, StepState.DONE, null)
+            } else {
+                set(7, StepState.FAILED, Strings.get(R.string.setup_not_turned_on, refused.joinToString(", ")))
+            }
 
             // 9. Lock adb away again (this ends the connection), only once the device has answered this app
             // through the hub, and never on another parent's device.
             when {
                 !req.turnOffDebugging -> skip(8, Strings.get(R.string.setup_debugging_left_on_chosen))
+
                 othersDevice -> skip(8, Strings.get(R.string.setup_debugging_left_on_other))
+
                 !reachable -> skip(8, Strings.get(R.string.setup_debugging_left_on_unreachable))
+
                 else -> {
                     set(8, StepState.RUNNING, null)
                     // Either the receiver confirms, or the connection drops as adb switches off: both mean done.
@@ -281,8 +303,13 @@ object ChildSetup {
             else -> Strings.get(R.string.setup_outcome_done, req.childName)
         }
         _run.update {
-            it?.copy(finished = true, failed = false, deviceId = added, debuggingOff = debugOff,
-                outcome = if (grantsFailed) Strings.get(R.string.setup_outcome_some_features_failed, outcome) else outcome)
+            it?.copy(
+                finished = true,
+                failed = false,
+                deviceId = added,
+                debuggingOff = debugOff,
+                outcome = if (grantsFailed) Strings.get(R.string.setup_outcome_some_features_failed, outcome) else outcome,
+            )
         }
     }
 
@@ -311,8 +338,13 @@ object ChildSetup {
                 Hub.removeDevice(d.id)
                 _run.update { it?.copy(deviceId = null) }
             }
-            throw SetupError(if (reply != null) Strings.get(R.string.setup_pairing_not_accepted, reply)
-                else Strings.get(R.string.setup_pairing_no_answer))
+            throw SetupError(
+                if (reply != null) {
+                    Strings.get(R.string.setup_pairing_not_accepted, reply)
+                } else {
+                    Strings.get(R.string.setup_pairing_no_answer)
+                },
+            )
         }
         return d.id
     }
@@ -331,16 +363,13 @@ object ChildSetup {
     }
 
     /** The lock app's `status` line ("owner=true paired=false topic=…"), or "" if it didn't answer. */
-    private fun status(device: AdbConnection): String =
-        broadcastReply(device.shell("am broadcast $CONFIG --es cmd status").output) ?: ""
+    private fun status(device: AdbConnection): String = broadcastReply(device.shell("am broadcast $CONFIG --es cmd status").output) ?: ""
 
     /** The same short fingerprint of a pairing topic as the lock app's ConfigReceiver.topicHash. */
-    private fun topicHash(topic: String): String =
-        MessageDigest.getInstance("SHA-256").digest(topic.toByteArray()).take(8).joinToString("") { "%02x".format(it) }
+    private fun topicHash(topic: String): String = MessageDigest.getInstance("SHA-256").digest(topic.toByteArray()).take(8).joinToString("") { "%02x".format(it) }
 
     /** The receiver's reply from `am broadcast` output: `Broadcast completed: result=1, data="…"`. */
-    private fun broadcastReply(out: String): String? =
-        Regex("result=1, data=\"(.*)\"", RegexOption.DOT_MATCHES_ALL).find(out)?.groupValues?.get(1)
+    private fun broadcastReply(out: String): String? = Regex("result=1, data=\"(.*)\"", RegexOption.DOT_MATCHES_ALL).find(out)?.groupValues?.get(1)
 
     /** The package of the device owner, or null when there is none. */
     private fun deviceOwner(device: AdbConnection): String? {
@@ -356,8 +385,10 @@ object ChildSetup {
         try {
             // Compare addresses, not strings ("192.168.1.20" typed vs resolved forms of the same host).
             val target = runCatching { java.net.InetAddress.getByName(host) }.getOrNull()
-            fun same(e: AdbEndpoint) = !e.pairing && (e.host == host ||
-                (target != null && runCatching { java.net.InetAddress.getByName(e.host) == target }.getOrDefault(false)))
+            fun same(e: AdbEndpoint) = !e.pairing && (
+                e.host == host ||
+                    (target != null && runCatching { java.net.InetAddress.getByName(e.host) == target }.getOrDefault(false))
+                )
             return withTimeoutOrNull(FIND_CONNECT_PORT_MS) {
                 discovery.found.first { l -> l.any(::same) }.first(::same).port
             }

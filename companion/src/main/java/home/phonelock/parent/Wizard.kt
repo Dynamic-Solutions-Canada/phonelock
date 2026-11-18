@@ -20,8 +20,13 @@ import androidx.compose.ui.unit.dp
  * of the numbered steps. [onBack] leaves the flow.
  */
 @Composable
-internal fun WizardIntro(heading: String, title: String, onBack: () -> Unit, onStart: () -> Unit,
-                         content: @Composable () -> Unit) {
+internal fun WizardIntro(
+    heading: String,
+    title: String,
+    onBack: () -> Unit,
+    onStart: () -> Unit,
+    content: @Composable () -> Unit,
+) {
     Page(heading, onBack) {
         Text(title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
         content()
@@ -52,8 +57,13 @@ internal fun WizardStep(
 ) {
     Page(heading, onBack) {
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            if (steps > 1) Text(stringResource(R.string.main_step_of, step, steps), style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.primary)
+            if (steps > 1) {
+                Text(
+                    stringResource(R.string.main_step_of, step, steps),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
             Text(title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
         }
         content()
@@ -76,8 +86,11 @@ internal fun StepOutline(items: List<Pair<String, String>>) {
                 Text("${i + 1}.", Modifier.width(28.dp), fontWeight = FontWeight.SemiBold)
                 Column {
                     Text(title, fontWeight = FontWeight.SemiBold)
-                    Text(detail, style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(
+                        detail,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                 }
             }
         }

@@ -65,8 +65,11 @@ object Push {
         val fm = FirebaseMessaging.getInstance()
         devices.filter(::onHub).forEach { d ->
             fm.subscribeToTopic(d.topic).addOnCompleteListener { task ->
-                if (task.isSuccessful) markSubscribed(d.topic, true)
-                else Log.w(TAG, "subscribe ${d.topic}: ${task.exception}")
+                if (task.isSuccessful) {
+                    markSubscribed(d.topic, true)
+                } else {
+                    Log.w(TAG, "subscribe ${d.topic}: ${task.exception}")
+                }
             }
         }
         removed.filter(::onHub).forEach { d ->
@@ -140,7 +143,8 @@ object Push {
         poll("${d.server}/${d.topic}/json?poll=1&since=12h") { m ->
             if (m.optString("id") == id) Hub.handle(d.topic, m.optString("message"), attachmentOf(m))
         }
-    }}
+    }
+}
 
 /** Receives the hub's FCM pushes and hands them to [Hub] like a message from the live connection. */
 class PushService : FirebaseMessagingService() {

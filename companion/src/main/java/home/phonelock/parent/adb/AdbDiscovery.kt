@@ -24,15 +24,19 @@ internal class AdbDiscovery(context: Context) : Closeable {
     private val nsd = context.applicationContext.getSystemService(NsdManager::class.java)
     private val main = context.applicationContext.mainExecutor
     private val _found = MutableStateFlow<List<AdbEndpoint>>(emptyList())
+
     /** Endpoints currently seen; entries go away when the device stops advertising them. */
     val found: StateFlow<List<AdbEndpoint>> = _found.asStateFlow()
 
     private val listeners = mutableListOf<NsdManager.DiscoveryListener>()
+
     /** Android 14+: one info callback per service, by name and kind, removed when the service goes away. */
     private val infoCallbacks = HashMap<String, NsdManager.ServiceInfoCallback>()
+
     /** Android 13 resolves one service at a time; the rest wait here. */
     private val pending = ArrayDeque<Pair<NsdServiceInfo, Boolean>>()
     private var resolving = false
+
     @Volatile private var closed = false
 
     fun start() {
@@ -41,8 +45,10 @@ internal class AdbDiscovery(context: Context) : Closeable {
                 override fun onServiceFound(info: NsdServiceInfo) = resolve(info, pairing)
                 override fun onServiceLost(info: NsdServiceInfo) {
                     _found.update { l -> l.filterNot { it.name == info.serviceName && it.pairing == pairing } }
-                    if (Build.VERSION.SDK_INT >= 34) synchronized(infoCallbacks) {
-                        infoCallbacks.remove(key(info, pairing))?.let { runCatching { nsd.unregisterServiceInfoCallback(it) } }
+                    if (Build.VERSION.SDK_INT >= 34) {
+                        synchronized(infoCallbacks) {
+                            infoCallbacks.remove(key(info, pairing))?.let { runCatching { nsd.unregisterServiceInfoCallback(it) } }
+                        }
                     }
                 }
                 override fun onDiscoveryStarted(serviceType: String) {}
@@ -95,22 +101,24 @@ internal class AdbDiscovery(context: Context) : Closeable {
         } ?: return
         if (closed) return
         val (info, pairing) = next
-        nsd.resolveService(info, object : NsdManager.ResolveListener {
-            override fun onServiceResolved(s: NsdServiceInfo) {
-                usable(listOfNotNull(s.host))?.let { add(AdbEndpoint(s.serviceName, it, s.port, pairing)) }
-                resolveNext()
-            }
-            override fun onResolveFailed(s: NsdServiceInfo, errorCode: Int) {
-                // Busy: try this one again after the rest.
-                if (errorCode == NsdManager.FAILURE_ALREADY_ACTIVE) synchronized(pending) { pending.addLast(s to pairing) }
-                resolveNext()
-            }
-        })
+        nsd.resolveService(
+            info,
+            object : NsdManager.ResolveListener {
+                override fun onServiceResolved(s: NsdServiceInfo) {
+                    usable(listOfNotNull(s.host))?.let { add(AdbEndpoint(s.serviceName, it, s.port, pairing)) }
+                    resolveNext()
+                }
+                override fun onResolveFailed(s: NsdServiceInfo, errorCode: Int) {
+                    // Busy: try this one again after the rest.
+                    if (errorCode == NsdManager.FAILURE_ALREADY_ACTIVE) synchronized(pending) { pending.addLast(s to pairing) }
+                    resolveNext()
+                }
+            },
+        )
     }
 
     /** An address we can connect to: IPv4 first, else IPv6 that isn't link-local (those need a scope). */
-    private fun usable(addresses: List<java.net.InetAddress>): String? =
-        (addresses.firstOrNull { it is Inet4Address } ?: addresses.firstOrNull { !it.isLinkLocalAddress })?.hostAddress
+    private fun usable(addresses: List<java.net.InetAddress>): String? = (addresses.firstOrNull { it is Inet4Address } ?: addresses.firstOrNull { !it.isLinkLocalAddress })?.hostAddress
 
     private fun add(e: AdbEndpoint) {
         if (closed) return
@@ -121,9 +129,11 @@ internal class AdbDiscovery(context: Context) : Closeable {
         if (closed) return
         closed = true
         listeners.forEach { runCatching { nsd.stopServiceDiscovery(it) } }
-        if (Build.VERSION.SDK_INT >= 34) synchronized(infoCallbacks) {
-            infoCallbacks.values.forEach { runCatching { nsd.unregisterServiceInfoCallback(it) } }
-            infoCallbacks.clear()
+        if (Build.VERSION.SDK_INT >= 34) {
+            synchronized(infoCallbacks) {
+                infoCallbacks.values.forEach { runCatching { nsd.unregisterServiceInfoCallback(it) } }
+                infoCallbacks.clear()
+            }
         }
     }
 

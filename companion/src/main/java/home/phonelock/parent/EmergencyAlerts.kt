@@ -37,20 +37,32 @@ object EmergencyAlerts {
      * once looked up, [number] her phone's number (to call back), [messages] what she sent, [acks] parents on
      * it, [cancelled] sent by mistake, and whether this phone is still [ringing] for it.
      */
-    data class Sos(val dev: String, val id: String, val since: Long, val where: Place? = null, val address: String? = null,
-                   val number: String? = null, val battery: Int = -1, val messages: List<String> = emptyList(),
-                   val acks: List<String> = emptyList(), val cancelled: Boolean = false, val ringing: Boolean = true)
+    data class Sos(
+        val dev: String,
+        val id: String,
+        val since: Long,
+        val where: Place? = null,
+        val address: String? = null,
+        val number: String? = null,
+        val battery: Int = -1,
+        val messages: List<String> = emptyList(),
+        val acks: List<String> = emptyList(),
+        val cancelled: Boolean = false,
+        val ringing: Boolean = true,
+    )
 
     /** Alerts are shown for this long after she pressed SOS (her phone sends readings for 30 minutes). */
     private const val SHOW_MS = 2 * 3600_000L
     private const val CHANNEL = "emergency"
     private const val TAG = "EmergencyAlerts"
+
     /** Stored name of a parent who hasn't set one (see [me]); kept as it was before translation. */
     private const val UNNAMED = "A parent"
 
     private lateinit var app: Context
     private val prefs by lazy { app.getSharedPreferences("emergency", Context.MODE_PRIVATE) }
     private val _alerts = MutableStateFlow<List<Sos>>(emptyList())
+
     /** Recent alerts, newest first. */
     val alerts: StateFlow<List<Sos>> = _alerts.asStateFlow()
 
@@ -71,8 +83,10 @@ object EmergencyAlerts {
         if (System.currentTimeMillis() - since > SHOW_MS) return // replayed from long ago
         val known = _alerts.value.firstOrNull { it.id == id }
         val base = known ?: Sos(d.id, id, since, ringing = m.optString("op") != "cancel")
-        var next = base.copy(battery = if (m.has("batt")) m.optInt("batt") else base.battery,
-            number = m.optString("number").takeIf { it.isNotEmpty() } ?: base.number)
+        var next = base.copy(
+            battery = if (m.has("batt")) m.optInt("batt") else base.battery,
+            number = m.optString("number").takeIf { it.isNotEmpty() } ?: base.number,
+        )
         m.optJSONObject("where")?.takeIf { it.has("lat") }?.let { w ->
             val at = w.optLong("at")
             next = next.copy(where = Place(at, at, w.getDouble("lat"), w.getDouble("lng"), w.optInt("acc")), address = null)
@@ -89,19 +103,23 @@ object EmergencyAlerts {
                 Hub.addEvent(d.id, Strings.get(R.string.alerts_emergency_event, name), since)
                 Alarm.start(app)
             }
+
             m.optString("op") == "cancel" -> {
                 Hub.addEvent(d.id, Strings.get(R.string.alerts_emergency_cancelled_event))
                 if (_alerts.value.none { it.ringing }) Alarm.stop(app)
             }
+
             m.optString("op") == "msg" -> Hub.addEvent(d.id, Strings.get(R.string.alerts_emergency_message_event, m.optString("text")))
         }
         notify(next)
         // The address makes the alert useful at a glance; look it up off this thread and update.
-        next.where?.let { p -> thread(name = "sos-where") {
-            val line = LocationHistory.addressNow(p) ?: return@thread
-            update(id) { it.copy(address = line) }
-            current(d.id)?.takeIf { it.id == id }?.let(::notify)
-        } }
+        next.where?.let { p ->
+            thread(name = "sos-where") {
+                val line = LocationHistory.addressNow(p) ?: return@thread
+                update(id) { it.copy(address = line) }
+                current(d.id)?.takeIf { it.id == id }?.let(::notify)
+            }
+        }
     }
 
     /** Another parent ([who]) answered alert `sos` on [dev]. */
@@ -121,8 +139,7 @@ object EmergencyAlerts {
     fun me(): String = Hub.parentName.value.ifBlank { UNNAMED }
 
     /** [a]'s "on it" parents for display, with an unnamed parent in the app's language. */
-    private fun onItNames(a: Sos): String =
-        a.acks.joinToString(", ") { if (it == UNNAMED) Strings.get(R.string.alerts_a_parent) else it }
+    private fun onItNames(a: Sos): String = a.acks.joinToString(", ") { if (it == UNNAMED) Strings.get(R.string.alerts_a_parent) else it }
 
     /** "I'm on it": tells her and the other parents, and stops this phone ringing. */
     fun ack(id: String) {
@@ -162,21 +179,32 @@ object EmergencyAlerts {
     /** The alert's notification: full screen while ringing (where allowed), with I'm on it / Silence. */
     private fun notify(a: Sos) {
         val nm = app.getSystemService(NotificationManager::class.java)
-        nm.createNotificationChannel(NotificationChannel(CHANNEL, Strings.get(R.string.alerts_channel_emergency), NotificationManager.IMPORTANCE_HIGH).apply {
-            description = Strings.get(R.string.alerts_channel_emergency_description)
-            setSound(null, null) // the alarm service plays the sound
-            enableVibration(false)
-            setBypassDnd(true)
-        })
-        val open = PendingIntent.getActivity(app, a.id.hashCode(),
+        nm.createNotificationChannel(
+            NotificationChannel(CHANNEL, Strings.get(R.string.alerts_channel_emergency), NotificationManager.IMPORTANCE_HIGH).apply {
+                description = Strings.get(R.string.alerts_channel_emergency_description)
+                setSound(null, null) // the alarm service plays the sound
+                enableVibration(false)
+                setBypassDnd(true)
+            },
+        )
+        val open = PendingIntent.getActivity(
+            app,
+            a.id.hashCode(),
             Intent(app, EmergencyActivity::class.java).putExtra("sos", a.id).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+        )
 
         /** A button that sends [kind] about this alert to [Actions]. */
-        fun action(label: String, kind: String) = Notification.Action.Builder(null, label,
-            PendingIntent.getBroadcast(app, (a.id + kind).hashCode(),
+        fun action(label: String, kind: String) = Notification.Action.Builder(
+            null,
+            label,
+            PendingIntent.getBroadcast(
+                app,
+                (a.id + kind).hashCode(),
                 Intent(app, Actions::class.java).putExtra("sos", a.id).putExtra("kind", kind),
-                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)).build()
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+            ),
+        ).build()
 
         val b = Notification.Builder(app, CHANNEL)
             .setSmallIcon(android.R.drawable.ic_dialog_alert)
@@ -200,9 +228,10 @@ object EmergencyAlerts {
     }
 
     /** "Emergency: Railyn", or "Cancelled: Railyn's alert". */
-    fun title(a: Sos): String =
-        Strings.get(if (a.cancelled) R.string.alerts_emergency_cancelled_title else R.string.alerts_emergency_title,
-            Hub.deviceName(a.dev))
+    fun title(a: Sos): String = Strings.get(
+        if (a.cancelled) R.string.alerts_emergency_cancelled_title else R.string.alerts_emergency_title,
+        Hub.deviceName(a.dev),
+    )
 
     /** Where she is, her messages and who's on it, in one paragraph. */
     fun summary(a: Sos): String {
@@ -248,10 +277,12 @@ object EmergencyAlerts {
     private fun save() {
         val arr = JSONArray()
         _alerts.value.forEach { a ->
-            arr.put(JSONObject().put("dev", a.dev).put("id", a.id).put("since", a.since).put("address", a.address ?: "")
-                .put("number", a.number ?: "").put("battery", a.battery).put("messages", JSONArray(a.messages))
-                .put("acks", JSONArray(a.acks)).put("cancelled", a.cancelled).put("ringing", a.ringing)
-                .also { o -> a.where?.let { o.put("lat", it.lat).put("lng", it.lng).put("at", it.to).put("acc", it.accuracyM) } })
+            arr.put(
+                JSONObject().put("dev", a.dev).put("id", a.id).put("since", a.since).put("address", a.address ?: "")
+                    .put("number", a.number ?: "").put("battery", a.battery).put("messages", JSONArray(a.messages))
+                    .put("acks", JSONArray(a.acks)).put("cancelled", a.cancelled).put("ringing", a.ringing)
+                    .also { o -> a.where?.let { o.put("lat", it.lat).put("lng", it.lng).put("at", it.to).put("acc", it.accuracyM) } },
+            )
         }
         prefs.edit().putString("alerts", arr.toString()).apply()
     }
@@ -261,12 +292,14 @@ object EmergencyAlerts {
         (0 until arr.length()).map { i ->
             val o = arr.getJSONObject(i)
             fun list(n: String) = o.optJSONArray(n)?.let { a -> (0 until a.length()).map { a.getString(it) } } ?: emptyList()
-            Sos(o.getString("dev"), o.getString("id"), o.getLong("since"),
+            Sos(
+                o.getString("dev"), o.getString("id"), o.getLong("since"),
                 if (o.has("lat")) Place(o.optLong("at"), o.optLong("at"), o.getDouble("lat"), o.getDouble("lng"), o.optInt("acc")) else null,
                 o.optString("address").takeIf { it.isNotEmpty() }, o.optString("number").takeIf { it.isNotEmpty() },
                 o.optInt("battery", -1), list("messages"), list("acks"), o.optBoolean("cancelled"),
                 // After a restart nothing is ringing any more; the alert is still shown.
-                ringing = false)
+                ringing = false,
+            )
         }
     }.getOrDefault(emptyList())
 
@@ -286,11 +319,16 @@ object EmergencyAlerts {
             val n = Notification.Builder(this, CHANNEL_SERVICE)
                 .setSmallIcon(android.R.drawable.ic_dialog_alert)
                 .setContentTitle(Strings.get(R.string.alerts_emergency_alarm))
-                .setContentIntent(PendingIntent.getActivity(this, 0, Intent(this, EmergencyActivity::class.java),
-                    PendingIntent.FLAG_IMMUTABLE))
+                .setContentIntent(
+                    PendingIntent.getActivity(
+                        this,
+                        0,
+                        Intent(this, EmergencyActivity::class.java),
+                        PendingIntent.FLAG_IMMUTABLE,
+                    ),
+                )
                 .build()
-            getSystemService(NotificationManager::class.java).createNotificationChannel(
-                NotificationChannel(CHANNEL_SERVICE, Strings.get(R.string.alerts_channel_emergency_service), NotificationManager.IMPORTANCE_LOW))
+            getSystemService(NotificationManager::class.java).createNotificationChannel(NotificationChannel(CHANNEL_SERVICE, Strings.get(R.string.alerts_channel_emergency_service), NotificationManager.IMPORTANCE_LOW))
             startForeground(SERVICE_ID, n, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
             if (player == null) play()
             android.os.Handler(mainLooper).postDelayed({ stopSelf() }, MAX_MS)
@@ -300,10 +338,15 @@ object EmergencyAlerts {
         private fun play() {
             try {
                 player = MediaPlayer().apply {
-                    setAudioAttributes(AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ALARM)
-                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build())
-                    setDataSource(this@Alarm, RingtoneManager.getActualDefaultRingtoneUri(this@Alarm, RingtoneManager.TYPE_ALARM)
-                        ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE))
+                    setAudioAttributes(
+                        AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ALARM)
+                            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build(),
+                    )
+                    setDataSource(
+                        this@Alarm,
+                        RingtoneManager.getActualDefaultRingtoneUri(this@Alarm, RingtoneManager.TYPE_ALARM)
+                            ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE),
+                    )
                     isLooping = true
                     prepare()
                     start()
@@ -313,11 +356,15 @@ object EmergencyAlerts {
             }
             getSystemService(Vibrator::class.java)?.takeIf { it.hasVibrator() }?.vibrate(
                 VibrationEffect.createWaveform(longArrayOf(0, 900, 500), 0),
-                AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ALARM).build())
+                AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ALARM).build(),
+            )
         }
 
         override fun onDestroy() {
-            player?.runCatching { stop(); release() }
+            player?.runCatching {
+                stop()
+                release()
+            }
             player = null
             getSystemService(Vibrator::class.java)?.cancel()
             super.onDestroy()
@@ -326,6 +373,7 @@ object EmergencyAlerts {
         companion object {
             private const val CHANNEL_SERVICE = "emergency_service"
             private const val SERVICE_ID = 0x505
+
             /** Longest the alarm plays without an answer. */
             private const val MAX_MS = 15 * 60_000L
 

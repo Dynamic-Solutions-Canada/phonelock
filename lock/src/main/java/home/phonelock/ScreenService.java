@@ -10,10 +10,8 @@ import android.util.Log;
 import android.view.Display;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
-
-import org.json.JSONObject;
-
 import java.io.ByteArrayOutputStream;
+import org.json.JSONObject;
 
 /**
  * Takes a screenshot when a parent asks to see the screen. An accessibility service is the only way to
@@ -26,10 +24,12 @@ import java.io.ByteArrayOutputStream;
 public class ScreenService extends AccessibilityService {
     /** Longest edge of the image sent to parents, in pixels. Keeps a shot around 100 KB. */
     private static final int MAX_EDGE = 1280;
+
     private static final int JPEG_QUALITY = 70;
 
     /** Fixed id so repeated views update one notice instead of stacking. */
     private static final int NOTICE_ID = 0x5c4ee7;
+
     private static final long LOG_EVERY_MS = 5 * 60_000L;
 
     private static volatile ScreenService instance;
@@ -91,22 +91,27 @@ public class ScreenService extends AccessibilityService {
         }
         String app = s.foregroundPackage();
         s.takeScreenshot(Display.DEFAULT_DISPLAY, c.getMainExecutor(), new TakeScreenshotCallback() {
-            @Override public void onSuccess(ScreenshotResult r) {
+            @Override
+            public void onSuccess(ScreenshotResult r) {
                 // Compression is slow-ish; keep it off the main thread.
-                new Thread(() -> {
-                    byte[] jpeg;
-                    try {
-                        jpeg = encode(r.getHardwareBuffer(), r.getColorSpace());
-                    } catch (Exception e) {
-                        Log.w(Policy.TAG, "shot encode: " + e);
-                        then.done(null, c.getString(R.string.events_shot_failed));
-                        return;
-                    }
-                    then.done(jpeg, null);
-                }, "shot").start();
+                new Thread(
+                                () -> {
+                                    byte[] jpeg;
+                                    try {
+                                        jpeg = encode(r.getHardwareBuffer(), r.getColorSpace());
+                                    } catch (Exception e) {
+                                        Log.w(Policy.TAG, "shot encode: " + e);
+                                        then.done(null, c.getString(R.string.events_shot_failed));
+                                        return;
+                                    }
+                                    then.done(jpeg, null);
+                                },
+                                "shot")
+                        .start();
             }
 
-            @Override public void onFailure(int code) {
+            @Override
+            public void onFailure(int code) {
                 then.done(null, failure(c, code, app == null ? null : Remote.label(c, app)));
             }
         });
@@ -146,7 +151,9 @@ public class ScreenService extends AccessibilityService {
     private String foregroundPackage() {
         try {
             AccessibilityNodeInfo root = getRootInActiveWindow();
-            return root == null || root.getPackageName() == null ? null : root.getPackageName().toString();
+            return root == null || root.getPackageName() == null
+                    ? null
+                    : root.getPackageName().toString();
         } catch (Exception e) {
             return null;
         }

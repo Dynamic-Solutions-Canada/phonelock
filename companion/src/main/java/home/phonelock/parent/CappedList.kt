@@ -21,8 +21,10 @@ import androidx.compose.ui.unit.dp
 internal fun <T> CappedList(items: List<T>, key: Any, initial: Int = 5, step: Int = 20, row: @Composable (T) -> Unit) {
     var shown by rememberSaveable(key) { mutableIntStateOf(initial) }
     items.take(shown).forEach { row(it) }
-    if (items.size > initial) Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        if (items.size > shown) TextButton(onClick = { shown += step }) { Text(stringResource(R.string.main_show_more, items.size - shown)) }
-        if (shown > initial) TextButton(onClick = { shown = initial }) { Text(stringResource(R.string.main_show_less)) }
+    if (items.size > initial) {
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            if (items.size > shown) TextButton(onClick = { shown += step }) { Text(stringResource(R.string.main_show_more, items.size - shown)) }
+            if (shown > initial) TextButton(onClick = { shown = initial }) { Text(stringResource(R.string.main_show_less)) }
+        }
     }
 }

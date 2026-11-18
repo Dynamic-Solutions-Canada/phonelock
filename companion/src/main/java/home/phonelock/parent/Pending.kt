@@ -1,12 +1,12 @@
 package home.phonelock.parent
 
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.Box
 import android.os.Handler
 import android.os.Looper
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,10 +37,12 @@ object Pending {
     private const val GIVE_UP_MS = 60_000L
 
     private val _waits = MutableStateFlow<Map<String, Map<String, Wait>>>(emptyMap())
+
     /** Device -> kind -> the newest request of that kind still unanswered. */
     val waits: StateFlow<Map<String, Map<String, Wait>>> = _waits.asStateFlow()
 
     private val _noAnswer = MutableStateFlow<Map<String, Set<String>>>(emptyMap())
+
     /** Device -> kinds whose last request got no answer in time (likely offline or asleep). */
     val noAnswer: StateFlow<Map<String, Set<String>>> = _noAnswer.asStateFlow()
 

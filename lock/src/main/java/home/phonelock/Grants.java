@@ -1,7 +1,6 @@
 package home.phonelock;
 
 import android.content.Context;
-
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -13,15 +12,17 @@ public final class Grants {
     private Grants() {}
 
     static final Map<String, String[]> ALIASES = new LinkedHashMap<>();
+
     static {
-        ALIASES.put("whatsapp", new String[]{"com.whatsapp"});
-        ALIASES.put("messages", new String[]{"com.google.android.apps.messaging"});
-        ALIASES.put("sms", new String[]{"com.google.android.apps.messaging"});
-        ALIASES.put("texting", new String[]{"com.google.android.apps.messaging"});
-        ALIASES.put("maps", new String[]{"com.google.android.apps.maps"});
-        ALIASES.put("gmail", new String[]{"com.google.android.gm"});
-        ALIASES.put("chat", new String[]{"com.google.android.apps.dynamite"});
+        ALIASES.put("whatsapp", new String[] {"com.whatsapp"});
+        ALIASES.put("messages", new String[] {"com.google.android.apps.messaging"});
+        ALIASES.put("sms", new String[] {"com.google.android.apps.messaging"});
+        ALIASES.put("texting", new String[] {"com.google.android.apps.messaging"});
+        ALIASES.put("maps", new String[] {"com.google.android.apps.maps"});
+        ALIASES.put("gmail", new String[] {"com.google.android.gm"});
+        ALIASES.put("chat", new String[] {"com.google.android.apps.dynamite"});
     }
+
     static final String SMS_APP = "com.google.android.apps.messaging";
 
     /** Live temporary grants: package -> end time (ms). */
@@ -54,7 +55,8 @@ public final class Grants {
             try {
                 long t = Long.parseLong(e.substring(i + 1));
                 if (t > now) m.put(e.substring(0, i), t);
-            } catch (NumberFormatException ignored) {}
+            } catch (NumberFormatException ignored) {
+            }
         }
         return m;
     }
@@ -78,7 +80,7 @@ public final class Grants {
     static String[] resolve(String name) {
         String k = name.toLowerCase(Locale.ROOT);
         if (ALIASES.containsKey(k)) return ALIASES.get(k);
-        if (name.contains(".")) return new String[]{name};
+        if (name.contains(".")) return new String[] {name};
         return null;
     }
 
@@ -139,8 +141,7 @@ public final class Grants {
             case "?":
                 return describe(c, g);
             case "help":
-                return "Commands: allow whatsapp 2h | revoke whatsapp | revoke all | status. Apps: "
-                        + ALIASES.keySet();
+                return "Commands: allow whatsapp 2h | revoke whatsapp | revoke all | status. Apps: " + ALIASES.keySet();
             default:
                 return "Unknown command. Send 'help'.";
         }
@@ -150,14 +151,16 @@ public final class Grants {
         if (g.isEmpty()) return "No extra apps allowed.";
         StringBuilder sb = new StringBuilder("Allowed: ");
         for (Map.Entry<String, Long> e : g.entrySet()) {
-            sb.append(label(e.getKey())).append(" until ").append(time(c, e.getValue())).append("; ");
+            sb.append(label(e.getKey()))
+                    .append(" until ")
+                    .append(time(c, e.getValue()))
+                    .append("; ");
         }
         return sb.toString().trim();
     }
 
     private static String label(String pkg) {
-        for (Map.Entry<String, String[]> e : ALIASES.entrySet())
-            if (e.getValue()[0].equals(pkg)) return e.getKey();
+        for (Map.Entry<String, String[]> e : ALIASES.entrySet()) if (e.getValue()[0].equals(pkg)) return e.getKey();
         return pkg;
     }
 

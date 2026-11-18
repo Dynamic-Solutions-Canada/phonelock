@@ -35,9 +35,12 @@ internal fun SharePhoneDialog(device: Device, close: () -> Unit) {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Text(stringResource(R.string.setup_share_instructions, stringResource(R.string.setup_add_existing_title)))
                 QrCode(Setup.pairingLink(device))
-                Text(stringResource(R.string.setup_share_warning),
-                    style = MaterialTheme.typography.bodySmall)
+                Text(
+                    stringResource(R.string.setup_share_warning),
+                    style = MaterialTheme.typography.bodySmall,
+                )
             }
         },
-        confirmButton = { TextButton(onClick = close) { Text(stringResource(R.string.done)) } })
+        confirmButton = { TextButton(onClick = close) { Text(stringResource(R.string.done)) } },
+    )
 }

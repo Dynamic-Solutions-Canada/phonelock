@@ -20,8 +20,12 @@ import androidx.compose.ui.res.stringResource
  * Activity and the App time report so both filter apps the same way.
  */
 @Composable
-internal fun AppPicker(apps: List<Pair<String, String>>, chosen: Set<String>, onChange: (Set<String>) -> Unit,
-                       allLabel: String = stringResource(R.string.apps_all_apps)) {
+internal fun AppPicker(
+    apps: List<Pair<String, String>>,
+    chosen: Set<String>,
+    onChange: (Set<String>) -> Unit,
+    allLabel: String = stringResource(R.string.apps_all_apps),
+) {
     var open by remember { mutableStateOf(false) }
     val title = when (chosen.size) {
         0 -> allLabel
@@ -31,12 +35,20 @@ internal fun AppPicker(apps: List<Pair<String, String>>, chosen: Set<String>, on
     Box {
         OutlinedButton(onClick = { open = true }) { Text("$title ▾") }
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
-            DropdownMenuItem(text = { Text(allLabel) }, onClick = { onChange(emptySet()); open = false },
-                leadingIcon = { Checkbox(checked = chosen.isEmpty(), onCheckedChange = null) })
+            DropdownMenuItem(
+                text = { Text(allLabel) },
+                onClick = {
+                    onChange(emptySet())
+                    open = false
+                },
+                leadingIcon = { Checkbox(checked = chosen.isEmpty(), onCheckedChange = null) },
+            )
             apps.forEach { (app, label) ->
-                DropdownMenuItem(text = { Text(label) },
+                DropdownMenuItem(
+                    text = { Text(label) },
                     onClick = { onChange(if (app in chosen) chosen - app else chosen + app) },
-                    leadingIcon = { Checkbox(checked = app in chosen, onCheckedChange = null) })
+                    leadingIcon = { Checkbox(checked = app in chosen, onCheckedChange = null) },
+                )
             }
         }
     }

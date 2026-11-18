@@ -16,8 +16,12 @@ import java.security.SecureRandom
  *
  * @param alice true for the pairing client ("adb pair client"), false for the server role.
  */
-internal class Spake2(private val alice: Boolean, private val myName: ByteArray, private val theirName: ByteArray,
-                      private val random: SecureRandom = SecureRandom()) {
+internal class Spake2(
+    private val alice: Boolean,
+    private val myName: ByteArray,
+    private val theirName: ByteArray,
+    private val random: SecureRandom = SecureRandom(),
+) {
     private var privateKey: BigInteger? = null
     private var passwordScalar: BigInteger = BigInteger.ZERO
     private var passwordHash = ByteArray(0)
@@ -65,9 +69,15 @@ internal class Spake2(private val alice: Boolean, private val myName: ByteArray,
             sha.update(b)
         }
         if (alice) {
-            put(myName); put(theirName); put(myMsg); put(theirMsg)
+            put(myName)
+            put(theirName)
+            put(myMsg)
+            put(theirMsg)
         } else {
-            put(theirName); put(myName); put(theirMsg); put(myMsg)
+            put(theirName)
+            put(myName)
+            put(theirMsg)
+            put(myMsg)
         }
         put(shared)
         put(passwordHash)

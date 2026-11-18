@@ -47,8 +47,10 @@ object AppIconCache {
         // ntfy's 4 KB message limit.
         missing.chunked(30).forEach { Hub.send(d.id, Hub.msg("icons").put("apps", JSONArray(it))) }
         // If a reply never comes (phone offline), allow asking again later.
-        main.postDelayed({ synchronized(requested) { missing.forEach { requested.remove("${d.id}/$it") } } },
-            RETRY_MS)
+        main.postDelayed(
+            { synchronized(requested) { missing.forEach { requested.remove("${d.id}/$it") } } },
+            RETRY_MS,
+        )
     }
 
     private val main = android.os.Handler(android.os.Looper.getMainLooper())

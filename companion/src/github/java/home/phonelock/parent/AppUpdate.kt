@@ -35,6 +35,7 @@ object AppUpdate {
     private const val VERSION_FILE = "parent-version.json"
     private const val APK_FILE = "PhoneLock-parent.apk"
     private const val CHECK_EVERY_MS = 6 * 3600_000L
+
     /** Far above the real size (about 55 MB), only to stop a runaway download. */
     private const val MAX_APK = 200L * 1024 * 1024
 
@@ -48,8 +49,11 @@ object AppUpdate {
     /** Called once at app start; shows a newer version found by an earlier check straight away. */
     fun init(c: Context) {
         app = c.applicationContext
-        _state.value = UpdateState(installed = installedVersion(), latest = prefs.getInt("latest", 0),
-            size = prefs.getLong("size", 0))
+        _state.value = UpdateState(
+            installed = installedVersion(),
+            latest = prefs.getInt("latest", 0),
+            size = prefs.getLong("size", 0),
+        )
     }
 
     /** Checks for a newer release if the last check was long enough ago (the app came to the front). */
@@ -75,7 +79,9 @@ object AppUpdate {
                 val st = _state.value
                 when {
                     !st.available -> if (asked) Undo.notify(Strings.get(R.string.device_app_up_to_date, st.installed))
+
                     asked -> offer(st.latest)
+
                     prefs.getInt("announced", 0) != st.latest -> {
                         prefs.edit().putInt("announced", st.latest).apply()
                         offer(st.latest)
@@ -129,8 +135,7 @@ object AppUpdate {
     }
 
     /** Announces version [latest] with an Update button. */
-    private fun offer(latest: Int) =
-        Undo.action(Strings.get(R.string.device_app_available, latest), Strings.get(R.string.device_app_update)) { install() }
+    private fun offer(latest: Int) = Undo.action(Strings.get(R.string.device_app_available, latest), Strings.get(R.string.device_app_update)) { install() }
 
     /** Downloads the advertised APK and returns it only if every check passes; otherwise deletes it and throws. */
     private fun downloadVerified(): File {
@@ -145,10 +150,15 @@ object AppUpdate {
         val problem = when {
             !sha.equals(prefs.getString("sha256", ""), ignoreCase = true) ->
                 Strings.get(R.string.device_app_bad_checksum)
+
             info == null -> Strings.get(R.string.device_app_not_an_app)
+
             info.packageName != app.packageName -> Strings.get(R.string.device_app_different_app)
+
             info.versionCode.toInt() != latest || latest <= installedVersion() -> Strings.get(R.string.device_app_different_version)
+
             ownSigner == null || info.signer != ownSigner -> Strings.get(R.string.device_app_bad_signature)
+
             else -> null
         }
         if (problem != null) {
@@ -178,8 +188,12 @@ object AppUpdate {
             }
             val reply = Intent(app, Result::class.java)
             // Mutable: the installer adds its status (and the confirmation screen) to this intent.
-            val pending = PendingIntent.getBroadcast(app, id, reply,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE)
+            val pending = PendingIntent.getBroadcast(
+                app,
+                id,
+                reply,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE,
+            )
             session.commit(pending.intentSender)
         }
         apk.delete()
@@ -191,8 +205,7 @@ object AppUpdate {
         Undo.notify(Strings.get(R.string.device_app_update_failed, why))
     }
 
-    private fun installedVersion(): Int =
-        app.packageManager.getPackageInfo(app.packageName, 0).longVersionCode.toInt()
+    private fun installedVersion(): Int = app.packageManager.getPackageInfo(app.packageName, 0).longVersionCode.toInt()
 
     /**
      * Android's answers about an install session: it needs the parent's confirmation (shown now, since they
@@ -207,11 +220,14 @@ object AppUpdate {
                     val confirm = intent.getParcelableExtra<Intent>(Intent.EXTRA_INTENT) ?: return failed(Strings.get(R.string.device_app_no_confirmation))
                     context.startActivity(confirm.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
                 }
+
                 PackageInstaller.STATUS_SUCCESS -> {}
+
                 PackageInstaller.STATUS_FAILURE_ABORTED -> {
                     _state.update { it.copy(busy = false, progress = null) }
                     Undo.notify(Strings.get(R.string.device_app_update_cancelled))
                 }
+
                 else -> failed(intent.getStringExtra(PackageInstaller.EXTRA_STATUS_MESSAGE) ?: Strings.get(R.string.device_app_install_failed))
             }
         }

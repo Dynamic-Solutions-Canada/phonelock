@@ -98,8 +98,7 @@ internal class AdbIdentity private constructor(val privateKey: PrivateKey, val c
             cert.verify(cert.publicKey)
         }
 
-        override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?) =
-            throw java.security.cert.CertificateException("Not a server")
+        override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?) = throw java.security.cert.CertificateException("Not a server")
 
         override fun getAcceptedIssuers() = arrayOf<X509Certificate>()
     }
@@ -143,7 +142,11 @@ internal class AdbIdentity private constructor(val privateKey: PrivateKey, val c
             val tbs = seq(
                 tlv(0xa0, tlv(0x02, byteArrayOf(2))), // version 3
                 tlv(0x02, serial.toByteArray()),
-                sha256WithRsa, name, validity, name, publicKeyInfo,
+                sha256WithRsa,
+                name,
+                validity,
+                name,
+                publicKeyInfo,
             )
             val sig = Signature.getInstance("SHA256withRSA").run {
                 initSign(key)

@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
-
 import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -46,7 +45,7 @@ final class BlobStream {
             c.updateAAD(pieceAad(aad, index, left == 0));
             byte[] ct = c.doFinal(buf, 0, n);
             int len = iv.length + ct.length;
-            out.write(new byte[]{(byte) (len >>> 24), (byte) (len >>> 16), (byte) (len >>> 8), (byte) len});
+            out.write(new byte[] {(byte) (len >>> 24), (byte) (len >>> 16), (byte) (len >>> 8), (byte) len});
             out.write(iv);
             out.write(ct);
             index++;

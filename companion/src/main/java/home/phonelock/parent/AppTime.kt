@@ -39,8 +39,14 @@ data class TimeLimit(val id: String, val app: String, val minutes: List<Int>) {
  * Today on the device, as of [ts]: minutes per app ([apps]), minutes counted towards each limit ([used], by
  * limit id: time allowed by a grant or in parent mode isn't counted), and the limits that have run out ([out]).
  */
-data class AppTimeToday(val ts: Long, val day: String, val apps: Map<String, Int>, val used: Map<String, Int>,
-                        val out: Set<String>, val labels: Map<String, String>)
+data class AppTimeToday(
+    val ts: Long,
+    val day: String,
+    val apps: Map<String, Int>,
+    val used: Map<String, Int>,
+    val out: Set<String>,
+    val labels: Map<String, String>,
+)
 
 /**
  * The parent side of daily app time limits and app-use reports (docs/protocol.md: `limits`, `usage`).
@@ -56,6 +62,7 @@ object AppTime {
     private val file by lazy { File(app.filesDir, "app-time.json") }
 
     private val _limits = MutableStateFlow<Map<String, List<TimeLimit>>>(emptyMap())
+
     /** Device -> its limits, as last reported (or as just edited here). */
     val limits: StateFlow<Map<String, List<TimeLimit>>> = _limits.asStateFlow()
 
@@ -63,17 +70,19 @@ object AppTime {
     val today: StateFlow<Map<String, AppTimeToday>> = _today.asStateFlow()
 
     private val _days = MutableStateFlow<Map<String, Map<String, Map<String, Int>>>>(emptyMap())
+
     /** Device -> day ("yyyy-MM-dd") -> app -> minutes. */
     val days: StateFlow<Map<String, Map<String, Map<String, Int>>>> = _days.asStateFlow()
 
     private val _labels = MutableStateFlow<Map<String, Map<String, String>>>(emptyMap())
+
     /** Device -> app names seen in its reports (apps since removed keep their name here). */
     val labels: StateFlow<Map<String, Map<String, String>>> = _labels.asStateFlow()
 
     private val _error = MutableStateFlow<Map<String, String>>(emptyMap())
+
     /** Device -> why its record can't be read (usage access missing). */
     val error: StateFlow<Map<String, String>> = _error.asStateFlow()
-
 
     fun init(c: Context) {
         app = c.applicationContext
@@ -118,10 +127,16 @@ object AppTime {
         }
         m.optJSONObject("appTime")?.let { t ->
             _today.update {
-                it + (dev to AppTimeToday(ts, t.optString("day"), ints(t.optJSONObject("apps")),
-                    ints(t.optJSONObject("used")),
-                    t.optJSONArray("out")?.let { a -> (0 until a.length()).map { i -> a.getString(i) }.toSet() } ?: emptySet(),
-                    strings(t.optJSONObject("labels"))))
+                it + (
+                    dev to AppTimeToday(
+                        ts,
+                        t.optString("day"),
+                        ints(t.optJSONObject("apps")),
+                        ints(t.optJSONObject("used")),
+                        t.optJSONArray("out")?.let { a -> (0 until a.length()).map { i -> a.getString(i) }.toSet() } ?: emptySet(),
+                        strings(t.optJSONObject("labels")),
+                    )
+                    )
             }
             t.optJSONObject("labels")?.let { l -> mergeLabels(dev, strings(l)) }
         }
@@ -169,11 +184,14 @@ object AppTime {
         runCatching {
             val o = JSONObject()
             o.put("limits", JSONObject().also { l -> _limits.value.forEach { (k, v) -> l.put(k, JSONArray(v.map { it.toJson() })) } })
-            o.put("days", JSONObject().also { d ->
-                _days.value.forEach { (k, v) ->
-                    d.put(k, JSONObject().also { dd -> v.forEach { (day, apps) -> dd.put(day, JSONObject(apps as Map<*, *>)) } })
-                }
-            })
+            o.put(
+                "days",
+                JSONObject().also { d ->
+                    _days.value.forEach { (k, v) ->
+                        d.put(k, JSONObject().also { dd -> v.forEach { (day, apps) -> dd.put(day, JSONObject(apps as Map<*, *>)) } })
+                    }
+                },
+            )
             o.put("labels", JSONObject().also { l -> _labels.value.forEach { (k, v) -> l.put(k, JSONObject(v as Map<*, *>)) } })
             val tmp = File(file.path + ".tmp")
             tmp.writeText(o.toString())
@@ -187,12 +205,9 @@ object AppTime {
 
     private fun parseLimits(a: JSONArray) = (0 until a.length()).mapNotNull { TimeLimit.from(a.getJSONObject(it)) }
 
-    private fun parseDays(o: JSONObject): Map<String, Map<String, Int>> =
-        o.keys().asSequence().associateWith { ints(o.optJSONObject(it)) }
+    private fun parseDays(o: JSONObject): Map<String, Map<String, Int>> = o.keys().asSequence().associateWith { ints(o.optJSONObject(it)) }
 
-    private fun ints(o: JSONObject?): Map<String, Int> =
-        o?.keys()?.asSequence()?.associateWith { o.optInt(it) } ?: emptyMap()
+    private fun ints(o: JSONObject?): Map<String, Int> = o?.keys()?.asSequence()?.associateWith { o.optInt(it) } ?: emptyMap()
 
-    private fun strings(o: JSONObject?): Map<String, String> =
-        o?.keys()?.asSequence()?.associateWith { o.optString(it) } ?: emptyMap()
+    private fun strings(o: JSONObject?): Map<String, String> = o?.keys()?.asSequence()?.associateWith { o.optString(it) } ?: emptyMap()
 }

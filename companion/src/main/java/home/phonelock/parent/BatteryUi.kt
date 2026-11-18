@@ -26,18 +26,26 @@ internal fun QuietAlertSetting(dev: String) {
         Text(stringResource(R.string.main_quiet_alert_title), style = MaterialTheme.typography.labelLarge)
         FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
             QuietWatch.CHOICES.forEach { m ->
-                FilterChip(selected = current == m, onClick = { QuietWatch.setMinutes(dev, m) },
+                FilterChip(
+                    selected = current == m,
+                    onClick = { QuietWatch.setMinutes(dev, m) },
                     label = {
-                        Text(when {
-                            m == 0 -> stringResource(R.string.main_off)
-                            m < 60 -> stringResource(R.string.duration_minutes, m)
-                            else -> stringResource(R.string.duration_hours, m / 60)
-                        })
-                    })
+                        Text(
+                            when {
+                                m == 0 -> stringResource(R.string.main_off)
+                                m < 60 -> stringResource(R.string.duration_minutes, m)
+                                else -> stringResource(R.string.duration_hours, m / 60)
+                            },
+                        )
+                    },
+                )
             }
         }
-        Text(stringResource(R.string.main_quiet_alert_hint), style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(
+            stringResource(R.string.main_quiet_alert_hint),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
 }
 
@@ -60,8 +68,11 @@ internal fun BatteryAlertSetting(dev: String, state: PhoneState?) {
         }
         FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
             ALERT_LEVELS.forEach { level ->
-                FilterChip(selected = current == level, onClick = { Hub.setBatteryAlert(dev, level) },
-                    label = { Text(if (level == 0) stringResource(R.string.main_off) else stringResource(R.string.main_percent, level)) })
+                FilterChip(
+                    selected = current == level,
+                    onClick = { Hub.setBatteryAlert(dev, level) },
+                    label = { Text(if (level == 0) stringResource(R.string.main_off) else stringResource(R.string.main_percent, level)) },
+                )
             }
         }
     }

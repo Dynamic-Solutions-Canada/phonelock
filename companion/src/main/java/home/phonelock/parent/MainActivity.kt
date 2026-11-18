@@ -14,8 +14,8 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -25,8 +25,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -77,26 +77,28 @@ class MainActivity : ComponentActivity() {
         setContent {
             val ctx = LocalContext.current
             MaterialTheme(colorScheme = if (isSystemInDarkTheme()) dynamicDarkColorScheme(ctx) else dynamicLightColorScheme(ctx)) {
-                Surface(Modifier.fillMaxSize()) { Box(Modifier.fillMaxSize()) {
-                    val devices by Hub.devices.collectAsState()
-                    var adding by rememberSaveable { mutableStateOf(false) }
-                    val link by pendingLink
-                    // Shown until accepted, also to parents already using the app when the disclosure changes.
-                    var disclosed by remember { mutableStateOf(Disclosure.accepted(ctx)) }
-                    if (!disclosed) {
-                        DisclosureScreen { disclosed = true }
-                    } else if (devices.isEmpty() || adding || link != null) {
-                        AddDeviceScreen(link, canCancel = devices.isNotEmpty()) { added ->
-                            pendingLink.value = null
-                            adding = false
-                            if (added != null) selected.value = added
+                Surface(Modifier.fillMaxSize()) {
+                    Box(Modifier.fillMaxSize()) {
+                        val devices by Hub.devices.collectAsState()
+                        var adding by rememberSaveable { mutableStateOf(false) }
+                        val link by pendingLink
+                        // Shown until accepted, also to parents already using the app when the disclosure changes.
+                        var disclosed by remember { mutableStateOf(Disclosure.accepted(ctx)) }
+                        if (!disclosed) {
+                            DisclosureScreen { disclosed = true }
+                        } else if (devices.isEmpty() || adding || link != null) {
+                            AddDeviceScreen(link, canCancel = devices.isNotEmpty()) { added ->
+                                pendingLink.value = null
+                                adding = false
+                                if (added != null) selected.value = added
+                            }
+                        } else {
+                            val sel = selected.value?.takeIf { s -> devices.any { it.id == s } } ?: devices.first().id
+                            MainScreen(devices, sel, onSelect = { selected.value = it }, onAdd = { adding = true })
                         }
-                    } else {
-                        val sel = selected.value?.takeIf { s -> devices.any { it.id == s } } ?: devices.first().id
-                        MainScreen(devices, sel, onSelect = { selected.value = it }, onAdd = { adding = true })
+                        with(Undo) { UndoHost() }
                     }
-                    with(Undo) { UndoHost() }
-                } }
+                }
             }
         }
     }
@@ -140,19 +142,52 @@ private fun MainScreen(devices: List<Device>, dev: String, onSelect: (String) ->
     val events = allEvents[dev] ?: emptyList()
     val name = Hub.deviceName(dev)
     var now by remember { mutableLongStateOf(System.currentTimeMillis()) }
-    LaunchedEffect(Unit) { while (true) { delay(15_000); now = System.currentTimeMillis() } }
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(15_000)
+            now = System.currentTimeMillis()
+        }
+    }
     // Calls, Contacts or Files open as their own page over the main screen.
     var page by rememberSaveable(dev) { mutableStateOf<String?>(null) }
     var startingMode by remember(dev) { mutableStateOf(false) }
     when (page) {
-        "calls" -> { CallsScreen(dev, state) { page = null }; return }
-        "contacts" -> { ContactsScreen(dev, state) { page = null }; return }
-        "files" -> { FilesScreen(dev, state) { page = null }; return }
-        "history" -> { LocationHistoryScreen(dev, name) { page = null }; return }
-        "settings" -> { SettingsScreen(dev, name, onOpen = { page = it }) { page = null }; return }
+        "calls" -> {
+            CallsScreen(dev, state) { page = null }
+            return
+        }
+
+        "contacts" -> {
+            ContactsScreen(dev, state) { page = null }
+            return
+        }
+
+        "files" -> {
+            FilesScreen(dev, state) { page = null }
+            return
+        }
+
+        "history" -> {
+            LocationHistoryScreen(dev, name) { page = null }
+            return
+        }
+
+        "settings" -> {
+            SettingsScreen(dev, name, onOpen = { page = it }) { page = null }
+            return
+        }
+
         // Opened from Settings, so they go back there.
-        "diag" -> { DiagnosticsScreen(dev, name) { page = "settings" }; return }
-        "apptime" -> { AppTimeScreen(dev, name, state) { page = null }; return }
+        "diag" -> {
+            DiagnosticsScreen(dev, name) { page = "settings" }
+            return
+        }
+
+        "apptime" -> {
+            AppTimeScreen(dev, name, state) { page = null }
+            return
+        }
+
         "fixsetup" -> {
             WifiSetupScreen(existing = devices.firstOrNull { it.id == dev }) { page = "settings" }
             return
@@ -162,93 +197,127 @@ private fun MainScreen(devices: List<Device>, dev: String, onSelect: (String) ->
     // Wide screens (tablets, unfolded foldables, landscape) put the full app list in its own column on the
     // right; narrow ones show everything in one column.
     BoxWithConstraints(Modifier.safeDrawingPadding()) {
-    val wide = maxWidth >= 840.dp || (maxWidth >= 600.dp && maxWidth > maxHeight)
-    Row(Modifier.fillMaxSize(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-    Column(Modifier.weight(1f).padding(16.dp).verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(14.dp)) {
-        Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically) {
-            devices.forEach { d ->
-                val pending = allRequests.count { it.device == d.id }
-                FilterChip(selected = d.id == dev, onClick = { onSelect(d.id) },
-                    label = { Text(Hub.deviceName(d.id) + if (pending > 0) "  •$pending" else "") })
-            }
-            TextButton(onClick = onAdd) { Text(stringResource(R.string.main_add_device)) }
-        }
-        val device = devices.firstOrNull { it.id == dev }
-        val vitals by Hub.vitals.collectAsState()
-        val askedAt by Hub.askedAt.collectAsState()
-        // After a refresh, re-check once the no-answer wait has passed, rather than on the next 15 s tick.
-        LaunchedEffect(askedAt[dev]) {
-            now = System.currentTimeMillis()
-            delay(21_000)
-            now = System.currentTimeMillis()
-        }
-        PhoneHeader(dev, name, state, vitals[dev] ?: Vitals(), askedAt[dev] ?: 0L,
-            connected || (device != null && Push.covers(device)), now, onRefresh = { Hub.refresh(dev) }, onMenu = { page = "settings" },
-            onLockNow = { Hub.parentMode(dev, 0) },
-            onStartMode = { startingMode = true }, onEndMode = { Hub.endMode(dev) })
-        if (startingMode) StartModeDialog(name, onPick = { mode, mins -> Hub.startMode(dev, mode, mins); startingMode = false },
-            onDismiss = { startingMode = false })
-        SetupHints()
-        EmergencySection(dev)
+        val wide = maxWidth >= 840.dp || (maxWidth >= 600.dp && maxWidth > maxHeight)
+        Row(Modifier.fillMaxSize(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            Column(
+                Modifier.weight(1f).padding(16.dp).verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(14.dp),
+            ) {
+                Row(
+                    Modifier.horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    devices.forEach { d ->
+                        val pending = allRequests.count { it.device == d.id }
+                        FilterChip(
+                            selected = d.id == dev,
+                            onClick = { onSelect(d.id) },
+                            label = { Text(Hub.deviceName(d.id) + if (pending > 0) "  •$pending" else "") },
+                        )
+                    }
+                    TextButton(onClick = onAdd) { Text(stringResource(R.string.main_add_device)) }
+                }
+                val device = devices.firstOrNull { it.id == dev }
+                val vitals by Hub.vitals.collectAsState()
+                val askedAt by Hub.askedAt.collectAsState()
+                // After a refresh, re-check once the no-answer wait has passed, rather than on the next 15 s tick.
+                LaunchedEffect(askedAt[dev]) {
+                    now = System.currentTimeMillis()
+                    delay(21_000)
+                    now = System.currentTimeMillis()
+                }
+                PhoneHeader(
+                    dev, name, state, vitals[dev] ?: Vitals(), askedAt[dev] ?: 0L,
+                    connected || (device != null && Push.covers(device)), now, onRefresh = { Hub.refresh(dev) }, onMenu = { page = "settings" },
+                    onLockNow = { Hub.parentMode(dev, 0) },
+                    onStartMode = { startingMode = true }, onEndMode = { Hub.endMode(dev) },
+                )
+                if (startingMode) {
+                    StartModeDialog(
+                        name,
+                        onPick = { mode, mins ->
+                            Hub.startMode(dev, mode, mins)
+                            startingMode = false
+                        },
+                        onDismiss = { startingMode = false },
+                    )
+                }
+                SetupHints()
+                EmergencySection(dev)
 
-        if (requests.isNotEmpty()) Section(stringResource(R.string.main_requests_title)) {
-            requests.forEach { r ->
-                // The child suggests a length; the parent picks the actual one (preselected to the ask).
-                var mins by remember(r.req) { mutableLongStateOf(r.minutes) }
-                AppName(dev, r.app, r.label)
-                Text(stringResource(R.string.main_asked_for, fmtMinutes(r.minutes), time(r.ts)), style = MaterialTheme.typography.bodySmall)
-                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    (GRANT_DURATIONS + r.minutes).distinct().sorted().forEach { m ->
-                        FilterChip(selected = mins == m, onClick = { mins = m }, label = { Text(fmtMinutes(m)) })
+                if (requests.isNotEmpty()) {
+                    Section(stringResource(R.string.main_requests_title)) {
+                        requests.forEach { r ->
+                            // The child suggests a length; the parent picks the actual one (preselected to the ask).
+                            var mins by remember(r.req) { mutableLongStateOf(r.minutes) }
+                            AppName(dev, r.app, r.label)
+                            Text(stringResource(R.string.main_asked_for, fmtMinutes(r.minutes), time(r.ts)), style = MaterialTheme.typography.bodySmall)
+                            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                (GRANT_DURATIONS + r.minutes).distinct().sorted().forEach { m ->
+                                    FilterChip(selected = mins == m, onClick = { mins = m }, label = { Text(fmtMinutes(m)) })
+                                }
+                            }
+                            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                Button(onClick = { Hub.grant(dev, r.app, mins, r.req) }) { Text(stringResource(R.string.main_allow_for, fmtMinutes(mins))) }
+                                OutlinedButton(onClick = { Hub.deny(r) }) { Text(stringResource(R.string.deny)) }
+                            }
+                        }
                     }
                 }
-                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Button(onClick = { Hub.grant(dev, r.app, mins, r.req) }) { Text(stringResource(R.string.main_allow_for, fmtMinutes(mins))) }
-                    OutlinedButton(onClick = { Hub.deny(r) }) { Text(stringResource(R.string.deny)) }
+
+                ScreenAlertsSection(dev)
+
+                FindAndReach(dev, name, state, now) { page = it }
+
+                AllowedNowSection(dev, state, now)
+                NotAllowedNowSection(dev, state)
+                if (!wide) {
+                    AppTableSection(dev, state)
+                    DeviceControlsSection(dev, state)
+                }
+                ScheduleSection(dev, state)
+
+                if (events.isNotEmpty()) {
+                    Section(stringResource(R.string.main_recent_events_title)) {
+                        // A day heading wherever the day changes (events run newest first), so times have a date.
+                        val rows = events.mapIndexed { i, e ->
+                            e to (i == 0 || startOfDay(events[i - 1].ts) != startOfDay(e.ts))
+                        }
+                        CappedList(rows, key = dev) { (e, newDay) ->
+                            if (newDay) {
+                                Text(
+                                    dayName(startOfDay(e.ts), now),
+                                    Modifier.padding(top = 6.dp),
+                                    style = MaterialTheme.typography.titleSmall,
+                                    color = MaterialTheme.colorScheme.primary,
+                                )
+                            }
+                            Row(Modifier.padding(vertical = 2.dp)) {
+                                Text(
+                                    time(e.ts),
+                                    Modifier.width(76.dp),
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                                Text(e.text, style = MaterialTheme.typography.bodyMedium)
+                            }
+                        }
+                    }
+                }
+            }
+            if (wide) {
+                Column(
+                    Modifier.weight(1f).padding(16.dp).verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(14.dp),
+                ) {
+                    AppTableSection(dev, state)
+                    DeviceControlsSection(dev, state)
                 }
             }
         }
-
-        ScreenAlertsSection(dev)
-
-        FindAndReach(dev, name, state, now) { page = it }
-
-        AllowedNowSection(dev, state, now)
-        NotAllowedNowSection(dev, state)
-        if (!wide) {
-            AppTableSection(dev, state)
-            DeviceControlsSection(dev, state)
-        }
-        ScheduleSection(dev, state)
-
-        if (events.isNotEmpty()) Section(stringResource(R.string.main_recent_events_title)) {
-            // A day heading wherever the day changes (events run newest first), so times have a date.
-            val rows = events.mapIndexed { i, e ->
-                e to (i == 0 || startOfDay(events[i - 1].ts) != startOfDay(e.ts))
-            }
-            CappedList(rows, key = dev) { (e, newDay) ->
-                if (newDay) Text(dayName(startOfDay(e.ts), now), Modifier.padding(top = 6.dp),
-                    style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary)
-                Row(Modifier.padding(vertical = 2.dp)) {
-                    Text(time(e.ts), Modifier.width(76.dp), style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    Text(e.text, style = MaterialTheme.typography.bodyMedium)
-                }
-            }
-        }
     }
-    if (wide) Column(Modifier.weight(1f).padding(16.dp).verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(14.dp)) {
-        AppTableSection(dev, state)
-        DeviceControlsSection(dev, state)
-    }
-    }
-    }
-
 }
-
 
 /**
  * The colour of section cards: a step lighter than the page in dark mode and a step darker in light mode, so

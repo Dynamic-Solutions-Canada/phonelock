@@ -3,22 +3,22 @@ package home.phonelock.parent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -29,14 +29,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -50,8 +50,10 @@ internal fun AppIcon(dev: String, pkg: String, label: String, size: Dp = 24.dp) 
     if (icon != null) {
         Image(icon, contentDescription = null, modifier = Modifier.size(size))
     } else {
-        Box(Modifier.size(size).clip(CircleShape).background(MaterialTheme.colorScheme.secondaryContainer),
-            contentAlignment = Alignment.Center) {
+        Box(
+            Modifier.size(size).clip(CircleShape).background(MaterialTheme.colorScheme.secondaryContainer),
+            contentAlignment = Alignment.Center,
+        ) {
             Text(label.take(1).uppercase(), style = MaterialTheme.typography.labelSmall)
         }
     }
@@ -62,15 +64,26 @@ internal fun AppIcon(dev: String, pkg: String, label: String, size: Dp = 24.dp) 
  * the name (for example its daily limit), in the error colour when [noteAlert].
  */
 @Composable
-internal fun AppName(dev: String, pkg: String, label: String, modifier: Modifier = Modifier,
-                     note: String? = null, noteAlert: Boolean = false) {
+internal fun AppName(
+    dev: String,
+    pkg: String,
+    label: String,
+    modifier: Modifier = Modifier,
+    note: String? = null,
+    noteAlert: Boolean = false,
+) {
     Row(modifier, verticalAlignment = Alignment.CenterVertically) {
         AppIcon(dev, pkg, label, 32.dp)
         Spacer(Modifier.width(12.dp))
         Column {
             Text(label, fontWeight = FontWeight.Medium)
-            if (note != null) Text(note, style = MaterialTheme.typography.bodySmall,
-                color = if (noteAlert) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant)
+            if (note != null) {
+                Text(
+                    note,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = if (noteAlert) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
     }
 }
@@ -82,29 +95,55 @@ internal fun AppName(dev: String, pkg: String, label: String, modifier: Modifier
  * lazy grid because it sits inside the main screen's scrolling column.
  */
 @Composable
-internal fun AppIconGrid(dev: String, state: PhoneState, pkgs: List<String>, onTap: (String) -> Unit,
-                         badge: String? = null, columns: Int = 4, notes: Map<String, String> = emptyMap(),
-                         dimmed: Set<String> = emptySet()) {
+internal fun AppIconGrid(
+    dev: String,
+    state: PhoneState,
+    pkgs: List<String>,
+    onTap: (String) -> Unit,
+    badge: String? = null,
+    columns: Int = 4,
+    notes: Map<String, String> = emptyMap(),
+    dimmed: Set<String> = emptySet(),
+) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         pkgs.chunked(columns).forEach { row ->
             Row(Modifier.fillMaxWidth()) {
                 row.forEach { p ->
-                    Column(Modifier.weight(1f).clip(RoundedCornerShape(12.dp)).clickable { onTap(p) }
-                        .padding(vertical = 6.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(
+                        Modifier.weight(1f).clip(RoundedCornerShape(12.dp)).clickable { onTap(p) }
+                            .padding(vertical = 6.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
                         // Dimmed apps (paused for a while) stay in place, greyed out.
                         Box(Modifier.alpha(if (p in dimmed) 0.35f else 1f)) {
                             AppIcon(dev, p, state.label(p), 48.dp)
-                            if (badge != null) Text(badge, Modifier.align(Alignment.TopEnd)
-                                .background(MaterialTheme.colorScheme.errorContainer, CircleShape)
-                                .padding(horizontal = 5.dp), style = MaterialTheme.typography.labelSmall)
+                            if (badge != null) {
+                                Text(
+                                    badge,
+                                    Modifier.align(Alignment.TopEnd)
+                                        .background(MaterialTheme.colorScheme.errorContainer, CircleShape)
+                                        .padding(horizontal = 5.dp),
+                                    style = MaterialTheme.typography.labelSmall,
+                                )
+                            }
                         }
                         Spacer(Modifier.height(4.dp))
-                        Text(state.label(p), style = MaterialTheme.typography.labelMedium, maxLines = 1,
-                            overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center)
+                        Text(
+                            state.label(p),
+                            style = MaterialTheme.typography.labelMedium,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            textAlign = TextAlign.Center,
+                        )
                         notes[p]?.let {
                             // Two lines, so a note like "Paused until / 9:34 PM" fits under a narrow icon.
-                            Text(it, style = MaterialTheme.typography.labelSmall, maxLines = 2,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
+                            Text(
+                                it,
+                                style = MaterialTheme.typography.labelSmall,
+                                maxLines = 2,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                textAlign = TextAlign.Center,
+                            )
                         }
                     }
                 }
@@ -147,13 +186,24 @@ internal fun AllowedNowSection(dev: String, state: PhoneState, now: Long) {
         }
         if (live.isNotEmpty()) {
             Text(stringResource(R.string.apps_allowed_for_a_while), style = MaterialTheme.typography.titleSmall)
-            AppIconGrid(dev, state, phoneFirst(state, live.keys), onTap = { granted = it },
-                notes = live.mapValues { stringResource(R.string.apps_until_time, time(it.value)) })
+            AppIconGrid(
+                dev,
+                state,
+                phoneFirst(state, live.keys),
+                onTap = { granted = it },
+                notes = live.mapValues { stringResource(R.string.apps_until_time, time(it.value)) },
+            )
         }
         if (paused.isNotEmpty()) {
             Text(stringResource(R.string.apps_paused_for_a_while), style = MaterialTheme.typography.titleSmall)
-            AppIconGrid(dev, state, phoneFirst(state, paused.keys), onTap = { unpausing = it },
-                notes = paused.mapValues { stringResource(R.string.apps_until_time, time(it.value)) }, dimmed = paused.keys)
+            AppIconGrid(
+                dev,
+                state,
+                phoneFirst(state, paused.keys),
+                onTap = { unpausing = it },
+                notes = paused.mapValues { stringResource(R.string.apps_until_time, time(it.value)) },
+                dimmed = paused.keys,
+            )
         }
         ControlPills(dev, controlsNow, label = { id ->
             state.grants[id]?.takeIf { it > now }?.let { stringResource(R.string.apps_control_until, DeviceControls.label(id), time(it)) }
@@ -162,36 +212,63 @@ internal fun AllowedNowSection(dev: String, state: PhoneState, now: Long) {
     }
 
     blocking?.let { p ->
-        LengthDialog(stringResource(R.string.apps_pause_how_long, state.label(p)), onPick = { m -> Hub.block(dev, p, m); blocking = null },
-            onDismiss = { blocking = null })
+        LengthDialog(
+            stringResource(R.string.apps_pause_how_long, state.label(p)),
+            onPick = { m ->
+                Hub.block(dev, p, m)
+                blocking = null
+            },
+            onDismiss = { blocking = null },
+        )
     }
     unpausing?.let { p ->
-        LengthDialog(stringResource(R.string.apps_allow_how_long, state.label(p)), onPick = { m -> Hub.grant(dev, p, m); unpausing = null },
+        LengthDialog(
+            stringResource(R.string.apps_allow_how_long, state.label(p)),
+            onPick = { m ->
+                Hub.grant(dev, p, m)
+                unpausing = null
+            },
             onDismiss = { unpausing = null },
-            extra = stringResource(R.string.apps_allow_again_now) to { Hub.unblock(dev, p); unpausing = null })
+            extra = stringResource(R.string.apps_allow_again_now) to {
+                Hub.unblock(dev, p)
+                unpausing = null
+            },
+        )
     }
     granted?.let { p ->
         val until = state.grants[p] ?: 0
+
         /** Gives back what was running before a stop, as Undo for "Stop now" and "Stop all". */
         fun regrant(grants: Map<String, Long>) {
             val nowMs = System.currentTimeMillis()
             grants.filterValues { it > nowMs }.forEach { (app, end) -> Hub.grant(dev, app, ((end - nowMs) / 60_000).coerceAtLeast(1)) }
         }
-        OptionsDialog(stringResource(R.string.apps_app_until, state.label(p), time(until)), onDismiss = { granted = null }, options = listOfNotNull(
-            MenuEntry(stringResource(R.string.apps_add_30_minutes)) {
-                Hub.grant(dev, p, (until - System.currentTimeMillis()) / 60_000 + 30); granted = null
-            },
-            MenuEntry(stringResource(R.string.apps_stop_now)) {
-                val before = mapOf(p to until)
-                Hub.revoke(dev, p); granted = null
-                Undo.offer(Strings.get(R.string.apps_app_stopped, state.label(p))) { regrant(before) }
-            },
-            if (live.size > 1) MenuEntry(stringResource(R.string.apps_stop_all)) {
-                val before = live
-                Hub.revoke(dev, "all"); granted = null
-                Undo.offer(Strings.get(R.string.apps_all_stopped)) { regrant(before) }
-            } else null,
-        ))
+        OptionsDialog(
+            stringResource(R.string.apps_app_until, state.label(p), time(until)),
+            onDismiss = { granted = null },
+            options = listOfNotNull(
+                MenuEntry(stringResource(R.string.apps_add_30_minutes)) {
+                    Hub.grant(dev, p, (until - System.currentTimeMillis()) / 60_000 + 30)
+                    granted = null
+                },
+                MenuEntry(stringResource(R.string.apps_stop_now)) {
+                    val before = mapOf(p to until)
+                    Hub.revoke(dev, p)
+                    granted = null
+                    Undo.offer(Strings.get(R.string.apps_app_stopped, state.label(p))) { regrant(before) }
+                },
+                if (live.size > 1) {
+                    MenuEntry(stringResource(R.string.apps_stop_all)) {
+                        val before = live
+                        Hub.revoke(dev, "all")
+                        granted = null
+                        Undo.offer(Strings.get(R.string.apps_all_stopped)) { regrant(before) }
+                    }
+                } else {
+                    null
+                },
+            ),
+        )
     }
 }
 
@@ -229,18 +306,25 @@ internal fun NotAllowedNowSection(dev: String, state: PhoneState) {
     val blockedNow = outOfHours
     val grantable = phoneFirst(state, appsOnly(blockedNow + state.others).distinct())
     // Wi-Fi and Bluetooth not allowed now (out of hours, paused, or never ticked): pills after the icons.
-    val controlsOff = if (!state.full || DeviceControls.ALL.none { it in state.home || it in state.others || it in state.notOffered })
+    val controlsOff = if (!state.full || DeviceControls.ALL.none { it in state.home || it in state.others || it in state.notOffered }) {
         emptyList() // not known yet, or a lock app too old to have them
-    else DeviceControls.ALL.filter { id ->
-        val scheduled = id in state.home && (state.masks[id] ?: (MODE_NORMAL or MODE_LIMITED)) and bit != 0
-        val allowed = (scheduled && (state.blocks[id] ?: 0) <= nowMs) || (state.grants[id] ?: 0) > nowMs
-        !allowed && id !in state.notOffered
+    } else {
+        DeviceControls.ALL.filter { id ->
+            val scheduled = id in state.home && (state.masks[id] ?: (MODE_NORMAL or MODE_LIMITED)) and bit != 0
+            val allowed = (scheduled && (state.blocks[id] ?: 0) <= nowMs) || (state.grants[id] ?: 0) > nowMs
+            !allowed && id !in state.notOffered
+        }
     }
 
     Section(stringResource(R.string.apps_not_allowed_now_title)) {
         Text(stringResource(R.string.apps_tap_to_allow), style = MaterialTheme.typography.bodySmall)
-        AppIconGrid(dev, state, grantable, onTap = { pick = it },
-            notes = paused.mapValues { stringResource(R.string.apps_paused_until_note, time(it.value)) })
+        AppIconGrid(
+            dev,
+            state,
+            grantable,
+            onTap = { pick = it },
+            notes = paused.mapValues { stringResource(R.string.apps_paused_until_note, time(it.value)) },
+        )
         ControlPills(dev, controlsOff, label = { id ->
             state.blocks[id]?.takeIf { it > nowMs }?.let { stringResource(R.string.apps_control_paused_until, DeviceControls.label(id), time(it)) }
                 ?: DeviceControls.label(id)
@@ -249,9 +333,25 @@ internal fun NotAllowedNowSection(dev: String, state: PhoneState) {
 
     pick?.let { p ->
         // A paused app can simply be given back; any app can be allowed for a set time.
-        val unpause = if (p in paused || (state.blocks[p] ?: 0) > nowMs) (stringResource(R.string.apps_allow_again_now) to { Hub.unblock(dev, p); pick = null }) else null
-        LengthDialog(stringResource(R.string.apps_allow_how_long, state.label(p)), onPick = { m -> Hub.grant(dev, p, m); pick = null },
-            onDismiss = { pick = null }, extra = unpause)
+        val unpause = if (p in paused || (state.blocks[p] ?: 0) > nowMs) {
+            (
+                stringResource(R.string.apps_allow_again_now) to {
+                    Hub.unblock(dev, p)
+                    pick = null
+                }
+                )
+        } else {
+            null
+        }
+        LengthDialog(
+            stringResource(R.string.apps_allow_how_long, state.label(p)),
+            onPick = { m ->
+                Hub.grant(dev, p, m)
+                pick = null
+            },
+            onDismiss = { pick = null },
+            extra = unpause,
+        )
     }
 }
 
@@ -261,25 +361,37 @@ internal fun NotAllowedNowSection(dev: String, state: PhoneState) {
  * action), e.g. "Allow again now".
  */
 @Composable
-internal fun LengthDialog(title: String, onPick: (Long) -> Unit, onDismiss: () -> Unit,
-                          extra: Pair<String, () -> Unit>? = null) {
+internal fun LengthDialog(
+    title: String,
+    onPick: (Long) -> Unit,
+    onDismiss: () -> Unit,
+    extra: Pair<String, () -> Unit>? = null,
+) {
     val ctx = LocalContext.current
     var custom by remember { mutableStateOf(false) }
     if (custom) {
         CustomLengthDialog(title, onPick = onPick, onDismiss = onDismiss)
         return
     }
-    OptionsDialog(title, onDismiss, options = listOfNotNull(
-        extra?.let { (label, action) -> MenuEntry(label, onClick = action) },
-        *GRANT_DURATIONS.map { m -> MenuEntry(fmtMinutes(m)) { onPick(m) } }.toTypedArray(),
-        MenuEntry(stringResource(R.string.apps_until_a_time)) {
-            val now = java.util.Calendar.getInstance()
-            android.app.TimePickerDialog(ctx, { _, h, min -> onPick(minutesUntil(h, min)) },
-                now.get(java.util.Calendar.HOUR_OF_DAY), now.get(java.util.Calendar.MINUTE),
-                android.text.format.DateFormat.is24HourFormat(ctx)).show()
-        },
-        MenuEntry(stringResource(R.string.apps_custom_length)) { custom = true },
-    ))
+    OptionsDialog(
+        title,
+        onDismiss,
+        options = listOfNotNull(
+            extra?.let { (label, action) -> MenuEntry(label, onClick = action) },
+            *GRANT_DURATIONS.map { m -> MenuEntry(fmtMinutes(m)) { onPick(m) } }.toTypedArray(),
+            MenuEntry(stringResource(R.string.apps_until_a_time)) {
+                val now = java.util.Calendar.getInstance()
+                android.app.TimePickerDialog(
+                    ctx,
+                    { _, h, min -> onPick(minutesUntil(h, min)) },
+                    now.get(java.util.Calendar.HOUR_OF_DAY),
+                    now.get(java.util.Calendar.MINUTE),
+                    android.text.format.DateFormat.is24HourFormat(ctx),
+                ).show()
+            },
+            MenuEntry(stringResource(R.string.apps_custom_length)) { custom = true },
+        ),
+    )
 }
 
 /** Hours and minutes fields for a length that isn't in the list. */
@@ -295,19 +407,35 @@ private fun CustomLengthDialog(title: String, onPick: (Long) -> Unit, onDismiss:
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedTextField(hours, { hours = it.filter(Char::isDigit).take(2) }, Modifier.weight(1f),
-                        label = { Text(stringResource(R.string.apps_hours)) }, singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
-                    OutlinedTextField(mins, { mins = it.filter(Char::isDigit).take(4) }, Modifier.weight(1f),
-                        label = { Text(stringResource(R.string.apps_minutes)) }, singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
+                    OutlinedTextField(
+                        hours,
+                        { hours = it.filter(Char::isDigit).take(2) },
+                        Modifier.weight(1f),
+                        label = { Text(stringResource(R.string.apps_hours)) },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    )
+                    OutlinedTextField(
+                        mins,
+                        { mins = it.filter(Char::isDigit).take(4) },
+                        Modifier.weight(1f),
+                        label = { Text(stringResource(R.string.apps_minutes)) },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    )
                 }
-                if (total > MAX_GRANT_MINUTES) Text(stringResource(R.string.apps_at_most_24_hours), color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall)
+                if (total > MAX_GRANT_MINUTES) {
+                    Text(
+                        stringResource(R.string.apps_at_most_24_hours),
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
             }
         },
         confirmButton = { TextButton(onClick = { onPick(total) }, enabled = ok) { Text(stringResource(R.string.apps_set)) } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } })
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } },
+    )
 }
 
 /** Longest grant or block the device accepts (24 hours). */

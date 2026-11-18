@@ -9,9 +9,6 @@ import android.content.Intent;
 import android.content.pm.ServiceInfo;
 import android.os.IBinder;
 import android.util.Log;
-
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -22,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import org.json.JSONObject;
 
 /**
  * Listens to a private ntfy topic for parent commands ("allow whatsapp 2h", "revoke all", "status")
@@ -33,6 +31,7 @@ public class RemoteService extends Service {
     private android.content.BroadcastReceiver screenOff, battery, shutdown;
     /** Receives location fixes other apps request, for the location log (costs no battery itself). */
     private android.location.LocationListener passive;
+
     private Thread listener, timer;
     private volatile HttpURLConnection conn;
 
@@ -52,8 +51,8 @@ public class RemoteService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         NotificationManager nm = getSystemService(NotificationManager.class);
-        nm.createNotificationChannel(new NotificationChannel("lock", getString(R.string.events_channel_parent_controls),
-                NotificationManager.IMPORTANCE_MIN));
+        nm.createNotificationChannel(new NotificationChannel(
+                "lock", getString(R.string.events_channel_parent_controls), NotificationManager.IMPORTANCE_MIN));
         Notification n = new Notification.Builder(this, "lock")
                 .setSmallIcon(android.R.drawable.ic_lock_lock)
                 .setContentTitle(getString(R.string.events_parent_controls_active))
@@ -72,11 +71,13 @@ public class RemoteService extends Service {
         if (screenOff == null) {
             // A downloaded update installs when the screen turns off, never while she's using the device.
             screenOff = new android.content.BroadcastReceiver() {
-                @Override public void onReceive(Context c, Intent i) {
+                @Override
+                public void onReceive(Context c, Intent i) {
                     new Thread(() -> Updater.installIfIdle(c), "update").start();
                 }
             };
-            registerReceiver(screenOff, new android.content.IntentFilter(Intent.ACTION_SCREEN_OFF), Context.RECEIVER_EXPORTED);
+            registerReceiver(
+                    screenOff, new android.content.IntentFilter(Intent.ACTION_SCREEN_OFF), Context.RECEIVER_EXPORTED);
         }
         if (battery == null) {
             // Low-battery alert and the "Turning off" notice (see Battery); both need a registered receiver.
@@ -86,8 +87,13 @@ public class RemoteService extends Service {
         if (passive == null) {
             passive = loc -> new Thread(() -> LocationLog.recordPassive(this, loc), "passive").start();
             try {
-                getSystemService(android.location.LocationManager.class).requestLocationUpdates(
-                        android.location.LocationManager.PASSIVE_PROVIDER, 60_000, 50f, passive, android.os.Looper.getMainLooper());
+                getSystemService(android.location.LocationManager.class)
+                        .requestLocationUpdates(
+                                android.location.LocationManager.PASSIVE_PROVIDER,
+                                60_000,
+                                50f,
+                                passive,
+                                android.os.Looper.getMainLooper());
             } catch (SecurityException e) {
                 Log.w(Policy.TAG, "passive location: " + e);
                 passive = null;
@@ -132,7 +138,9 @@ public class RemoteService extends Service {
     }
 
     @Override
-    public IBinder onBind(Intent intent) { return null; }
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
 
     static String server(Context c) {
         return Policy.prefs(c).getString("ntfy_server", "https://ntfy.sh");
@@ -151,7 +159,11 @@ public class RemoteService extends Service {
         java.util.Map<String, Long> lastBlocks = Grants.loadBlocks(this);
         int lastMode = Schedule.currentMode(this);
         while (running) {
-            try { Thread.sleep(20_000); } catch (InterruptedException e) { if (!running) return; }
+            try {
+                Thread.sleep(20_000);
+            } catch (InterruptedException e) {
+                if (!running) return;
+            }
             // A few times a day, look for a lock app update (on its own thread: a download can take a while).
             if (Updater.checkDue(this)) new Thread(() -> Updater.check(this, null), "update").start();
             Debugging.expireIfDue(this);
@@ -210,7 +222,8 @@ public class RemoteService extends Service {
         Policy.apply(this);
         List<String> names = new ArrayList<>();
         for (String p : ended) names.add(Remote.label(this, p));
-        String txt = getResources().getQuantityString(R.plurals.events_apps_back, ended.size(), String.join(", ", names));
+        String txt =
+                getResources().getQuantityString(R.plurals.events_apps_back, ended.size(), String.join(", ", names));
         Remote.notifyKid(this, txt);
         if (Remote.paired(this)) {
             Remote.event(this, txt, null, true);
@@ -257,11 +270,14 @@ public class RemoteService extends Service {
                 c.setReadTimeout(120_000); // ntfy sends keepalives every ~45 s
                 // Ask for an uncompressed stream so proxies (Cloudflare) pass each line on immediately.
                 c.setRequestProperty("Accept-Encoding", "identity");
-                try (BufferedReader r = new BufferedReader(
-                        new InputStreamReader(c.getInputStream(), StandardCharsets.UTF_8))) {
+                try (BufferedReader r =
+                        new BufferedReader(new InputStreamReader(c.getInputStream(), StandardCharsets.UTF_8))) {
                     backoff = 2_000;
-                    Policy.prefs(this).edit().putLong("hub_connected_at", System.currentTimeMillis())
-                            .remove("hub_error").apply();
+                    Policy.prefs(this)
+                            .edit()
+                            .putLong("hub_connected_at", System.currentTimeMillis())
+                            .remove("hub_error")
+                            .apply();
                     // Connected again: send what was kept while offline (alerts, location readings).
                     Outbox.flush(this);
                     String line;
@@ -270,7 +286,10 @@ public class RemoteService extends Service {
             } catch (Exception e) {
                 Log.w(Policy.TAG, "ntfy: " + e);
                 // Kept for diagnostics: why the device last lost (or couldn't get) the hub connection.
-                Policy.prefs(this).edit().putString("hub_error", e.getClass().getSimpleName() + ": " + e.getMessage()).apply();
+                Policy.prefs(this)
+                        .edit()
+                        .putString("hub_error", e.getClass().getSimpleName() + ": " + e.getMessage())
+                        .apply();
             }
             sleep(backoff);
             backoff = Math.min(backoff * 2, 120_000);
@@ -301,26 +320,30 @@ public class RemoteService extends Service {
         String topic = topic(ctx);
         if (topic.isEmpty()) return;
         new Thread(() -> {
-            try {
-                HttpURLConnection c = (HttpURLConnection) new URL(server(ctx) + "/" + topic).openConnection();
-                c.setRequestMethod("POST");
-                c.setDoOutput(true);
-                c.setConnectTimeout(15_000);
-                c.setReadTimeout(15_000);
-                c.setRequestProperty("Title", "Phone lock");
-                c.setRequestProperty("Tags", "iphone");
-                try (OutputStream os = c.getOutputStream()) {
-                    os.write((REPLY_PREFIX + " " + text).getBytes(StandardCharsets.UTF_8));
-                }
-                c.getResponseCode();
-                c.disconnect();
-            } catch (Exception e) {
-                Log.w(Policy.TAG, "reply: " + e);
-            }
-        }).start();
+                    try {
+                        HttpURLConnection c = (HttpURLConnection) new URL(server(ctx) + "/" + topic).openConnection();
+                        c.setRequestMethod("POST");
+                        c.setDoOutput(true);
+                        c.setConnectTimeout(15_000);
+                        c.setReadTimeout(15_000);
+                        c.setRequestProperty("Title", "Phone lock");
+                        c.setRequestProperty("Tags", "iphone");
+                        try (OutputStream os = c.getOutputStream()) {
+                            os.write((REPLY_PREFIX + " " + text).getBytes(StandardCharsets.UTF_8));
+                        }
+                        c.getResponseCode();
+                        c.disconnect();
+                    } catch (Exception e) {
+                        Log.w(Policy.TAG, "reply: " + e);
+                    }
+                })
+                .start();
     }
 
     private void sleep(long ms) {
-        try { Thread.sleep(ms); } catch (InterruptedException ignored) {}
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException ignored) {
+        }
     }
 }

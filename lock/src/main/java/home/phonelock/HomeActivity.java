@@ -22,7 +22,6 @@ import android.widget.LinearLayout;
 import android.widget.TextClock;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +35,7 @@ public class HomeActivity extends Activity {
      * off or restarting it. (Settings, when allowed, is an ordinary app on the grid.)
      */
     private static final List<String> QUICK = BuiltInApps.ALL;
+
     private TextView quickButton;
     private final List<String> quickAllowed = new ArrayList<>();
     /** Repeated taps on the same unavailable app within this long are logged once. */
@@ -50,6 +50,7 @@ public class HomeActivity extends Activity {
     private TextView batteryText;
     /** Situation the screen was last built for, so the tick refreshes when it changes. */
     private int shownMode = -1;
+
     private LinearLayout parentBar;
     private TextView parentText;
     private boolean receiversOn;
@@ -60,7 +61,8 @@ public class HomeActivity extends Activity {
      * they can't set off another round.
      */
     private final BroadcastReceiver pkgReceiver = new BroadcastReceiver() {
-        @Override public void onReceive(Context c, Intent i) {
+        @Override
+        public void onReceive(Context c, Intent i) {
             if (Policy.justApplied()) return;
             Policy.applySoon(c);
         }
@@ -68,26 +70,30 @@ public class HomeActivity extends Activity {
 
     /** Policy was re-applied (grant, schedule, app changes): redraw. */
     private final BroadcastReceiver policyChanged = new BroadcastReceiver() {
-        @Override public void onReceive(Context c, Intent i) {
+        @Override
+        public void onReceive(Context c, Intent i) {
             refresh();
         }
     };
 
     /** Battery level or charging changed: show or hide the low-battery notice. */
     private final BroadcastReceiver batteryChanged = new BroadcastReceiver() {
-        @Override public void onReceive(Context c, Intent i) {
+        @Override
+        public void onReceive(Context c, Intent i) {
             updateBattery();
         }
     };
 
     private final BroadcastReceiver screenOff = new BroadcastReceiver() {
-        @Override public void onReceive(Context c, Intent i) {
+        @Override
+        public void onReceive(Context c, Intent i) {
             if (Policy.inParentMode(c)) endParentMode();
         }
     };
 
     private final Runnable tick = new Runnable() {
-        @Override public void run() {
+        @Override
+        public void run() {
             // Pick up schedule changes (bedtime starting) while the home screen is showing.
             int mode = Schedule.currentMode(HomeActivity.this);
             if (mode != shownMode) {
@@ -114,7 +120,7 @@ public class HomeActivity extends Activity {
         // Deep blue-grey to near black, top to bottom: calm, and icons stand out against it.
         root.setBackground(new android.graphics.drawable.GradientDrawable(
                 android.graphics.drawable.GradientDrawable.Orientation.TOP_BOTTOM,
-                new int[]{Color.rgb(28, 34, 52), Color.rgb(12, 13, 18)}));
+                new int[] {Color.rgb(28, 34, 52), Color.rgb(12, 13, 18)}));
         root.setPadding(dp(16), dp(40), dp(16), dp(16));
         root.setFitsSystemWindows(true);
 
@@ -150,11 +156,17 @@ public class HomeActivity extends Activity {
         // Parent unlock: press and hold the clock for 4 seconds.
         clock.setOnTouchListener(new View.OnTouchListener() {
             final Runnable fire = () -> askPin();
-            @Override public boolean onTouch(View v, MotionEvent e) {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent e) {
                 switch (e.getActionMasked()) {
-                    case MotionEvent.ACTION_DOWN: h.postDelayed(fire, 4000); return true;
+                    case MotionEvent.ACTION_DOWN:
+                        h.postDelayed(fire, 4000);
+                        return true;
                     case MotionEvent.ACTION_UP:
-                    case MotionEvent.ACTION_CANCEL: h.removeCallbacks(fire); return true;
+                    case MotionEvent.ACTION_CANCEL:
+                        h.removeCallbacks(fire);
+                        return true;
                 }
                 return true;
             }
@@ -246,8 +258,6 @@ public class HomeActivity extends Activity {
         al.setMargins(dp(8), dp(8), dp(8), dp(4));
         root.addView(bottom, al);
 
-
-
         setContentView(root);
     }
 
@@ -265,7 +275,11 @@ public class HomeActivity extends Activity {
         // or paused (e.g. Phone at bedtime), so she can ask for those too.
         List<String> pkgs = parent ? parentModeApps() : askableApps();
         if (pkgs.isEmpty()) {
-            Toast.makeText(this, parent ? R.string.home_no_other_apps : R.string.home_nothing_to_ask, Toast.LENGTH_SHORT).show();
+            Toast.makeText(
+                            this,
+                            parent ? R.string.home_no_other_apps : R.string.home_nothing_to_ask,
+                            Toast.LENGTH_SHORT)
+                    .show();
             return;
         }
         // Wi-Fi and Bluetooth aren't apps: offered as pills after the app icons, not in the grid.
@@ -297,7 +311,8 @@ public class HomeActivity extends Activity {
         choices.sort((x, y) -> x.label.toString().compareToIgnoreCase(y.label.toString()));
         grid.setApps(choices, e -> {
             pick.dismiss();
-            if (parent) launch(e.pkg); else askHowLong(e);
+            if (parent) launch(e.pkg);
+            else askHowLong(e);
         });
         for (AppGrid.Entry e : AppGrid.load(this, controls, false)) {
             // Icon and name in a rounded pill, like the ⋮ menu's.
@@ -318,7 +333,8 @@ public class HomeActivity extends Activity {
             pill.addView(name);
             pill.setOnClickListener(v -> {
                 pick.dismiss();
-                if (parent) launch(e.pkg); else askHowLong(e);
+                if (parent) launch(e.pkg);
+                else askHowLong(e);
             });
             LinearLayout.LayoutParams pl = new LinearLayout.LayoutParams(-2, -2);
             pl.setMarginStart(pills.getChildCount() > 0 ? dp(10) : 0);
@@ -343,14 +359,15 @@ public class HomeActivity extends Activity {
         // A dark red circle, with a bright one revealed from the bottom up as the button is held.
         android.graphics.drawable.ClipDrawable fill = new android.graphics.drawable.ClipDrawable(
                 rounded(Color.rgb(230, 50, 45), 28), Gravity.BOTTOM, android.graphics.drawable.ClipDrawable.VERTICAL);
-        b.setBackground(new android.graphics.drawable.LayerDrawable(new android.graphics.drawable.Drawable[]{
-                rounded(Color.rgb(140, 30, 30), 28), fill}));
+        b.setBackground(new android.graphics.drawable.LayerDrawable(
+                new android.graphics.drawable.Drawable[] {rounded(Color.rgb(140, 30, 30), 28), fill}));
         android.animation.ValueAnimator hold = android.animation.ValueAnimator.ofInt(0, 10_000);
         hold.setDuration(SOS_HOLD_MS);
         hold.addUpdateListener(a -> fill.setLevel((int) a.getAnimatedValue()));
         boolean[] fired = {false};
         hold.addListener(new android.animation.AnimatorListenerAdapter() {
-            @Override public void onAnimationEnd(android.animation.Animator a) {
+            @Override
+            public void onAnimationEnd(android.animation.Animator a) {
                 if (fill.getLevel() < 10_000) return; // let go early (cancelled)
                 fired[0] = true;
                 b.performHapticFeedback(android.view.HapticFeedbackConstants.LONG_PRESS);
@@ -369,7 +386,8 @@ public class HomeActivity extends Activity {
                     hold.cancel();
                     fill.setLevel(0);
                     if (early && e.getActionMasked() == MotionEvent.ACTION_UP) {
-                        Toast.makeText(this, R.string.home_sos_hold, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, R.string.home_sos_hold, Toast.LENGTH_SHORT)
+                                .show();
                     }
                     return true;
             }
@@ -381,7 +399,11 @@ public class HomeActivity extends Activity {
     /** Starts (or rejoins) an emergency alert and shows its screen. */
     private void startEmergency() {
         if (!Remote.paired(this)) {
-            Toast.makeText(this, getString(R.string.home_sos_not_set_up, EmergencyNumbers.local(this)), Toast.LENGTH_LONG).show();
+            Toast.makeText(
+                            this,
+                            getString(R.string.home_sos_not_set_up, EmergencyNumbers.local(this)),
+                            Toast.LENGTH_LONG)
+                    .show();
         } else {
             Emergency.start(this);
         }
@@ -410,7 +432,8 @@ public class HomeActivity extends Activity {
         List<String> usable = Policy.homeApps(this);
         java.util.Set<String> hidden = Policy.notOffered(this);
         for (String p : Schedule.masks(this).keySet()) {
-            if (!usable.contains(p) && !pkgs.contains(p) && !hidden.contains(p) && Policy.isPresent(this, p)) pkgs.add(p);
+            if (!usable.contains(p) && !pkgs.contains(p) && !hidden.contains(p) && Policy.isPresent(this, p))
+                pkgs.add(p);
         }
         return pkgs;
     }
@@ -438,10 +461,10 @@ public class HomeActivity extends Activity {
             pf.addAction(Intent.ACTION_PACKAGE_REMOVED);
             pf.addDataScheme("package");
             registerReceiver(pkgReceiver, pf, Context.RECEIVER_EXPORTED);
-            registerReceiver(screenOff, new IntentFilter(Intent.ACTION_SCREEN_OFF),
-                    Context.RECEIVER_EXPORTED);
+            registerReceiver(screenOff, new IntentFilter(Intent.ACTION_SCREEN_OFF), Context.RECEIVER_EXPORTED);
             registerReceiver(policyChanged, new IntentFilter(Policy.ACTION_CHANGED), Context.RECEIVER_NOT_EXPORTED);
-            registerReceiver(batteryChanged, new IntentFilter(Intent.ACTION_BATTERY_CHANGED), Context.RECEIVER_EXPORTED);
+            registerReceiver(
+                    batteryChanged, new IntentFilter(Intent.ACTION_BATTERY_CHANGED), Context.RECEIVER_EXPORTED);
             receiversOn = true;
         }
         // A safety net, not the main trigger (grants, schedules and parent mode apply on their own). Skipped
@@ -485,7 +508,9 @@ public class HomeActivity extends Activity {
     }
 
     @Override
-    public void onBackPressed() { /* home screen: nowhere to go back to */ }
+    public void onBackPressed() {
+        /* home screen: nowhere to go back to */
+    }
 
     /** Rotation or a tablet's window change: re-flow the icon grids for the new width. */
     @Override
@@ -503,7 +528,10 @@ public class HomeActivity extends Activity {
         // lock task by itself (lockTaskMode if_whitelisted), so stopping it closed the home screen, Android
         // started a new one that locked again, and the home screen closed and reopened ten times a second.
         if (!locked && Policy.dpm(this).isLockTaskPermitted(getPackageName())) {
-            try { startLockTask(); } catch (Exception ignored) {}
+            try {
+                startLockTask();
+            } catch (Exception ignored) {
+            }
         }
         updateParentBar();
     }
@@ -514,7 +542,8 @@ public class HomeActivity extends Activity {
         parentBar.setVisibility(p ? View.VISIBLE : View.GONE);
         if (p) {
             long until = Policy.prefs(this).getLong("parent_until", 0);
-            parentText.setText(getString(R.string.home_parent_mode_until,
+            parentText.setText(getString(
+                    R.string.home_parent_mode_until,
                     DateFormat.getTimeFormat(this).format(new java.util.Date(until))));
         }
     }
@@ -526,8 +555,8 @@ public class HomeActivity extends Activity {
             Outbox.note(this, getString(R.string.home_event_parent_mode_ended));
         }
         Policy.applySoon(this);
-        startActivity(new Intent(this, HomeActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                | Intent.FLAG_ACTIVITY_CLEAR_TOP));
+        startActivity(new Intent(this, HomeActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
         enforceLockTask();
         refresh();
     }
@@ -547,8 +576,8 @@ public class HomeActivity extends Activity {
                 .setTitle(getString(R.string.home_for_how_long, app.label))
                 .setItems(times, (d, w) -> {
                     boolean ok = Remote.request(this, app.pkg, mins[w]);
-                    Toast.makeText(this, ok ? R.string.home_asked : R.string.home_ask_wait,
-                            Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, ok ? R.string.home_asked : R.string.home_ask_wait, Toast.LENGTH_LONG)
+                            .show();
                 })
                 .show();
     }
@@ -566,7 +595,7 @@ public class HomeActivity extends Activity {
         in.setGravity(Gravity.CENTER);
         in.setTextSize(28);
         in.setLetterSpacing(0.3f);
-        in.setFilters(new android.text.InputFilter[]{new android.text.InputFilter.LengthFilter(8)});
+        in.setFilters(new android.text.InputFilter[] {new android.text.InputFilter.LengthFilter(8)});
         in.setImeOptions(android.view.inputmethod.EditorInfo.IME_ACTION_DONE);
         LinearLayout box = new LinearLayout(this);
         box.setPadding(dp(24), dp(8), dp(24), 0);
@@ -575,7 +604,8 @@ public class HomeActivity extends Activity {
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle(R.string.home_pin_title)
                 .setView(box)
-                .setPositiveButton(R.string.home_unlock, (d, w) -> unlockWith(in.getText().toString()))
+                .setPositiveButton(
+                        R.string.home_unlock, (d, w) -> unlockWith(in.getText().toString()))
                 .setNegativeButton(R.string.cancel, null)
                 .create();
         in.setOnEditorActionListener((v, action, ev) -> {
@@ -593,8 +623,8 @@ public class HomeActivity extends Activity {
     }
 
     /** Phone apps (dialers) always lead the home screen; everything else follows alphabetically. */
-    private static final java.util.Set<String> DIALERS = new java.util.HashSet<>(java.util.Arrays.asList(
-            "com.google.android.dialer", "com.android.dialer"));
+    private static final java.util.Set<String> DIALERS =
+            new java.util.HashSet<>(java.util.Arrays.asList("com.google.android.dialer", "com.android.dialer"));
 
     private static List<AppGrid.Entry> phoneFirstThenByName(List<AppGrid.Entry> apps) {
         apps.sort((a, b) -> {
@@ -617,7 +647,8 @@ public class HomeActivity extends Activity {
             Policy.prefs(this).edit().putBoolean("parent_by_pin", true).apply();
             Outbox.alert(this, getString(R.string.home_event_pin_unlocked, Remote.time(this, until)));
         } else if (r > 0) {
-            Toast.makeText(this, getString(R.string.home_pin_try_again, r), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.home_pin_try_again, r), Toast.LENGTH_LONG)
+                    .show();
         } else {
             Toast.makeText(this, R.string.home_pin_wrong, Toast.LENGTH_SHORT).show();
             // Someone guessing: tell the parents from the third wrong try on (each one locks the PIN for a while).
@@ -625,8 +656,9 @@ public class HomeActivity extends Activity {
             if (fails >= 3) {
                 long wait = Policy.prefs(this).getLong("pin_lock_until", 0) - System.currentTimeMillis();
                 long lockedMin = Math.max(1, wait / 60_000);
-                Outbox.alert(this, getResources().getQuantityString(R.plurals.home_event_pin_wrong, fails, fails,
-                        lockedMin));
+                Outbox.alert(
+                        this,
+                        getResources().getQuantityString(R.plurals.home_event_pin_wrong, fails, fails, lockedMin));
             }
         }
     }
@@ -640,7 +672,8 @@ public class HomeActivity extends Activity {
         }
         Intent i = getPackageManager().getLaunchIntentForPackage(pkg);
         if (i == null) {
-            Toast.makeText(this, R.string.home_not_available, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.home_not_available, Toast.LENGTH_SHORT)
+                    .show();
             noteAttempt(pkg, getString(R.string.home_event_not_available, Remote.label(this, pkg)));
             return;
         }
@@ -684,7 +717,8 @@ public class HomeActivity extends Activity {
         List<String> extra = new ArrayList<>();
         for (String p : grants.keySet()) if (!scheduled.contains(p) && !QUICK.contains(p)) extra.add(p);
         List<AppGrid.Entry> allowed = AppGrid.load(this, extra, true);
-        for (AppGrid.Entry e : allowed) e.note = getString(R.string.home_app_until, Remote.time(this, grants.get(e.pkg)));
+        for (AppGrid.Entry e : allowed)
+            e.note = getString(R.string.home_app_until, Remote.time(this, grants.get(e.pkg)));
         allowedGrid.setApps(allowed, e -> launch(e.pkg));
         showIf(!allowed.isEmpty(), allowedHeading, allowedGrid);
 
@@ -704,7 +738,8 @@ public class HomeActivity extends Activity {
         }
         pausedGrid.setApps(paused, e -> {
             String pausedUntil = Remote.time(this, blocks.get(e.pkg));
-            Toast.makeText(this, getString(R.string.home_app_paused_until, e.label, pausedUntil), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.home_app_paused_until, e.label, pausedUntil), Toast.LENGTH_SHORT)
+                    .show();
             noteAttempt(e.pkg, getString(R.string.home_event_paused, e.label, pausedUntil));
         });
         showIf(!paused.isEmpty(), pausedHeading, pausedGrid);
@@ -720,7 +755,8 @@ public class HomeActivity extends Activity {
         menu.setGravity(Gravity.END);
         android.widget.PopupWindow popup = new android.widget.PopupWindow(menu, -2, -2, true);
         List<AppGrid.Entry> items = new ArrayList<>(AppGrid.load(this, quickAllowed, false));
-        items.add(new AppGrid.Entry(POWER, getString(R.string.home_power), getDrawable(android.R.drawable.ic_lock_power_off)));
+        items.add(new AppGrid.Entry(
+                POWER, getString(R.string.home_power), getDrawable(android.R.drawable.ic_lock_power_off)));
         for (AppGrid.Entry e : items) {
             LinearLayout pill = new LinearLayout(this);
             pill.setGravity(Gravity.CENTER_VERTICAL);
@@ -737,7 +773,8 @@ public class HomeActivity extends Activity {
             pill.addView(label);
             pill.setOnClickListener(v -> {
                 popup.dismiss();
-                if (POWER.equals(e.pkg)) showPower(); else launch(e.pkg);
+                if (POWER.equals(e.pkg)) showPower();
+                else launch(e.pkg);
             });
             LinearLayout.LayoutParams pl = new LinearLayout.LayoutParams(-2, -2);
             pl.bottomMargin = dp(10);
@@ -746,7 +783,9 @@ public class HomeActivity extends Activity {
         menu.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         popup.setElevation(dp(8));
         // Just above the button, right edges lined up.
-        popup.showAsDropDown(quickButton, quickButton.getWidth() - menu.getMeasuredWidth(),
+        popup.showAsDropDown(
+                quickButton,
+                quickButton.getWidth() - menu.getMeasuredWidth(),
                 -quickButton.getHeight() - menu.getMeasuredHeight() - dp(6));
     }
 
@@ -759,14 +798,19 @@ public class HomeActivity extends Activity {
      */
     private void showPower() {
         if (ScreenService.showPowerMenu()) return;
-        new AlertDialog.Builder(this).setTitle(R.string.home_restart_title)
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.home_restart_title)
                 .setMessage(R.string.home_restart_message)
                 .setPositiveButton(R.string.home_restart, (d, w) -> {
-                    try { Policy.dpm(this).reboot(Policy.admin(this)); } catch (Exception e) {
-                        Toast.makeText(this, R.string.home_restart_failed, Toast.LENGTH_SHORT).show();
+                    try {
+                        Policy.dpm(this).reboot(Policy.admin(this));
+                    } catch (Exception e) {
+                        Toast.makeText(this, R.string.home_restart_failed, Toast.LENGTH_SHORT)
+                                .show();
                     }
                 })
-                .setNegativeButton(R.string.cancel, null).show();
+                .setNegativeButton(R.string.cancel, null)
+                .show();
     }
 
     private static void showIf(boolean show, View... views) {

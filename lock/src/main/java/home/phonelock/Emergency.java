@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -22,11 +21,13 @@ import org.json.JSONObject;
 final class Emergency {
     /** Location readings come every minute for this long after an alert. */
     static final long TRACK_MS = 30 * 60_000L;
+
     static final long TRACK_EVERY_MS = 60_000L;
     /** "Sent by mistake" is offered this long after starting. */
     static final long CANCEL_MS = 2 * 60_000L;
     /** How long sending keeps retrying (signal may come back). */
     private static final long RETRY_FOR_MS = 60 * 60_000L;
+
     private static final long RETRY_EVERY_MS = 15_000L;
     private static final long SEND_TIMEOUT_MS = 15_000L;
 
@@ -46,7 +47,9 @@ final class Emergency {
     static String activeId(Context c) {
         String id = prefs(c).getString("sos_id", "");
         long at = prefs(c).getLong("sos_at", 0);
-        boolean live = !id.isEmpty() && System.currentTimeMillis() - at < TRACK_MS && !prefs(c).getBoolean("sos_cancelled", false);
+        boolean live = !id.isEmpty()
+                && System.currentTimeMillis() - at < TRACK_MS
+                && !prefs(c).getBoolean("sos_cancelled", false);
         return live ? id : "";
     }
 
@@ -75,7 +78,8 @@ final class Emergency {
         try {
             JSONArray a = new JSONArray(prefs(c).getString("sos_acks", "[]"));
             for (int i = 0; i < a.length(); i++) out.add(a.getString(i));
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
         return out;
     }
 
@@ -85,7 +89,8 @@ final class Emergency {
         try {
             JSONArray a = new JSONArray(prefs(c).getString("sos_msgs", "[]"));
             for (int i = 0; i < a.length(); i++) out.add(a.getString(i));
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
         return out;
     }
 
@@ -104,8 +109,15 @@ final class Emergency {
 
         String id = Crypto.randomId();
         long now = System.currentTimeMillis();
-        prefs(app).edit().putString("sos_id", id).putLong("sos_at", now).putBoolean("sos_cancelled", false)
-                .putString("sos_acks", "[]").putString("sos_msgs", "[]").putString("sos_queue", "[]").commit();
+        prefs(app)
+                .edit()
+                .putString("sos_id", id)
+                .putLong("sos_at", now)
+                .putBoolean("sos_cancelled", false)
+                .putString("sos_acks", "[]")
+                .putString("sos_msgs", "[]")
+                .putString("sos_queue", "[]")
+                .commit();
         try {
             JSONObject o = part(app, id, "start");
             JSONObject where = LocationLog.lastPlace(app);
@@ -124,8 +136,13 @@ final class Emergency {
             if (fix == null || !id.equals(activeId(app))) return;
             try {
                 JSONObject o = part(app, id, "where");
-                o.put("where", new JSONObject().put("lat", fix.getLatitude()).put("lng", fix.getLongitude())
-                        .put("at", fix.getTime()).put("acc", Math.round(fix.getAccuracy())));
+                o.put(
+                        "where",
+                        new JSONObject()
+                                .put("lat", fix.getLatitude())
+                                .put("lng", fix.getLongitude())
+                                .put("at", fix.getTime())
+                                .put("acc", Math.round(fix.getAccuracy())));
                 enqueue(app, o);
             } catch (Exception e) {
                 Log.w(Policy.TAG, "sos fix: " + e);

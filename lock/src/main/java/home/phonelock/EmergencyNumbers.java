@@ -4,7 +4,6 @@ import android.content.Context;
 import android.telephony.TelephonyManager;
 import android.telephony.emergency.EmergencyNumber;
 import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -108,8 +107,8 @@ final class EmergencyNumbers {
 
         // Separate service numbers only.
         for (int wanted : new int[] {
-                EmergencyNumber.EMERGENCY_SERVICE_CATEGORY_AMBULANCE,
-                EmergencyNumber.EMERGENCY_SERVICE_CATEGORY_POLICE}) {
+            EmergencyNumber.EMERGENCY_SERVICE_CATEGORY_AMBULANCE, EmergencyNumber.EMERGENCY_SERVICE_CATEGORY_POLICE
+        }) {
             for (Candidate n : local) {
                 if ((n.categories & wanted) != 0) return n.number;
             }
@@ -143,8 +142,8 @@ final class EmergencyNumbers {
                         builtIn = false;
                     }
                 }
-                out.add(new Candidate(n.getNumber(), n.getCountryIso().toLowerCase(java.util.Locale.ROOT),
-                        categories, builtIn));
+                out.add(new Candidate(
+                        n.getNumber(), n.getCountryIso().toLowerCase(java.util.Locale.ROOT), categories, builtIn));
             }
         }
         return out;

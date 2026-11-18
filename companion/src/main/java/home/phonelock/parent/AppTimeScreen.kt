@@ -1,11 +1,5 @@
 package home.phonelock.parent
 
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,23 +8,29 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -48,7 +48,7 @@ internal val ClockIcon: ImageVector by lazy {
     ImageVector.Builder("Clock", 24.dp, 24.dp, 24f, 24f).addPath(
         PathParser().parsePathString(
             "M12 2a10 10 0 1 0 0 20a10 10 0 1 0 0-20zm0 2a8 8 0 1 1 0 16a8 8 0 1 1 0-16z" +
-                "M11 6h2v5.6l4 2.3-1 1.7-5-2.9z"
+                "M11 6h2v5.6l4 2.3-1 1.7-5-2.9z",
         ).toNodes(),
         fill = androidx.compose.ui.graphics.SolidColor(androidx.compose.ui.graphics.Color.Black),
     ).build()
@@ -111,8 +111,10 @@ private fun allowanceText(min: List<Int>): String {
             min[0] == 0 -> Strings.get(R.string.apps_limit_not_allowed_any_day)
             else -> Strings.get(R.string.apps_limit_per_day, one(min[0]))
         }
+
         weekdays.size == 1 && weekend.size == 1 ->
             Strings.get(R.string.apps_limit_split, one(weekdays[0]), one(weekend[0], lower = true))
+
         else -> Strings.get(R.string.apps_limit_varies)
     }
 }
@@ -129,8 +131,14 @@ private enum class LimitShape { SAME, SPLIT, EACH }
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-internal fun LimitDialog(state: PhoneState, initial: TimeLimit, isNew: Boolean,
-                         onSave: (TimeLimit) -> Unit, onDelete: () -> Unit, onDismiss: () -> Unit) {
+internal fun LimitDialog(
+    state: PhoneState,
+    initial: TimeLimit,
+    isNew: Boolean,
+    onSave: (TimeLimit) -> Unit,
+    onDelete: () -> Unit,
+    onDismiss: () -> Unit,
+) {
     var minutes by remember { mutableStateOf(initial.minutes) }
     var shape by remember { mutableStateOf(shapeOf(initial.minutes)) }
 
@@ -140,8 +148,14 @@ internal fun LimitDialog(state: PhoneState, initial: TimeLimit, isNew: Boolean,
         text = {
             Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    FilterChip(shape == LimitShape.SAME, { shape = LimitShape.SAME; minutes = List(7) { minutes[1] } },
-                        label = { Text(stringResource(R.string.apps_limit_every_day)) })
+                    FilterChip(
+                        shape == LimitShape.SAME,
+                        {
+                            shape = LimitShape.SAME
+                            minutes = List(7) { minutes[1] }
+                        },
+                        label = { Text(stringResource(R.string.apps_limit_every_day)) },
+                    )
                     FilterChip(shape == LimitShape.SPLIT, {
                         shape = LimitShape.SPLIT
                         minutes = List(7) { d -> if (d == 0 || d == 6) minutes[0] else minutes[1] }
@@ -150,13 +164,17 @@ internal fun LimitDialog(state: PhoneState, initial: TimeLimit, isNew: Boolean,
                 }
                 when (shape) {
                     LimitShape.SAME -> Stepper(stringResource(R.string.apps_limit_every_day), minutes[1]) { v -> minutes = List(7) { v } }
+
                     LimitShape.SPLIT -> {
                         Stepper(stringResource(R.string.apps_limit_mon_fri), minutes[1]) { v -> minutes = List(7) { d -> if (d in 1..5) v else minutes[d] } }
                         Stepper(stringResource(R.string.apps_limit_sat_sun), minutes[0]) { v -> minutes = List(7) { d -> if (d == 0 || d == 6) v else minutes[d] } }
                     }
+
                     LimitShape.EACH -> (0 until 7).map { (it + 1) % 7 }.forEach { d ->
-                        Stepper(java.time.DayOfWeek.of(if (d == 0) 7 else d).getDisplayName(TextStyle.FULL, Locale.getDefault()),
-                            minutes[d]) { v -> minutes = minutes.toMutableList().also { it[d] = v } }
+                        Stepper(
+                            java.time.DayOfWeek.of(if (d == 0) 7 else d).getDisplayName(TextStyle.FULL, Locale.getDefault()),
+                            minutes[d],
+                        ) { v -> minutes = minutes.toMutableList().also { it[d] = v } }
                     }
                 }
                 Text(stringResource(R.string.apps_limit_explainer), style = MaterialTheme.typography.bodySmall)
@@ -170,7 +188,8 @@ internal fun LimitDialog(state: PhoneState, initial: TimeLimit, isNew: Boolean,
                 if (!isNew) DangerButton(stringResource(R.string.remove), onClick = onDelete)
                 TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) }
             }
-        })
+        },
+    )
 }
 
 private fun shapeOf(min: List<Int>): LimitShape = when {
@@ -191,14 +210,23 @@ private fun Stepper(label: String, value: Int, onChange: (Int) -> Unit) {
         IconButton(onClick = { onChange(LIMIT_STEPS[(i - 1).coerceAtLeast(0)]) }, Modifier.size(40.dp), enabled = i > 0) {
             Text("−", style = MaterialTheme.typography.titleMedium)
         }
-        Text(when {
-            value < 0 -> stringResource(R.string.apps_limit_none)
-            value == 0 -> stringResource(R.string.apps_limit_not_allowed)
-            else -> fmtMinutes(value.toLong())
-        }, Modifier.widthIn(min = 72.dp), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium,
-            textAlign = androidx.compose.ui.text.style.TextAlign.Center, maxLines = 1)
-        IconButton(onClick = { onChange(LIMIT_STEPS[(i + 1).coerceAtMost(LIMIT_STEPS.lastIndex)]) }, Modifier.size(40.dp),
-            enabled = i < LIMIT_STEPS.lastIndex) {
+        Text(
+            when {
+                value < 0 -> stringResource(R.string.apps_limit_none)
+                value == 0 -> stringResource(R.string.apps_limit_not_allowed)
+                else -> fmtMinutes(value.toLong())
+            },
+            Modifier.widthIn(min = 72.dp),
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.Medium,
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+            maxLines = 1,
+        )
+        IconButton(
+            onClick = { onChange(LIMIT_STEPS[(i + 1).coerceAtMost(LIMIT_STEPS.lastIndex)]) },
+            Modifier.size(40.dp),
+            enabled = i < LIMIT_STEPS.lastIndex,
+        ) {
             Text("+", style = MaterialTheme.typography.titleMedium)
         }
     }
@@ -243,23 +271,39 @@ private fun ReportSection(dev: String, state: PhoneState) {
     Section(stringResource(R.string.apps_app_use_title)) {
         SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
             Period.entries.forEachIndexed { i, p ->
-                SegmentedButton(selected = period == p, onClick = { period = p },
-                    shape = SegmentedButtonDefaults.itemShape(i, Period.entries.size)) { Text(stringResource(p.label)) }
+                SegmentedButton(
+                    selected = period == p,
+                    onClick = { period = p },
+                    shape = SegmentedButtonDefaults.itemShape(i, Period.entries.size),
+                ) { Text(stringResource(p.label)) }
             }
         }
-        StepNav(periodTitle(period, dates),
+        StepNav(
+            periodTitle(period, dates),
             onEarlier = { anchorText = shift(period, anchor, -1).toString() },
-            onLater = if (dates.last() < LocalDate.now()) ({ anchorText = shift(period, anchor, 1).toString() }) else null)
+            onLater = if (dates.last() < LocalDate.now()) ({ anchorText = shift(period, anchor, 1).toString() }) else null,
+        )
 
-        val bars = if (period == Period.DAY) series.indices.map { s -> series.indices.map { if (it == s) minutesOn(days, anchor, series[s]) else 0 } }
-            else dates.map { d -> series.map { minutesOn(days, d, it) } }
+        val bars = if (period == Period.DAY) {
+            series.indices.map { s -> series.indices.map { if (it == s) minutesOn(days, anchor, series[s]) else 0 } }
+        } else {
+            dates.map { d -> series.map { minutesOn(days, d, it) } }
+        }
         if (series.isEmpty() || bars.all { it.sum() == 0 }) {
             EmptyNote(stringResource(if (days.isEmpty()) R.string.apps_no_use_yet else R.string.apps_no_use_period))
         } else {
-            if (period != Period.DAY) Text(stringResource(R.string.apps_tap_bar), style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant)
+            if (period != Period.DAY) {
+                Text(
+                    stringResource(R.string.apps_tap_bar),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
             StackedBars(bars, series, xLabel = { i -> barLabel(period, dates, i) }, onTap = { i ->
-                if (period != Period.DAY) { anchorText = dates[i].toString(); period = Period.DAY }
+                if (period != Period.DAY) {
+                    anchorText = dates[i].toString()
+                    period = Period.DAY
+                }
             })
         }
 
@@ -272,18 +316,35 @@ private fun ReportSection(dev: String, state: PhoneState) {
                 Spacer(Modifier.width(10.dp))
                 Text(s.label, Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
                 val totalText = fmtMinutes(total.toLong())
-                Text(if (period != Period.DAY) stringResource(R.string.apps_total_per_day, totalText, fmtMinutes((total / counted).toLong()))
-                    else totalText,
-                    style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    if (period != Period.DAY) {
+                        stringResource(R.string.apps_total_per_day, totalText, fmtMinutes((total / counted).toLong()))
+                    } else {
+                        totalText
+                    },
+                    style = MaterialTheme.typography.bodyMedium,
+                )
             }
         }
 
         // Filter: nothing chosen shows the most used apps; choosing shows exactly those (the same menu as Activity).
         val apps = totals.entries.filter { it.value > 0 }.sortedByDescending { it.value }.map { it.key to label(it.key) }
-        if (apps.size > 1) AppPicker(apps, selected.map { it.removePrefix("app:") }.toSet(),
-            onChange = { chosen -> selected = chosen.map { "app:$it" } }, allLabel = stringResource(R.string.apps_most_used))
-        if (canFilter) SwitchRow(stringResource(R.string.apps_include_system), stringResource(R.string.apps_include_system_hint),
-            on = showSystem, enabled = true) { showSystem = it }
+        if (apps.size > 1) {
+            AppPicker(
+                apps,
+                selected.map { it.removePrefix("app:") }.toSet(),
+                onChange = { chosen -> selected = chosen.map { "app:$it" } },
+                allLabel = stringResource(R.string.apps_most_used),
+            )
+        }
+        if (canFilter) {
+            SwitchRow(
+                stringResource(R.string.apps_include_system),
+                stringResource(R.string.apps_include_system_hint),
+                on = showSystem,
+                enabled = true,
+            ) { showSystem = it }
+        }
     }
 }
 
@@ -298,9 +359,11 @@ private fun periodTitle(period: Period, dates: List<LocalDate>): String {
     val first = dates.first()
     return when (period) {
         Period.DAY -> first.format(localPattern("EEEEMMMd"))
+
         // A range keeps the start's month (and drops the end's when it's the same) in the language's order.
         Period.WEEK -> first.format(localPattern("MMMd")) + " – " +
             dates.last().format(localPattern(if (dates.last().month == first.month) "d" else "MMMd"))
+
         Period.MONTH -> first.format(localPattern("MMMMyyyy"))
     }
 }

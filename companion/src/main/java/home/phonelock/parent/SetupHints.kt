@@ -31,16 +31,20 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 @SuppressLint("BatteryLife")
 @Composable
 internal fun SetupHints() {
-    PermissionHint(stringResource(R.string.setup_hint_background),
+    PermissionHint(
+        stringResource(R.string.setup_hint_background),
         granted = { it.getSystemService(PowerManager::class.java).isIgnoringBatteryOptimizations(it.packageName) },
-        settings = { Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, Uri.parse("package:${it.packageName}")) })
+        settings = { Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, Uri.parse("package:${it.packageName}")) },
+    )
     // Android 14 and later ask for this separately: without it an emergency alert is only a notification,
     // not a screen that wakes the phone (the alarm still sounds).
     // Only the GitHub build asks for it (Play restricts full-screen alerts to calling and alarm apps).
     if (Build.VERSION.SDK_INT >= 34 && BuildConfig.FLAVOR == "github") {
-        PermissionHint(stringResource(R.string.setup_hint_full_screen),
+        PermissionHint(
+            stringResource(R.string.setup_hint_full_screen),
             granted = { it.getSystemService(NotificationManager::class.java).canUseFullScreenIntent() },
-            settings = { Intent(Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT, Uri.parse("package:${it.packageName}")) })
+            settings = { Intent(Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT, Uri.parse("package:${it.packageName}")) },
+        )
     }
 }
 

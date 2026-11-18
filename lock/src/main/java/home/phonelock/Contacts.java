@@ -10,13 +10,11 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.util.Log;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * The child's contacts, for parents: list them (to pick safe numbers), add one, remove one. New contacts
@@ -33,10 +31,11 @@ final class Contacts {
     static String nameFor(Context c, String number) {
         if (number == null || number.isEmpty() || !canRead(c)) return null;
         Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number));
-        try (Cursor cur = c.getContentResolver().query(uri,
-                new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME}, null, null, null)) {
+        try (Cursor cur = c.getContentResolver()
+                .query(uri, new String[] {ContactsContract.PhoneLookup.DISPLAY_NAME}, null, null, null)) {
             if (cur != null && cur.moveToFirst()) return cur.getString(0);
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
         return null;
     }
 
@@ -44,18 +43,27 @@ final class Contacts {
     static JSONArray list(Context c) throws Exception {
         Map<Long, JSONObject> byId = new LinkedHashMap<>();
         if (!canRead(c)) return new JSONArray();
-        String[] cols = {ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
-                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
-                ContactsContract.CommonDataKinds.Phone.NUMBER,
-                ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY};
-        try (Cursor cur = c.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, cols,
-                null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " COLLATE NOCASE")) {
+        String[] cols = {
+            ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
+            ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+            ContactsContract.CommonDataKinds.Phone.NUMBER,
+            ContactsContract.CommonDataKinds.Phone.LOOKUP_KEY
+        };
+        try (Cursor cur = c.getContentResolver()
+                .query(
+                        ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                        cols,
+                        null,
+                        null,
+                        ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " COLLATE NOCASE")) {
             while (cur != null && cur.moveToNext()) {
                 long id = cur.getLong(0);
                 JSONObject o = byId.get(id);
                 if (o == null) {
                     // The lookup key survives Android re-merging contacts; the numeric id may not.
-                    o = new JSONObject().put("key", cur.getString(3)).put("name", cur.getString(1))
+                    o = new JSONObject()
+                            .put("key", cur.getString(3))
+                            .put("name", cur.getString(1))
                             .put("numbers", new JSONArray());
                     byId.put(id, o);
                 }
@@ -77,7 +85,8 @@ final class Contacts {
         try {
             Account[] accounts = AccountManager.get(c).getAccountsByType("com.google");
             if (accounts.length > 0) google = accounts[0];
-        } catch (SecurityException ignored) {}
+        } catch (SecurityException ignored) {
+        }
         ArrayList<ContentProviderOperation> ops = new ArrayList<>();
         ops.add(ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
                 .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, google == null ? null : google.type)
@@ -85,14 +94,17 @@ final class Contacts {
                 .build());
         ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
                 .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
-                .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
+                .withValue(
+                        ContactsContract.Data.MIMETYPE,
+                        ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
                 .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, name)
                 .build());
         ops.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
                 .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
                 .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
                 .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, number)
-                .withValue(ContactsContract.CommonDataKinds.Phone.TYPE, ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE)
+                .withValue(
+                        ContactsContract.CommonDataKinds.Phone.TYPE, ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE)
                 .build());
         try {
             c.getContentResolver().applyBatch(ContactsContract.AUTHORITY, ops);
@@ -108,10 +120,11 @@ final class Contacts {
         if (key == null || key.isEmpty()) return null;
         Uri uri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_LOOKUP_URI, Uri.encode(key));
         String name = null;
-        try (Cursor cur = c.getContentResolver().query(uri,
-                new String[]{ContactsContract.Contacts.DISPLAY_NAME}, null, null, null)) {
+        try (Cursor cur = c.getContentResolver()
+                .query(uri, new String[] {ContactsContract.Contacts.DISPLAY_NAME}, null, null, null)) {
             if (cur != null && cur.moveToFirst()) name = cur.getString(0);
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
         if (name == null) return null;
         try {
             return c.getContentResolver().delete(uri, null, null) > 0 ? name : null;
@@ -123,16 +136,19 @@ final class Contacts {
 
     /** Replies to a {@code contacts} request (or after a change) with the full list. */
     static void sendList(Context c, String req) {
-        new Thread(() -> {
-            try {
-                JSONObject o = Remote.msg("contacts");
-                if (req != null) o.put("req", req);
-                o.put("list", list(c));
-                if (!canRead(c)) o.put("error", c.getString(R.string.tools_contacts_not_permitted));
-                Remote.publish(c, o, null);
-            } catch (Exception e) {
-                Log.w(Policy.TAG, "contacts: " + e);
-            }
-        }, "contacts").start();
+        new Thread(
+                        () -> {
+                            try {
+                                JSONObject o = Remote.msg("contacts");
+                                if (req != null) o.put("req", req);
+                                o.put("list", list(c));
+                                if (!canRead(c)) o.put("error", c.getString(R.string.tools_contacts_not_permitted));
+                                Remote.publish(c, o, null);
+                            } catch (Exception e) {
+                                Log.w(Policy.TAG, "contacts: " + e);
+                            }
+                        },
+                        "contacts")
+                .start();
     }
 }

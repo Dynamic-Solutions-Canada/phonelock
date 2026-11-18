@@ -1,46 +1,46 @@
 package home.phonelock.parent
 
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.MultiChoiceSegmentedButtonRow
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.foundation.layout.padding
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.collectAsState
 import android.app.TimePickerDialog
 import android.text.format.DateFormat
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.Icons
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MultiChoiceSegmentedButtonRow
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.json.JSONArray
@@ -64,10 +64,13 @@ data class ScheduleRule(val mode: String, val days: Int, val start: Int, val end
     fun toJson(): JSONObject = JSONObject().put("mode", mode).put("days", days).put("start", start).put("end", end)
 
     companion object {
-        fun listFrom(a: JSONArray?): List<ScheduleRule> = if (a == null) emptyList() else
+        fun listFrom(a: JSONArray?): List<ScheduleRule> = if (a == null) {
+            emptyList()
+        } else {
             (0 until a.length()).map { a.getJSONObject(it) }.map {
                 ScheduleRule(it.optString("mode"), it.optInt("days"), it.optInt("start"), it.optInt("end"))
             }
+        }
 
         fun toJson(rules: List<ScheduleRule>) = JSONArray().apply { rules.forEach { put(it.toJson()) } }
     }
@@ -108,8 +111,7 @@ private fun dayShortNames(): List<String> {
 }
 
 /** Short day names ("Mon", "Tue" in English), Monday first (bit 0), in the app's language. */
-private fun dayNames(): List<String> =
-    DayOfWeek.entries.map { it.getDisplayName(TextStyle.SHORT, Locale.getDefault()) }
+private fun dayNames(): List<String> = DayOfWeek.entries.map { it.getDisplayName(TextStyle.SHORT, Locale.getDefault()) }
 
 /** "Limited hours", "Bedtime", "Normal hours" for a mode name from the device. */
 fun modeLabel(mode: String) = when (mode) {
@@ -159,23 +161,36 @@ internal fun AppTableSection(dev: String, state: PhoneState) {
     val today = allToday[dev]
     var editingLimit by remember(dev) { mutableStateOf<TimeLimit?>(null) }
     editingLimit?.let { l ->
-        LimitDialog(state, l, isNew = limits.none { it.id == l.id },
-            onSave = { AppTime.saveLimit(dev, it); editingLimit = null },
+        LimitDialog(
+            state,
+            l,
+            isNew = limits.none { it.id == l.id },
+            onSave = {
+                AppTime.saveLimit(dev, it)
+                editingLimit = null
+            },
             // Same as "Remove daily limit" in the row's menu, Undo included.
             onDelete = {
                 AppTime.removeLimit(dev, l.id)
                 editingLimit = null
                 Undo.offer(Strings.get(R.string.apps_limit_removed, state.label(l.app))) { AppTime.saveLimit(dev, l) }
             },
-            onDismiss = { editingLimit = null })
+            onDismiss = { editingLimit = null },
+        )
     }
     uninstalling?.let { p ->
         AppDialog(
             onDismissRequest = { uninstalling = null },
             title = { Text(stringResource(R.string.apps_uninstall_title, state.label(p))) },
             text = { Text(stringResource(R.string.apps_uninstall_body)) },
-            confirmButton = { DangerButton(stringResource(R.string.apps_uninstall)) { Hub.uninstall(dev, p); uninstalling = null } },
-            dismissButton = { TextButton(onClick = { uninstalling = null }) { Text(stringResource(R.string.cancel)) } })
+            confirmButton = {
+                DangerButton(stringResource(R.string.apps_uninstall)) {
+                    Hub.uninstall(dev, p)
+                    uninstalling = null
+                }
+            },
+            dismissButton = { TextButton(onClick = { uninstalling = null }) { Text(stringResource(R.string.cancel)) } },
+        )
     }
     // Every app on the device, Phone first and then A to Z, ticked or not.
     val rows = phoneFirst(state, appsOnly((state.home + state.others).distinct()))
@@ -192,30 +207,38 @@ internal fun AppTableSection(dev: String, state: PhoneState) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     AppName(dev, p, state.label(p), Modifier.weight(1f))
                     SituationChecks(dev, p, state.label(p), mask, enabled = state.full)
-                    RowMenu(stringResource(R.string.apps_more_for, state.label(p)), enabled = state.full, entries = listOfNotNull(
-                        MenuEntry(stringResource(if (own == null) R.string.apps_set_limit else R.string.apps_change_limit)) {
-                            editingLimit = own ?: newLimit(p)
-                        },
-                        own?.let { l ->
-                            MenuEntry(stringResource(R.string.apps_remove_limit)) {
-                                AppTime.removeLimit(dev, l.id)
-                                Undo.offer(Strings.get(R.string.apps_limit_removed, state.label(p))) { AppTime.saveLimit(dev, l) }
-                            }
-                        },
-                        // Hiding only apps with no ticks, so hiding never quietly takes an app off the home screen.
-                        MenuEntry(stringResource(if (mask == 0) R.string.apps_hide else R.string.apps_hide_untick), enabled = mask == 0) {
-                            Hub.offer(dev, p, false)
-                            Undo.offer(Strings.get(R.string.apps_app_hidden, state.label(p))) { Hub.offer(dev, p, true) }
-                        },
-                        // Only apps installed on the device, not built in.
-                        if (p in state.removable) MenuEntry(stringResource(R.string.apps_uninstall_menu)) { uninstalling = p } else null,
-                    ))
+                    RowMenu(
+                        stringResource(R.string.apps_more_for, state.label(p)),
+                        enabled = state.full,
+                        entries = listOfNotNull(
+                            MenuEntry(stringResource(if (own == null) R.string.apps_set_limit else R.string.apps_change_limit)) {
+                                editingLimit = own ?: newLimit(p)
+                            },
+                            own?.let { l ->
+                                MenuEntry(stringResource(R.string.apps_remove_limit)) {
+                                    AppTime.removeLimit(dev, l.id)
+                                    Undo.offer(Strings.get(R.string.apps_limit_removed, state.label(p))) { AppTime.saveLimit(dev, l) }
+                                }
+                            },
+                            // Hiding only apps with no ticks, so hiding never quietly takes an app off the home screen.
+                            MenuEntry(stringResource(if (mask == 0) R.string.apps_hide else R.string.apps_hide_untick), enabled = mask == 0) {
+                                Hub.offer(dev, p, false)
+                                Undo.offer(Strings.get(R.string.apps_app_hidden, state.label(p))) { Hub.offer(dev, p, true) }
+                            },
+                            // Only apps installed on the device, not built in.
+                            if (p in state.removable) MenuEntry(stringResource(R.string.apps_uninstall_menu)) { uninstalling = p } else null,
+                        ),
+                    )
                 }
                 // The daily limit on a line of its own under the row, lined up with the name (icon 32 dp + gap
                 // 12 dp), so it has the full width instead of the narrow name column.
                 ownStatus?.let { (text, out) ->
-                    Text(text, Modifier.padding(start = 44.dp), style = MaterialTheme.typography.bodySmall,
-                        color = if (out) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(
+                        text,
+                        Modifier.padding(start = 44.dp),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = if (out) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                 }
             }
         }
@@ -226,13 +249,15 @@ internal fun AppTableSection(dev: String, state: PhoneState) {
             TextButton(onClick = { showHidden = !showHidden }) {
                 Text(stringResource(R.string.apps_hidden_apps, hidden.size) + if (showHidden) " ▴" else " ▾")
             }
-            if (showHidden) phoneFirst(state, hidden).forEach { p ->
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    AppName(dev, p, state.label(p), Modifier.weight(1f))
-                    TextButton(enabled = state.full, onClick = {
-                        Hub.offer(dev, p, true)
-                        Undo.offer(Strings.get(R.string.apps_app_shown, state.label(p))) { Hub.offer(dev, p, false) }
-                    }) { Text(stringResource(R.string.apps_show)) }
+            if (showHidden) {
+                phoneFirst(state, hidden).forEach { p ->
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        AppName(dev, p, state.label(p), Modifier.weight(1f))
+                        TextButton(enabled = state.full, onClick = {
+                            Hub.offer(dev, p, true)
+                            Undo.offer(Strings.get(R.string.apps_app_shown, state.label(p))) { Hub.offer(dev, p, false) }
+                        }) { Text(stringResource(R.string.apps_show)) }
+                    }
                 }
             }
         }
@@ -293,7 +318,10 @@ internal fun RowMenu(description: String, enabled: Boolean, entries: List<MenuEn
         }
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
             entries.forEach { e ->
-                DropdownMenuItem(text = { Text(e.label) }, enabled = e.enabled, onClick = { open = false; e.onClick() })
+                DropdownMenuItem(text = { Text(e.label) }, enabled = e.enabled, onClick = {
+                    open = false
+                    e.onClick()
+                })
             }
         }
     }
@@ -319,14 +347,23 @@ internal fun ScheduleSection(dev: String, state: PhoneState) {
                 Undo.offer(Strings.get(R.string.apps_rule_removed, modeLabel(r.mode))) { Hub.setSchedule(dev, before) }
             }
             // Tap to edit; ⋮ for edit or remove. Both wait for the device's current schedule (a full state).
-            ListRow(modeLabel(r.mode),
-                AnnotatedString(if (r.start == r.end) stringResource(R.string.apps_rule_all_day, describeDays(r.days))
-                    else stringResource(R.string.apps_rule_range, describeDays(r.days), clock(r.start), clock(r.end))),
+            ListRow(
+                modeLabel(r.mode),
+                AnnotatedString(
+                    if (r.start == r.end) {
+                        stringResource(R.string.apps_rule_all_day, describeDays(r.days))
+                    } else {
+                        stringResource(R.string.apps_rule_range, describeDays(r.days), clock(r.start), clock(r.end))
+                    },
+                ),
                 leading = { SymbolBadge(if (r.mode == "bedtime") "🌙" else "⏳") },
                 actionsEnabled = state.full,
-                actions = listOf(MenuEntry(stringResource(R.string.apps_edit)) { editing = i to r },
-                    MenuEntry(stringResource(R.string.remove), onClick = remove)),
-                onClick = if (state.full) ({ editing = i to r }) else null)
+                actions = listOf(
+                    MenuEntry(stringResource(R.string.apps_edit)) { editing = i to r },
+                    MenuEntry(stringResource(R.string.remove), onClick = remove),
+                ),
+                onClick = if (state.full) ({ editing = i to r }) else null,
+            )
         }
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             // Edits replace the whole schedule, so they wait until the device's current one has arrived.
@@ -361,7 +398,10 @@ internal fun ScheduleRule.nextStart(now: Long): Long {
         val day = Calendar.getInstance().apply {
             timeInMillis = now
             add(Calendar.DAY_OF_MONTH, offset)
-            set(Calendar.HOUR_OF_DAY, 0); set(Calendar.MINUTE, 0); set(Calendar.SECOND, 0); set(Calendar.MILLISECOND, 0)
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
         }
         val weekday = (day.get(Calendar.DAY_OF_WEEK) + 5) % 7
         if (days and (1 shl weekday) == 0) continue
@@ -393,28 +433,40 @@ private fun RuleDialog(draft: ScheduleRule, isNew: Boolean, onSave: (ScheduleRul
     var start by remember { mutableIntStateOf(draft.start) }
     var end by remember { mutableIntStateOf(draft.end) }
     fun pickTime(initial: Int, set: (Int) -> Unit) {
-        TimePickerDialog(ctx, { _, h, m -> set(h * 60 + m) }, initial / 60, initial % 60,
-            DateFormat.is24HourFormat(ctx)).show()
+        TimePickerDialog(
+            ctx,
+            { _, h, m -> set(h * 60 + m) },
+            initial / 60,
+            initial % 60,
+            DateFormat.is24HourFormat(ctx),
+        ).show()
     }
     AppDialog(
         onDismissRequest = onDismiss,
         title = {
             // Whole titles per mode rather than a lower-cased mode name, so each language can word them its own way.
             val bedtime = mode == "bedtime"
-            Text(stringResource(when {
-                isNew && bedtime -> R.string.apps_add_bedtime
-                isNew -> R.string.apps_add_limited
-                bedtime -> R.string.apps_edit_bedtime
-                else -> R.string.apps_edit_limited
-            }))
+            Text(
+                stringResource(
+                    when {
+                        isNew && bedtime -> R.string.apps_add_bedtime
+                        isNew -> R.string.apps_add_limited
+                        bedtime -> R.string.apps_edit_bedtime
+                        else -> R.string.apps_edit_limited
+                    },
+                ),
+            )
         },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 // Which situation this range is; editable, so a range can switch between the two.
                 SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
                     listOf("limited" to R.string.apps_mode_limited, "bedtime" to R.string.apps_mode_bedtime).forEachIndexed { i, (key, label) ->
-                        SegmentedButton(selected = mode == key, onClick = { mode = key },
-                            shape = SegmentedButtonDefaults.itemShape(i, 2)) { Text(stringResource(label)) }
+                        SegmentedButton(
+                            selected = mode == key,
+                            onClick = { mode = key },
+                            shape = SegmentedButtonDefaults.itemShape(i, 2),
+                        ) { Text(stringResource(label)) }
                     }
                 }
                 // Days as equal toggles with short names, so the two Ts and two Ss can't be mixed up.
@@ -422,8 +474,12 @@ private fun RuleDialog(draft: ScheduleRule, isNew: Boolean, onSave: (ScheduleRul
                 MultiChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
                     val dayShort = dayShortNames()
                     dayShort.forEachIndexed { i, l ->
-                        SegmentedButton(checked = days and (1 shl i) != 0, onCheckedChange = { days = days xor (1 shl i) },
-                            shape = SegmentedButtonDefaults.itemShape(i, dayShort.size), icon = {}) {
+                        SegmentedButton(
+                            checked = days and (1 shl i) != 0,
+                            onCheckedChange = { days = days xor (1 shl i) },
+                            shape = SegmentedButtonDefaults.itemShape(i, dayShort.size),
+                            icon = {},
+                        ) {
                             Text(l, maxLines = 1, softWrap = false)
                         }
                     }
@@ -440,8 +496,11 @@ private fun RuleDialog(draft: ScheduleRule, isNew: Boolean, onSave: (ScheduleRul
             }
         },
         confirmButton = {
-            TextButton(onClick = { onSave(draft.copy(mode = mode, days = days, start = start, end = end)) },
-                enabled = days != 0) { Text(stringResource(if (isNew) R.string.add else R.string.save)) }
+            TextButton(
+                onClick = { onSave(draft.copy(mode = mode, days = days, start = start, end = end)) },
+                enabled = days != 0,
+            ) { Text(stringResource(if (isNew) R.string.add else R.string.save)) }
         },
-        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } })
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } },
+    )
 }

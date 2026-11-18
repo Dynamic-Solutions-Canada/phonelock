@@ -18,9 +18,14 @@ public class IncomingCallGuard extends CallScreeningService {
         boolean block = incoming && CallGuard.limitIncoming(this) && CallGuard.match(this, number) == null;
 
         CallResponse.Builder r = new CallResponse.Builder();
-        if (block) r.setDisallowCall(true).setRejectCall(true).setSkipNotification(false).setSkipCallLog(false);
+        if (block)
+            r.setDisallowCall(true)
+                    .setRejectCall(true)
+                    .setSkipNotification(false)
+                    .setSkipCallLog(false);
         respondToCall(details, r.build());
 
-        if (block) Remote.event(this, getString(R.string.events_call_blocked, CallGuard.describe(this, number)), null, true);
+        if (block)
+            Remote.event(this, getString(R.string.events_call_blocked, CallGuard.describe(this, number)), null, true);
     }
 }

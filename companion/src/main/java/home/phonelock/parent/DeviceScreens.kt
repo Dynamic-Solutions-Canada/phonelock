@@ -1,44 +1,39 @@
 package home.phonelock.parent
 
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.ui.draw.shadow
-import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Box
-import androidx.compose.material3.Checkbox
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.background
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.SpanStyle
 import android.net.Uri
 import android.text.format.DateFormat
 import android.text.format.Formatter
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -54,10 +49,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import java.util.Date
 
@@ -71,10 +71,17 @@ import java.util.Date
  * [busy]. Anything floating over the body, such as a transfer's progress, goes in [overlay].
  */
 @Composable
-internal fun Page(title: String, onBack: () -> Unit, scroll: Boolean = true,
-                  dev: String? = null, waitingOn: Set<String> = emptySet(), busy: Boolean = false,
-                  actions: @Composable () -> Unit = {}, overlay: @Composable BoxScope.() -> Unit = {},
-                  content: @Composable () -> Unit) {
+internal fun Page(
+    title: String,
+    onBack: () -> Unit,
+    scroll: Boolean = true,
+    dev: String? = null,
+    waitingOn: Set<String> = emptySet(),
+    busy: Boolean = false,
+    actions: @Composable () -> Unit = {},
+    overlay: @Composable BoxScope.() -> Unit = {},
+    content: @Composable () -> Unit,
+) {
     BackHandler(onBack = onBack)
     val waits by Pending.waits.collectAsState()
     val waiting = busy || (dev != null && waits[dev].orEmpty().keys.any { it in waitingOn })
@@ -87,8 +94,10 @@ internal fun Page(title: String, onBack: () -> Unit, scroll: Boolean = true,
         ProgressTrack(waiting, Modifier.padding(bottom = 8.dp))
         Box(Modifier.weight(1f)) {
             if (scroll) {
-                Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(bottom = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(14.dp)) { content() }
+                Column(
+                    Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(bottom = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(14.dp),
+                ) { content() }
             } else {
                 Column(Modifier.fillMaxSize()) { content() }
             }
@@ -118,6 +127,7 @@ internal fun CallsScreen(dev: String, state: PhoneState, onBack: () -> Unit) {
     }
     val calls = state.calls
     val ctx = LocalContext.current
+
     /** Adds to the safe list, or says it's already there (the same number in any format counts). */
     fun addSafe(name: String, number: String) {
         if (calls.isSafe(number)) {
@@ -126,6 +136,7 @@ internal fun CallsScreen(dev: String, state: PhoneState, onBack: () -> Unit) {
             Hub.setCalls(dev, calls.withSafe(SafeEntry(name, number)))
         }
     }
+
     /** Takes [number] off the safe list, with Undo. */
     fun removeSafe(name: String, number: String) {
         Hub.setCalls(dev, calls.withoutSafe(number))
@@ -143,10 +154,12 @@ internal fun CallsScreen(dev: String, state: PhoneState, onBack: () -> Unit) {
         Section(stringResource(R.string.main_safe_list_title)) {
             if (state.full && calls.safe.isEmpty()) EmptyNote(stringResource(R.string.main_safe_list_empty))
             calls.safe.forEach { e ->
-                PersonRow(e.name.ifEmpty { formatNumber(e.number) },
+                PersonRow(
+                    e.name.ifEmpty { formatNumber(e.number) },
                     AnnotatedString(if (e.name.isNotEmpty()) formatNumber(e.number) else stringResource(R.string.main_no_name)),
                     actionsEnabled = state.full,
-                    actions = listOf(MenuEntry(stringResource(R.string.main_remove_from_safe_list)) { removeSafe(e.name, e.number) }))
+                    actions = listOf(MenuEntry(stringResource(R.string.main_remove_from_safe_list)) { removeSafe(e.name, e.number) }),
+                )
             }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedButton(onClick = { picking = true }, enabled = state.full) { Text(stringResource(R.string.main_from_contacts)) }
@@ -154,24 +167,36 @@ internal fun CallsScreen(dev: String, state: PhoneState, onBack: () -> Unit) {
             }
         }
         Section(stringResource(R.string.main_call_log_title)) {
-            if (!state.canCallLog) Text(stringResource(R.string.main_no_call_log_access),
-                style = MaterialTheme.typography.bodySmall)
+            if (!state.canCallLog) {
+                Text(
+                    stringResource(R.string.main_no_call_log_access),
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
             val entries = log[dev].orEmpty()
             // Not "no calls" while the log is still on its way, or when it can't be read at all.
             if (entries.isEmpty() && state.canCallLog && !isWaiting(dev, "calllog")) EmptyNote(stringResource(R.string.main_no_calls))
             CappedList(entries, key = dev, initial = 10) { c ->
-                CallRow(c, safe = c.number.isNotEmpty() && calls.isSafe(c.number), canEdit = state.full,
-                    onAddSafe = { addSafe(c.name, c.number) })
+                CallRow(
+                    c,
+                    safe = c.number.isNotEmpty() && calls.isSafe(c.number),
+                    canEdit = state.full,
+                    onAddSafe = { addSafe(c.name, c.number) },
+                )
             }
         }
     }
-    if (adding) NumberDialog(stringResource(R.string.main_add_to_safe_list), onDismiss = { adding = false }) { name, number ->
-        addSafe(name, number)
-        adding = false
+    if (adding) {
+        NumberDialog(stringResource(R.string.main_add_to_safe_list), onDismiss = { adding = false }) { name, number ->
+            addSafe(name, number)
+            adding = false
+        }
     }
-    if (picking) ContactPicker(dev, contacts[dev], calls, onDismiss = { picking = false }) { c, number ->
-        addSafe(c.name, number)
-        picking = false
+    if (picking) {
+        ContactPicker(dev, contacts[dev], calls, onDismiss = { picking = false }) { c, number ->
+            addSafe(c.name, number)
+            picking = false
+        }
     }
 }
 
@@ -192,13 +217,20 @@ internal fun callWho(c: CallEntry) = c.name.ifEmpty { if (c.number.isEmpty()) St
 /** The arrow and word for a call's direction ("↗" "Outgoing"), the same in the call log and Activity. */
 internal fun callKind(type: String): Pair<String, String> = when (type) {
     "out" -> "↗" to Strings.get(R.string.main_call_out)
+
     "in" -> "↙" to Strings.get(R.string.main_call_in)
+
     "missed" -> "↙" to Strings.get(R.string.main_call_missed)
+
     "rejected" -> "⊘" to Strings.get(R.string.main_call_declined)
+
     "blocked" -> "⊘" to Strings.get(R.string.main_call_blocked)
+
     // A call she tried to place to a number off the safe list; it was stopped before it rang.
     "attempt" -> "⊘" to Strings.get(R.string.main_call_attempt)
+
     "voicemail" -> "↙" to Strings.get(R.string.main_call_voicemail)
+
     else -> "•" to type
 }
 
@@ -218,12 +250,20 @@ private fun CallRow(c: CallEntry, safe: Boolean, canEdit: Boolean, onAddSafe: ()
     val dirColor = if (c.unanswered) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
     val dur = if (c.durationS > 0) " · ${callLength(c.durationS)}" else ""
     val name = callWho(c)
-    PersonRow(name, buildAnnotatedString {
-        withStyle(SpanStyle(color = dirColor, fontWeight = FontWeight.Medium)) { append("$arrow $word") }
-        append(" · ${dateTime(c.ts)}$dur")
-    }, tag = if (safe) stringResource(R.string.main_safe_tag) else null, actionsEnabled = canEdit,
-        actions = if (safe || c.number.isEmpty()) emptyList()
-        else listOf(MenuEntry(stringResource(R.string.main_add_to_safe_list), onClick = onAddSafe)))
+    PersonRow(
+        name,
+        buildAnnotatedString {
+            withStyle(SpanStyle(color = dirColor, fontWeight = FontWeight.Medium)) { append("$arrow $word") }
+            append(" · ${dateTime(c.ts)}$dur")
+        },
+        tag = if (safe) stringResource(R.string.main_safe_tag) else null,
+        actionsEnabled = canEdit,
+        actions = if (safe || c.number.isEmpty()) {
+            emptyList()
+        } else {
+            listOf(MenuEntry(stringResource(R.string.main_add_to_safe_list), onClick = onAddSafe))
+        },
+    )
 }
 
 /** Name and number fields; [onSave] gets both trimmed. */
@@ -237,19 +277,29 @@ private fun NumberDialog(title: String, onDismiss: () -> Unit, onSave: (String, 
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedTextField(name, { name = it }, label = { Text(stringResource(R.string.main_name)) }, singleLine = true)
-                OutlinedTextField(number, { number = it }, label = { Text(stringResource(R.string.main_phone_number)) }, singleLine = true,
-                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
-                        keyboardType = androidx.compose.ui.text.input.KeyboardType.Phone))
+                OutlinedTextField(
+                    number,
+                    { number = it },
+                    label = { Text(stringResource(R.string.main_phone_number)) },
+                    singleLine = true,
+                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = androidx.compose.ui.text.input.KeyboardType.Phone),
+                )
             }
         },
         confirmButton = { TextButton(enabled = number.isNotBlank(), onClick = { onSave(name.trim(), number.trim()) }) { Text(stringResource(R.string.add)) } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } })
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } },
+    )
 }
 
 /** Picks one number of one of the device's contacts. */
 @Composable
-private fun ContactPicker(dev: String, contacts: List<Contact>?, calls: CallSettings, onDismiss: () -> Unit,
-                          onPick: (Contact, String) -> Unit) {
+private fun ContactPicker(
+    dev: String,
+    contacts: List<Contact>?,
+    calls: CallSettings,
+    onDismiss: () -> Unit,
+    onPick: (Contact, String) -> Unit,
+) {
     // Each number once, whatever its format; numbers already on the safe list are left out.
     val choices = contacts.orEmpty().flatMap { c -> c.distinctNumbers.filterNot(calls::isSafe).map { c to it } }
     AppDialog(
@@ -264,13 +314,18 @@ private fun ContactPicker(dev: String, contacts: List<Contact>?, calls: CallSett
                     choices.isEmpty() -> EmptyNote(stringResource(R.string.main_all_contacts_safe))
                 }
                 choices.forEach { (c, n) ->
-                    ListRow(c.name, AnnotatedString(formatNumber(n)), leading = { InitialAvatar(c.name) },
-                        onClick = { onPick(c, n) })
+                    ListRow(
+                        c.name,
+                        AnnotatedString(formatNumber(n)),
+                        leading = { InitialAvatar(c.name) },
+                        onClick = { onPick(c, n) },
+                    )
                 }
             }
         },
         confirmButton = {},
-        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } })
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } },
+    )
 }
 
 // ---------- Contacts ----------
@@ -290,34 +345,51 @@ internal fun ContactsScreen(dev: String, state: PhoneState, onBack: () -> Unit) 
             contacts.orEmpty().forEach { c ->
                 val safeNumbers = c.distinctNumbers.filter(calls::isSafe)
                 val number = c.distinctNumbers.firstOrNull()
-                PersonRow(c.name, AnnotatedString(c.distinctNumbers.joinToString(", ") { formatNumber(it) }),
+                PersonRow(
+                    c.name,
+                    AnnotatedString(c.distinctNumbers.joinToString(", ") { formatNumber(it) }),
                     tag = if (safeNumbers.isNotEmpty()) stringResource(R.string.main_safe_tag) else null,
                     actions = listOfNotNull(
                         // The safe list changes wait for the device's call settings (a full state).
-                        if (safeNumbers.isNotEmpty()) MenuEntry(stringResource(R.string.main_remove_from_safe_list), enabled = state.full) {
-                            Hub.setCalls(dev, safeNumbers.fold(calls) { s, n -> s.withoutSafe(n) })
-                            Undo.offer(Strings.get(R.string.main_removed_from_safe_list, c.name)) { Hub.setCalls(dev, calls) }
-                        } else if (number != null) MenuEntry(stringResource(R.string.main_add_to_safe_list), enabled = state.full) {
-                            Hub.setCalls(dev, calls.withSafe(SafeEntry(c.name, number)))
-                        } else null,
+                        if (safeNumbers.isNotEmpty()) {
+                            MenuEntry(stringResource(R.string.main_remove_from_safe_list), enabled = state.full) {
+                                Hub.setCalls(dev, safeNumbers.fold(calls) { s, n -> s.withoutSafe(n) })
+                                Undo.offer(Strings.get(R.string.main_removed_from_safe_list, c.name)) { Hub.setCalls(dev, calls) }
+                            }
+                        } else if (number != null) {
+                            MenuEntry(stringResource(R.string.main_add_to_safe_list), enabled = state.full) {
+                                Hub.setCalls(dev, calls.withSafe(SafeEntry(c.name, number)))
+                            }
+                        } else {
+                            null
+                        },
                         MenuEntry(stringResource(R.string.main_delete_contact)) { removing = c },
-                    ))
+                    ),
+                )
             }
             // Below the list, like the safe list's buttons.
             OutlinedButton(onClick = { adding = true }) { Text(stringResource(R.string.main_add_contact)) }
         }
     }
-    if (adding) NumberDialog(stringResource(R.string.main_add_contact), onDismiss = { adding = false }) { name, number ->
-        DeviceData.addContact(dev, name.ifEmpty { number }, number)
-        adding = false
+    if (adding) {
+        NumberDialog(stringResource(R.string.main_add_contact), onDismiss = { adding = false }) { name, number ->
+            DeviceData.addContact(dev, name.ifEmpty { number }, number)
+            adding = false
+        }
     }
     removing?.let { c ->
         AppDialog(
             onDismissRequest = { removing = null },
             title = { Text(stringResource(R.string.main_delete_contact_title, c.name)) },
             text = { Text(stringResource(R.string.main_delete_contact_body)) },
-            confirmButton = { DangerButton(stringResource(R.string.delete)) { DeviceData.removeContact(dev, c.key); removing = null } },
-            dismissButton = { TextButton(onClick = { removing = null }) { Text(stringResource(R.string.cancel)) } })
+            confirmButton = {
+                DangerButton(stringResource(R.string.delete)) {
+                    DeviceData.removeContact(dev, c.key)
+                    removing = null
+                }
+            },
+            dismissButton = { TextButton(onClick = { removing = null }) { Text(stringResource(R.string.cancel)) } },
+        )
     }
 }
 
@@ -361,14 +433,19 @@ internal fun FilesScreen(dev: String, state: PhoneState, onBack: () -> Unit) {
     Page(stringResource(R.string.main_files_title), back, dev = dev, waitingOn = setOf("files"), overlay = {
         Column(Modifier.align(Alignment.BottomCenter).padding(bottom = 12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             transfers[dev]?.takeIf { it.busy }?.let { TransferStatus(it) }
-            if (choosing) SelectionBar(chosen, entries,
-                onAll = { chosen = entries.map { it.name }.toSet() },
-                onNone = { chosen = emptySet() },
-                onSave = {
-                    DeviceData.saveFiles(dev, entries.filter { it.name in chosen && !it.dir }.map { full(it.name) })
-                    chosen = emptySet()
-                },
-                onDelete = { deletingChosen = true })
+            if (choosing) {
+                SelectionBar(
+                    chosen,
+                    entries,
+                    onAll = { chosen = entries.map { it.name }.toSet() },
+                    onNone = { chosen = emptySet() },
+                    onSave = {
+                        DeviceData.saveFiles(dev, entries.filter { it.name in chosen && !it.dir }.map { full(it.name) })
+                        chosen = emptySet()
+                    },
+                    onDelete = { deletingChosen = true },
+                )
+            }
         }
     }) {
         if (!state.canFiles) Text(stringResource(R.string.main_no_file_access), style = MaterialTheme.typography.bodySmall)
@@ -387,26 +464,41 @@ internal fun FilesScreen(dev: String, state: PhoneState, onBack: () -> Unit) {
             // Opening another folder hides the old one's entries until the new list arrives.
             val opening = folder == null || (folder.loading && folder.path != path)
             if (!opening && folder!!.entries.isEmpty()) EmptyNote(stringResource(R.string.main_folder_empty))
-            if (!opening && !choosing && entries.size > 1) Text(stringResource(R.string.main_long_press_hint),
-                style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            if (!opening && !choosing && entries.size > 1) {
+                Text(
+                    stringResource(R.string.main_long_press_hint),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
             entries.forEach { e ->
                 val detail = (if (e.dir) stringResource(R.string.main_folder) else Formatter.formatShortFileSize(ctx, e.size)) + " · " + dateTime(e.mtime)
-                ListRow(e.name, AnnotatedString(detail),
+                ListRow(
+                    e.name,
+                    AnnotatedString(detail),
                     leading = {
-                        if (choosing) Box(Modifier.size(40.dp), contentAlignment = Alignment.Center) {
-                            Checkbox(checked = e.name in chosen, onCheckedChange = { toggle(e.name) })
-                        } else SymbolBadge(fileIcon(e))
+                        if (choosing) {
+                            Box(Modifier.size(40.dp), contentAlignment = Alignment.Center) {
+                                Checkbox(checked = e.name in chosen, onCheckedChange = { toggle(e.name) })
+                            }
+                        } else {
+                            SymbolBadge(fileIcon(e))
+                        }
                     },
-                    actions = if (choosing) emptyList() else listOfNotNull(
-                        if (!e.dir) MenuEntry(stringResource(R.string.open)) { DeviceData.openFile(dev, full(e.name)) } else null,
-                        if (!e.dir) MenuEntry(stringResource(R.string.main_save_to_downloads)) { DeviceData.saveFile(dev, full(e.name)) } else null,
-                        MenuEntry(stringResource(R.string.main_select)) { toggle(e.name) },
-                        MenuEntry(stringResource(R.string.main_rename_ellipsis)) { renaming = e },
-                        MenuEntry(stringResource(R.string.main_delete_ellipsis)) {
-                            chosen = setOf(e.name)
-                            deletingChosen = true
-                        },
-                    ),
+                    actions = if (choosing) {
+                        emptyList()
+                    } else {
+                        listOfNotNull(
+                            if (!e.dir) MenuEntry(stringResource(R.string.open)) { DeviceData.openFile(dev, full(e.name)) } else null,
+                            if (!e.dir) MenuEntry(stringResource(R.string.main_save_to_downloads)) { DeviceData.saveFile(dev, full(e.name)) } else null,
+                            MenuEntry(stringResource(R.string.main_select)) { toggle(e.name) },
+                            MenuEntry(stringResource(R.string.main_rename_ellipsis)) { renaming = e },
+                            MenuEntry(stringResource(R.string.main_delete_ellipsis)) {
+                                chosen = setOf(e.name)
+                                deletingChosen = true
+                            },
+                        )
+                    },
                     // Tapping a folder goes into it; tapping a file opens it (not saved; see DeviceData.openFile).
                     onClick = {
                         when {
@@ -415,7 +507,8 @@ internal fun FilesScreen(dev: String, state: PhoneState, onBack: () -> Unit) {
                             else -> DeviceData.openFile(dev, full(e.name))
                         }
                     },
-                    onLongClick = { toggle(e.name) })
+                    onLongClick = { toggle(e.name) },
+                )
             }
         }
         // Room at the end so the floating bars never cover the last files.
@@ -427,24 +520,36 @@ internal fun FilesScreen(dev: String, state: PhoneState, onBack: () -> Unit) {
             renaming = null
         }
     }
-    if (newFolder) NameDialog(stringResource(R.string.main_new_folder), "", onDismiss = { newFolder = false }) { n ->
-        DeviceData.fileOp(dev, "mkdir", full(n))
-        newFolder = false
+    if (newFolder) {
+        NameDialog(stringResource(R.string.main_new_folder), "", onDismiss = { newFolder = false }) { n ->
+            DeviceData.fileOp(dev, "mkdir", full(n))
+            newFolder = false
+        }
     }
     if (deletingChosen) {
         val items = entries.filter { it.name in chosen }
         val folderCount = items.count { it.dir }
         AppDialog(
-            onDismissRequest = { deletingChosen = false; if (chosen.size == 1) chosen = emptySet() },
+            onDismissRequest = {
+                deletingChosen = false
+                if (chosen.size == 1) chosen = emptySet()
+            },
             title = {
-                Text(if (items.size == 1) stringResource(R.string.main_delete_item_title, items[0].name)
-                else pluralStringResource(R.plurals.main_delete_items_title, items.size, items.size))
+                Text(
+                    if (items.size == 1) {
+                        stringResource(R.string.main_delete_item_title, items[0].name)
+                    } else {
+                        pluralStringResource(R.plurals.main_delete_items_title, items.size, items.size)
+                    },
+                )
             },
             text = {
                 val more = items.size - 6
-                Text(items.take(6).joinToString("\n") { it.name } +
-                    (if (more > 0) "\n" + pluralStringResource(R.plurals.main_and_more, more, more) else "") +
-                    "\n\n" + stringResource(if (folderCount > 0) R.string.main_delete_folders_body else R.string.main_delete_files_body))
+                Text(
+                    items.take(6).joinToString("\n") { it.name } +
+                        (if (more > 0) "\n" + pluralStringResource(R.plurals.main_and_more, more, more) else "") +
+                        "\n\n" + stringResource(if (folderCount > 0) R.string.main_delete_folders_body else R.string.main_delete_files_body),
+                )
             },
             confirmButton = {
                 DangerButton(stringResource(R.string.delete)) {
@@ -453,7 +558,8 @@ internal fun FilesScreen(dev: String, state: PhoneState, onBack: () -> Unit) {
                     deletingChosen = false
                 }
             },
-            dismissButton = { TextButton(onClick = { deletingChosen = false }) { Text(stringResource(R.string.cancel)) } })
+            dismissButton = { TextButton(onClick = { deletingChosen = false }) { Text(stringResource(R.string.cancel)) } },
+        )
     }
 }
 
@@ -463,16 +569,28 @@ internal fun FilesScreen(dev: String, state: PhoneState, onBack: () -> Unit) {
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun SelectionBar(chosen: Set<String>, entries: List<FileEntry>, onAll: () -> Unit, onNone: () -> Unit,
-                         onSave: () -> Unit, onDelete: () -> Unit) {
+private fun SelectionBar(
+    chosen: Set<String>,
+    entries: List<FileEntry>,
+    onAll: () -> Unit,
+    onNone: () -> Unit,
+    onSave: () -> Unit,
+    onDelete: () -> Unit,
+) {
     val files = entries.count { it.name in chosen && !it.dir }
     val folders = entries.count { it.name in chosen && it.dir }
-    Column(Modifier.fillMaxWidth().shadow(6.dp, RoundedCornerShape(14.dp))
-        .background(MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(14.dp))
-        .padding(horizontal = 14.dp, vertical = 8.dp)) {
+    Column(
+        Modifier.fillMaxWidth().shadow(6.dp, RoundedCornerShape(14.dp))
+            .background(MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(14.dp))
+            .padding(horizontal = 14.dp, vertical = 8.dp),
+    ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(pluralStringResource(R.plurals.main_selected, chosen.size, chosen.size), Modifier.weight(1f), style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onSecondaryContainer)
+            Text(
+                pluralStringResource(R.plurals.main_selected, chosen.size, chosen.size),
+                Modifier.weight(1f),
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
+            )
             if (chosen.size < entries.size) TextButton(onClick = onAll) { Text(stringResource(R.string.main_select_all)) }
             TextButton(onClick = onNone) { Text(stringResource(R.string.cancel)) }
         }
@@ -482,8 +600,13 @@ private fun SelectionBar(chosen: Set<String>, entries: List<FileEntry>, onAll: (
             }
             OutlinedButton(onClick = onDelete) { Text(stringResource(R.string.main_delete_ellipsis), color = MaterialTheme.colorScheme.error) }
         }
-        if (folders > 0 && files > 0) Text(stringResource(R.string.main_folders_not_saved), style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSecondaryContainer)
+        if (folders > 0 && files > 0) {
+            Text(
+                stringResource(R.string.main_folders_not_saved),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
+            )
+        }
     }
 }
 
@@ -493,14 +616,20 @@ private fun SelectionBar(chosen: Set<String>, entries: List<FileEntry>, onAll: (
  */
 @Composable
 private fun TransferStatus(t: Transfer, modifier: Modifier = Modifier) {
-    Column(modifier.fillMaxWidth().shadow(6.dp, RoundedCornerShape(14.dp))
-        .background(MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(14.dp))
-        .padding(horizontal = 14.dp, vertical = 10.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(
+        modifier.fillMaxWidth().shadow(6.dp, RoundedCornerShape(14.dp))
+            .background(MaterialTheme.colorScheme.secondaryContainer, RoundedCornerShape(14.dp))
+            .padding(horizontal = 14.dp, vertical = 10.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             if (t.busy && t.progress == null) CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
             val percent = t.progress?.takeIf { t.busy }?.let { (it * 100).toInt() }
-            Text(if (percent != null) stringResource(R.string.main_transfer_progress, t.text, percent) else t.text,
-                style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSecondaryContainer)
+            Text(
+                if (percent != null) stringResource(R.string.main_transfer_progress, t.text, percent) else t.text,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
+            )
         }
         if (t.busy && t.progress != null) LinearProgressIndicator(progress = { t.progress }, Modifier.fillMaxWidth())
     }
@@ -516,7 +645,6 @@ private fun fileIcon(e: FileEntry): String {
     }
 }
 
-
 @Composable
 private fun NameDialog(title: String, initial: String, onDismiss: () -> Unit, onSave: (String) -> Unit) {
     var name by remember { mutableStateOf(initial) }
@@ -526,7 +654,8 @@ private fun NameDialog(title: String, initial: String, onDismiss: () -> Unit, on
         title = { Text(title) },
         text = { OutlinedTextField(name, { name = it }, label = { Text(stringResource(R.string.main_name)) }, singleLine = true) },
         confirmButton = { TextButton(enabled = ok, onClick = { onSave(name.trim()) }) { Text(stringResource(R.string.main_ok)) } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } })
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } },
+    )
 }
 
 /** Row of buttons on the main screen that open Calls, Contacts and Files. */

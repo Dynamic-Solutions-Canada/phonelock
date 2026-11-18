@@ -63,16 +63,20 @@ internal fun OptionsDialog(title: String, onDismiss: () -> Unit, options: List<M
                     Text(it, Modifier.padding(bottom = 8.dp), style = MaterialTheme.typography.bodyMedium)
                 }
                 options.forEach { o ->
-                    Row(Modifier.fillMaxWidth().heightIn(min = 48.dp).clip(RoundedCornerShape(10.dp))
-                        .clickable(enabled = o.enabled, onClick = o.onClick).padding(horizontal = 12.dp)
-                        .alpha(if (o.enabled) 1f else 0.4f), verticalAlignment = Alignment.CenterVertically) {
+                    Row(
+                        Modifier.fillMaxWidth().heightIn(min = 48.dp).clip(RoundedCornerShape(10.dp))
+                            .clickable(enabled = o.enabled, onClick = o.onClick).padding(horizontal = 12.dp)
+                            .alpha(if (o.enabled) 1f else 0.4f),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
                         Text(o.label, style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.primary)
                     }
                 }
             }
         },
         confirmButton = {},
-        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } })
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } },
+    )
 }
 
 /** A dialog button for an action that deletes or removes something, in the error colour so it reads as such. */

@@ -6,12 +6,10 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-
-import org.json.JSONObject;
-
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.json.JSONObject;
 
 /**
  * Watches the screens Google services opens. The lock must let Google services run (other apps borrow its
@@ -33,7 +31,12 @@ import java.util.Map;
 final class ScreenGuard {
     static final String GMS = "com.google.android.gms";
 
-    enum Verdict { IGNORE, ALLOW, BLOCK, ALERT }
+    enum Verdict {
+        IGNORE,
+        ALLOW,
+        BLOCK,
+        ALERT
+    }
 
     /**
      * A group of screens that lead out of the lock, blocked unless a parent allows the group: {@code key}
@@ -55,13 +58,16 @@ final class ScreenGuard {
     }
 
     static final Area[] AREAS = {
-            new Area("account", R.string.events_area_account, ".accountsettings."),
-            new Area("settings", R.string.events_area_settings, ".app.settings.",
-                    ".quickstart.xos.ui.XosGoogleSettingsActivity",
-                    ".trustagent.activeunlock.primary.ui.activity.ActiveUnlockGoogleSettingsEntryPoint"),
-            new Area("help", R.string.events_area_help, ".googlehelp.", ".appfunctions.googlehelp."),
-            new Area("feedback", R.string.events_area_feedback, ".feedback."),
-            new Area("quickshare", R.string.events_area_quickshare, ".nearby.sharing."),
+        new Area("account", R.string.events_area_account, ".accountsettings."),
+        new Area(
+                "settings",
+                R.string.events_area_settings,
+                ".app.settings.",
+                ".quickstart.xos.ui.XosGoogleSettingsActivity",
+                ".trustagent.activeunlock.primary.ui.activity.ActiveUnlockGoogleSettingsEntryPoint"),
+        new Area("help", R.string.events_area_help, ".googlehelp.", ".appfunctions.googlehelp."),
+        new Area("feedback", R.string.events_area_feedback, ".feedback."),
+        new Area("quickshare", R.string.events_area_quickshare, ".nearby.sharing."),
     };
 
     /** Prefix of an area's key in the parents' decisions. */
@@ -69,15 +75,15 @@ final class ScreenGuard {
 
     /** Screens other apps rely on (account picker, sign-in, consent and location prompts): never reported. */
     static final String[] NEEDED = {
-            ".common.account.",                   // Choose an account
-            ".common.api.",                       // "Update Google Play services" and similar prompts
-            ".auth.",                             // Sign-in, consent, SMS code consent
-            ".signin.",
-            ".identity.",
-            ".fido.",                             // Passkeys and security keys
-            ".location.settings.",                // "Turn on location accuracy"
-            ".locationsharingreporter.",
-            ".permission.",
+        ".common.account.", // Choose an account
+        ".common.api.", // "Update Google Play services" and similar prompts
+        ".auth.", // Sign-in, consent, SMS code consent
+        ".signin.",
+        ".identity.",
+        ".fido.", // Passkeys and security keys
+        ".location.settings.", // "Turn on location accuracy"
+        ".locationsharingreporter.",
+        ".permission.",
     };
 
     /** How long a blocked screen's report waits before the same screen is reported again. */
@@ -88,12 +94,14 @@ final class ScreenGuard {
     private static final long SHOT_DELAY_MS = 1500;
     /** After "Back", how long before checking it worked (and going home if it didn't). */
     private static final long BACK_CHECK_MS = 700;
+
     private static final int NOTICE_ID = 0x5c4ee8;
 
     /** Created on first use, so the pure parts of this class load in plain unit tests. */
     private static Handler main;
     /** The last screen reported by Android, and the last app (not Google services) in front before it. */
     private static volatile String current = "";
+
     private static volatile String lastApp = "";
 
     private ScreenGuard() {}
@@ -174,7 +182,7 @@ final class ScreenGuard {
                 current = cls;
                 return;
             }
-            if (!cls.startsWith(GMS + ".")) return;  // a dialog or view inside a Google services screen
+            if (!cls.startsWith(GMS + ".")) return; // a dialog or view inside a Google services screen
             current = cls;
             Context c = s.getApplicationContext();
             if (Policy.inParentMode(c)) return;
@@ -197,9 +205,11 @@ final class ScreenGuard {
     /** Leaves blocked screen {@code cls} with Back (so the app that opened it stays usable), else Home. */
     private static void block(AccessibilityService s, Context c, String cls) {
         s.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK);
-        main().postDelayed(() -> {
-            if (cls.equals(current)) s.performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME);
-        }, BACK_CHECK_MS);
+        main().postDelayed(
+                        () -> {
+                            if (cls.equals(current)) s.performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME);
+                        },
+                        BACK_CHECK_MS);
 
         if (!due(c, "screen_block_" + cls, BLOCK_REPORT_EVERY_MS)) return;
         // Says which screen and area, so the parents' notification can offer to allow it for a while.
@@ -220,14 +230,19 @@ final class ScreenGuard {
     private static void alert(Context c, String cls) {
         if (!due(c, "screen_alert_" + cls, ALERT_EVERY_MS)) return;
         String from = lastApp;
-        main().postDelayed(() -> {
-            // The child may already have left it; the next visit reports it instead.
-            if (!cls.equals(current)) {
-                Policy.prefs(c).edit().remove("screen_alert_" + cls).apply();
-                return;
-            }
-            ScreenService.snap(c, (jpeg, error) -> send(c, cls, from, jpeg, error));
-        }, SHOT_DELAY_MS);
+        main().postDelayed(
+                        () -> {
+                            // The child may already have left it; the next visit reports it instead.
+                            if (!cls.equals(current)) {
+                                Policy.prefs(c)
+                                        .edit()
+                                        .remove("screen_alert_" + cls)
+                                        .apply();
+                                return;
+                            }
+                            ScreenService.snap(c, (jpeg, error) -> send(c, cls, from, jpeg, error));
+                        },
+                        SHOT_DELAY_MS);
     }
 
     /** Publishes the alert for screen {@code cls}: the screenshot, or why there isn't one. */
@@ -330,7 +345,8 @@ final class ScreenGuard {
             if (verdict(e.getValue(), now) == null) continue; // a time-limited allow that ran out
             try {
                 o.put(e.getKey(), e.getValue());
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
         return o;
     }
@@ -341,7 +357,8 @@ final class ScreenGuard {
         for (Area area : AREAS) {
             try {
                 a.put(new JSONObject().put("key", area.key).put("name", c.getString(area.name)));
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
         return a;
     }

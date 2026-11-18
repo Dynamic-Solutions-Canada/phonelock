@@ -6,7 +6,6 @@ import android.net.LinkAddress;
 import android.net.LinkProperties;
 import android.provider.Settings;
 import android.util.Log;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.Inet4Address;
@@ -35,7 +34,8 @@ final class Debugging {
                 .putBoolean("allow_debugging", true);
         // Remember the policy choice so it can be put back when the time is up: only when no window is open
         // already (extending one must not record "allowed" as the choice to go back to).
-        if (!p.contains("debug_restore_allow")) e.putBoolean("debug_restore_allow", p.getBoolean("allow_debugging", true));
+        if (!p.contains("debug_restore_allow"))
+            e.putBoolean("debug_restore_allow", p.getBoolean("allow_debugging", true));
         e.apply();
         Policy.apply(c);
         try {
@@ -48,7 +48,10 @@ final class Debugging {
             return;
         }
         // Wireless debugging picks its port when it starts; give it a moment, then report where it is.
-        try { Thread.sleep(3_000); } catch (InterruptedException ignored) {}
+        try {
+            Thread.sleep(3_000);
+        } catch (InterruptedException ignored) {
+        }
         String port = prop("service.adb.tls.port");
         String ip = wifiAddress(c);
         String until = Remote.time(c, p.getLong("debug_until", 0));
@@ -74,7 +77,8 @@ final class Debugging {
         android.content.SharedPreferences.Editor e = p.edit().putLong("debug_until", 0);
         // Put the policy choice back only if a window recorded one; otherwise leave it as it is.
         if (p.contains("debug_restore_allow")) {
-            e.putBoolean("allow_debugging", p.getBoolean("debug_restore_allow", true)).remove("debug_restore_allow");
+            e.putBoolean("allow_debugging", p.getBoolean("debug_restore_allow", true))
+                    .remove("debug_restore_allow");
         }
         e.apply();
         try {
@@ -106,7 +110,8 @@ final class Debugging {
             LinkProperties lp = cm.getLinkProperties(cm.getActiveNetwork());
             if (lp == null) return null;
             for (LinkAddress a : lp.getLinkAddresses()) {
-                if (a.getAddress() instanceof Inet4Address) return a.getAddress().getHostAddress();
+                if (a.getAddress() instanceof Inet4Address)
+                    return a.getAddress().getHostAddress();
             }
         } catch (Exception e) {
             Log.w(Policy.TAG, "address: " + e);

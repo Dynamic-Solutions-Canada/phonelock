@@ -45,15 +45,18 @@ object LocationHistory {
     private val file by lazy { File(app.filesDir, "location-history.json") }
 
     private val _places = MutableStateFlow<Map<String, List<Place>>>(emptyMap())
+
     /** Device -> entries, newest first. */
     val places: StateFlow<Map<String, List<Place>>> = _places.asStateFlow()
 
     private val appsFile by lazy { File(app.filesDir, "app-history.json") }
     private val _apps = MutableStateFlow<Map<String, List<AppSession>>>(emptyMap())
+
     /** Device -> app-use sessions, oldest first (sent with the location readings). */
     val apps: StateFlow<Map<String, List<AppSession>>> = _apps.asStateFlow()
 
     private val _addresses = MutableStateFlow<Map<String, String>>(emptyMap())
+
     /** [Place.spot] -> street address, for rows already looked up. */
     val addresses: StateFlow<Map<String, String>> = _addresses.asStateFlow()
     private val lookingUp = HashSet<String>()
@@ -147,13 +150,18 @@ object LocationHistory {
         val done = java.util.concurrent.CountDownLatch(1)
         var line: String? = null
         try {
-            Geocoder(app).getFromLocation(p.lat, p.lng, 1, object : Geocoder.GeocodeListener {
-                override fun onGeocode(results: MutableList<android.location.Address>) {
-                    line = results.firstOrNull()?.getAddressLine(0)
-                    done.countDown()
-                }
-                override fun onError(errorMessage: String?) = done.countDown()
-            })
+            Geocoder(app).getFromLocation(
+                p.lat,
+                p.lng,
+                1,
+                object : Geocoder.GeocodeListener {
+                    override fun onGeocode(results: MutableList<android.location.Address>) {
+                        line = results.firstOrNull()?.getAddressLine(0)
+                        done.countDown()
+                    }
+                    override fun onError(errorMessage: String?) = done.countDown()
+                },
+            )
             done.await(timeoutMs, java.util.concurrent.TimeUnit.MILLISECONDS)
         } catch (e: Exception) {
             Log.w(TAG, "geocode now: $e")
@@ -173,16 +181,24 @@ object LocationHistory {
         }
         if (!Geocoder.isPresent()) return
         try {
-            Geocoder(app).getFromLocation(p.lat, p.lng, 1, object : Geocoder.GeocodeListener {
-                override fun onGeocode(results: MutableList<android.location.Address>) {
-                    val line = results.firstOrNull()?.getAddressLine(0)
-                    if (line != null) _addresses.update { it + (spot to line) }
-                    else synchronized(lookingUp) { lookingUp.remove(spot) } // try again next time it's shown
-                }
-                override fun onError(errorMessage: String?) {
-                    synchronized(lookingUp) { lookingUp.remove(spot) }
-                }
-            })
+            Geocoder(app).getFromLocation(
+                p.lat,
+                p.lng,
+                1,
+                object : Geocoder.GeocodeListener {
+                    override fun onGeocode(results: MutableList<android.location.Address>) {
+                        val line = results.firstOrNull()?.getAddressLine(0)
+                        if (line != null) {
+                            _addresses.update { it + (spot to line) }
+                        } else {
+                            synchronized(lookingUp) { lookingUp.remove(spot) } // try again next time it's shown
+                        }
+                    }
+                    override fun onError(errorMessage: String?) {
+                        synchronized(lookingUp) { lookingUp.remove(spot) }
+                    }
+                },
+            )
         } catch (e: Exception) {
             Log.w(TAG, "geocode: $e")
             synchronized(lookingUp) { lookingUp.remove(spot) }
@@ -193,8 +209,15 @@ object LocationHistory {
         val o = a.optJSONObject(i) ?: return@mapNotNull null
         if (!o.has("lat") || !o.has("lng") || !o.has("t")) return@mapNotNull null
         val from = o.getLong("t")
-        Place(from, o.optLong("to", from), o.getDouble("lat"), o.getDouble("lng"), o.optInt("acc"),
-            o.optInt("batt", -1), o.optBoolean("chg"))
+        Place(
+            from,
+            o.optLong("to", from),
+            o.getDouble("lat"),
+            o.getDouble("lng"),
+            o.optInt("acc"),
+            o.optInt("batt", -1),
+            o.optBoolean("chg"),
+        )
     }
 
     @Synchronized
@@ -203,8 +226,10 @@ object LocationHistory {
         _places.value.forEach { (dev, list) ->
             val a = JSONArray()
             list.forEach {
-                a.put(JSONObject().put("t", it.from).put("to", it.to).put("lat", it.lat).put("lng", it.lng)
-                    .put("acc", it.accuracyM).put("batt", it.battery).put("chg", it.charging))
+                a.put(
+                    JSONObject().put("t", it.from).put("to", it.to).put("lat", it.lat).put("lng", it.lng)
+                        .put("acc", it.accuracyM).put("batt", it.battery).put("chg", it.charging),
+                )
             }
             o.put(dev, a)
         }

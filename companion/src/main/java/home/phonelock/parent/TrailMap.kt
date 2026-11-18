@@ -91,22 +91,37 @@ internal fun TrailMap(
             val prev = places[i - 1]
             val cur = places[i]
             val gap = cur.from - prev.to > GAP_MS
-            Polyline(points = listOf(prev.latLng, cur.latLng), color = line, width = 10f,
-                pattern = if (gap) listOf(Dash(24f), Gap(18f)) else null)
+            Polyline(
+                points = listOf(prev.latLng, cur.latLng),
+                color = line,
+                width = 10f,
+                pattern = if (gap) listOf(Dash(24f), Gap(18f)) else null,
+            )
         }
         places.forEach { p ->
-            Circle(center = p.latLng, radius = maxOf(p.accuracyM.toDouble(), 20.0), fillColor = area,
-                strokeColor = line, strokeWidth = 2f)
+            Circle(
+                center = p.latLng,
+                radius = maxOf(p.accuracyM.toDouble(), 20.0),
+                fillColor = area,
+                strokeColor = line,
+                strokeWidth = 2f,
+            )
             if ((p.to - p.from) / 60_000 >= PIN_MINUTES) {
-                Marker(state = rememberUpdatedMarkerState(position = p.latLng),
+                Marker(
+                    state = rememberUpdatedMarkerState(position = p.latLng),
                     title = addresses[p.spot] ?: stopTitle,
                     snippet = clockSpan(p.from, p.to),
-                    icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+                    icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE),
+                )
             }
         }
         now?.let {
-            Marker(state = rememberUpdatedMarkerState(position = it), title = nowTitle, zIndex = 2f,
-                icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+            Marker(
+                state = rememberUpdatedMarkerState(position = it),
+                title = nowTitle,
+                zIndex = 2f,
+                icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN),
+            )
         }
         marker?.let {
             Marker(state = rememberUpdatedMarkerState(position = it), title = markerTitle, zIndex = 3f)
@@ -135,8 +150,7 @@ internal fun positionAt(places: List<Place>, t: Long): LatLng? {
  * The place covering [t], or the last one before it if that ended no more than [GAP_MS] earlier. Null when
  * there was no reading near that time (location off, no signal), rather than an old place.
  */
-internal fun placeAt(places: List<Place>, t: Long): Place? =
-    places.firstOrNull { t in it.from..it.to } ?: places.lastOrNull { it.to <= t && t - it.to <= GAP_MS }
+internal fun placeAt(places: List<Place>, t: Long): Place? = places.firstOrNull { t in it.from..it.to } ?: places.lastOrNull { it.to <= t && t - it.to <= GAP_MS }
 
 /** "2:15 p.m." in the phone's own time format. */
 internal fun clock(t: Long): String = java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT).format(java.util.Date(t))

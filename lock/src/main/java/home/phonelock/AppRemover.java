@@ -8,7 +8,6 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInstaller;
 import android.content.pm.PackageManager;
 import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +25,8 @@ final class AppRemover {
     static boolean removable(Context c, String pkg) {
         if (pkg == null || pkg.equals(c.getPackageName())) return false;
         try {
-            ApplicationInfo ai = c.getPackageManager().getApplicationInfo(pkg, PackageManager.MATCH_UNINSTALLED_PACKAGES);
+            ApplicationInfo ai =
+                    c.getPackageManager().getApplicationInfo(pkg, PackageManager.MATCH_UNINSTALLED_PACKAGES);
             return (ai.flags & ApplicationInfo.FLAG_INSTALLED) != 0 && (ai.flags & ApplicationInfo.FLAG_SYSTEM) == 0;
         } catch (PackageManager.NameNotFoundException e) {
             return false;
@@ -49,10 +49,13 @@ final class AppRemover {
         }
         try {
             Policy.dpm(c).clearUserRestriction(Policy.admin(c), "no_uninstall_apps");
-            Intent result = new Intent(ACTION_RESULT).setPackage(c.getPackageName())
-                    .putExtra("label", label).putExtra("who", who).putExtra("pkg", pkg);
-            PendingIntent pi = PendingIntent.getBroadcast(c, pkg.hashCode(), result,
-                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
+            Intent result = new Intent(ACTION_RESULT)
+                    .setPackage(c.getPackageName())
+                    .putExtra("label", label)
+                    .putExtra("who", who)
+                    .putExtra("pkg", pkg);
+            PendingIntent pi = PendingIntent.getBroadcast(
+                    c, pkg.hashCode(), result, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
             c.getPackageManager().getPackageInstaller().uninstall(pkg, pi.getIntentSender());
         } catch (Exception e) {
             Log.w(Policy.TAG, "uninstall " + pkg + ": " + e);

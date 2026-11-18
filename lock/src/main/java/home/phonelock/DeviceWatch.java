@@ -11,7 +11,6 @@ import android.provider.Settings;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
 import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -41,17 +40,20 @@ final class DeviceWatch {
 
         // Airplane mode: on means she drops off the map, so it notifies; off is just noted.
         airplane = new BroadcastReceiver() {
-            @Override public void onReceive(Context ctx, Intent i) {
+            @Override
+            public void onReceive(Context ctx, Intent i) {
                 boolean on = i.getBooleanExtra("state", false);
                 if (on) Outbox.alert(ctx, ctx.getString(R.string.events_airplane_on));
                 else Outbox.note(ctx, ctx.getString(R.string.events_airplane_off));
             }
         };
-        app.registerReceiver(airplane, new IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED), Context.RECEIVER_EXPORTED);
+        app.registerReceiver(
+                airplane, new IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED), Context.RECEIVER_EXPORTED);
 
         // Mobile data on or off (a global setting; there's no broadcast for it).
         mobileData = new ContentObserver(new Handler(Looper.getMainLooper())) {
-            @Override public void onChange(boolean selfChange) {
+            @Override
+            public void onChange(boolean selfChange) {
                 boolean on = Settings.Global.getInt(app.getContentResolver(), "mobile_data", 1) == 1;
                 if (on == Policy.prefs(app).getBoolean("watch_mobile_data", true)) return;
                 Policy.prefs(app).edit().putBoolean("watch_mobile_data", on).apply();
@@ -64,7 +66,8 @@ final class DeviceWatch {
         try {
             SubscriptionManager sm = app.getSystemService(SubscriptionManager.class);
             sims = new SubscriptionManager.OnSubscriptionsChangedListener() {
-                @Override public void onSubscriptionsChanged() {
+                @Override
+                public void onSubscriptionsChanged() {
                     checkSims(app);
                 }
             };
@@ -75,7 +78,8 @@ final class DeviceWatch {
 
         // New apps (not updates of installed ones).
         installs = new BroadcastReceiver() {
-            @Override public void onReceive(Context ctx, Intent i) {
+            @Override
+            public void onReceive(Context ctx, Intent i) {
                 if (i.getBooleanExtra(Intent.EXTRA_REPLACING, false) || i.getData() == null) return;
                 String pkg = i.getData().getSchemeSpecificPart();
                 // Showing a hidden app (parent mode shows them all) also arrives as "added": only report an
@@ -103,7 +107,8 @@ final class DeviceWatch {
             app.unregisterReceiver(airplane);
             app.unregisterReceiver(installs);
             app.getContentResolver().unregisterContentObserver(mobileData);
-            if (sims != null) app.getSystemService(SubscriptionManager.class).removeOnSubscriptionsChangedListener(sims);
+            if (sims != null)
+                app.getSystemService(SubscriptionManager.class).removeOnSubscriptionsChangedListener(sims);
         } catch (Exception e) {
             Log.w(Policy.TAG, "device watch stop: " + e);
         }
@@ -121,7 +126,8 @@ final class DeviceWatch {
         String now;
         String names;
         try {
-            List<SubscriptionInfo> list = c.getSystemService(SubscriptionManager.class).getActiveSubscriptionInfoList();
+            List<SubscriptionInfo> list =
+                    c.getSystemService(SubscriptionManager.class).getActiveSubscriptionInfoList();
             List<String> keys = new ArrayList<>();
             List<String> carriers = new ArrayList<>();
             if (list != null) {

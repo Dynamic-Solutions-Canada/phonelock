@@ -53,7 +53,7 @@ android {
     // (release builds run these checks; see docs/development.md "Languages").
     lint {
         fatal 'MissingTranslation', 'ExtraTranslation', 'StringFormatInvalid', 'StringFormatCount',
-            'StringFormatMatches', 'MissingQuantity', 'UnusedQuantity'
+                'StringFormatMatches', 'MissingQuantity', 'UnusedQuantity'
     }
 
     compileOptions {

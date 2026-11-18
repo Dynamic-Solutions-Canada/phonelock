@@ -90,8 +90,11 @@ final class Ringer {
 
         Vibrator v = app.getSystemService(Vibrator.class);
         if (v != null && v.hasVibrator()) {
-            v.vibrate(VibrationEffect.createWaveform(new long[]{0, 800, 400}, 0),
-                    new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ALARM).build());
+            v.vibrate(
+                    VibrationEffect.createWaveform(new long[] {0, 800, 400}, 0),
+                    new AudioAttributes.Builder()
+                            .setUsage(AudioAttributes.USAGE_ALARM)
+                            .build());
         }
         Remote.sendState(app, false);
     }
@@ -110,7 +113,8 @@ final class Ringer {
         if (mp != null) {
             try {
                 mp.stop();
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
             mp.release();
         }
 

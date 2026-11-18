@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.BatteryManager;
 import android.util.Log;
-
 import org.json.JSONObject;
 
 /**
@@ -81,7 +80,11 @@ final class Battery {
     /** Sets the low-battery threshold (0 turns the alert off) and re-arms it. */
     static void setAlertAt(Context c, int percent) {
         int p = Math.max(0, Math.min(50, percent));
-        Policy.prefs(c).edit().putInt("batt_alert", p).putBoolean("batt_alerted", false).apply();
+        Policy.prefs(c)
+                .edit()
+                .putInt("batt_alert", p)
+                .putBoolean("batt_alerted", false)
+                .apply();
     }
 
     /**
@@ -90,7 +93,8 @@ final class Battery {
      */
     static BroadcastReceiver watch(Context c) {
         BroadcastReceiver r = new BroadcastReceiver() {
-            @Override public void onReceive(Context ctx, Intent i) {
+            @Override
+            public void onReceive(Context ctx, Intent i) {
                 onChanged(ctx, level(i), charging(i));
             }
         };
@@ -126,15 +130,19 @@ final class Battery {
      */
     static BroadcastReceiver watchShutdown(Context c) {
         BroadcastReceiver r = new BroadcastReceiver() {
-            @Override public void onReceive(Context ctx, Intent i) {
+            @Override
+            public void onReceive(Context ctx, Intent i) {
                 PendingResult pending = goAsync();
-                new Thread(() -> {
-                    try {
-                        sendShutdown(ctx);
-                    } finally {
-                        pending.finish();
-                    }
-                }, "shutdown").start();
+                new Thread(
+                                () -> {
+                                    try {
+                                        sendShutdown(ctx);
+                                    } finally {
+                                        pending.finish();
+                                    }
+                                },
+                                "shutdown")
+                        .start();
             }
         };
         c.registerReceiver(r, new IntentFilter(Intent.ACTION_SHUTDOWN), Context.RECEIVER_EXPORTED);

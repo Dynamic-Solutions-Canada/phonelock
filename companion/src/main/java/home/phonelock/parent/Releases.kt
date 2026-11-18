@@ -88,6 +88,5 @@ object Releases {
     private fun onlySigner(certs: Array<Signature>?): String? = certs?.singleOrNull()?.let(::certHash)
 
     /** URL-safe base64 SHA-256 of a signing certificate, the form [Setup.LOCK_SIGNATURE_SHA256] is written in. */
-    private fun certHash(s: Signature): String =
-        Base64.getUrlEncoder().withoutPadding().encodeToString(MessageDigest.getInstance("SHA-256").digest(s.toByteArray()))
+    private fun certHash(s: Signature): String = Base64.getUrlEncoder().withoutPadding().encodeToString(MessageDigest.getInstance("SHA-256").digest(s.toByteArray()))
 }

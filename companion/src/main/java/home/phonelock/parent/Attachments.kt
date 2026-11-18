@@ -7,6 +7,7 @@ import java.net.URL
 object Attachments {
     /** Screenshots and icon packs. */
     private const val MAX_BYTES = 4L * 1024 * 1024
+
     /** Files from file management (the hub takes up to 50 MB). */
     const val MAX_FILE_BYTES = 50L * 1024 * 1024
 

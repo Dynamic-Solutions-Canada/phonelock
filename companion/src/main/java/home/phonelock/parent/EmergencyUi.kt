@@ -66,8 +66,12 @@ internal fun EmergencyPanel(a: EmergencyAlerts.Sos, onClose: (() -> Unit)?) {
 
     Card(Modifier.fillMaxWidth(), shape = RoundedCornerShape(24.dp), colors = CardDefaults.cardColors(containerColor = danger)) {
         Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            Text(EmergencyAlerts.title(a), style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold,
-                color = onDanger)
+            Text(
+                EmergencyAlerts.title(a),
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                color = onDanger,
+            )
             Text(stringResource(R.string.alerts_emergency_pressed_at, time(a.since)), color = onDanger)
             Text(EmergencyAlerts.summary(a), style = MaterialTheme.typography.bodyLarge, color = onDanger)
 
@@ -75,14 +79,23 @@ internal fun EmergencyPanel(a: EmergencyAlerts.Sos, onClose: (() -> Unit)?) {
             val trail = places[a.dev].orEmpty().filter { it.to >= a.since }.reversed()
             val latest = a.where?.let { LatLng(it.lat, it.lng) }
             if (trail.isNotEmpty() || latest != null) {
-                TrailMap(trail, marker = latest, markerTitle = stringResource(R.string.alerts_emergency_latest), selection = a.where, addresses = addresses,
-                    now = latest, modifier = Modifier.fillMaxWidth().height(220.dp))
+                TrailMap(
+                    trail,
+                    marker = latest,
+                    markerTitle = stringResource(R.string.alerts_emergency_latest),
+                    selection = a.where,
+                    addresses = addresses,
+                    now = latest,
+                    modifier = Modifier.fillMaxWidth().height(220.dp),
+                )
             }
 
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 if (!a.cancelled && EmergencyAlerts.me() !in a.acks) {
-                    Button(onClick = { EmergencyAlerts.ack(a.id) },
-                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)) { Text(stringResource(R.string.alerts_emergency_ack)) }
+                    Button(
+                        onClick = { EmergencyAlerts.ack(a.id) },
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error),
+                    ) { Text(stringResource(R.string.alerts_emergency_ack)) }
                 }
                 a.number?.let { n ->
                     OutlinedButton(onClick = {
@@ -115,16 +128,20 @@ class EmergencyActivity : ComponentActivity() {
                     val all by EmergencyAlerts.alerts.collectAsState()
                     val id = intent.getStringExtra("sos")
                     val a = all.firstOrNull { it.id == id } ?: all.firstOrNull()
-                    Column(Modifier.safeDrawingPadding().padding(16.dp).verticalScroll(rememberScrollState()),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Column(
+                        Modifier.safeDrawingPadding().padding(16.dp).verticalScroll(rememberScrollState()),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
                         if (a == null) {
                             EmptyNote(stringResource(R.string.alerts_emergency_none))
                         } else {
                             EmergencyPanel(a, onClose = { finish() })
                         }
                         TextButton(onClick = {
-                            startActivity(Intent(this@EmergencyActivity, MainActivity::class.java)
-                                .putExtra("device", a?.dev).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+                            startActivity(
+                                Intent(this@EmergencyActivity, MainActivity::class.java)
+                                    .putExtra("device", a?.dev).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+                            )
                             finish()
                         }) { Text(stringResource(R.string.alerts_emergency_open_app)) }
                     }

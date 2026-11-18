@@ -33,8 +33,10 @@ import androidx.compose.ui.unit.dp
 
 /** A refresh with no reply after this long means the device isn't answering (offline, off, or no signal). */
 private const val NO_ANSWER_MS = 20_000L
+
 /** Not heard from in this long: the status dot turns amber. */
 private const val QUIET_MS = 40 * 60_000L
+
 /** A battery reading older than this shows its age. */
 private const val BATTERY_FRESH_MS = 20 * 60_000L
 
@@ -46,28 +48,55 @@ private const val BATTERY_FRESH_MS = 20 * 60_000L
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-internal fun PhoneHeader(dev: String, name: String, state: PhoneState, vitals: Vitals, askedAt: Long, connected: Boolean, now: Long,
-                         onRefresh: () -> Unit, onMenu: () -> Unit, onLockNow: () -> Unit = {},
-                         onStartMode: () -> Unit = {}, onEndMode: () -> Unit = {}) {
-    Card(Modifier.fillMaxWidth(), shape = RoundedCornerShape(28.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)) {
-        Column(Modifier.padding(start = 20.dp, end = 8.dp, top = 16.dp, bottom = 18.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)) {
+internal fun PhoneHeader(
+    dev: String,
+    name: String,
+    state: PhoneState,
+    vitals: Vitals,
+    askedAt: Long,
+    connected: Boolean,
+    now: Long,
+    onRefresh: () -> Unit,
+    onMenu: () -> Unit,
+    onLockNow: () -> Unit = {},
+    onStartMode: () -> Unit = {},
+    onEndMode: () -> Unit = {},
+) {
+    Card(
+        Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(28.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+    ) {
+        Column(
+            Modifier.padding(start = 20.dp, end = 8.dp, top = 16.dp, bottom = 18.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(name, Modifier.weight(1f), style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                Text(
+                    name,
+                    Modifier.weight(1f),
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                )
                 IconButton(onClick = onRefresh) { Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.refresh)) }
                 IconButton(onClick = onMenu) { Icon(Icons.Default.MoreVert, contentDescription = stringResource(R.string.main_device_settings)) }
             }
             // Meta line: whether the device is answering, and its battery, both as plain secondary text.
             val status = deviceStatus(vitals, state, askedAt, connected, now)
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(14.dp), verticalArrangement = Arrangement.spacedBy(4.dp),
-                itemVerticalAlignment = Alignment.CenterVertically) {
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(14.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                itemVerticalAlignment = Alignment.CenterVertically,
+            ) {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     // Green while the device is answering and recently heard from; amber otherwise.
                     Box(Modifier.size(8.dp).background(if (status.ok) Color(0xFF3DBE6B) else Color(0xFFE0A030), CircleShape))
-                    Text(status.text, style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer)
+                    Text(
+                        status.text,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    )
                 }
                 if (vitals.battery >= 0) BatteryLevel(vitals, state, now)
             }
@@ -77,9 +106,16 @@ internal fun PhoneHeader(dev: String, name: String, state: PhoneState, vitals: V
             val manualOn = state.manualMode.isNotEmpty() && state.manualUntil > System.currentTimeMillis()
             val situation = situationLines(state, manualOn)
             Column(Modifier.padding(top = 4.dp)) {
-                Text(situation.first, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold,
-                    color = if (state.mode != "normal") MaterialTheme.colorScheme.tertiary
-                    else MaterialTheme.colorScheme.onPrimaryContainer)
+                Text(
+                    situation.first,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.SemiBold,
+                    color = if (state.mode != "normal") {
+                        MaterialTheme.colorScheme.tertiary
+                    } else {
+                        MaterialTheme.colorScheme.onPrimaryContainer
+                    },
+                )
                 situation.second?.let {
                     Text(it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onPrimaryContainer)
                 }
@@ -87,17 +123,31 @@ internal fun PhoneHeader(dev: String, name: String, state: PhoneState, vitals: V
             // Start limited hours or bedtime by hand, or end the one that's running: a real button.
             FilledTonalButton(onClick = if (manualOn) onEndMode else onStartMode) {
                 Icon(Icons.Default.DateRange, contentDescription = null, Modifier.size(18.dp))
-                Text(if (manualOn) stringResource(if (state.manualMode == "bedtime") R.string.main_end_bedtime_now else R.string.main_end_limited_now)
-                    else stringResource(R.string.main_start_mode),
-                    Modifier.padding(start = 8.dp))
+                Text(
+                    if (manualOn) {
+                        stringResource(if (state.manualMode == "bedtime") R.string.main_end_bedtime_now else R.string.main_end_limited_now)
+                    } else {
+                        stringResource(R.string.main_start_mode)
+                    },
+                    Modifier.padding(start = 8.dp),
+                )
             }
             if (state.ringing) Pill(stringResource(R.string.main_ringing), highlighted = true)
-            if (state.parentMode) Row(verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Pill(if (state.parentUntil > 0) stringResource(R.string.main_parent_mode_until, time(state.parentUntil))
-                    else stringResource(R.string.main_parent_mode_on),
-                    highlighted = true)
-                androidx.compose.material3.TextButton(onClick = onLockNow) { Text(stringResource(R.string.main_lock_now)) }
+            if (state.parentMode) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    Pill(
+                        if (state.parentUntil > 0) {
+                            stringResource(R.string.main_parent_mode_until, time(state.parentUntil))
+                        } else {
+                            stringResource(R.string.main_parent_mode_on)
+                        },
+                        highlighted = true,
+                    )
+                    androidx.compose.material3.TextButton(onClick = onLockNow) { Text(stringResource(R.string.main_lock_now)) }
+                }
             }
         }
     }
@@ -119,23 +169,51 @@ private fun InUseLine(dev: String, state: PhoneState, now: Long) {
     val color = MaterialTheme.colorScheme.onPrimaryContainer
     val style = MaterialTheme.typography.bodyMedium
     when {
-        state.using.isNotEmpty() -> Row(verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        state.using.isNotEmpty() -> Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
             AppIcon(dev, state.using, state.label(state.using), 20.dp)
             // Counting on while fresh; frozen at the report's time once it may be out of date.
             val open = (if (stale) state.updated else now) - state.usingSince
-            val length = if (open < 60_000) stringResource(R.string.main_just_opened)
-            else stringResource(R.string.main_open_for, fmtMinutes(open / 60_000))
+            val length = if (open < 60_000) {
+                stringResource(R.string.main_just_opened)
+            } else {
+                stringResource(R.string.main_open_for, fmtMinutes(open / 60_000))
+            }
             val app = state.label(state.using)
-            val text = if (asOf != null) stringResource(R.string.main_using_app_as_of, app, length, asOf)
-            else stringResource(R.string.main_using_app, app, length)
-            Text(text, style = style, color = color,
-                fontWeight = FontWeight.Medium)
+            val text = if (asOf != null) {
+                stringResource(R.string.main_using_app_as_of, app, length, asOf)
+            } else {
+                stringResource(R.string.main_using_app, app, length)
+            }
+            Text(
+                text,
+                style = style,
+                color = color,
+                fontWeight = FontWeight.Medium,
+            )
         }
-        screenOn -> Text(if (asOf != null) stringResource(R.string.main_home_screen_as_of, asOf)
-            else stringResource(R.string.main_home_screen), style = style, color = color)
-        else -> Text(if (asOf != null) stringResource(R.string.main_screen_off_as_of, asOf)
-            else stringResource(R.string.main_screen_off), style = style, color = color)
+
+        screenOn -> Text(
+            if (asOf != null) {
+                stringResource(R.string.main_home_screen_as_of, asOf)
+            } else {
+                stringResource(R.string.main_home_screen)
+            },
+            style = style,
+            color = color,
+        )
+
+        else -> Text(
+            if (asOf != null) {
+                stringResource(R.string.main_screen_off_as_of, asOf)
+            } else {
+                stringResource(R.string.main_screen_off)
+            },
+            style = style,
+            color = color,
+        )
     }
 }
 
@@ -150,6 +228,7 @@ private data class DeviceStatus(val text: String, val ok: Boolean)
  */
 private fun deviceStatus(v: Vitals, state: PhoneState, askedAt: Long, connected: Boolean, now: Long): DeviceStatus {
     val seen = maxOf(v.seen, state.updated)
+
     /** [text], marked as still connecting while this phone has no link to the hub. */
     fun withLink(text: String) = if (connected) text else Strings.get(R.string.main_status_connecting, text)
     if (seen <= 0) return DeviceStatus(withLink(Strings.get(R.string.main_status_no_reply)), false)
@@ -157,9 +236,12 @@ private fun deviceStatus(v: Vitals, state: PhoneState, askedAt: Long, connected:
     val since = ago(now - seen)
     val text = when {
         waiting && now - askedAt >= NO_ANSWER_MS -> Strings.get(R.string.main_status_not_answering, since)
+
         waiting -> Strings.get(R.string.main_status_checking, since)
+
         // Settings (app lists, schedule) still on their way: said here, in place, instead of in each section.
         !state.full -> Strings.get(R.string.main_status_getting_settings, since)
+
         else -> Strings.get(R.string.main_status_seen, since)
     }
     val ok = connected && !(waiting && now - askedAt >= NO_ANSWER_MS) && now - seen < QUIET_MS
@@ -200,9 +282,12 @@ private fun BatteryLevel(vitals: Vitals, state: PhoneState, now: Long) {
     )
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
         BatteryGlyph(vitals.battery, colour)
-        Text(parts.joinToString(" · "),
-            style = MaterialTheme.typography.bodyMedium, color = colour,
-            fontWeight = if (low) FontWeight.SemiBold else FontWeight.Normal)
+        Text(
+            parts.joinToString(" · "),
+            style = MaterialTheme.typography.bodyMedium,
+            color = colour,
+            fontWeight = if (low) FontWeight.SemiBold else FontWeight.Normal,
+        )
     }
 }
 
@@ -217,10 +302,16 @@ private fun BatteryGlyph(level: Int, colour: Color) {
         drawRoundRect(colour, size = body, cornerRadius = r, style = androidx.compose.ui.graphics.drawscope.Stroke(stroke))
         val inset = stroke + 1.dp.toPx()
         val fill = (body.width - inset * 2) * level.coerceIn(0, 100) / 100f
-        drawRect(colour, topLeft = androidx.compose.ui.geometry.Offset(inset, inset),
-            size = androidx.compose.ui.geometry.Size(fill, body.height - inset * 2))
-        drawRect(colour, topLeft = androidx.compose.ui.geometry.Offset(body.width, size.height * 0.3f),
-            size = androidx.compose.ui.geometry.Size(tip, size.height * 0.4f))
+        drawRect(
+            colour,
+            topLeft = androidx.compose.ui.geometry.Offset(inset, inset),
+            size = androidx.compose.ui.geometry.Size(fill, body.height - inset * 2),
+        )
+        drawRect(
+            colour,
+            topLeft = androidx.compose.ui.geometry.Offset(body.width, size.height * 0.3f),
+            size = androidx.compose.ui.geometry.Size(tip, size.height * 0.4f),
+        )
     }
 }
 
@@ -237,6 +328,10 @@ private fun whenText(ms: Long): String {
 internal fun Pill(text: String, highlighted: Boolean = false) {
     val bg = if (highlighted) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.surface
     val fg = if (highlighted) MaterialTheme.colorScheme.onTertiary else MaterialTheme.colorScheme.onSurface
-    Text(text, Modifier.background(bg, RoundedCornerShape(50)).padding(horizontal = 12.dp, vertical = 5.dp),
-        style = MaterialTheme.typography.labelLarge, color = fg)
+    Text(
+        text,
+        Modifier.background(bg, RoundedCornerShape(50)).padding(horizontal = 12.dp, vertical = 5.dp),
+        style = MaterialTheme.typography.labelLarge,
+        color = fg,
+    )
 }

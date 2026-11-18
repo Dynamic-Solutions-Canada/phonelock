@@ -5,7 +5,6 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,7 +78,8 @@ final class BluetoothControl {
         BluetoothAdapter a = adapter(c);
         try {
             if (a != null && a.isDiscovering()) a.cancelDiscovery();
-        } catch (SecurityException ignored) {}
+        } catch (SecurityException ignored) {
+        }
     }
 
     /** Starts pairing with {@code d}; the outcome arrives as BluetoothDevice.ACTION_BOND_STATE_CHANGED. */

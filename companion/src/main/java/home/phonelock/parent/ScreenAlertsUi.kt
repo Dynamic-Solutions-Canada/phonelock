@@ -46,15 +46,23 @@ internal fun ScreenAlertsSection(dev: String) {
     var enlarged by remember { mutableStateOf<ImageBitmap?>(null) }
 
     Section(stringResource(R.string.alerts_screen_section)) {
-        Text(stringResource(R.string.alerts_screen_section_detail), style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(
+            stringResource(R.string.alerts_screen_section_detail),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
         mine.forEach { a ->
             // Decoded once per report; the files are small JPEGs.
             val image = remember(a.image) { a.image?.let { BitmapFactory.decodeFile(it)?.asImageBitmap() } }
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 if (image != null) {
-                    Image(image, stringResource(R.string.alerts_screenshot), Modifier.width(72.dp).heightIn(max = 150.dp)
-                        .clip(RoundedCornerShape(8.dp)).clickable { enlarged = image }, contentScale = ContentScale.Fit)
+                    Image(
+                        image,
+                        stringResource(R.string.alerts_screenshot),
+                        Modifier.width(72.dp).heightIn(max = 150.dp)
+                            .clip(RoundedCornerShape(8.dp)).clickable { enlarged = image },
+                        contentScale = ContentScale.Fit,
+                    )
                 }
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Text(a.name, style = MaterialTheme.typography.titleSmall)
@@ -73,9 +81,11 @@ internal fun ScreenAlertsSection(dev: String) {
     }
 
     enlarged?.let { img ->
-        AppDialog(onDismissRequest = { enlarged = null },
+        AppDialog(
+            onDismissRequest = { enlarged = null },
             confirmButton = { TextButton(onClick = { enlarged = null }) { Text(stringResource(R.string.alerts_close)) } },
-            text = { Image(img, stringResource(R.string.alerts_screenshot), Modifier.fillMaxWidth(), contentScale = ContentScale.Fit) })
+            text = { Image(img, stringResource(R.string.alerts_screenshot), Modifier.fillMaxWidth(), contentScale = ContentScale.Fit) },
+        )
     }
 }
 
@@ -95,15 +105,32 @@ internal fun ScreenRulesSection(dev: String, state: PhoneState?) {
     val bedtimeAhead = st.mode != "bedtime" && st.schedule.any { it.mode == "bedtime" }
 
     Section(stringResource(R.string.alerts_rules_section)) {
-        Text(stringResource(R.string.alerts_rules_section_detail), style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(
+            stringResource(R.string.alerts_rules_section_detail),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
         st.screenAreas.forEach { area ->
-            ScreenRuleRow(dev, Hub.AREA_PREFIX + area.key, area.name, st.screenRules[Hub.AREA_PREFIX + area.key],
-                blockedByDefault = true, now = now, bedtimeAhead = bedtimeAhead)
+            ScreenRuleRow(
+                dev,
+                Hub.AREA_PREFIX + area.key,
+                area.name,
+                st.screenRules[Hub.AREA_PREFIX + area.key],
+                blockedByDefault = true,
+                now = now,
+                bedtimeAhead = bedtimeAhead,
+            )
         }
         singles.sortedBy { ScreenAlerts.screenName(it) }.forEach { screen ->
-            ScreenRuleRow(dev, screen, ScreenAlerts.screenName(screen), st.screenRules[screen],
-                blockedByDefault = false, now = now, bedtimeAhead = bedtimeAhead)
+            ScreenRuleRow(
+                dev,
+                screen,
+                ScreenAlerts.screenName(screen),
+                st.screenRules[screen],
+                blockedByDefault = false,
+                now = now,
+                bedtimeAhead = bedtimeAhead,
+            )
         }
     }
 }
@@ -113,8 +140,15 @@ internal fun ScreenRulesSection(dev: String, state: PhoneState?) {
  * which means blocked for an area and reported for a single screen), and its menu.
  */
 @Composable
-private fun ScreenRuleRow(dev: String, key: String, title: String, rule: String?, blockedByDefault: Boolean,
-                          now: Long, bedtimeAhead: Boolean) {
+private fun ScreenRuleRow(
+    dev: String,
+    key: String,
+    title: String,
+    rule: String?,
+    blockedByDefault: Boolean,
+    now: Long,
+    bedtimeAhead: Boolean,
+) {
     val until = rule?.takeIf { it.startsWith("ok:") }?.removePrefix("ok:")?.toLongOrNull()?.takeIf { it > now }
     val allowed = rule == "ok" || until != null
     val decided = rule == "ok" || rule == "block" || until != null
@@ -134,8 +168,7 @@ private fun ScreenRuleRow(dev: String, key: String, title: String, rule: String?
     val resetLabel = stringResource(if (blockedByDefault) R.string.alerts_rule_back_to_blocked else R.string.alerts_rule_forget)
 
     /** Sends a decision about this row. */
-    fun set(rule: String, minutes: Int = 0, untilBedtime: Boolean = false) =
-        Hub.setScreenRule(dev, key, rule, minutes, untilBedtime)
+    fun set(rule: String, minutes: Int = 0, untilBedtime: Boolean = false) = Hub.setScreenRule(dev, key, rule, minutes, untilBedtime)
 
     val entries = buildList {
         if (rule != "ok") add(MenuEntry(allowLabel) { set("ok") })

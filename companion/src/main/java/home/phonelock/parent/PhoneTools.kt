@@ -69,8 +69,12 @@ object PhoneTools {
      */
     fun viewScreen(dev: String) = request(dev, "screen", capturing)
 
-    private fun request(dev: String, type: String, inFlight: MutableStateFlow<Set<String>>,
-                        extra: (JSONObject) -> Unit = {}) {
+    private fun request(
+        dev: String,
+        type: String,
+        inFlight: MutableStateFlow<Set<String>>,
+        extra: (JSONObject) -> Unit = {},
+    ) {
         inFlight.update { it + dev }
         // Also tracked by Pending, so screens can say when the device is slow or doesn't answer.
         val m = track(dev, Hub.msg(type).also(extra))
@@ -171,14 +175,19 @@ object PhoneTools {
                 .onFailure { Log.w(TAG, "shot download: $it") }
                 .getOrNull()
             capturing.update { it - d.id }
-            setScreen(d.id, if (image != null) PhoneScreen(ts, image, label)
-                else PhoneScreen(ts, label = label, error = Strings.get(R.string.setup_screenshot_unreadable)))
+            setScreen(
+                d.id,
+                if (image != null) {
+                    PhoneScreen(ts, image, label)
+                } else {
+                    PhoneScreen(ts, label = label, error = Strings.get(R.string.setup_screenshot_unreadable))
+                },
+            )
         }
     }
 
     /** Keeps the newest screenshot, since replies can arrive out of order during auto-refresh. */
-    private fun setScreen(dev: String, s: PhoneScreen) =
-        _screens.update { cur -> if ((cur[dev]?.ts ?: 0) > s.ts) cur else cur + (dev to s) }
+    private fun setScreen(dev: String, s: PhoneScreen) = _screens.update { cur -> if ((cur[dev]?.ts ?: 0) > s.ts) cur else cur + (dev to s) }
 
     /** Fetches and decrypts the screenshot attached to sealed message [msgId]. */
     private fun download(d: Device, url: String, msgId: String): ImageBitmap? {

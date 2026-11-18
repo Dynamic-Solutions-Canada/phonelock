@@ -8,10 +8,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.RippleDrawable;
-import android.content.res.ColorStateList;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,7 +25,6 @@ import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,18 +52,22 @@ public class ConnectionsActivity extends Activity {
     private LinearLayout content;
     /** Devices found by the current Bluetooth search, by address; null while not searching. */
     private Map<String, BluetoothDevice> found;
+
     private String btNote;
     /** Re-checks the schedule while open, so a grant running out closes the screen. */
     private final Handler handler = new Handler(Looper.getMainLooper());
+
     private final Runnable recheck = new Runnable() {
-        @Override public void run() {
+        @Override
+        public void run() {
             if (allowedNow()) handler.postDelayed(this, RECHECK_MS);
         }
     };
     private static final long RECHECK_MS = 30_000;
 
     private final BroadcastReceiver radios = new BroadcastReceiver() {
-        @Override public void onReceive(Context c, Intent i) {
+        @Override
+        public void onReceive(Context c, Intent i) {
             String a = i.getAction();
             if (Policy.ACTION_CHANGED.equals(a)) {
                 if (allowedNow()) show();
@@ -77,7 +80,9 @@ public class ConnectionsActivity extends Activity {
                 if (ssid != null) toast(c.getString(R.string.tools_wifi_wrong_password, ssid));
             }
             BluetoothDevice d = i.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE, BluetoothDevice.class);
-            if (BluetoothDevice.ACTION_FOUND.equals(a) && d != null && found != null
+            if (BluetoothDevice.ACTION_FOUND.equals(a)
+                    && d != null
+                    && found != null
                     && d.getBondState() != BluetoothDevice.BOND_BONDED) {
                 found.put(d.getAddress(), d);
             } else if (BluetoothDevice.ACTION_BOND_STATE_CHANGED.equals(a) && d != null) {
@@ -107,10 +112,11 @@ public class ConnectionsActivity extends Activity {
         root.setPadding(dp(20), dp(28), dp(20), dp(16));
         root.setFitsSystemWindows(true);
         // The home screen's background, so this feels like part of it.
-        root.setBackground(new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,
-                new int[]{Color.rgb(28, 34, 52), Color.rgb(12, 13, 18)}));
+        root.setBackground(new GradientDrawable(
+                GradientDrawable.Orientation.TOP_BOTTOM, new int[] {Color.rgb(28, 34, 52), Color.rgb(12, 13, 18)}));
 
-        root.addView(text(BuiltInApps.label(this, tab == TAB_BLUETOOTH ? BuiltInApps.BLUETOOTH : BuiltInApps.WIFI), 28, TEXT));
+        root.addView(text(
+                BuiltInApps.label(this, tab == TAB_BLUETOOTH ? BuiltInApps.BLUETOOTH : BuiltInApps.WIFI), 28, TEXT));
 
         content = new LinearLayout(this);
         content.setOrientation(LinearLayout.VERTICAL);
@@ -151,8 +157,14 @@ public class ConnectionsActivity extends Activity {
     @Override
     protected void onPause() {
         handler.removeCallbacks(recheck);
-        try { unregisterReceiver(radios); } catch (IllegalArgumentException ignored) {}
-        try { unregisterReceiver(systemRadios); } catch (IllegalArgumentException ignored) {}
+        try {
+            unregisterReceiver(radios);
+        } catch (IllegalArgumentException ignored) {
+        }
+        try {
+            unregisterReceiver(systemRadios);
+        } catch (IllegalArgumentException ignored) {
+        }
         BluetoothControl.stopDiscovery(this);
         found = null;
         super.onPause();
@@ -160,7 +172,8 @@ public class ConnectionsActivity extends Activity {
 
     /** The system's radio broadcasts, handled like ours (a receiver can be registered only once). */
     private final BroadcastReceiver systemRadios = new BroadcastReceiver() {
-        @Override public void onReceive(Context c, Intent i) {
+        @Override
+        public void onReceive(Context c, Intent i) {
             if (Policy.ACTION_CHANGED.equals(i.getAction())) return; // only this app may send that
             radios.onReceive(c, i);
         }
@@ -183,7 +196,8 @@ public class ConnectionsActivity extends Activity {
     /** Redraws the selected tab from the radios' current state. */
     private void show() {
         content.removeAllViews();
-        if (tab == TAB_WIFI) showWifi(); else showBluetooth();
+        if (tab == TAB_WIFI) showWifi();
+        else showBluetooth();
     }
 
     // ---------- Wi-Fi ----------
@@ -206,22 +220,27 @@ public class ConnectionsActivity extends Activity {
         }
         LinearLayout list = card();
         for (WifiControl.Network n : nets) {
-            String detail = getString(n.connected ? R.string.tools_wifi_connected
-                    : n.saved ? R.string.tools_wifi_saved
-                    : n.secured ? R.string.tools_wifi_secured
-                    : R.string.tools_wifi_open);
+            String detail = getString(
+                    n.connected
+                            ? R.string.tools_wifi_connected
+                            : n.saved
+                                    ? R.string.tools_wifi_saved
+                                    : n.secured ? R.string.tools_wifi_secured : R.string.tools_wifi_open);
             View row = listRow(n.ssid, detail, n.connected, signalBars(n.bars));
             row.setOnClickListener(v -> onNetwork(n));
-            if (n.saved) row.setOnLongClickListener(v -> {
-                new AlertDialog.Builder(this).setTitle(getString(R.string.tools_wifi_forget_title, n.ssid))
-                        .setPositiveButton(R.string.tools_wifi_forget, (d, w) -> {
-                            if (!allowedNow()) return;
-                            WifiControl.forget(this, n.ssid);
-                            show();
-                        })
-                        .setNegativeButton(R.string.cancel, null).show();
-                return true;
-            });
+            if (n.saved)
+                row.setOnLongClickListener(v -> {
+                    new AlertDialog.Builder(this)
+                            .setTitle(getString(R.string.tools_wifi_forget_title, n.ssid))
+                            .setPositiveButton(R.string.tools_wifi_forget, (d, w) -> {
+                                if (!allowedNow()) return;
+                                WifiControl.forget(this, n.ssid);
+                                show();
+                            })
+                            .setNegativeButton(R.string.cancel, null)
+                            .show();
+                    return true;
+                });
             list.addView(row);
         }
         content.addView(list);
@@ -241,14 +260,17 @@ public class ConnectionsActivity extends Activity {
         LinearLayout box = new LinearLayout(this);
         box.setPadding(dp(24), dp(8), dp(24), 0);
         box.addView(pw, new LinearLayout.LayoutParams(-1, -2));
-        new AlertDialog.Builder(this).setTitle(n.ssid).setView(box)
+        new AlertDialog.Builder(this)
+                .setTitle(n.ssid)
+                .setView(box)
                 .setPositiveButton(R.string.tools_wifi_join, (d, w) -> {
                     if (!allowedNow()) return;
                     if (!WifiControl.join(this, n.ssid, pw.getText().toString())) {
                         toast(getString(R.string.tools_wifi_join_failed, n.ssid));
                     }
                 })
-                .setNegativeButton(R.string.cancel, null).show();
+                .setNegativeButton(R.string.cancel, null)
+                .show();
     }
 
     // ---------- Bluetooth ----------
@@ -257,7 +279,10 @@ public class ConnectionsActivity extends Activity {
         boolean on = BluetoothControl.isOn(this);
         toggleCard(getString(R.string.tools_bluetooth), on, value -> {
             if (!BluetoothControl.setOn(this, value)) {
-                toast(getString(value ? R.string.tools_bluetooth_switch_on_failed : R.string.tools_bluetooth_switch_off_failed));
+                toast(getString(
+                        value
+                                ? R.string.tools_bluetooth_switch_on_failed
+                                : R.string.tools_bluetooth_switch_off_failed));
             }
             show();
         });
@@ -293,11 +318,13 @@ public class ConnectionsActivity extends Activity {
             if (!found.isEmpty()) {
                 LinearLayout list = card();
                 for (BluetoothDevice d : found.values()) {
-                    View row = listRow(BluetoothControl.name(d), getString(R.string.tools_bluetooth_tap_to_pair), false, null);
+                    View row = listRow(
+                            BluetoothControl.name(d), getString(R.string.tools_bluetooth_tap_to_pair), false, null);
                     row.setOnClickListener(v -> {
                         if (!allowedNow()) return;
                         btNote = getString(R.string.tools_bluetooth_pairing, BluetoothControl.name(d));
-                        if (!BluetoothControl.pair(this, d)) btNote = getString(R.string.tools_bluetooth_pairing_failed_start);
+                        if (!BluetoothControl.pair(this, d))
+                            btNote = getString(R.string.tools_bluetooth_pairing_failed_start);
                         show();
                     });
                     list.addView(row);
@@ -309,7 +336,9 @@ public class ConnectionsActivity extends Activity {
 
     // ---------- pieces ----------
 
-    interface OnToggle { void toggle(boolean on); }
+    interface OnToggle {
+        void toggle(boolean on);
+    }
 
     /** The big card at the top of a tab: its name, On/Off, and a switch. */
     private void toggleCard(String title, boolean on, OnToggle onToggle) {
@@ -345,7 +374,9 @@ public class ConnectionsActivity extends Activity {
         LinearLayout r = new LinearLayout(this);
         r.setGravity(Gravity.CENTER_VERTICAL);
         r.setPadding(dp(20), dp(14), dp(20), dp(14));
-        r.setBackground(new RippleDrawable(ColorStateList.valueOf(Color.argb(40, 255, 255, 255)), null,
+        r.setBackground(new RippleDrawable(
+                ColorStateList.valueOf(Color.argb(40, 255, 255, 255)),
+                null,
                 new android.graphics.drawable.ColorDrawable(Color.WHITE)));
         LinearLayout words = new LinearLayout(this);
         words.setOrientation(LinearLayout.VERTICAL);

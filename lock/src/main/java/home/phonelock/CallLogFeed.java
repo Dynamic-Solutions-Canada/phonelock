@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.provider.CallLog;
 import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -21,6 +20,7 @@ import org.json.JSONObject;
 final class CallLogFeed {
     /** Most entries sent in one reply. */
     private static final int MAX_ENTRIES = 200;
+
     private static ContentObserver observer;
 
     private CallLogFeed() {}
@@ -32,8 +32,15 @@ final class CallLogFeed {
     static void sendAttempt(Context c, String number, String who) {
         try {
             JSONObject o = Remote.msg("calls");
-            o.put("entries", new JSONArray().put(new JSONObject().put("ts", System.currentTimeMillis())
-                    .put("number", number == null ? "" : number).put("name", who).put("type", "attempt").put("dur", 0)));
+            o.put(
+                    "entries",
+                    new JSONArray()
+                            .put(new JSONObject()
+                                    .put("ts", System.currentTimeMillis())
+                                    .put("number", number == null ? "" : number)
+                                    .put("name", who)
+                                    .put("type", "attempt")
+                                    .put("dur", 0)));
             Remote.publish(c, o, null);
         } catch (Exception e) {
             Log.w(Policy.TAG, "call attempt: " + e);
@@ -49,7 +56,8 @@ final class CallLogFeed {
         if (observer != null || !permitted(c)) return;
         Context app = c.getApplicationContext();
         observer = new ContentObserver(new Handler(Looper.getMainLooper())) {
-            @Override public void onChange(boolean selfChange) {
+            @Override
+            public void onChange(boolean selfChange) {
                 new Thread(() -> sendNew(app), "calllog").start();
             }
         };
@@ -61,7 +69,10 @@ final class CallLogFeed {
         long last = Policy.prefs(c).getLong("calllog_sent", System.currentTimeMillis() - 60_000);
         JSONArray entries = read(c, last, MAX_ENTRIES);
         if (entries.length() == 0) return;
-        Policy.prefs(c).edit().putLong("calllog_sent", entries.optJSONObject(0).optLong("ts", last)).apply();
+        Policy.prefs(c)
+                .edit()
+                .putLong("calllog_sent", entries.optJSONObject(0).optLong("ts", last))
+                .apply();
         publish(c, entries, null);
     }
 
@@ -86,11 +97,20 @@ final class CallLogFeed {
     private static JSONArray read(Context c, long after, int limit) {
         JSONArray out = new JSONArray();
         if (!permitted(c)) return out;
-        String[] cols = {CallLog.Calls.DATE, CallLog.Calls.NUMBER, CallLog.Calls.CACHED_NAME,
-                CallLog.Calls.TYPE, CallLog.Calls.DURATION};
-        try (Cursor cur = c.getContentResolver().query(CallLog.Calls.CONTENT_URI, cols,
-                CallLog.Calls.DATE + " > ?", new String[]{String.valueOf(after)},
-                CallLog.Calls.DATE + " DESC")) {
+        String[] cols = {
+            CallLog.Calls.DATE,
+            CallLog.Calls.NUMBER,
+            CallLog.Calls.CACHED_NAME,
+            CallLog.Calls.TYPE,
+            CallLog.Calls.DURATION
+        };
+        try (Cursor cur = c.getContentResolver()
+                .query(
+                        CallLog.Calls.CONTENT_URI,
+                        cols,
+                        CallLog.Calls.DATE + " > ?",
+                        new String[] {String.valueOf(after)},
+                        CallLog.Calls.DATE + " DESC")) {
             while (cur != null && cur.moveToNext() && out.length() < limit) {
                 String number = cur.getString(1);
                 String name = cur.getString(2);
@@ -109,13 +129,20 @@ final class CallLogFeed {
 
     private static String typeName(int t) {
         switch (t) {
-            case CallLog.Calls.INCOMING_TYPE: return "in";
-            case CallLog.Calls.OUTGOING_TYPE: return "out";
-            case CallLog.Calls.MISSED_TYPE: return "missed";
-            case CallLog.Calls.REJECTED_TYPE: return "rejected";
-            case CallLog.Calls.BLOCKED_TYPE: return "blocked";
-            case CallLog.Calls.VOICEMAIL_TYPE: return "voicemail";
-            default: return "other";
+            case CallLog.Calls.INCOMING_TYPE:
+                return "in";
+            case CallLog.Calls.OUTGOING_TYPE:
+                return "out";
+            case CallLog.Calls.MISSED_TYPE:
+                return "missed";
+            case CallLog.Calls.REJECTED_TYPE:
+                return "rejected";
+            case CallLog.Calls.BLOCKED_TYPE:
+                return "blocked";
+            case CallLog.Calls.VOICEMAIL_TYPE:
+                return "voicemail";
+            default:
+                return "other";
         }
     }
 }

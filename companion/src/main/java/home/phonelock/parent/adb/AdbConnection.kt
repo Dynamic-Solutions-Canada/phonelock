@@ -29,6 +29,7 @@ internal class ShellResult(val output: String, val errorOutput: String, val exit
 internal class AdbConnection private constructor(private var socket: Socket) : Closeable {
     private var input = DataInputStream(socket.inputStream.buffered())
     private var output: OutputStream = socket.outputStream.buffered()
+
     /** Largest payload the device accepts in one message (from its CNXN). */
     private var maxPayload = MAX_PAYLOAD_V1
     private var features = emptySet<String>()
@@ -99,6 +100,7 @@ internal class AdbConnection private constructor(private var socket: Socket) : C
                     received.write(m.data)
                     send(A_OKAY, local, remote)
                 }
+
                 A_CLSE -> {
                     send(A_CLSE, local, remote)
                     return received.toByteArray()
@@ -235,11 +237,13 @@ internal class AdbConnection private constructor(private var socket: Socket) : C
                     output = tls.outputStream.buffered()
                     upgraded = true
                 }
+
                 A_CNXN -> {
                     maxPayload = minOf(MAX_PAYLOAD, m.arg1)
                     features = String(m.data).substringAfter("features=", "").substringBefore(';').split(',').toSet()
                     return
                 }
+
                 A_AUTH -> throw IOException(Strings.get(R.string.setup_adb_usb_auth))
             }
         }

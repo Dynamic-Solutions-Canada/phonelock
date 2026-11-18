@@ -39,8 +39,11 @@ public class ParentCli {
             String json = a[1];
             byte[] id = new byte[9];
             new SecureRandom().nextBytes(id);
-            json = json.replaceFirst("\\{", "{\"v\":1,\"id\":\"" + Base64.getUrlEncoder().withoutPadding()
-                    .encodeToString(id) + "\",\"ts\":" + System.currentTimeMillis() + ",\"from\":\"PC\",");
+            json = json.replaceFirst(
+                    "\\{",
+                    "{\"v\":1,\"id\":\""
+                            + Base64.getUrlEncoder().withoutPadding().encodeToString(id) + "\",\"ts\":"
+                            + System.currentTimeMillis() + ",\"from\":\"PC\",");
             byte[] iv = new byte[12];
             new SecureRandom().nextBytes(iv);
             Cipher c = Cipher.getInstance("AES/GCM/NoPadding");
@@ -51,12 +54,18 @@ public class ParentCli {
             System.arraycopy(iv, 0, all, 0, 12);
             System.arraycopy(ct, 0, all, 12, ct.length);
             String body = Base64.getUrlEncoder().withoutPadding().encodeToString(all);
-            var r = http.send(HttpRequest.newBuilder(URI.create(server + "/" + topic))
-                    .POST(HttpRequest.BodyPublishers.ofString(body)).build(), HttpResponse.BodyHandlers.ofString());
+            var r = http.send(
+                    HttpRequest.newBuilder(URI.create(server + "/" + topic))
+                            .POST(HttpRequest.BodyPublishers.ofString(body))
+                            .build(),
+                    HttpResponse.BodyHandlers.ofString());
             System.out.println("sent " + r.statusCode() + ": " + json);
         } else if (a[0].equals("read")) {
-            var r = http.send(HttpRequest.newBuilder(URI.create(server + "/" + topic + "/json?poll=1&since="
-                    + (a.length > 1 ? a[1] : "10m"))).build(), HttpResponse.BodyHandlers.ofString());
+            var r = http.send(
+                    HttpRequest.newBuilder(URI.create(
+                                    server + "/" + topic + "/json?poll=1&since=" + (a.length > 1 ? a[1] : "10m")))
+                            .build(),
+                    HttpResponse.BodyHandlers.ofString());
             for (String line : r.body().split("\n")) {
                 int i = line.indexOf("\"message\":\"");
                 if (i < 0) continue;
@@ -74,10 +83,15 @@ public class ParentCli {
                     if (plain.contains("\"t\":\"big\"") && u >= 0) {
                         String url = line.substring(u + 7, line.indexOf('"', u + 7));
                         String id = plain.replaceAll(".*\"id\":\"([^\"]+)\".*", "$1");
-                        byte[] blob = http.send(HttpRequest.newBuilder(URI.create(url)).build(),
-                                HttpResponse.BodyHandlers.ofByteArray()).body();
+                        byte[] blob = http.send(
+                                        HttpRequest.newBuilder(URI.create(url)).build(),
+                                        HttpResponse.BodyHandlers.ofByteArray())
+                                .body();
                         Cipher b = Cipher.getInstance("AES/GCM/NoPadding");
-                        b.init(Cipher.DECRYPT_MODE, new SecretKeySpec(key, "AES"), new GCMParameterSpec(128, blob, 0, 12));
+                        b.init(
+                                Cipher.DECRYPT_MODE,
+                                new SecretKeySpec(key, "AES"),
+                                new GCMParameterSpec(128, blob, 0, 12));
                         b.updateAAD(("phonelock/blob/" + id).getBytes(StandardCharsets.US_ASCII));
                         System.out.println(new String(b.doFinal(blob, 12, blob.length - 12), StandardCharsets.UTF_8));
                     }

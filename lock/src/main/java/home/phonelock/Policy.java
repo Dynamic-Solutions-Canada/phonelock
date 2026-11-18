@@ -10,7 +10,6 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.util.Log;
-
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
@@ -32,37 +31,37 @@ public final class Policy {
      * Several package names cover stock Android, Pixel and LineageOS; only installed ones show.
      */
     static final String[] DEFAULT_APPS = {
-            "com.google.android.dialer",
-            "com.android.dialer",
-            "com.google.android.contacts",
-            "com.android.contacts",
-            "com.google.android.calendar",
-            "com.google.android.GoogleCamera",
-            "org.lineageos.aperture",
-            "com.google.android.deskclock",
-            "com.android.deskclock",
-            "com.google.android.calculator",
-            "com.android.calculator2",
+        "com.google.android.dialer",
+        "com.android.dialer",
+        "com.google.android.contacts",
+        "com.android.contacts",
+        "com.google.android.calendar",
+        "com.google.android.GoogleCamera",
+        "org.lineageos.aperture",
+        "com.google.android.deskclock",
+        "com.android.deskclock",
+        "com.google.android.calculator",
+        "com.android.calculator2",
     };
 
     /** Allowed to run inside the lock, but not shown on the home screen. */
     static final String[] SUPPORT = {
-            "android",
-            "com.android.systemui",
-            "com.android.phone",
-            "com.android.server.telecom",
-            "com.android.emergency",
-            "com.android.permissioncontroller",
-            "com.google.android.permissioncontroller",
-            "com.android.documentsui",
-            "com.google.android.gms",
-            "com.google.android.gsf",
-            "com.android.providers.media",
-            "com.android.providers.media.module",
-            "com.google.android.providers.media.module",
-            "org.lineageos.glimpse",
-            "com.google.android.inputmethod.latin",
-            "com.android.inputmethod.latin",
+        "android",
+        "com.android.systemui",
+        "com.android.phone",
+        "com.android.server.telecom",
+        "com.android.emergency",
+        "com.android.permissioncontroller",
+        "com.google.android.permissioncontroller",
+        "com.android.documentsui",
+        "com.google.android.gms",
+        "com.google.android.gsf",
+        "com.android.providers.media",
+        "com.android.providers.media.module",
+        "com.google.android.providers.media.module",
+        "org.lineageos.glimpse",
+        "com.google.android.inputmethod.latin",
+        "com.android.inputmethod.latin",
     };
 
     /**
@@ -70,80 +69,80 @@ public final class Policy {
      * ({@link #notOffered}): a parent can show one and allow it for a while.
      */
     static final String[] HIDDEN_FROM_LIST_BY_DEFAULT = {
-            "com.android.settings",
+        "com.android.settings",
     };
 
     /** Never hidden even though they have a launcher icon (lock task still keeps them shut). */
     static final String[] NEVER_HIDE = {
-            "com.android.settings",
-            "com.android.vending",
-            // Emergency / government alerts must keep working.
-            "com.android.cellbroadcastreceiver",
-            "com.android.cellbroadcastreceiver.module",
-            "com.google.android.cellbroadcastreceiver",
-            "com.android.stk",
+        "com.android.settings",
+        "com.android.vending",
+        // Emergency / government alerts must keep working.
+        "com.android.cellbroadcastreceiver",
+        "com.android.cellbroadcastreceiver.module",
+        "com.google.android.cellbroadcastreceiver",
+        "com.android.stk",
     };
 
     /** Always applied while locked. */
     static final String[] RESTRICTIONS_LOCKED = {
-            "no_sms",
-            "no_modify_accounts",
-            "no_factory_reset",
-            "no_safe_boot",
-            "no_add_user",
-            "no_remove_user",
-            "no_user_switch",
-            "no_add_managed_profile",
-            "no_add_clone_profile",
-            "no_add_private_profile",
-            "no_install_unknown_sources",
-            "no_install_unknown_sources_globally",
-            "no_apps_control",
-            "no_uninstall_apps",
-            "no_config_vpn",
-            "no_config_private_dns",
-            "no_config_date_time",
-            "no_config_credentials",
-            "no_config_tethering",
-            "no_network_reset",
-            "no_debugging_features",
-            "no_usb_file_transfer",
-            "no_mount_physical_media",
-            "no_set_user_icon",
-            "no_set_wallpaper",
-            "no_config_location",
+        "no_sms",
+        "no_modify_accounts",
+        "no_factory_reset",
+        "no_safe_boot",
+        "no_add_user",
+        "no_remove_user",
+        "no_user_switch",
+        "no_add_managed_profile",
+        "no_add_clone_profile",
+        "no_add_private_profile",
+        "no_install_unknown_sources",
+        "no_install_unknown_sources_globally",
+        "no_apps_control",
+        "no_uninstall_apps",
+        "no_config_vpn",
+        "no_config_private_dns",
+        "no_config_date_time",
+        "no_config_credentials",
+        "no_config_tethering",
+        "no_network_reset",
+        "no_debugging_features",
+        "no_usb_file_transfer",
+        "no_mount_physical_media",
+        "no_set_user_icon",
+        "no_set_wallpaper",
+        "no_config_location",
     };
 
     /** Runtime permissions the device owner grants to this app. */
     private static final String[] OWN_PERMISSIONS = {
-            android.Manifest.permission.POST_NOTIFICATIONS,
-            android.Manifest.permission.ACCESS_FINE_LOCATION,
-            android.Manifest.permission.ACCESS_COARSE_LOCATION,
-            android.Manifest.permission.ACCESS_BACKGROUND_LOCATION,
-            // Contacts for the parents' safe list and contact management; accounts to add to Google.
-            android.Manifest.permission.READ_CONTACTS,
-            android.Manifest.permission.WRITE_CONTACTS,
-            android.Manifest.permission.GET_ACCOUNTS,
-            // The call log for parents; Android may refuse this one to a device owner (restricted).
-            android.Manifest.permission.READ_CALL_LOG,
-            android.Manifest.permission.READ_PHONE_STATE,
-            // The phone's own number for emergency alerts (parents call back).
-            android.Manifest.permission.READ_PHONE_NUMBERS,
-            // The Wi-Fi & Bluetooth screen: find and pair accessories.
-            android.Manifest.permission.BLUETOOTH_SCAN,
-            android.Manifest.permission.BLUETOOTH_CONNECT,
+        android.Manifest.permission.POST_NOTIFICATIONS,
+        android.Manifest.permission.ACCESS_FINE_LOCATION,
+        android.Manifest.permission.ACCESS_COARSE_LOCATION,
+        android.Manifest.permission.ACCESS_BACKGROUND_LOCATION,
+        // Contacts for the parents' safe list and contact management; accounts to add to Google.
+        android.Manifest.permission.READ_CONTACTS,
+        android.Manifest.permission.WRITE_CONTACTS,
+        android.Manifest.permission.GET_ACCOUNTS,
+        // The call log for parents; Android may refuse this one to a device owner (restricted).
+        android.Manifest.permission.READ_CALL_LOG,
+        android.Manifest.permission.READ_PHONE_STATE,
+        // The phone's own number for emergency alerts (parents call back).
+        android.Manifest.permission.READ_PHONE_NUMBERS,
+        // The Wi-Fi & Bluetooth screen: find and pair accessories.
+        android.Manifest.permission.BLUETOOTH_SCAN,
+        android.Manifest.permission.BLUETOOTH_CONNECT,
     };
 
     /** Lifted while a parent has unlocked with the PIN. */
     static final String[] RESTRICTIONS_LIFTED_FOR_PARENT = {
-            "no_modify_accounts",
-            "no_apps_control",
-            "no_uninstall_apps",
-            "no_config_private_dns",
-            "no_config_date_time",
-            "no_debugging_features",
-            "no_usb_file_transfer",
-            "no_config_vpn",
+        "no_modify_accounts",
+        "no_apps_control",
+        "no_uninstall_apps",
+        "no_config_private_dns",
+        "no_config_date_time",
+        "no_debugging_features",
+        "no_usb_file_transfer",
+        "no_config_vpn",
     };
 
     private Policy() {}
@@ -161,8 +160,7 @@ public final class Policy {
     }
 
     static SharedPreferences prefs(Context c) {
-        return c.createDeviceProtectedStorageContext()
-                .getSharedPreferences("phonelock", Context.MODE_PRIVATE);
+        return c.createDeviceProtectedStorageContext().getSharedPreferences("phonelock", Context.MODE_PRIVATE);
     }
 
     static List<String> visibleApps(Context c) {
@@ -184,8 +182,8 @@ public final class Policy {
     static boolean isPresent(Context c, String pkg) {
         if (BuiltInApps.is(pkg)) return true;
         try {
-            ApplicationInfo ai = c.getPackageManager()
-                    .getApplicationInfo(pkg, PackageManager.MATCH_UNINSTALLED_PACKAGES);
+            ApplicationInfo ai =
+                    c.getPackageManager().getApplicationInfo(pkg, PackageManager.MATCH_UNINSTALLED_PACKAGES);
             // Hidden apps are still "installed"; apps removed from this user (data kept) are not.
             return (ai.flags & ApplicationInfo.FLAG_INSTALLED) != 0;
         } catch (PackageManager.NameNotFoundException e) {
@@ -208,12 +206,16 @@ public final class Policy {
         if (Arrays.asList(HIDDEN_FROM_LIST_BY_DEFAULT).contains(pkg)) {
             // Hidden by default, so what's remembered is that a parent chose to show it.
             Set<String> shown = csv(c, "offered_defaults");
-            if (offered) shown.add(pkg); else shown.remove(pkg);
-            prefs(c).edit().putString("offered_defaults", String.join(",", shown)).apply();
+            if (offered) shown.add(pkg);
+            else shown.remove(pkg);
+            prefs(c).edit()
+                    .putString("offered_defaults", String.join(",", shown))
+                    .apply();
             return;
         }
         Set<String> s = csv(c, "not_offered");
-        if (offered) s.remove(pkg); else s.add(pkg);
+        if (offered) s.remove(pkg);
+        else s.add(pkg);
         prefs(c).edit().putString("not_offered", String.join(",", s)).apply();
     }
 
@@ -260,6 +262,7 @@ public final class Policy {
     /** Runs [applySoon]'s updates one after another, off the main thread. */
     private static final java.util.concurrent.ExecutorService APPLIER =
             java.util.concurrent.Executors.newSingleThreadExecutor();
+
     private static final java.util.concurrent.atomic.AtomicBoolean APPLY_QUEUED =
             new java.util.concurrent.atomic.AtomicBoolean();
     private static volatile long appliedAt;
@@ -302,14 +305,20 @@ public final class Policy {
         // the home screen when this changes, and doing it on every apply made the home screen flash grey and
         // black in a loop during bursts of applies (parent mode starting).
         ComponentName ours = new ComponentName(c, HomeActivity.class);
-        ResolveInfo current = c.getPackageManager().resolveActivity(
-                new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME), PackageManager.MATCH_DEFAULT_ONLY);
-        boolean isHome = current != null && current.activityInfo != null
+        ResolveInfo current = c.getPackageManager()
+                .resolveActivity(
+                        new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME),
+                        PackageManager.MATCH_DEFAULT_ONLY);
+        boolean isHome = current != null
+                && current.activityInfo != null
                 && ours.equals(new ComponentName(current.activityInfo.packageName, current.activityInfo.name));
         if (!isHome) {
             // Android restarts the home screen after this; logged so a repeat shows up in diagnostics.
-            Log.i(TAG, "home screen re-registered (resolved to "
-                    + (current == null || current.activityInfo == null ? "nothing" : current.activityInfo.name) + ")");
+            Log.i(
+                    TAG,
+                    "home screen re-registered (resolved to "
+                            + (current == null || current.activityInfo == null ? "nothing" : current.activityInfo.name)
+                            + ")");
             IntentFilter home = new IntentFilter(Intent.ACTION_MAIN);
             home.addCategory(Intent.CATEGORY_HOME);
             home.addCategory(Intent.CATEGORY_DEFAULT);
@@ -338,20 +347,22 @@ public final class Policy {
             lockPkgs.addAll(launchableApps(c));
         }
         // Wi-Fi and Bluetooth are screens of this app, not packages (see BuiltInApps).
-        dpm.setLockTaskPackages(a, lockPkgs.stream().filter(p -> !BuiltInApps.is(p)).toArray(String[]::new));
+        dpm.setLockTaskPackages(
+                a, lockPkgs.stream().filter(p -> !BuiltInApps.is(p)).toArray(String[]::new));
         // Parent mode stays inside lock task (see HomeActivity#enforceLockTask), with the recent-apps button
         // as well so a parent can switch between Settings and the Play Store.
-        dpm.setLockTaskFeatures(a, (parent ? DevicePolicyManager.LOCK_TASK_FEATURE_OVERVIEW : 0)
-                | DevicePolicyManager.LOCK_TASK_FEATURE_SYSTEM_INFO
+        dpm.setLockTaskFeatures(
+                a,
+                (parent ? DevicePolicyManager.LOCK_TASK_FEATURE_OVERVIEW : 0)
+                        | DevicePolicyManager.LOCK_TASK_FEATURE_SYSTEM_INFO
                         | DevicePolicyManager.LOCK_TASK_FEATURE_NOTIFICATIONS
                         | DevicePolicyManager.LOCK_TASK_FEATURE_HOME
                         | DevicePolicyManager.LOCK_TASK_FEATURE_GLOBAL_ACTIONS
                         | DevicePolicyManager.LOCK_TASK_FEATURE_KEYGUARD);
 
         // 3. User restrictions.
-        Set<String> lifted = parent
-                ? new LinkedHashSet<>(Arrays.asList(RESTRICTIONS_LIFTED_FOR_PARENT))
-                : new LinkedHashSet<>();
+        Set<String> lifted =
+                parent ? new LinkedHashSet<>(Arrays.asList(RESTRICTIONS_LIFTED_FOR_PARENT)) : new LinkedHashSet<>();
         // Debugging stays available until setup is finished and it is switched off explicitly.
         if (prefs(c).getBoolean("allow_debugging", true)) lifted.add("no_debugging_features");
         if (grants.containsKey(Grants.SMS_APP)) lifted.add("no_sms");
@@ -367,7 +378,11 @@ public final class Policy {
         // Our own runtime permissions: notifications (messages to the kid) and location ("find").
         grantOwnPermissions(c, dpm, a);
         // "Find" needs location on; no_config_location (above) keeps it on.
-        try { dpm.setLocationEnabled(a, true); } catch (Exception e) { Log.w(TAG, "location on: " + e); }
+        try {
+            dpm.setLocationEnabled(a, true);
+        } catch (Exception e) {
+            Log.w(TAG, "location on: " + e);
+        }
         // Only our screenshot service may be an accessibility service, so nothing else can read the screen.
         try {
             dpm.setPermittedAccessibilityServices(a, Collections.singletonList(c.getPackageName()));
@@ -407,8 +422,8 @@ public final class Policy {
                 // and apply() runs often, so only grant what isn't already granted.
                 if (dpm.getPermissionGrantState(a, c.getPackageName(), perm)
                         == DevicePolicyManager.PERMISSION_GRANT_STATE_GRANTED) continue;
-                dpm.setPermissionGrantState(a, c.getPackageName(), perm,
-                        DevicePolicyManager.PERMISSION_GRANT_STATE_GRANTED);
+                dpm.setPermissionGrantState(
+                        a, c.getPackageName(), perm, DevicePolicyManager.PERMISSION_GRANT_STATE_GRANTED);
             } catch (Exception e) {
                 Log.w(TAG, "grant " + perm + ": " + e);
             }
@@ -442,20 +457,17 @@ public final class Policy {
         }
     }
 
-    private static void hideApps(Context c, DevicePolicyManager dpm, ComponentName a,
-                                 Set<String> allowed) {
+    private static void hideApps(Context c, DevicePolicyManager dpm, ComponentName a, Set<String> allowed) {
         Set<String> keep = new LinkedHashSet<>(allowed);
         keep.addAll(Arrays.asList(NEVER_HIDE));
         Set<String> extraHide = new LinkedHashSet<>();
-        for (String p : prefs(c).getString("hide", "").split(","))
-            if (!p.trim().isEmpty()) extraHide.add(p.trim());
+        for (String p : prefs(c).getString("hide", "").split(",")) if (!p.trim().isEmpty()) extraHide.add(p.trim());
 
         Set<String> launchable = launchableApps(c);
         launchable.addAll(extraHide);
 
         Set<String> wasHidden = new LinkedHashSet<>();
-        for (String p : prefs(c).getString("hidden_by_us", "").split(","))
-            if (!p.isEmpty()) wasHidden.add(p);
+        for (String p : prefs(c).getString("hidden_by_us", "").split(",")) if (!p.isEmpty()) wasHidden.add(p);
 
         Set<String> nowHidden = new LinkedHashSet<>();
         for (String p : launchable) {
@@ -472,10 +484,16 @@ public final class Policy {
         // Un-hide anything we hid earlier that is now allowed.
         for (String p : wasHidden) {
             if (!nowHidden.contains(p) && keep.contains(p) && !extraHide.contains(p)) {
-                try { dpm.setApplicationHidden(a, p, false); } catch (Exception ignored) {}
+                try {
+                    dpm.setApplicationHidden(a, p, false);
+                } catch (Exception ignored) {
+                }
             } else if (!nowHidden.contains(p)) {
                 // still hidden from a previous run (hidden apps don't resolve), keep tracking it
-                try { if (dpm.isApplicationHidden(a, p)) nowHidden.add(p); } catch (Exception ignored) {}
+                try {
+                    if (dpm.isApplicationHidden(a, p)) nowHidden.add(p);
+                } catch (Exception ignored) {
+                }
             }
         }
         prefs(c).edit().putString("hidden_by_us", String.join(",", nowHidden)).apply();
@@ -490,7 +508,7 @@ public final class Policy {
         } catch (Exception e) {
             Log.w(TAG, "default dialer: " + e);
         }
-        for (String p : new String[]{"com.google.android.dialer", "com.android.dialer"}) {
+        for (String p : new String[] {"com.google.android.dialer", "com.android.dialer"}) {
             if (isPresent(c, p)) out.add(p);
         }
         return out;
@@ -504,8 +522,8 @@ public final class Policy {
         PackageManager pm = c.getPackageManager();
         Intent launcher = new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER);
         Set<String> launchable = new LinkedHashSet<>();
-        for (ResolveInfo ri : pm.queryIntentActivities(launcher,
-                PackageManager.MATCH_DISABLED_COMPONENTS | PackageManager.MATCH_UNINSTALLED_PACKAGES)) {
+        for (ResolveInfo ri : pm.queryIntentActivities(
+                launcher, PackageManager.MATCH_DISABLED_COMPONENTS | PackageManager.MATCH_UNINSTALLED_PACKAGES)) {
             launchable.add(ri.activityInfo.packageName);
         }
         // Anything that can open web links counts too, launcher icon or not.
@@ -533,14 +551,26 @@ public final class Policy {
         ComponentName a = admin(c);
         suspendApps(c, dpm, a, new LinkedHashSet<>());
         for (String r : RESTRICTIONS_LOCKED) {
-            try { dpm.clearUserRestriction(a, r); } catch (Exception ignored) {}
+            try {
+                dpm.clearUserRestriction(a, r);
+            } catch (Exception ignored) {
+            }
         }
         for (String p : prefs(c).getString("hidden_by_us", "").split(",")) {
             if (p.isEmpty()) continue;
-            try { dpm.setApplicationHidden(a, p, false); } catch (Exception ignored) {}
+            try {
+                dpm.setApplicationHidden(a, p, false);
+            } catch (Exception ignored) {
+            }
         }
-        try { dpm.setGlobalPrivateDnsModeOpportunistic(a); } catch (Exception ignored) {}
-        try { dpm.setPermittedAccessibilityServices(a, null); } catch (Exception ignored) {}
+        try {
+            dpm.setGlobalPrivateDnsModeOpportunistic(a);
+        } catch (Exception ignored) {
+        }
+        try {
+            dpm.setPermittedAccessibilityServices(a, null);
+        } catch (Exception ignored) {
+        }
         dpm.setLockTaskPackages(a, new String[0]);
         dpm.clearPackagePersistentPreferredActivities(a, c.getPackageName());
         prefs(c).edit().putString("hidden_by_us", "").apply();
@@ -552,8 +582,12 @@ public final class Policy {
         byte[] salt = new byte[16];
         new SecureRandom().nextBytes(salt);
         String s = toHex(salt);
-        prefs(c).edit().putString("pin_salt", s).putString("pin_hash", hash(s, pin))
-                .putInt("pin_fails", 0).putLong("pin_lock_until", 0).apply();
+        prefs(c).edit()
+                .putString("pin_salt", s)
+                .putString("pin_hash", hash(s, pin))
+                .putInt("pin_fails", 0)
+                .putLong("pin_lock_until", 0)
+                .apply();
     }
 
     static boolean hasPin(Context c) {
@@ -567,8 +601,10 @@ public final class Policy {
         long until = p.getLong("pin_lock_until", 0);
         if (now < until) return (until - now) / 1000 + 1;
         String salt = p.getString("pin_salt", null), h = p.getString("pin_hash", null);
-        if (salt != null && h != null && MessageDigest.isEqual(
-                h.getBytes(StandardCharsets.US_ASCII), hash(salt, pin).getBytes(StandardCharsets.US_ASCII))) {
+        if (salt != null
+                && h != null
+                && MessageDigest.isEqual(
+                        h.getBytes(StandardCharsets.US_ASCII), hash(salt, pin).getBytes(StandardCharsets.US_ASCII))) {
             p.edit().putInt("pin_fails", 0).apply();
             return 0;
         }

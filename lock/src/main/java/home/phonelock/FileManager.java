@@ -4,17 +4,15 @@ import android.content.Context;
 import android.media.MediaScannerConnection;
 import android.os.Environment;
 import android.util.Log;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.io.File;
-import java.io.IOException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * Parent file management for the device's shared storage (Download, Pictures, DCIM, Music, Documents, …):
@@ -98,7 +96,8 @@ final class FileManager {
                         sendFile(c, req, f);
                         break;
                     case "mkdir":
-                        if (!f.mkdirs() && !f.isDirectory()) throw new Exception(c.getString(R.string.tools_files_create_folder_failed));
+                        if (!f.mkdirs() && !f.isDirectory())
+                            throw new Exception(c.getString(R.string.tools_files_create_folder_failed));
                         log(c, who, c.getString(R.string.tools_files_created_folder, who, rel(f)));
                         reply(c, req, op, rel(f), null, f.getParentFile());
                         break;
@@ -106,7 +105,9 @@ final class FileManager {
                         // The storage root and its top-level folders (DCIM, Download, Music…) stay.
                         File parentDir = f.getParentFile();
                         if (f.equals(root().getCanonicalFile())
-                                || (parentDir != null && parentDir.equals(root().getCanonicalFile()) && f.isDirectory())) {
+                                || (parentDir != null
+                                        && parentDir.equals(root().getCanonicalFile())
+                                        && f.isDirectory())) {
                             throw new Exception(c.getString(R.string.tools_files_top_level));
                         }
                         deleteTree(c, f);
@@ -116,9 +117,11 @@ final class FileManager {
                         break;
                     case "mv": {
                         String to = m.optString("to").trim();
-                        if (to.isEmpty() || to.contains("/")) throw new Exception(c.getString(R.string.tools_files_invalid_name));
+                        if (to.isEmpty() || to.contains("/"))
+                            throw new Exception(c.getString(R.string.tools_files_invalid_name));
                         File dest = resolve(rel(f.getParentFile()) + "/" + to);
-                        if (dest == null || dest.exists()) throw new Exception(c.getString(R.string.tools_files_name_taken));
+                        if (dest == null || dest.exists())
+                            throw new Exception(c.getString(R.string.tools_files_name_taken));
                         if (!f.renameTo(dest)) throw new Exception(c.getString(R.string.tools_files_rename_failed));
                         scan(c, f);
                         scan(c, dest);
@@ -129,7 +132,8 @@ final class FileManager {
                     case "put": {
                         // path is the folder; the name comes with the upload.
                         String name = m.optString("name").trim();
-                        if (name.isEmpty() || name.contains("/")) throw new Exception(c.getString(R.string.tools_files_invalid_name));
+                        if (name.isEmpty() || name.contains("/"))
+                            throw new Exception(c.getString(R.string.tools_files_invalid_name));
                         File dest = freeName(resolve(rel(f) + "/" + name));
                         if (dest == null) throw new Exception(c.getString(R.string.tools_files_location_unavailable));
                         if (attachmentUrl == null) throw new Exception(c.getString(R.string.tools_files_no_upload));
@@ -145,7 +149,13 @@ final class FileManager {
             } catch (Throwable e) {
                 // Throwable, so even running out of memory reports back instead of killing the lock app.
                 Log.w(Policy.TAG, "files " + op + ": " + e);
-                reply(c, req, op, path, e.getMessage() == null ? c.getString(R.string.tools_files_generic_error) : e.getMessage(), null);
+                reply(
+                        c,
+                        req,
+                        op,
+                        path,
+                        e.getMessage() == null ? c.getString(R.string.tools_files_generic_error) : e.getMessage(),
+                        null);
             }
         });
     }
@@ -171,12 +181,13 @@ final class FileManager {
         boolean link = java.nio.file.Files.isSymbolicLink(f.toPath());
         File[] kids = !link && f.isDirectory() ? f.listFiles() : null;
         if (kids != null) for (File k : kids) deleteTree(c, k);
-        if (!f.delete() && f.exists()) throw new Exception(c.getString(R.string.tools_files_delete_failed, f.getName()));
+        if (!f.delete() && f.exists())
+            throw new Exception(c.getString(R.string.tools_files_delete_failed, f.getName()));
     }
 
     /** Tells the media index about a changed path, so galleries and music players update. */
     private static void scan(Context c, File f) {
-        MediaScannerConnection.scanFile(c, new String[]{f.getAbsolutePath()}, null, null);
+        MediaScannerConnection.scanFile(c, new String[] {f.getAbsolutePath()}, null, null);
     }
 
     /** {@code want}, or "name (1).ext", "name (2).ext", … if that's taken, so uploads never overwrite. */
@@ -197,7 +208,8 @@ final class FileManager {
      * renamed into place only when complete, so a failure never leaves a broken file behind.
      */
     private static void receive(Context c, String url, String msgId, File dest) throws Exception {
-        if (!url.startsWith(RemoteService.server(c) + "/")) throw new Exception(c.getString(R.string.tools_files_unknown_server));
+        if (!url.startsWith(RemoteService.server(c) + "/"))
+            throw new Exception(c.getString(R.string.tools_files_unknown_server));
         File parent = dest.getParentFile();
         if (parent != null) parent.mkdirs();
         File tmp = new File(parent, "." + dest.getName() + ".part");
@@ -205,7 +217,7 @@ final class FileManager {
         h.setConnectTimeout(20_000);
         h.setReadTimeout(120_000);
         try (InputStream in = new java.io.BufferedInputStream(h.getInputStream());
-             FileOutputStream out = new FileOutputStream(tmp)) {
+                FileOutputStream out = new FileOutputStream(tmp)) {
             BlobStream.open(Crypto.key(Remote.secret(c)), "phonelock/file/" + msgId, in, out, MAX_BYTES);
         } catch (IOException e) {
             // BlobStream's own messages are technical English; the parent sees this one instead.
@@ -234,8 +246,8 @@ final class FileManager {
         JSONObject o = Remote.msg("file");
         o.put("req", req).put("path", rel(f)).put("name", f.getName()).put("size", size);
         byte[] key = Crypto.key(Remote.secret(c));
-        HttpURLConnection h = (HttpURLConnection) new URL(
-                RemoteService.server(c) + "/" + RemoteService.topic(c)).openConnection();
+        HttpURLConnection h =
+                (HttpURLConnection) new URL(RemoteService.server(c) + "/" + RemoteService.topic(c)).openConnection();
         h.setRequestMethod("PUT");
         h.setDoOutput(true);
         h.setConnectTimeout(20_000);
@@ -244,7 +256,7 @@ final class FileManager {
         h.setRequestProperty("Message", Crypto.seal(key, o.toString()));
         h.setFixedLengthStreamingMode(BlobStream.sealedSize(size));
         try (InputStream in = new java.io.FileInputStream(f);
-             java.io.OutputStream out = new java.io.BufferedOutputStream(h.getOutputStream())) {
+                java.io.OutputStream out = new java.io.BufferedOutputStream(h.getOutputStream())) {
             BlobStream.seal(key, "phonelock/file/" + o.getString("id"), in, size, out);
         }
         int code = h.getResponseCode();
@@ -280,8 +292,11 @@ final class FileManager {
         for (File k : kids) {
             if (k.getName().startsWith(".")) continue;
             if (atRoot && k.getName().equals("Android")) continue;
-            out.put(new JSONObject().put("name", k.getName()).put("dir", k.isDirectory())
-                    .put("size", k.isFile() ? k.length() : 0).put("mtime", k.lastModified()));
+            out.put(new JSONObject()
+                    .put("name", k.getName())
+                    .put("dir", k.isDirectory())
+                    .put("size", k.isFile() ? k.length() : 0)
+                    .put("mtime", k.lastModified()));
         }
         return out;
     }

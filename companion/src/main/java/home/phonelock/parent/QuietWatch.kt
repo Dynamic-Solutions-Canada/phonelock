@@ -31,6 +31,7 @@ object QuietWatch {
     val CHOICES = listOf(0, 30, 60, 120, 240)
     private const val DEFAULT_MINUTES = 60
     private const val CHECK_EVERY_MS = 15 * 60_000L
+
     /** A shutdown notice this close to the last message means the silence is the phone being off. */
     private const val OFF_MARGIN_MS = 60_000L
     private const val TAG = "QuietWatch"
@@ -39,6 +40,7 @@ object QuietWatch {
     private val prefs by lazy { app.getSharedPreferences("quiet", Context.MODE_PRIVATE) }
 
     private val _minutes = MutableStateFlow<Map<String, Int>>(emptyMap())
+
     /** Device -> this parent's chosen quiet time in minutes (absent: the default). */
     val minutes: StateFlow<Map<String, Int>> = _minutes.asStateFlow()
 
@@ -70,8 +72,11 @@ object QuietWatch {
         if (prefs.getLong("alerted_$dev", 0) == 0L) return
         prefs.edit().remove("alerted_$dev").apply()
         val gap = System.currentTimeMillis() - lastSeen
-        val text = if (lastSeen > 0) Strings.get(R.string.alerts_heard_again_after, duration(gap))
-            else Strings.get(R.string.alerts_heard_again)
+        val text = if (lastSeen > 0) {
+            Strings.get(R.string.alerts_heard_again_after, duration(gap))
+        } else {
+            Strings.get(R.string.alerts_heard_again)
+        }
         Hub.notify(dev, text, null)
     }
 
@@ -136,8 +141,11 @@ object QuietWatch {
         LocationHistory.places.value[dev]?.firstOrNull()?.let { p ->
             val at = LocationHistory.clock(p.to)
             val where = LocationHistory.addressNow(p)
-            sentences += if (where != null) Strings.get(R.string.alerts_quiet_last_near, where, at)
-                else Strings.get(R.string.alerts_quiet_last_location, at)
+            sentences += if (where != null) {
+                Strings.get(R.string.alerts_quiet_last_near, where, at)
+            } else {
+                Strings.get(R.string.alerts_quiet_last_location, at)
+            }
         }
         if (v.battery >= 0) {
             sentences += Strings.get(if (v.charging) R.string.alerts_battery_charging else R.string.alerts_battery, v.battery)

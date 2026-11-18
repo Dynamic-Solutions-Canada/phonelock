@@ -20,7 +20,8 @@ public class RingActivity extends Activity {
 
     /** Closes this screen when the ringing stops elsewhere (parent, timer). */
     private final BroadcastReceiver closer = new BroadcastReceiver() {
-        @Override public void onReceive(Context c, Intent i) {
+        @Override
+        public void onReceive(Context c, Intent i) {
             finish();
         }
     };
@@ -95,13 +96,14 @@ public class RingActivity extends Activity {
     }
 
     @Override
-    public void onBackPressed() { /* Stop is the way out, so the ring isn't dismissed by accident */ }
+    public void onBackPressed() {
+        /* Stop is the way out, so the ring isn't dismissed by accident */
+    }
 
     private void bind() {
         String who = Ringer.caller();
-        title.setText(who.isEmpty()
-                ? getString(R.string.home_ring_title_unknown)
-                : getString(R.string.home_ring_title, who));
+        title.setText(
+                who.isEmpty() ? getString(R.string.home_ring_title_unknown) : getString(R.string.home_ring_title, who));
     }
 
     private int dp(int v) {

@@ -50,16 +50,24 @@ internal fun DiagnosticsScreen(dev: String, name: String, onBack: () -> Unit) {
             OutlinedButton(onClick = { Diagnostics.request(dev) }, enabled = !asking) {
                 Text(if (asking) stringResource(R.string.device_diag_asking, name) else stringResource(R.string.device_diag_ask_again))
             }
-            if (report != null) Button(onClick = {
-                val send = Intent(Intent.ACTION_SEND).setType("text/plain")
-                    .putExtra(Intent.EXTRA_SUBJECT, subject)
-                    .putExtra(Intent.EXTRA_TEXT, asText(name, report))
-                ctx.startActivity(Intent.createChooser(send, shareTitle))
-            }) { Text(stringResource(R.string.device_diag_share)) }
+            if (report != null) {
+                Button(onClick = {
+                    val send = Intent(Intent.ACTION_SEND).setType("text/plain")
+                        .putExtra(Intent.EXTRA_SUBJECT, subject)
+                        .putExtra(Intent.EXTRA_TEXT, asText(name, report))
+                    ctx.startActivity(Intent.createChooser(send, shareTitle))
+                }) { Text(stringResource(R.string.device_diag_share)) }
+            }
         }
         if (report == null) {
-            Text(if (asking) stringResource(R.string.device_diag_waiting, name)
-                else stringResource(R.string.device_diag_no_report), style = MaterialTheme.typography.bodyMedium)
+            Text(
+                if (asking) {
+                    stringResource(R.string.device_diag_waiting, name)
+                } else {
+                    stringResource(R.string.device_diag_no_report)
+                },
+                style = MaterialTheme.typography.bodyMedium,
+            )
             return@Page
         }
         Text(stringResource(R.string.device_diag_report_from, time(report.ts)), style = MaterialTheme.typography.bodySmall)
@@ -72,8 +80,15 @@ internal fun DiagnosticsScreen(dev: String, name: String, onBack: () -> Unit) {
                 Text(if (showLog) stringResource(R.string.device_diag_hide_log) else stringResource(R.string.device_diag_show_log))
             }
             val emptyLog = stringResource(R.string.device_diag_log_empty)
-            if (showLog) Text(report.log.ifBlank { emptyLog }, Modifier.horizontalScroll(rememberScrollState()),
-                fontFamily = FontFamily.Monospace, style = MaterialTheme.typography.bodySmall, softWrap = false)
+            if (showLog) {
+                Text(
+                    report.log.ifBlank { emptyLog },
+                    Modifier.horizontalScroll(rememberScrollState()),
+                    fontFamily = FontFamily.Monospace,
+                    style = MaterialTheme.typography.bodySmall,
+                    softWrap = false,
+                )
+            }
         }
     }
 }
@@ -81,7 +96,11 @@ internal fun DiagnosticsScreen(dev: String, name: String, onBack: () -> Unit) {
 /** "✓ Device owner", "✗ Call screening role / Re-run the setup script", or "Battery: 54%". */
 @Composable
 private fun CheckRow(c: DiagCheck) {
-    val mark = when (c.ok) { true -> "✓"; false -> "✗"; null -> "•" }
+    val mark = when (c.ok) {
+        true -> "✓"
+        false -> "✗"
+        null -> "•"
+    }
     val color = if (c.ok == false) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
     Row {
         Text(mark, Modifier.width(24.dp), color = color, fontWeight = FontWeight.Bold)
@@ -100,7 +119,11 @@ private fun asText(name: String, r: DiagReport): String = buildString {
     appendLine(Strings.get(R.string.device_diag_report_heading, name, java.util.Date(r.ts).toString()))
     appendLine()
     r.checks.forEach { c ->
-        val mark = when (c.ok) { true -> "[ok]"; false -> "[FAIL]"; null -> "-" }
+        val mark = when (c.ok) {
+            true -> "[ok]"
+            false -> "[FAIL]"
+            null -> "-"
+        }
         appendLine("$mark ${c.name}" + (c.value?.let { ": $it" } ?: ""))
     }
     appendLine()

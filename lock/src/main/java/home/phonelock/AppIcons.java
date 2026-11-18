@@ -7,12 +7,10 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.util.Base64;
 import android.util.Log;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * Sends app icons to the parent apps, which can't read the child's installed apps. Parents ask only for
@@ -32,29 +30,36 @@ final class AppIcons {
      */
     static void send(Context c, String req, JSONArray apps) {
         if (apps == null) return;
-        new Thread(() -> {
-            try {
-                JSONObject icons = new JSONObject();
-                PackageManager pm = c.getPackageManager();
-                for (int i = 0; i < apps.length() && i < MAX_APPS; i++) {
-                    String pkg = apps.optString(i);
-                    if (BuiltInApps.is(pkg)) {
-                        icons.put(pkg, Base64.encodeToString(encode(BuiltInApps.icon(c, pkg)), Base64.NO_WRAP));
-                        continue;
-                    }
-                    try {
-                        Drawable d = pm.getApplicationIcon(
-                                pm.getApplicationInfo(pkg, PackageManager.MATCH_UNINSTALLED_PACKAGES));
-                        icons.put(pkg, Base64.encodeToString(encode(d), Base64.NO_WRAP));
-                    } catch (PackageManager.NameNotFoundException ignored) {}
-                }
-                JSONObject o = Remote.msg("icons");
-                o.put("req", req);
-                Remote.publishWithBlob(c, o, icons.toString().getBytes(StandardCharsets.UTF_8));
-            } catch (Exception e) {
-                Log.w(Policy.TAG, "icons: " + e);
-            }
-        }, "icons").start();
+        new Thread(
+                        () -> {
+                            try {
+                                JSONObject icons = new JSONObject();
+                                PackageManager pm = c.getPackageManager();
+                                for (int i = 0; i < apps.length() && i < MAX_APPS; i++) {
+                                    String pkg = apps.optString(i);
+                                    if (BuiltInApps.is(pkg)) {
+                                        icons.put(
+                                                pkg,
+                                                Base64.encodeToString(
+                                                        encode(BuiltInApps.icon(c, pkg)), Base64.NO_WRAP));
+                                        continue;
+                                    }
+                                    try {
+                                        Drawable d = pm.getApplicationIcon(
+                                                pm.getApplicationInfo(pkg, PackageManager.MATCH_UNINSTALLED_PACKAGES));
+                                        icons.put(pkg, Base64.encodeToString(encode(d), Base64.NO_WRAP));
+                                    } catch (PackageManager.NameNotFoundException ignored) {
+                                    }
+                                }
+                                JSONObject o = Remote.msg("icons");
+                                o.put("req", req);
+                                Remote.publishWithBlob(c, o, icons.toString().getBytes(StandardCharsets.UTF_8));
+                            } catch (Exception e) {
+                                Log.w(Policy.TAG, "icons: " + e);
+                            }
+                        },
+                        "icons")
+                .start();
     }
 
     /** Renders {@code d} at {@link #SIZE} px and compresses it as lossy WebP. */

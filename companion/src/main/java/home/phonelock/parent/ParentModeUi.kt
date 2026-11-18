@@ -26,9 +26,12 @@ private val PARENT_MODE_MINUTES = listOf(15L, 60L, 240L)
  */
 @Composable
 internal fun ParentModeDialog(name: String, onPick: (Long) -> Unit, onDismiss: () -> Unit) {
-    OptionsDialog(stringResource(R.string.apps_parent_mode_title, name), onDismiss,
+    OptionsDialog(
+        stringResource(R.string.apps_parent_mode_title, name),
+        onDismiss,
         note = stringResource(R.string.apps_parent_mode_note),
-        options = PARENT_MODE_MINUTES.map { m -> MenuEntry(stringResource(R.string.apps_for_length, fmtMinutes(m))) { onPick(m) } })
+        options = PARENT_MODE_MINUTES.map { m -> MenuEntry(stringResource(R.string.apps_for_length, fmtMinutes(m))) { onPick(m) } },
+    )
 }
 
 /** New parent PIN, typed twice. 4 to 8 digits, like the setup screen. */
@@ -42,18 +45,29 @@ internal fun PinDialog(onSave: (String) -> Unit, onDismiss: () -> Unit) {
         title = { Text(stringResource(R.string.apps_pin_title)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(pin, { pin = it.filter(Char::isDigit).take(8) }, label = { Text(stringResource(R.string.apps_pin_new)) },
-                    singleLine = true, visualTransformation = PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword))
-                OutlinedTextField(again, { again = it.filter(Char::isDigit).take(8) }, label = { Text(stringResource(R.string.apps_pin_again)) },
-                    singleLine = true, visualTransformation = PasswordVisualTransformation(),
+                OutlinedTextField(
+                    pin,
+                    { pin = it.filter(Char::isDigit).take(8) },
+                    label = { Text(stringResource(R.string.apps_pin_new)) },
+                    singleLine = true,
+                    visualTransformation = PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
+                )
+                OutlinedTextField(
+                    again,
+                    { again = it.filter(Char::isDigit).take(8) },
+                    label = { Text(stringResource(R.string.apps_pin_again)) },
+                    singleLine = true,
+                    visualTransformation = PasswordVisualTransformation(),
                     isError = again.isNotEmpty() && again != pin,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword))
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
+                )
                 Text(stringResource(R.string.apps_pin_hint), style = MaterialTheme.typography.bodySmall)
             }
         },
         confirmButton = { TextButton(enabled = valid && pin == again, onClick = { onSave(pin) }) { Text(stringResource(R.string.save)) } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } })
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } },
+    )
 }
 
 /**
@@ -69,8 +83,13 @@ internal fun StartModeDialog(name: String, onPick: (String, Long) -> Unit, onDis
         LengthDialog(stringResource(R.string.apps_mode_how_long, modeLabel(chosen)), onPick = { onPick(chosen, it) }, onDismiss = onDismiss)
         return
     }
-    OptionsDialog(stringResource(R.string.apps_start_mode_title, name), onDismiss,
+    OptionsDialog(
+        stringResource(R.string.apps_start_mode_title, name),
+        onDismiss,
         note = stringResource(R.string.apps_start_mode_note),
-        options = listOf(MenuEntry(stringResource(R.string.apps_mode_limited)) { mode = "limited" },
-            MenuEntry(stringResource(R.string.apps_mode_bedtime)) { mode = "bedtime" }))
+        options = listOf(
+            MenuEntry(stringResource(R.string.apps_mode_limited)) { mode = "limited" },
+            MenuEntry(stringResource(R.string.apps_mode_bedtime)) { mode = "bedtime" },
+        ),
+    )
 }

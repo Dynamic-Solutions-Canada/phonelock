@@ -5,14 +5,12 @@ import android.app.usage.UsageEvents;
 import android.app.usage.UsageStatsManager;
 import android.content.Context;
 import android.util.Log;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * Which apps she used and when, for the parents' timeline: read from Android's own record of apps coming to
@@ -29,18 +27,23 @@ final class AppUsage {
     private static final long MIN_SESSION_MS = 60_000;
     /** A gap shorter than this between two runs of the same app (a notification pulled down) is one session. */
     private static final long JOIN_GAP_MS = 30_000;
+
     private static final long KEEP_MS = 7 * 24 * 3600_000L;
     private static final Set<String> SKIP = new HashSet<>(java.util.Arrays.asList(
-            "com.android.systemui", "android", "com.android.settings.intelligence",
-            "com.google.android.permissioncontroller", "com.android.permissioncontroller"));
+            "com.android.systemui",
+            "android",
+            "com.android.settings.intelligence",
+            "com.google.android.permissioncontroller",
+            "com.android.permissioncontroller"));
 
     private AppUsage() {}
 
     /** Whether usage access is granted. */
     static boolean permitted(Context c) {
         AppOpsManager ops = c.getSystemService(AppOpsManager.class);
-        return ops.unsafeCheckOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, android.os.Process.myUid(),
-                c.getPackageName()) == AppOpsManager.MODE_ALLOWED;
+        return ops.unsafeCheckOpNoThrow(
+                        AppOpsManager.OPSTR_GET_USAGE_STATS, android.os.Process.myUid(), c.getPackageName())
+                == AppOpsManager.MODE_ALLOWED;
     }
 
     /** Receives each stretch an app was on screen: {@code end} is "now" for one still open. */
@@ -78,7 +81,8 @@ final class AppUsage {
                 if (start != null) visit.on(pkg, start, e.getTimeStamp());
             } else if (type == UsageEvents.Event.SCREEN_NON_INTERACTIVE) {
                 // Screen off ends whatever was showing, even if the app's own pause event never comes.
-                for (Map.Entry<String, Long> o : openSince.entrySet()) visit.on(o.getKey(), o.getValue(), e.getTimeStamp());
+                for (Map.Entry<String, Long> o : openSince.entrySet())
+                    visit.on(o.getKey(), o.getValue(), e.getTimeStamp());
                 openSince.clear();
                 openActivities.clear();
             }
@@ -97,7 +101,8 @@ final class AppUsage {
             // Start a few hours early so a stretch that began before the window is seen.
             walk(c, from - 6 * 3600_000L, to, true, (pkg, start, end) -> {
                 long s = Math.max(start, from), e = Math.min(end, to);
-                if (e > s) out.computeIfAbsent(pkg, k -> new java.util.ArrayList<>()).add(new long[]{s, e});
+                if (e > s)
+                    out.computeIfAbsent(pkg, k -> new java.util.ArrayList<>()).add(new long[] {s, e});
             });
         } catch (Exception ex) {
             Log.w(Policy.TAG, "usage intervals: " + ex);
@@ -122,7 +127,8 @@ final class AppUsage {
                 if (prev != null && start - prev.optLong("to") < JOIN_GAP_MS) {
                     prev.put("to", end);
                 } else {
-                    JSONObject s = new JSONObject().put("app", pkg).put("t", start).put("to", end);
+                    JSONObject s =
+                            new JSONObject().put("app", pkg).put("t", start).put("to", end);
                     lastByApp.put(pkg, s);
                     out.put(s);
                 }
@@ -137,7 +143,8 @@ final class AppUsage {
             if (s.optLong("to") <= from || s.optLong("to") - s.optLong("t") < MIN_SESSION_MS) continue;
             try {
                 s.put("label", Remote.label(c, s.optString("app")));
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
             kept.put(s);
         }
         return kept;
@@ -153,8 +160,14 @@ final class AppUsage {
         long now = System.currentTimeMillis();
         Map<String, java.util.List<long[]>> stretches = new HashMap<>();
         try {
-            walk(c, now - 6 * 3600_000L, now, true, (pkg, start, end) ->
-                    stretches.computeIfAbsent(pkg, k -> new java.util.ArrayList<>()).add(new long[]{start, end}));
+            walk(
+                    c,
+                    now - 6 * 3600_000L,
+                    now,
+                    true,
+                    (pkg, start, end) -> stretches
+                            .computeIfAbsent(pkg, k -> new java.util.ArrayList<>())
+                            .add(new long[] {start, end}));
         } catch (Exception ex) {
             Log.w(Policy.TAG, "usage now: " + ex);
             return null;
@@ -194,7 +207,8 @@ final class AppUsage {
     /** End time of the newest session in {@code sessions}, or {@code fallback}. */
     static long newestEnd(JSONArray sessions, long fallback) {
         long max = fallback;
-        for (int i = 0; i < sessions.length(); i++) max = Math.max(max, sessions.optJSONObject(i).optLong("to"));
+        for (int i = 0; i < sessions.length(); i++)
+            max = Math.max(max, sessions.optJSONObject(i).optLong("to"));
         return max;
     }
 }

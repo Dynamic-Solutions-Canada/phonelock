@@ -11,9 +11,6 @@ import android.content.pm.Signature;
 import android.os.PowerManager;
 import android.telecom.TelecomManager;
 import android.util.Log;
-
-import org.json.JSONObject;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -24,6 +21,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Arrays;
+import org.json.JSONObject;
 
 /**
  * Keeps the lock app up to date by itself, from the public GitHub release that setup also installs from.
@@ -43,7 +41,8 @@ final class Updater {
 
     static int installedVersion(Context c) {
         try {
-            return (int) c.getPackageManager().getPackageInfo(c.getPackageName(), 0).getLongVersionCode();
+            return (int)
+                    c.getPackageManager().getPackageInfo(c.getPackageName(), 0).getLongVersionCode();
         } catch (PackageManager.NameNotFoundException e) {
             return 0;
         }
@@ -72,7 +71,8 @@ final class Updater {
     static synchronized void check(Context c, String who) {
         android.content.SharedPreferences prefs = Policy.prefs(c);
         try {
-            JSONObject v = new JSONObject(new String(fetch(RELEASE + "lock-version.json", 64 * 1024), StandardCharsets.UTF_8));
+            JSONObject v =
+                    new JSONObject(new String(fetch(RELEASE + "lock-version.json", 64 * 1024), StandardCharsets.UTF_8));
             // Only a check that reached the release counts; a failed one is retried within the hour.
             prefs.edit().putLong("update_checked", System.currentTimeMillis()).apply();
             int latest = v.getInt("versionCode");
@@ -98,8 +98,11 @@ final class Updater {
             installIfIdle(c);
         } catch (Exception e) {
             Log.w(Policy.TAG, "update check: " + e);
-            prefs.edit().putLong("update_checked", System.currentTimeMillis() - CHECK_EVERY_MS + RETRY_MS).apply();
-            if (who != null) Remote.event(c, c.getString(R.string.tools_update_check_failed, e.getMessage()), who, false);
+            prefs.edit()
+                    .putLong("update_checked", System.currentTimeMillis() - CHECK_EVERY_MS + RETRY_MS)
+                    .apply();
+            if (who != null)
+                Remote.event(c, c.getString(R.string.tools_update_check_failed, e.getMessage()), who, false);
         }
     }
 
@@ -115,7 +118,11 @@ final class Updater {
 
     /** Forgets a downloaded update that couldn't be installed, so it isn't retried on every screen-off. */
     private static void discard(Context c, int version) {
-        Policy.prefs(c).edit().remove("update_ready").putInt("update_failed", version).apply();
+        Policy.prefs(c)
+                .edit()
+                .remove("update_ready")
+                .putInt("update_failed", version)
+                .apply();
         apk(c).delete();
     }
 
@@ -125,7 +132,8 @@ final class Updater {
         HttpURLConnection h = open(RELEASE + "lock-release.apk");
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         long total = 0;
-        try (InputStream in = h.getInputStream(); OutputStream out = new FileOutputStream(tmp)) {
+        try (InputStream in = h.getInputStream();
+                OutputStream out = new FileOutputStream(tmp)) {
             byte[] buf = new byte[64 * 1024];
             for (int n; (n = in.read(buf)) > 0; ) {
                 total += n;
@@ -137,7 +145,8 @@ final class Updater {
             h.disconnect();
         }
         try {
-            if (!toHex(md.digest()).equalsIgnoreCase(sha256)) throw new Exception(c.getString(R.string.tools_update_checksum));
+            if (!toHex(md.digest()).equalsIgnoreCase(sha256))
+                throw new Exception(c.getString(R.string.tools_update_checksum));
             verifyPackage(c, tmp, version);
         } catch (Exception e) {
             tmp.delete();
@@ -151,17 +160,18 @@ final class Updater {
     private static void verifyPackage(Context c, File f, int version) throws Exception {
         PackageManager pm = c.getPackageManager();
         PackageInfo pi = pm.getPackageArchiveInfo(f.getPath(), PackageManager.GET_SIGNING_CERTIFICATES);
-        if (pi == null || !c.getPackageName().equals(pi.packageName)) throw new Exception(c.getString(R.string.tools_update_wrong_app));
+        if (pi == null || !c.getPackageName().equals(pi.packageName))
+            throw new Exception(c.getString(R.string.tools_update_wrong_app));
         if (pi.getLongVersionCode() != version) throw new Exception(c.getString(R.string.tools_update_wrong_version));
         PackageInfo mine = pm.getPackageInfo(c.getPackageName(), PackageManager.GET_SIGNING_CERTIFICATES);
-        if (pi.signingInfo == null || mine.signingInfo == null
-                || !Arrays.equals(signers(pi), signers(mine))) {
+        if (pi.signingInfo == null || mine.signingInfo == null || !Arrays.equals(signers(pi), signers(mine))) {
             throw new Exception(c.getString(R.string.tools_update_wrong_key));
         }
     }
 
     private static Signature[] signers(PackageInfo pi) {
-        return pi.signingInfo.hasMultipleSigners() ? pi.signingInfo.getApkContentsSigners()
+        return pi.signingInfo.hasMultipleSigners()
+                ? pi.signingInfo.getApkContentsSigners()
                 : pi.signingInfo.getSigningCertificateHistory();
     }
 
@@ -174,7 +184,8 @@ final class Updater {
         boolean inCall = false;
         try {
             inCall = tm != null && tm.isInCall();
-        } catch (SecurityException ignored) {}
+        } catch (SecurityException ignored) {
+        }
         if (pm.isInteractive() || inCall || Ringer.isRinging()) return;
         install(c, ready);
     }
@@ -183,34 +194,41 @@ final class Updater {
      * Installs the verified APK silently. The app is replaced and restarted mid-way, so success is
      * reported by {@link #reportIfUpdated} after the restart; {@link Result} handles failures.
      */
-    private static final java.util.concurrent.atomic.AtomicBoolean INSTALLING = new java.util.concurrent.atomic.AtomicBoolean();
+    private static final java.util.concurrent.atomic.AtomicBoolean INSTALLING =
+            new java.util.concurrent.atomic.AtomicBoolean();
 
     private static void install(Context c, int version) {
         // One install at a time: screen-off and a finished download can both get here.
         if (!INSTALLING.compareAndSet(false, true)) return;
         try {
             PackageInstaller pi = c.getPackageManager().getPackageInstaller();
-            PackageInstaller.SessionParams p = new PackageInstaller.SessionParams(PackageInstaller.SessionParams.MODE_FULL_INSTALL);
+            PackageInstaller.SessionParams p =
+                    new PackageInstaller.SessionParams(PackageInstaller.SessionParams.MODE_FULL_INSTALL);
             p.setAppPackageName(c.getPackageName());
             p.setRequireUserAction(PackageInstaller.SessionParams.USER_ACTION_NOT_REQUIRED);
             int id = pi.createSession(p);
             try (PackageInstaller.Session s = pi.openSession(id)) {
                 File f = apk(c);
-                try (InputStream in = new FileInputStream(f); OutputStream out = s.openWrite("update.apk", 0, f.length())) {
+                try (InputStream in = new FileInputStream(f);
+                        OutputStream out = s.openWrite("update.apk", 0, f.length())) {
                     in.transferTo(out);
                     s.fsync(out);
                 }
                 // commit(), not apply(): the install kills this process moments later.
-                Policy.prefs(c).edit().putInt("update_from", installedVersion(c)).commit();
+                Policy.prefs(c)
+                        .edit()
+                        .putInt("update_from", installedVersion(c))
+                        .commit();
                 Intent result = new Intent(c, Result.class);
-                PendingIntent cb = PendingIntent.getBroadcast(c, 7, result,
-                        PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
+                PendingIntent cb = PendingIntent.getBroadcast(
+                        c, 7, result, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
                 s.commit(cb.getIntentSender());
             }
             Log.i(Policy.TAG, "installing update " + version);
         } catch (Exception e) {
             Log.w(Policy.TAG, "update install: " + e);
-            Remote.event(c, c.getString(R.string.tools_update_install_version_failed, version, e.getMessage()), null, true);
+            Remote.event(
+                    c, c.getString(R.string.tools_update_install_version_failed, version, e.getMessage()), null, true);
             discard(c, version);
             INSTALLING.set(false);
         }
@@ -220,7 +238,12 @@ final class Updater {
     static void reportIfUpdated(Context c) {
         int from = Policy.prefs(c).getInt("update_from", 0);
         int now = installedVersion(c);
-        Policy.prefs(c).edit().remove("update_from").remove("update_ready").remove("update_failed").apply();
+        Policy.prefs(c)
+                .edit()
+                .remove("update_from")
+                .remove("update_ready")
+                .remove("update_failed")
+                .apply();
         apk(c).delete();
         if (from > 0 && now > from) Remote.event(c, c.getString(R.string.tools_update_updated, now), null, true);
     }
@@ -237,7 +260,9 @@ final class Updater {
             if (ready > 0) discard(c, ready);
             String text = status == PackageInstaller.STATUS_PENDING_USER_ACTION
                     ? c.getString(R.string.tools_update_install_failed_asked)
-                    : c.getString(R.string.tools_update_install_failed, i.getStringExtra(PackageInstaller.EXTRA_STATUS_MESSAGE));
+                    : c.getString(
+                            R.string.tools_update_install_failed,
+                            i.getStringExtra(PackageInstaller.EXTRA_STATUS_MESSAGE));
             Remote.event(c, text, null, false);
         }
     }

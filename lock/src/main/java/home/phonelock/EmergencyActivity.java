@@ -34,30 +34,34 @@ public class EmergencyActivity extends Activity {
      * they follow the app's current language (parents read them in the same language).
      */
     private static final int[] QUICK = {
-            R.string.home_sos_quick_hurt,
-            R.string.home_sos_quick_scared,
-            R.string.home_sos_quick_lost,
-            R.string.home_sos_quick_come,
-            R.string.home_sos_quick_call,
+        R.string.home_sos_quick_hurt,
+        R.string.home_sos_quick_scared,
+        R.string.home_sos_quick_lost,
+        R.string.home_sos_quick_come,
+        R.string.home_sos_quick_call,
     };
+
     private static final long REFRESH_MS = 5_000;
 
     private final Handler h = new Handler(Looper.getMainLooper());
     private TextView status;
     /** The number the call button shows and dials, looked up when the screen opens. */
     private String emergencyNumber = EmergencyNumbers.FALLBACK;
+
     private TextView sent;
     private Button cancel;
 
     private final BroadcastReceiver changed = new BroadcastReceiver() {
-        @Override public void onReceive(Context c, Intent i) {
+        @Override
+        public void onReceive(Context c, Intent i) {
             bind();
         }
     };
 
     /** Re-checks every few seconds, so "Sent by mistake" goes away when its time is up. */
     private final Runnable tick = new Runnable() {
-        @Override public void run() {
+        @Override
+        public void run() {
             bind();
             h.postDelayed(this, REFRESH_MS);
         }
@@ -229,7 +233,8 @@ public class EmergencyActivity extends Activity {
             try {
                 startActivity(new Intent(Intent.ACTION_DIAL, number).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
             } catch (Exception e2) {
-                Toast.makeText(this, R.string.home_sos_no_dialer, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.home_sos_no_dialer, Toast.LENGTH_LONG)
+                        .show();
             }
         }
     }

@@ -37,6 +37,7 @@ internal object AdbPairing {
     private const val PEER_INFO_SIZE = 8192
     private const val MAX_PAYLOAD = PEER_INFO_SIZE * 2
     private const val PEER_RSA_PUB_KEY = 0
+
     // NUL included: adb passes sizeof() of these C strings.
     private val CLIENT_NAME = "adb pair client\u0000".toByteArray()
     private val SERVER_NAME = "adb pair server\u0000".toByteArray()

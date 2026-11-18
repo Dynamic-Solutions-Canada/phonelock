@@ -49,16 +49,22 @@ internal fun AddDeviceScreen(initialLink: String?, canCancel: Boolean, done: (St
 @Composable
 private fun ChooseHowToAdd(canCancel: Boolean, onPick: (String) -> Unit, onCancel: () -> Unit) {
     if (canCancel) BackHandler(onBack = onCancel)
-    Column(Modifier.safeDrawingPadding().padding(20.dp).verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    Column(
+        Modifier.safeDrawingPadding().padding(20.dp).verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
         Text(stringResource(R.string.setup_add_child_device), style = MaterialTheme.typography.headlineSmall)
         Text(stringResource(R.string.setup_already_installed_question))
-        ChoiceCard(stringResource(R.string.setup_set_up_new_device),
+        ChoiceCard(
+            stringResource(R.string.setup_set_up_new_device),
             stringResource(R.string.setup_new_device_body),
-            stringResource(R.string.setup_new_device_when)) { onPick("new") }
-        ChoiceCard(stringResource(R.string.setup_add_existing_title),
+            stringResource(R.string.setup_new_device_when),
+        ) { onPick("new") }
+        ChoiceCard(
+            stringResource(R.string.setup_add_existing_title),
             stringResource(R.string.setup_add_existing_body),
-            stringResource(R.string.setup_add_existing_when)) { onPick("existing") }
+            stringResource(R.string.setup_add_existing_when),
+        ) { onPick("existing") }
         if (canCancel) TextButton(onClick = onCancel) { Text(stringResource(R.string.cancel)) }
     }
 }
@@ -92,53 +98,99 @@ private fun AddExistingDevice(initialLink: String?, done: (String?) -> Unit) {
 
     if (scanning) {
         BackHandler { scanning = false }
-        QrScanner(onResult = { link = it; scanning = false; if (Hub.parsePairing(it) != null) step = 3 },
-            onCancel = { scanning = false })
+        QrScanner(
+            onResult = {
+                link = it
+                scanning = false
+                if (Hub.parsePairing(it) != null) step = 3
+            },
+            onCancel = { scanning = false },
+        )
         return
     }
 
     when (step) {
         1 -> WizardIntro(heading, stringResource(R.string.setup_what_to_expect), onBack = { done(null) }, onStart = { step = 2 }) {
-            StepOutline(listOf(
-                stringResource(R.string.setup_get_code_title) to stringResource(R.string.setup_get_code_detail),
-                stringResource(R.string.setup_scan_it_title) to stringResource(R.string.setup_scan_it_detail),
-                stringResource(R.string.setup_name_it_title) to stringResource(R.string.setup_name_it_detail),
-            ))
+            StepOutline(
+                listOf(
+                    stringResource(R.string.setup_get_code_title) to stringResource(R.string.setup_get_code_detail),
+                    stringResource(R.string.setup_scan_it_title) to stringResource(R.string.setup_scan_it_detail),
+                    stringResource(R.string.setup_name_it_title) to stringResource(R.string.setup_name_it_detail),
+                ),
+            )
             Text(stringResource(R.string.setup_you_need), style = MaterialTheme.typography.titleSmall)
             Requirements(listOf(stringResource(R.string.setup_need_other_parent)))
         }
-        2 -> WizardStep(heading, 1, 2, stringResource(R.string.setup_scan_code_title), onBack = { step = 1 },
-            nextEnabled = parsed != null, onNext = { step = 3 }) {
-            Text(stringResource(R.string.setup_scan_code_where),
-                style = MaterialTheme.typography.bodyMedium)
+
+        2 -> WizardStep(
+            heading,
+            1,
+            2,
+            stringResource(R.string.setup_scan_code_title),
+            onBack = { step = 1 },
+            nextEnabled = parsed != null,
+            onNext = { step = 3 },
+        ) {
+            Text(
+                stringResource(R.string.setup_scan_code_where),
+                style = MaterialTheme.typography.bodyMedium,
+            )
             Button(onClick = { scanning = true }) { Text(stringResource(R.string.setup_scan_qr)) }
-            OutlinedTextField(link, { link = it.trim() }, Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.setup_paste_link)) },
+            OutlinedTextField(
+                link,
+                { link = it.trim() },
+                Modifier.fillMaxWidth(),
+                label = { Text(stringResource(R.string.setup_paste_link)) },
                 isError = link.isNotBlank() && parsed == null,
                 supportingText = {
-                    Text(stringResource(when {
-                        parsed != null -> R.string.setup_code_recognised
-                        link.isNotBlank() -> R.string.setup_not_a_link
-                        else -> R.string.setup_link_starts_with
-                    }))
-                })
+                    Text(
+                        stringResource(
+                            when {
+                                parsed != null -> R.string.setup_code_recognised
+                                link.isNotBlank() -> R.string.setup_not_a_link
+                                else -> R.string.setup_link_starts_with
+                            },
+                        ),
+                    )
+                },
+            )
         }
-        else -> WizardStep(heading, 2, 2, stringResource(R.string.setup_name_it_title), onBack = { step = 2 },
-            next = stringResource(R.string.setup_add_device_button), nextEnabled = parsed != null && you.isNotBlank(), onNext = {
+
+        else -> WizardStep(
+            heading,
+            2,
+            2,
+            stringResource(R.string.setup_name_it_title),
+            onBack = { step = 2 },
+            next = stringResource(R.string.setup_add_device_button),
+            nextEnabled = parsed != null && you.isNotBlank(),
+            onNext = {
                 parsed?.let {
                     Hub.setParentName(you)
                     Hub.addDevice(it.copy(name = deviceName.ifBlank { it.name }))
                     done(it.id)
                 }
-            }) {
-            OutlinedTextField(deviceName, { deviceName = it }, Modifier.fillMaxWidth(),
-                label = { Text(stringResource(R.string.child_device_name)) }, singleLine = true,
-                supportingText = { Text(stringResource(R.string.setup_device_name_hint)) })
-            OutlinedTextField(you, { you = it }, Modifier.fillMaxWidth(),
-                label = { Text(stringResource(R.string.your_name)) }, singleLine = true,
+            },
+        ) {
+            OutlinedTextField(
+                deviceName,
+                { deviceName = it },
+                Modifier.fillMaxWidth(),
+                label = { Text(stringResource(R.string.child_device_name)) },
+                singleLine = true,
+                supportingText = { Text(stringResource(R.string.setup_device_name_hint)) },
+            )
+            OutlinedTextField(
+                you,
+                { you = it },
+                Modifier.fillMaxWidth(),
+                label = { Text(stringResource(R.string.your_name)) },
+                singleLine = true,
                 supportingText = {
                     val example = you.ifBlank { stringResource(R.string.setup_example_parent_name) }
                     Text(stringResource(R.string.setup_your_name_hint_example, example))
-                })
+                },
+            )
         }
     }
 }

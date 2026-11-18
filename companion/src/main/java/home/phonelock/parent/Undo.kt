@@ -51,8 +51,11 @@ object Undo {
         LaunchedEffect(Unit) {
             items.receiveAsFlow().collect { item ->
                 host.currentSnackbarData?.dismiss()
-                val result = host.showSnackbar(item.text, actionLabel = item.label,
-                    duration = if (item.long) SnackbarDuration.Long else SnackbarDuration.Short)
+                val result = host.showSnackbar(
+                    item.text,
+                    actionLabel = item.label,
+                    duration = if (item.long) SnackbarDuration.Long else SnackbarDuration.Short,
+                )
                 if (result == SnackbarResult.ActionPerformed) item.run?.invoke()
             }
         }

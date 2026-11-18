@@ -16,8 +16,12 @@ import java.net.URL
 import kotlin.concurrent.thread
 
 /** One upload or download's status: [busy] while it's going, with [progress] (0 to 1) once that's known. */
-data class Transfer(val text: String, val busy: Boolean = false, val progress: Float? = null,
-                    val id: Long = System.nanoTime())
+data class Transfer(
+    val text: String,
+    val busy: Boolean = false,
+    val progress: Float? = null,
+    val id: Long = System.nanoTime(),
+)
 
 /** One safe number. */
 data class SafeEntry(val name: String, val number: String) {
@@ -54,8 +58,11 @@ data class CallSettings(val limitOut: Boolean = false, val limitIn: Boolean = fa
         fun from(o: JSONObject?): CallSettings {
             if (o == null) return CallSettings()
             val a = o.optJSONArray("safe") ?: JSONArray()
-            return CallSettings(o.optBoolean("limitOut"), o.optBoolean("limitIn"),
-                (0 until a.length()).map { a.getJSONObject(it) }.map { SafeEntry(it.optString("name"), it.optString("number")) })
+            return CallSettings(
+                o.optBoolean("limitOut"),
+                o.optBoolean("limitIn"),
+                (0 until a.length()).map { a.getJSONObject(it) }.map { SafeEntry(it.optString("name"), it.optString("number")) },
+            )
         }
     }
 }
@@ -89,6 +96,7 @@ object DeviceData {
     val contacts: StateFlow<Map<String, List<Contact>>> = _contacts.asStateFlow()
     private val _folders = MutableStateFlow<Map<String, Folder>>(emptyMap())
     val folders: StateFlow<Map<String, Folder>> = _folders.asStateFlow()
+
     /** Status of the latest download or upload, per device: shown in Files from the tap until it's done. */
     val transfer = MutableStateFlow<Map<String, Transfer>>(emptyMap())
 
@@ -111,8 +119,7 @@ object DeviceData {
     // screen can show it is waiting for the device.
     fun loadCallLog(dev: String) = Pending.send(dev, "calllog", Hub.msg("calllog"))
     fun loadContacts(dev: String) = Pending.send(dev, "contacts", Hub.msg("contacts").put("op", "list"))
-    fun addContact(dev: String, name: String, number: String) =
-        Pending.send(dev, "contacts", Hub.msg("contacts").put("op", "add").put("name", name).put("number", number))
+    fun addContact(dev: String, name: String, number: String) = Pending.send(dev, "contacts", Hub.msg("contacts").put("op", "add").put("name", name).put("number", number))
     fun removeContact(dev: String, key: String) = Pending.send(dev, "contacts", Hub.msg("contacts").put("op", "remove").put("key", key))
 
     /** File requests this app sent: replies to other parents' requests are ignored (no stray downloads). */
@@ -143,8 +150,7 @@ object DeviceData {
     /** Several files being saved from one device, one after another: [paths], the one at [index] in flight. */
     private data class Batch(val paths: List<String>, val index: Int = 0, val saved: Int = 0) {
         /** [status] with "(2 of 5) " in front while there's more than one file, else [status] as it is. */
-        fun label(status: String) =
-            if (paths.size > 1) Strings.get(R.string.device_batch_status, index + 1, paths.size, status) else status
+        fun label(status: String) = if (paths.size > 1) Strings.get(R.string.device_batch_status, index + 1, paths.size, status) else status
     }
 
     /** Device -> its batch of saves; changed on the main thread, read from download threads. */
@@ -176,11 +182,14 @@ object DeviceData {
             if (done.paths.size > 1) {
                 val failed = done.paths.size - done.saved
                 val total = done.paths.size
-                setTransfer(dev, if (failed > 0) {
-                    Strings.plural(R.plurals.device_batch_saved_some_failed, total, done.saved, total, failed)
-                } else {
-                    Strings.plural(R.plurals.device_batch_saved, total, done.saved, total)
-                })
+                setTransfer(
+                    dev,
+                    if (failed > 0) {
+                        Strings.plural(R.plurals.device_batch_saved_some_failed, total, done.saved, total, failed)
+                    } else {
+                        Strings.plural(R.plurals.device_batch_saved, total, done.saved, total)
+                    },
+                )
             }
         }
     }
@@ -214,8 +223,7 @@ object DeviceData {
         }, 60_000)
     }
 
-    fun fileOp(dev: String, op: String, path: String, extra: (JSONObject) -> Unit = {}) =
-        Pending.send(dev, "files", track(Hub.msg("files").put("op", op).put("path", path).also(extra)))
+    fun fileOp(dev: String, op: String, path: String, extra: (JSONObject) -> Unit = {}) = Pending.send(dev, "files", track(Hub.msg("files").put("op", op).put("path", path).also(extra)))
 
     /**
      * Uploads the file at [uri] into folder [path] on [dev], all off the main thread: it is copied to a
@@ -261,8 +269,11 @@ object DeviceData {
                 val code = h.responseCode
                 h.disconnect()
                 if (code in 200..299) Pending.start(dev, "files", o.getString("id"))
-                if (code in 200..299) setTransfer(dev, Strings.get(R.string.device_file_sent, name), busy = true)
-                else setTransfer(dev, Strings.get(R.string.device_upload_failed_http, code))
+                if (code in 200..299) {
+                    setTransfer(dev, Strings.get(R.string.device_file_sent, name), busy = true)
+                } else {
+                    setTransfer(dev, Strings.get(R.string.device_upload_failed_http, code))
+                }
             } catch (e: Throwable) {
                 setTransfer(dev, Strings.get(R.string.device_upload_failed, e.message.toString()))
             } finally {
@@ -293,44 +304,50 @@ object DeviceData {
      * [out], counting what's written through it and reporting the share of [total] bytes done to [onProgress]
      * at most every 2 %, so progress updates don't flood the screen.
      */
-    private fun progressStream(out: java.io.OutputStream, total: Long, onProgress: (Float) -> Unit) =
-        object : java.io.FilterOutputStream(out) {
-            private var done = 0L
-            private var shown = -1f
+    private fun progressStream(out: java.io.OutputStream, total: Long, onProgress: (Float) -> Unit) = object : java.io.FilterOutputStream(out) {
+        private var done = 0L
+        private var shown = -1f
 
-            override fun write(b: ByteArray, off: Int, len: Int) {
-                out.write(b, off, len)
-                count(len)
-            }
+        override fun write(b: ByteArray, off: Int, len: Int) {
+            out.write(b, off, len)
+            count(len)
+        }
 
-            override fun write(b: Int) {
-                out.write(b)
-                count(1)
-            }
+        override fun write(b: Int) {
+            out.write(b)
+            count(1)
+        }
 
-            private fun count(n: Int) {
-                done += n
-                val f = if (total > 0) (done.toFloat() / total).coerceIn(0f, 1f) else 0f
-                if (f - shown >= 0.02f || (f >= 1f && shown < 1f)) {
-                    shown = f
-                    onProgress(f)
-                }
+        private fun count(n: Int) {
+            done += n
+            val f = if (total > 0) (done.toFloat() / total).coerceIn(0f, 1f) else 0f
+            if (f - shown >= 0.02f || (f >= 1f && shown < 1f)) {
+                shown = f
+                onProgress(f)
             }
         }
+    }
 
     // ---------- replies ----------
 
     fun handle(d: Device, m: JSONObject, attachmentUrl: String?) {
         when (m.optString("t")) {
             "calls" -> onCalls(d.id, m)
+
             "contacts" -> m.optJSONArray("list")?.let { a ->
-                _contacts.update { it + (d.id to (0 until a.length()).map { i -> a.getJSONObject(i) }.map { o ->
-                    val nums = o.optJSONArray("numbers") ?: JSONArray()
-                    Contact(o.optString("key"), o.optString("name"), (0 until nums.length()).map { nums.getString(it) })
-                }) }
+                _contacts.update {
+                    it + (
+                        d.id to (0 until a.length()).map { i -> a.getJSONObject(i) }.map { o ->
+                            val nums = o.optJSONArray("numbers") ?: JSONArray()
+                            Contact(o.optString("key"), o.optString("name"), (0 until nums.length()).map { nums.getString(it) })
+                        }
+                        )
+                }
             }
+
             // Only replies to this app's own file requests; another parent's browsing and downloads stay theirs.
             "files" -> if (m.optString("req") in myFileRequests) onFiles(d.id, m)
+
             "file" -> if (m.optString("req") in myFileRequests) onFile(d, m, attachmentUrl)
         }
     }
@@ -349,8 +366,17 @@ object DeviceData {
     private fun saveCalls() {
         val o = JSONObject()
         _calls.value.forEach { (k, l) ->
-            o.put(k, JSONArray().apply { l.forEach { put(JSONObject().put("ts", it.ts).put("number", it.number)
-                .put("name", it.name).put("type", it.type).put("dur", it.durationS)) } })
+            o.put(
+                k,
+                JSONArray().apply {
+                    l.forEach {
+                        put(
+                            JSONObject().put("ts", it.ts).put("number", it.number)
+                                .put("name", it.name).put("type", it.type).put("dur", it.durationS),
+                        )
+                    }
+                },
+            )
         }
         prefs.edit().putString("calls", o.toString()).apply()
     }
@@ -373,9 +399,17 @@ object DeviceData {
         val a = m.optJSONArray("entries")
         _folders.update { all ->
             val cur = all[dev]
-            val folder = if (a != null) Folder(m.optString("dir"), (0 until a.length()).map { a.getJSONObject(it) }.map {
-                FileEntry(it.optString("name"), it.optBoolean("dir"), it.optLong("size"), it.optLong("mtime"))
-            }, error) else (cur ?: Folder("", emptyList())).copy(error = error, loading = false)
+            val folder = if (a != null) {
+                Folder(
+                    m.optString("dir"),
+                    (0 until a.length()).map { a.getJSONObject(it) }.map {
+                        FileEntry(it.optString("name"), it.optBoolean("dir"), it.optLong("size"), it.optLong("mtime"))
+                    },
+                    error,
+                )
+            } else {
+                (cur ?: Folder("", emptyList())).copy(error = error, loading = false)
+            }
             all + (dev to folder)
         }
         if (m.optString("op") == "put") setTransfer(dev, error ?: Strings.get(R.string.device_file_uploaded, m.optString("path").substringAfterLast('/')))

@@ -28,8 +28,16 @@ object ScreenAlerts {
      * [from] the app she opened it from (may be empty), [image] the saved screenshot (null if none, then
      * [error] may say why).
      */
-    data class Alert(val id: String, val dev: String, val ts: Long, val screen: String, val name: String,
-                     val from: String, val image: String?, val error: String?)
+    data class Alert(
+        val id: String,
+        val dev: String,
+        val ts: Long,
+        val screen: String,
+        val name: String,
+        val from: String,
+        val image: String?,
+        val error: String?,
+    )
 
     private const val TAG = "ScreenAlerts"
     private const val MAX_PER_DEVICE = 20
@@ -39,6 +47,7 @@ object ScreenAlerts {
     private val dir by lazy { File(app.filesDir, "screen-alerts").apply { mkdirs() } }
 
     private val _alerts = MutableStateFlow<List<Alert>>(emptyList())
+
     /** Undecided reports from every device, newest first. */
     val alerts: StateFlow<List<Alert>> = _alerts.asStateFlow()
 
@@ -56,12 +65,22 @@ object ScreenAlerts {
                 runCatching { Attachments.fetch(d, url, id) }.onFailure { Log.w(TAG, "fetch: $it") }.getOrNull()
                     ?.let { jpeg -> File(dir, "$id.jpg").apply { writeBytes(jpeg) }.path }
             }
-            val a = Alert(id, d.id, m.optLong("ts", System.currentTimeMillis()), m.optString("screen"),
-                m.optString("name"), m.optString("from"), image,
-                m.optString("error").takeIf { it.isNotEmpty() } ?: if (image == null && attachmentUrl != null) Strings.get(R.string.alerts_screen_shot_failed) else null)
+            val a = Alert(
+                id,
+                d.id,
+                m.optLong("ts", System.currentTimeMillis()),
+                m.optString("screen"),
+                m.optString("name"),
+                m.optString("from"),
+                image,
+                m.optString("error").takeIf { it.isNotEmpty() } ?: if (image == null && attachmentUrl != null) Strings.get(R.string.alerts_screen_shot_failed) else null,
+            )
             add(a)
-            val text = if (a.from.isNotEmpty()) Strings.get(R.string.alerts_screen_event_from, a.from, a.name)
-                else Strings.get(R.string.alerts_screen_event, a.name)
+            val text = if (a.from.isNotEmpty()) {
+                Strings.get(R.string.alerts_screen_event_from, a.from, a.name)
+            } else {
+                Strings.get(R.string.alerts_screen_event, a.name)
+            }
             Hub.addEvent(a.dev, text, a.ts)
             notify(a)
         }
@@ -79,6 +98,7 @@ object ScreenAlerts {
                 remove { it.dev == a.dev && it.screen == a.screen }
                 Undo.notify(Strings.get(if (kind == "ok") R.string.alerts_screen_allowed_message else R.string.alerts_screen_blocked_message))
             }
+
             else -> remove { it.id == id }
         }
     }
@@ -124,8 +144,10 @@ object ScreenAlerts {
     private fun save() {
         val a = JSONArray()
         _alerts.value.forEach {
-            a.put(JSONObject().put("id", it.id).put("dev", it.dev).put("ts", it.ts).put("screen", it.screen)
-                .put("name", it.name).put("from", it.from).put("image", it.image ?: "").put("error", it.error ?: ""))
+            a.put(
+                JSONObject().put("id", it.id).put("dev", it.dev).put("ts", it.ts).put("screen", it.screen)
+                    .put("name", it.name).put("from", it.from).put("image", it.image ?: "").put("error", it.error ?: ""),
+            )
         }
         prefs.edit().putString("alerts", a.toString()).apply()
     }
@@ -134,9 +156,16 @@ object ScreenAlerts {
         val a = JSONArray(prefs.getString("alerts", "[]"))
         (0 until a.length()).map { i ->
             val o = a.getJSONObject(i)
-            Alert(o.getString("id"), o.getString("dev"), o.getLong("ts"), o.getString("screen"), o.getString("name"),
-                o.optString("from"), o.optString("image").takeIf { it.isNotEmpty() && File(it).exists() },
-                o.optString("error").takeIf { it.isNotEmpty() })
+            Alert(
+                o.getString("id"),
+                o.getString("dev"),
+                o.getLong("ts"),
+                o.getString("screen"),
+                o.getString("name"),
+                o.optString("from"),
+                o.optString("image").takeIf { it.isNotEmpty() && File(it).exists() },
+                o.optString("error").takeIf { it.isNotEmpty() },
+            )
         }
     }.getOrDefault(emptyList())
 
@@ -145,17 +174,30 @@ object ScreenAlerts {
     /** Announces [a] with its screenshot and "Mark OK" / "Block" buttons. */
     private fun notify(a: Alert) {
         Hub.channels(app)
-        val open = PendingIntent.getActivity(app, a.id.hashCode(),
-            Intent(app, MainActivity::class.java).putExtra("device", a.dev), PendingIntent.FLAG_IMMUTABLE)
+        val open = PendingIntent.getActivity(
+            app,
+            a.id.hashCode(),
+            Intent(app, MainActivity::class.java).putExtra("device", a.dev),
+            PendingIntent.FLAG_IMMUTABLE,
+        )
 
         /** A button that sends decision [kind] about this alert. */
-        fun action(label: String, kind: String, code: Int) = Notification.Action.Builder(null, label,
-            PendingIntent.getBroadcast(app, code,
+        fun action(label: String, kind: String, code: Int) = Notification.Action.Builder(
+            null,
+            label,
+            PendingIntent.getBroadcast(
+                app,
+                code,
                 Intent(app, ActionReceiver::class.java).putExtra("alert", a.id).putExtra("kind", kind),
-                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)).build()
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+            ),
+        ).build()
 
-        val text = if (a.from.isNotEmpty()) Strings.get(R.string.alerts_screen_notification_from, a.from)
-            else Strings.get(R.string.alerts_screen_notification)
+        val text = if (a.from.isNotEmpty()) {
+            Strings.get(R.string.alerts_screen_notification_from, a.from)
+        } else {
+            Strings.get(R.string.alerts_screen_notification)
+        }
         val b = Notification.Builder(app, "requests")
             .setSmallIcon(android.R.drawable.ic_lock_lock)
             .setContentTitle(Hub.deviceName(a.dev))

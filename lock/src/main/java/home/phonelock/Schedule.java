@@ -3,15 +3,13 @@ package home.phonelock;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * Weekly schedule of situations ({@link #NORMAL}, {@link #LIMITED}, {@link #BEDTIME}) and which of the
@@ -30,8 +28,9 @@ final class Schedule {
     static final int DEFAULT_MASK = NORMAL | LIMITED;
 
     /** Apps also allowed at bedtime when the table is first created from the old home-screen list. */
-    private static final String[] BEDTIME_DEFAULTS = {"com.google.android.dialer", "com.android.dialer",
-            "com.google.android.deskclock", "com.android.deskclock"};
+    private static final String[] BEDTIME_DEFAULTS = {
+        "com.google.android.dialer", "com.android.dialer", "com.google.android.deskclock", "com.android.deskclock"
+    };
 
     private Schedule() {}
 
@@ -47,7 +46,11 @@ final class Schedule {
         }
 
         JSONObject toJson() throws Exception {
-            return new JSONObject().put("mode", modeName(mode)).put("days", days).put("start", start).put("end", end);
+            return new JSONObject()
+                    .put("mode", modeName(mode))
+                    .put("days", days)
+                    .put("start", start)
+                    .put("end", end);
         }
 
         /** Parses a rule, or returns null if it is malformed. */
@@ -95,7 +98,6 @@ final class Schedule {
         return c.getString(R.string.events_mode_label_normal);
     }
 
-
     // ---------- storage ----------
 
     static List<Rule> rules(Context c) {
@@ -139,7 +141,8 @@ final class Schedule {
         try {
             String s = p.getString("app_masks", null);
             if (s != null) stored = new JSONObject(s);
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
         for (String pkg : Policy.visibleApps(c)) {
             int m = stored != null ? stored.optInt(pkg, DEFAULT_MASK) : defaultMask(pkg);
             out.put(pkg, m & ALL);
@@ -154,7 +157,10 @@ final class Schedule {
     }
 
     private static void saveMasks(Context c, Map<String, Integer> masks) {
-        Policy.prefs(c).edit().putString("app_masks", new JSONObject(masks).toString()).apply();
+        Policy.prefs(c)
+                .edit()
+                .putString("app_masks", new JSONObject(masks).toString())
+                .apply();
     }
 
     /**
@@ -212,7 +218,11 @@ final class Schedule {
             mode = 0;
             until = 0;
         }
-        Policy.prefs(c).edit().putInt("override_mode", mode).putLong("override_until", until).commit();
+        Policy.prefs(c)
+                .edit()
+                .putInt("override_mode", mode)
+                .putLong("override_until", until)
+                .commit();
     }
 
     /** The stricter of two situations: bedtime over limited hours over normal (the bit values are ordered). */
@@ -279,7 +289,8 @@ final class Schedule {
      */
     static List<String> allowedNow(Context c) {
         int mode = currentMode(c);
-        java.util.Set<String> blocked = new java.util.HashSet<>(Grants.loadBlocks(c).keySet());
+        java.util.Set<String> blocked =
+                new java.util.HashSet<>(Grants.loadBlocks(c).keySet());
         blocked.addAll(AppTime.blockedApps(c));
         List<String> out = new ArrayList<>();
         for (Map.Entry<String, Integer> e : masks(c).entrySet()) {

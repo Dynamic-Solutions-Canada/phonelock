@@ -30,14 +30,17 @@ final class ScreenViewGuard {
         Context app = c.getApplicationContext();
         if (observer == null) {
             observer = new ContentObserver(new Handler(Looper.getMainLooper())) {
-                @Override public void onChange(boolean selfChange) {
+                @Override
+                public void onChange(boolean selfChange) {
                     check(app);
                 }
             };
-            app.getContentResolver().registerContentObserver(
-                    Settings.Secure.getUriFor(Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES), false, observer);
-            app.getContentResolver().registerContentObserver(
-                    Settings.Secure.getUriFor(Settings.Secure.ACCESSIBILITY_ENABLED), false, observer);
+            app.getContentResolver()
+                    .registerContentObserver(
+                            Settings.Secure.getUriFor(Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES), false, observer);
+            app.getContentResolver()
+                    .registerContentObserver(
+                            Settings.Secure.getUriFor(Settings.Secure.ACCESSIBILITY_ENABLED), false, observer);
         }
         check(app);
     }
@@ -55,7 +58,8 @@ final class ScreenViewGuard {
 
     /** Whether this app may switch the service back on by itself (granted at setup). */
     static boolean canRestore(Context c) {
-        return c.checkSelfPermission(android.Manifest.permission.WRITE_SECURE_SETTINGS) == PackageManager.PERMISSION_GRANTED;
+        return c.checkSelfPermission(android.Manifest.permission.WRITE_SECURE_SETTINGS)
+                == PackageManager.PERMISSION_GRANTED;
     }
 
     /**
@@ -66,7 +70,10 @@ final class ScreenViewGuard {
         SharedPreferences p = Policy.prefs(c);
         // Only once screen view has been set up: a device that never had it isn't "switched off".
         if (enabled(c)) {
-            p.edit().putBoolean("screen_view_seen", true).putBoolean("screen_view_reported", false).apply();
+            p.edit()
+                    .putBoolean("screen_view_seen", true)
+                    .putBoolean("screen_view_reported", false)
+                    .apply();
             return;
         }
         if (!p.getBoolean("screen_view_seen", false) || !Policy.isOwner(c) || Policy.inParentMode(c)) return;
@@ -80,9 +87,11 @@ final class ScreenViewGuard {
     /** Puts this app's service back in the enabled list and turns accessibility on. */
     private static boolean restore(Context c) {
         try {
-            String on = Settings.Secure.getString(c.getContentResolver(), Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
+            String on =
+                    Settings.Secure.getString(c.getContentResolver(), Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
             String mine = component(c);
-            String list = on == null || on.isEmpty() ? mine : (on.contains(c.getPackageName() + "/") ? on : on + ":" + mine);
+            String list =
+                    on == null || on.isEmpty() ? mine : (on.contains(c.getPackageName() + "/") ? on : on + ":" + mine);
             Settings.Secure.putString(c.getContentResolver(), Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES, list);
             Settings.Secure.putInt(c.getContentResolver(), Settings.Secure.ACCESSIBILITY_ENABLED, 1);
             Log.i(Policy.TAG, "screen view restored");

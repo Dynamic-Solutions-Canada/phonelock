@@ -7,7 +7,6 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.LocaleList;
 import android.util.Log;
-
 import java.util.Locale;
 
 /**
@@ -44,7 +43,8 @@ final class Language {
 
         // The English matching the device's region, so dates and times keep the region's layout where we can.
         // apply() records the flag only once it has worked, so a failure here is retried at the next update.
-        String region = Resources.getSystem().getConfiguration().getLocales().get(0).getCountry();
+        String region =
+                Resources.getSystem().getConfiguration().getLocales().get(0).getCountry();
         return apply(c, "CA".equals(region) ? "en-CA" : "en-US");
     }
 

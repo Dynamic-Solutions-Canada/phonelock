@@ -24,9 +24,11 @@ public class BootReceiver extends BroadcastReceiver {
         // Pairs with "Turning off": parents see when it came back, even if it starts without signal.
         if (Intent.ACTION_BOOT_COMPLETED.equals(i.getAction())) {
             int level = Battery.level(c);
-            Outbox.note(c, level >= 0
-                    ? c.getString(R.string.home_event_turned_on_battery, level)
-                    : c.getString(R.string.home_event_turned_on));
+            Outbox.note(
+                    c,
+                    level >= 0
+                            ? c.getString(R.string.home_event_turned_on_battery, level)
+                            : c.getString(R.string.home_event_turned_on));
         }
         Policy.apply(c);
         RemoteService.start(c);

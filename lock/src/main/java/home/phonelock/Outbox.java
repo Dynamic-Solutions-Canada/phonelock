@@ -3,12 +3,10 @@ package home.phonelock;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * Messages the parents must get even if the device is offline when they happen: low-battery alerts and the
@@ -49,8 +47,11 @@ final class Outbox {
                 JSONArray a = new JSONArray(p.getString("outbox_alerts", "[]"));
                 // The message id is fixed now and reused on every retry, so if a send that timed out did
                 // reach the hub after all, the parents drop the retry as a duplicate.
-                JSONObject item = new JSONObject().put("text", text).put("quiet", quiet)
-                        .put("at", System.currentTimeMillis()).put("id", Crypto.randomId());
+                JSONObject item = new JSONObject()
+                        .put("text", text)
+                        .put("quiet", quiet)
+                        .put("at", System.currentTimeMillis())
+                        .put("id", Crypto.randomId());
                 if (where != null) item.put("where", where);
                 a.put(item);
                 p.edit().putString("outbox_alerts", a.toString()).commit();

@@ -13,11 +13,14 @@ import java.math.BigInteger
 internal object Ed25519 {
     /** The field prime 2^255 - 19. */
     val P: BigInteger = BigInteger.TWO.pow(255).subtract(BigInteger.valueOf(19))
+
     /** Order of the prime-order subgroup: 2^252 + 27742317777372353535851937790883648493. */
     val L: BigInteger = BigInteger.TWO.pow(252).add(BigInteger("27742317777372353535851937790883648493"))
+
     /** Curve constant d = -121665/121666. */
     private val D: BigInteger = BigInteger.valueOf(-121665).multiply(inv(BigInteger.valueOf(121666))).mod(P)
     private val D2: BigInteger = D.shiftLeft(1).mod(P)
+
     /** A square root of -1, used when decoding points. */
     private val SQRT_M1: BigInteger = BigInteger.TWO.modPow(P.subtract(BigInteger.ONE).shiftRight(2), P)
 

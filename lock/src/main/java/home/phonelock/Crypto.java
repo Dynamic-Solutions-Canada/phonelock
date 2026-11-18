@@ -1,10 +1,8 @@
 package home.phonelock;
 
 import android.util.Base64;
-
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
-
 import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -16,6 +14,7 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public final class Crypto {
     private static final SecureRandom RNG = new SecureRandom();
+
     private Crypto() {}
 
     static byte[] key(String secretB64) {
@@ -74,8 +73,7 @@ public final class Crypto {
             byte[] in = Base64.decode(sealed.trim(), Base64.URL_SAFE | Base64.NO_WRAP | Base64.NO_PADDING);
             if (in.length < 12 + 16) return null;
             Cipher c = Cipher.getInstance("AES/GCM/NoPadding");
-            c.init(Cipher.DECRYPT_MODE, new SecretKeySpec(key, "AES"),
-                    new GCMParameterSpec(128, in, 0, 12));
+            c.init(Cipher.DECRYPT_MODE, new SecretKeySpec(key, "AES"), new GCMParameterSpec(128, in, 0, 12));
             c.updateAAD("phonelock/1".getBytes(StandardCharsets.US_ASCII));
             return new String(c.doFinal(in, 12, in.length - 12), StandardCharsets.UTF_8);
         } catch (Exception e) {

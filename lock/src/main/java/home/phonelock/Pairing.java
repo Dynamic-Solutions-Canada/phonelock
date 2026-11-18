@@ -24,7 +24,8 @@ final class Pairing {
     }
 
     private static void storeRemote(Context c, String server, String topic) {
-        Policy.prefs(c).edit()
+        Policy.prefs(c)
+                .edit()
                 .putString("ntfy_server", server)
                 .putString("ntfy_topic", topic)
                 .remove("ntfy_last_id")
@@ -38,7 +39,10 @@ final class Pairing {
 
     /** Sets the name the parent apps show for this phone, and tells them. */
     static void setName(Context c, String name) {
-        Policy.prefs(c).edit().putString("device_name", name == null || name.isEmpty() ? "Device" : name).apply();
+        Policy.prefs(c)
+                .edit()
+                .putString("device_name", name == null || name.isEmpty() ? "Device" : name)
+                .apply();
         Remote.sendState(c, false);
     }
 }

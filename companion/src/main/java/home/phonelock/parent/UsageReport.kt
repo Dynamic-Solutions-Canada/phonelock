@@ -1,11 +1,11 @@
 package home.phonelock.parent
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
-import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
@@ -27,7 +27,9 @@ import java.util.Locale
 
 /** The span a report covers; [label] is its name on the report's buttons. */
 enum class Period(@StringRes val label: Int) {
-    DAY(R.string.apps_period_day), WEEK(R.string.apps_period_week), MONTH(R.string.apps_period_month)
+    DAY(R.string.apps_period_day),
+    WEEK(R.string.apps_period_week),
+    MONTH(R.string.apps_period_month),
 }
 
 /**
@@ -38,8 +40,14 @@ data class Series(val key: String, val label: String, val apps: Set<String>, val
 
 /** Distinct colours for chart parts, readable on light and dark backgrounds; "Other" is grey. */
 private val PALETTE = listOf(
-    Color(0xFF4C8DF6), Color(0xFFF2994A), Color(0xFF27AE60), Color(0xFFEB5757),
-    Color(0xFF9B51E0), Color(0xFF00A3A3), Color(0xFFD4A017), Color(0xFFE056A0),
+    Color(0xFF4C8DF6),
+    Color(0xFFF2994A),
+    Color(0xFF27AE60),
+    Color(0xFFEB5757),
+    Color(0xFF9B51E0),
+    Color(0xFF00A3A3),
+    Color(0xFFD4A017),
+    Color(0xFFE056A0),
 )
 private val OTHER_COLOR = Color(0xFF9AA0A6)
 
@@ -55,10 +63,12 @@ fun weekStart(): DayOfWeek = WeekFields.of(AppLanguage.deviceRegion()).firstDayO
  */
 fun periodDays(period: Period, anchor: LocalDate, firstDay: DayOfWeek = weekStart()): List<LocalDate> = when (period) {
     Period.DAY -> listOf(anchor)
+
     Period.WEEK -> {
         val start = anchor.with(TemporalAdjusters.previousOrSame(firstDay))
         (0L until 7L).map { start.plusDays(it) }
     }
+
     Period.MONTH -> {
         val start = anchor.withDayOfMonth(1)
         (0L until anchor.lengthOfMonth().toLong()).map { start.plusDays(it) }
@@ -80,16 +90,19 @@ fun totalsOver(days: Map<String, Map<String, Int>>, dates: List<LocalDate>): Map
 }
 
 /** [days] keeping only the apps in [keep] (a day with none of them stays, empty). */
-fun onlyApps(days: Map<String, Map<String, Int>>, keep: Set<String>): Map<String, Map<String, Int>> =
-    days.mapValues { (_, apps) -> apps.filterKeys { it in keep } }
+fun onlyApps(days: Map<String, Map<String, Int>>, keep: Set<String>): Map<String, Map<String, Int>> = days.mapValues { (_, apps) -> apps.filterKeys { it in keep } }
 
 /**
  * The chart's parts. With nothing [selected], the [TOP_APPS] most used apps over the period and the rest as
  * [otherLabel] (passed in, already translated, so this stays plain Kotlin); otherwise the selected apps
  * ("app:<package>"), in the order chosen.
  */
-fun seriesFor(selected: List<String>, totals: Map<String, Int>, otherLabel: String,
-              label: (String) -> String): List<Series> {
+fun seriesFor(
+    selected: List<String>,
+    totals: Map<String, Int>,
+    otherLabel: String,
+    label: (String) -> String,
+): List<Series> {
     if (selected.isEmpty()) {
         val top = totals.entries.filter { it.value > 0 }.sortedByDescending { it.value }.take(TOP_APPS).map { it.key }
         val parts = top.mapIndexed { i, p -> Series("app:$p", label(p), setOf(p), PALETTE[i % PALETTE.size]) }
@@ -102,8 +115,7 @@ fun seriesFor(selected: List<String>, totals: Map<String, Int>, otherLabel: Stri
 }
 
 /** Minutes [s] took on [day]. */
-fun minutesOn(days: Map<String, Map<String, Int>>, day: LocalDate, s: Series): Int =
-    days[day.toString()]?.let { apps -> s.apps.sumOf { apps[it] ?: 0 } } ?: 0
+fun minutesOn(days: Map<String, Map<String, Int>>, day: LocalDate, s: Series): Int = days[day.toString()]?.let { apps -> s.apps.sumOf { apps[it] ?: 0 } } ?: 0
 
 /**
  * A stacked bar chart: one bar per entry of [bars] (a day, or for the Day view a single part), each split
@@ -117,14 +129,16 @@ fun StackedBars(bars: List<List<Int>>, series: List<Series>, xLabel: (Int) -> St
     val textColor = MaterialTheme.colorScheme.onSurfaceVariant
     val maxTotal = bars.maxOfOrNull { it.sum() } ?: 0
     val top = niceCeiling(maxTotal)
-    Canvas(Modifier.fillMaxWidth().height(220.dp).pointerInput(bars.size) {
-        detectTapGestures { pos ->
-            val left = 44.dp.toPx()
-            val slot = (size.width - left) / bars.size.coerceAtLeast(1)
-            val i = ((pos.x - left) / slot).toInt()
-            if (pos.x >= left && i in bars.indices) onTap(i)
-        }
-    }) {
+    Canvas(
+        Modifier.fillMaxWidth().height(220.dp).pointerInput(bars.size) {
+            detectTapGestures { pos ->
+                val left = 44.dp.toPx()
+                val slot = (size.width - left) / bars.size.coerceAtLeast(1)
+                val i = ((pos.x - left) / slot).toInt()
+                if (pos.x >= left && i in bars.indices) onTap(i)
+            }
+        },
+    ) {
         val left = 44.dp.toPx()
         val bottom = size.height - 22.dp.toPx()
         val style = TextStyle(fontSize = 11.sp, color = textColor)
@@ -161,8 +175,12 @@ fun StackedBars(bars: List<List<Int>>, series: List<Series>, xLabel: (Int) -> St
 /** One coloured piece of a bar, with a hairline gap above it so stacked parts read as separate. */
 private fun DrawScope.drawSegment(color: Color, topLeft: Offset, size: Size) {
     val gap = 1.dp.toPx().coerceAtMost(size.height / 2)
-    drawRoundRect(color, topLeft = Offset(topLeft.x, topLeft.y + gap), size = Size(size.width, size.height - gap),
-        cornerRadius = CornerRadius(3.dp.toPx()))
+    drawRoundRect(
+        color,
+        topLeft = Offset(topLeft.x, topLeft.y + gap),
+        size = Size(size.width, size.height - gap),
+        cornerRadius = CornerRadius(3.dp.toPx()),
+    )
 }
 
 /** A round top for the chart: the next of 30 min, 1 h, 2 h, 3 h… above [minutes]. */

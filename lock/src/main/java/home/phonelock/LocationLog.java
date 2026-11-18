@@ -11,13 +11,11 @@ import android.net.wifi.WifiManager;
 import android.os.PowerManager;
 import android.os.SystemClock;
 import android.util.Log;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * A log of where the device has been, for the parents' "Location history": a reading every 15 minutes
@@ -43,10 +41,12 @@ final class LocationLog {
     private static final long MOVING_HOLD_MS = 6 * 60_000L;
     /** Passive fixes (from other apps) less precise than this are ignored. */
     private static final float PASSIVE_MAX_ACCURACY_M = 100;
+
     private static final long KEEP_MS = 7 * 24 * 3600_000L;
     private static final int MAX_ENTRIES = 2000;
     /** Readings within this distance of the last entry extend it (a fix's own accuracy can widen it). */
     private static final float SAME_PLACE_M = 100;
+
     private static final float SAME_PLACE_MAX_M = 300;
     /** Even on the same Wi-Fi, take a real fix this often, in case the network moved (a hotspot). */
     private static final long REFIX_MS = 3600_000L;
@@ -78,13 +78,13 @@ final class LocationLog {
         wait = Math.min(wait, every);
         Policy.prefs(c).edit().putLong("track_next_at", now + wait).apply();
         AlarmManager am = c.getSystemService(AlarmManager.class);
-        am.setAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + wait,
-                tickIntent(c));
+        am.setAndAllowWhileIdle(
+                AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + wait, tickIntent(c));
     }
 
     private static PendingIntent tickIntent(Context c) {
-        return PendingIntent.getBroadcast(c, 11, new Intent(c, Tick.class),
-                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        return PendingIntent.getBroadcast(
+                c, 11, new Intent(c, Tick.class), PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
     }
 
     /**
@@ -99,18 +99,24 @@ final class LocationLog {
             PowerManager.WakeLock wl = app.getSystemService(PowerManager.class)
                     .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "phonelock:track");
             wl.acquire(TICK_WAKE_MS);
-            new Thread(() -> {
-                try {
-                    Policy.prefs(app).edit().putLong("track_tick", System.currentTimeMillis()).apply();
-                    sample(app);
-                    Outbox.flushAndHeartbeat(app);
-                } catch (Exception e) {
-                    Log.w(Policy.TAG, "track tick: " + e);
-                } finally {
-                    schedule(app);
-                    if (wl.isHeld()) wl.release();
-                }
-            }, "track").start();
+            new Thread(
+                            () -> {
+                                try {
+                                    Policy.prefs(app)
+                                            .edit()
+                                            .putLong("track_tick", System.currentTimeMillis())
+                                            .apply();
+                                    sample(app);
+                                    Outbox.flushAndHeartbeat(app);
+                                } catch (Exception e) {
+                                    Log.w(Policy.TAG, "track tick: " + e);
+                                } finally {
+                                    schedule(app);
+                                    if (wl.isHeld()) wl.release();
+                                }
+                            },
+                            "track")
+                    .start();
         }
     }
 
@@ -125,7 +131,9 @@ final class LocationLog {
         synchronized (LocationLog.class) {
             JSONArray log = load(c);
             JSONObject last = log.length() > 0 ? log.optJSONObject(log.length() - 1) : null;
-            sameWifi = last != null && wifi != null && wifi.equals(last.optString("w", null))
+            sameWifi = last != null
+                    && wifi != null
+                    && wifi.equals(last.optString("w", null))
                     && now - last.optLong("to") < MAX_GAP_MS;
             // Same Wi-Fi as last time and recently fixed: she's still there, no GPS needed. Not during an
             // emergency alert, when every reading is a real fix.
@@ -169,7 +177,10 @@ final class LocationLog {
             log.put(entry(c, now, fix, wifi));
             // Only a precise fix counts as moving (and brings readings every 2 minutes).
             if (last != null && fix.hasAccuracy() && fix.getAccuracy() <= SAME_PLACE_MAX_M) {
-                Policy.prefs(c).edit().putLong("track_moving_until", now + MOVING_HOLD_MS).apply();
+                Policy.prefs(c)
+                        .edit()
+                        .putLong("track_moving_until", now + MOVING_HOLD_MS)
+                        .apply();
             }
         }
         save(c, prune(log, now));
@@ -214,7 +225,9 @@ final class LocationLog {
             if (fix != null) {
                 e.put("f", now);
                 if (fix.hasAccuracy() && fix.getAccuracy() < e.optDouble("acc", Double.MAX_VALUE)) {
-                    e.put("lat", fix.getLatitude()).put("lng", fix.getLongitude()).put("acc", Math.round(fix.getAccuracy()));
+                    e.put("lat", fix.getLatitude())
+                            .put("lng", fix.getLongitude())
+                            .put("acc", Math.round(fix.getAccuracy()));
                 }
             }
             Battery.put(c, e);
@@ -283,8 +296,11 @@ final class LocationLog {
             } catch (Exception e) {
                 return;
             }
-            Policy.prefs(c).edit().putLong("track_sent", newest)
-                    .putLong("usage_sent", AppUsage.newestEnd(apps, appsSent)).commit();
+            Policy.prefs(c)
+                    .edit()
+                    .putLong("track_sent", newest)
+                    .putLong("usage_sent", AppUsage.newestEnd(apps, appsSent))
+                    .commit();
             heartbeat = false;
             if (batch.length() < BATCH) return;
         }
@@ -292,27 +308,30 @@ final class LocationLog {
 
     /** Replies to a parent's {@code track} request with every entry still running at or after {@code since}. */
     static void sendHistory(Context c, long since, String req) {
-        new Thread(() -> {
-            try {
-                JSONArray out = new JSONArray();
-                synchronized (LocationLog.class) {
-                    JSONArray log = load(c);
-                    for (int i = 0; i < log.length(); i++) {
-                        JSONObject e = log.optJSONObject(i);
-                        if (e != null && e.optLong("to") >= since) out.put(forParents(e));
-                    }
-                }
-                JSONObject o = Remote.msg("track");
-                o.put("req", req);
-                o.put("points", out);
-                JSONArray apps = AppUsage.sessionsSince(c, since);
-                if (apps.length() > 0) o.put("apps", apps);
-                Battery.put(c, o);
-                Remote.publish(c, o, null);
-            } catch (Exception e) {
-                Log.w(Policy.TAG, "track history: " + e);
-            }
-        }, "track").start();
+        new Thread(
+                        () -> {
+                            try {
+                                JSONArray out = new JSONArray();
+                                synchronized (LocationLog.class) {
+                                    JSONArray log = load(c);
+                                    for (int i = 0; i < log.length(); i++) {
+                                        JSONObject e = log.optJSONObject(i);
+                                        if (e != null && e.optLong("to") >= since) out.put(forParents(e));
+                                    }
+                                }
+                                JSONObject o = Remote.msg("track");
+                                o.put("req", req);
+                                o.put("points", out);
+                                JSONArray apps = AppUsage.sessionsSince(c, since);
+                                if (apps.length() > 0) o.put("apps", apps);
+                                Battery.put(c, o);
+                                Remote.publish(c, o, null);
+                            } catch (Exception e) {
+                                Log.w(Policy.TAG, "track history: " + e);
+                            }
+                        },
+                        "track")
+                .start();
     }
 
     /**
@@ -327,8 +346,11 @@ final class LocationLog {
             }
             JSONObject e = log.length() == 0 ? null : log.optJSONObject(log.length() - 1);
             if (e == null || !e.has("lat")) return null;
-            return new JSONObject().put("lat", e.getDouble("lat")).put("lng", e.getDouble("lng"))
-                    .put("at", e.optLong("to")).put("acc", e.optInt("acc"));
+            return new JSONObject()
+                    .put("lat", e.getDouble("lat"))
+                    .put("lng", e.getDouble("lng"))
+                    .put("at", e.optLong("to"))
+                    .put("acc", e.optInt("acc"));
         } catch (Exception ex) {
             return null;
         }
@@ -338,10 +360,11 @@ final class LocationLog {
     private static JSONObject forParents(JSONObject e) {
         JSONObject o = new JSONObject();
         try {
-            for (String k : new String[]{"t", "to", "lat", "lng", "acc", "batt", "chg"}) {
+            for (String k : new String[] {"t", "to", "lat", "lng", "acc", "batt", "chg"}) {
                 if (e.has(k)) o.put(k, e.get(k));
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
         return o;
     }
 

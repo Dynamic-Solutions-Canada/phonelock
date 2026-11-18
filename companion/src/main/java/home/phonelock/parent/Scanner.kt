@@ -63,7 +63,12 @@ fun QrScanner(onResult: (String) -> Unit, onCancel: () -> Unit) {
     val scanner = remember {
         BarcodeScanning.getClient(BarcodeScannerOptions.Builder().setBarcodeFormats(Barcode.FORMAT_QR_CODE).build())
     }
-    DisposableEffect(Unit) { onDispose { scanner.close(); executor.shutdown() } }
+    DisposableEffect(Unit) {
+        onDispose {
+            scanner.close()
+            executor.shutdown()
+        }
+    }
 
     Box(Modifier.fillMaxSize()) {
         AndroidView(modifier = Modifier.fillMaxSize(), factory = { c ->
@@ -76,7 +81,10 @@ fun QrScanner(onResult: (String) -> Unit, onCancel: () -> Unit) {
                     .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST).build()
                 analysis.setAnalyzer(executor) { proxy ->
                     val media = proxy.image
-                    if (media == null || done.get()) { proxy.close(); return@setAnalyzer }
+                    if (media == null || done.get()) {
+                        proxy.close()
+                        return@setAnalyzer
+                    }
                     scanner.process(InputImage.fromMediaImage(media, proxy.imageInfo.rotationDegrees))
                         .addOnSuccessListener { codes ->
                             val hit = codes.firstNotNullOfOrNull { it.rawValue?.takeIf { v -> v.startsWith("phonelock://") } }

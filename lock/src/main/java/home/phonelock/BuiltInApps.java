@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -37,11 +36,11 @@ final class BuiltInApps {
         return c.getString(BLUETOOTH.equals(id) ? R.string.events_bluetooth_settings : R.string.events_wifi_settings);
     }
 
-
     /** Opens its screen. */
     static Intent launch(Context c, String id) {
         return new Intent(c, ConnectionsActivity.class)
-                .putExtra(ConnectionsActivity.EXTRA_TAB,
+                .putExtra(
+                        ConnectionsActivity.EXTRA_TAB,
                         BLUETOOTH.equals(id) ? ConnectionsActivity.TAB_BLUETOOTH : ConnectionsActivity.TAB_WIFI);
     }
 
@@ -86,6 +85,9 @@ final class BuiltInApps {
         if (p.getBoolean("built_in_apps_added", false)) return;
         java.util.List<String> apps = new java.util.ArrayList<>(Policy.visibleApps(c));
         for (String id : ALL) if (!apps.contains(id)) apps.add(id);
-        p.edit().putString("apps", String.join(",", apps)).putBoolean("built_in_apps_added", true).apply();
+        p.edit()
+                .putString("apps", String.join(",", apps))
+                .putBoolean("built_in_apps_added", true)
+                .apply();
     }
 }

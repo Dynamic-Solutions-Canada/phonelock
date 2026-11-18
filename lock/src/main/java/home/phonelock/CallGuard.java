@@ -4,13 +4,11 @@ import android.content.Context;
 import android.telephony.PhoneNumberUtils;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * Who the child may call and be called by. Parents keep a safe list of numbers and can limit outgoing
@@ -39,7 +37,11 @@ final class CallGuard {
     }
 
     static void setLimits(Context c, boolean outgoing, boolean incoming) {
-        Policy.prefs(c).edit().putBoolean("calls_limit_out", outgoing).putBoolean("calls_limit_in", incoming).apply();
+        Policy.prefs(c)
+                .edit()
+                .putBoolean("calls_limit_out", outgoing)
+                .putBoolean("calls_limit_in", incoming)
+                .apply();
     }
 
     static List<Entry> safeList(Context c) {
@@ -71,8 +73,12 @@ final class CallGuard {
 
     static JSONObject settingsJson(Context c) throws Exception {
         JSONArray safe = new JSONArray();
-        for (Entry e : safeList(c)) safe.put(new JSONObject().put("name", e.name).put("number", e.number));
-        return new JSONObject().put("limitOut", limitOutgoing(c)).put("limitIn", limitIncoming(c)).put("safe", safe);
+        for (Entry e : safeList(c))
+            safe.put(new JSONObject().put("name", e.name).put("number", e.number));
+        return new JSONObject()
+                .put("limitOut", limitOutgoing(c))
+                .put("limitIn", limitIncoming(c))
+                .put("safe", safe);
     }
 
     /** The safe-list entry matching {@code number} (same number in any common format), or null. */
@@ -91,7 +97,11 @@ final class CallGuard {
         if (iso == null || iso.isEmpty()) iso = tm == null ? null : tm.getSimCountryIso();
         // The phone's own region, not this app's language (a parent may have picked another country's).
         if (iso == null || iso.isEmpty()) {
-            iso = android.content.res.Resources.getSystem().getConfiguration().getLocales().get(0).getCountry();
+            iso = android.content.res.Resources.getSystem()
+                    .getConfiguration()
+                    .getLocales()
+                    .get(0)
+                    .getCountry();
         }
         return iso.toUpperCase(Locale.ROOT);
     }

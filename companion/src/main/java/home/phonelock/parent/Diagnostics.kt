@@ -20,6 +20,7 @@ data class DiagReport(val ts: Long, val checks: List<DiagCheck>, val log: String
 object Diagnostics {
     private val _reports = MutableStateFlow<Map<String, DiagReport>>(emptyMap())
     val reports: StateFlow<Map<String, DiagReport>> = _reports.asStateFlow()
+
     /** Device -> id of the request in flight, cleared when its answer arrives. */
     private val _waiting = MutableStateFlow<Map<String, String>>(emptyMap())
     val waiting: StateFlow<Map<String, String>> = _waiting.asStateFlow()
@@ -46,8 +47,11 @@ object Diagnostics {
         if (_waiting.value[dev] != m.optString("req")) return
         val a = m.optJSONArray("checks")
         val checks = (0 until (a?.length() ?: 0)).mapNotNull { a!!.optJSONObject(it) }.map {
-            DiagCheck(it.optString("name"), if (it.has("ok")) it.optBoolean("ok") else null,
-                it.optString("value").takeIf { v -> v.isNotEmpty() })
+            DiagCheck(
+                it.optString("name"),
+                if (it.has("ok")) it.optBoolean("ok") else null,
+                it.optString("value").takeIf { v -> v.isNotEmpty() },
+            )
         }
         _reports.update { it + (dev to DiagReport(m.optLong("ts"), checks, m.optString("log"))) }
         _waiting.update { it - dev }

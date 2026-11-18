@@ -40,16 +40,27 @@ internal fun AppUpdateSection() {
         Text(stringResource(R.string.device_app_version, st.installed))
         ProgressTrack(st.busy)
         when {
-            st.busy -> Text(st.progress?.let { stringResource(R.string.device_app_downloading, st.latest, (it * 100).toInt()) }
-                ?: stringResource(R.string.device_app_installing, st.latest), style = MaterialTheme.typography.bodyMedium)
+            st.busy -> Text(
+                st.progress?.let { stringResource(R.string.device_app_downloading, st.latest, (it * 100).toInt()) }
+                    ?: stringResource(R.string.device_app_installing, st.latest),
+                style = MaterialTheme.typography.bodyMedium,
+            )
 
-            st.available -> ListRow(stringResource(R.string.device_app_update_to, st.latest),
+            st.available -> ListRow(
+                stringResource(R.string.device_app_update_to, st.latest),
                 AnnotatedString(stringResource(R.string.device_app_update_detail, st.size / (1024 * 1024))),
-                leading = { SymbolBadge("⬇") }, onClick = { AppUpdate.install() }, titleLines = 2)
+                leading = { SymbolBadge("⬇") },
+                onClick = { AppUpdate.install() },
+                titleLines = 2,
+            )
 
-            else -> ListRow(stringResource(R.string.device_app_check),
+            else -> ListRow(
+                stringResource(R.string.device_app_check),
                 AnnotatedString(stringResource(R.string.device_app_check_detail)),
-                leading = { SymbolBadge("⬆") }, onClick = { AppUpdate.check(asked = true) }, titleLines = 2)
+                leading = { SymbolBadge("⬆") },
+                onClick = { AppUpdate.check(asked = true) },
+                titleLines = 2,
+            )
         }
     }
 }

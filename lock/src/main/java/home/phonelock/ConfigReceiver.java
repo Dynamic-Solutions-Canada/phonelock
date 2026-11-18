@@ -30,17 +30,18 @@ public class ConfigReceiver extends BroadcastReceiver {
         PendingResult pr = goAsync();
         final String fcmd = cmd;
         new Thread(() -> {
-            String out;
-            try {
-                out = run(c, fcmd, value);
-            } catch (Exception e) {
-                out = "ERROR " + e;
-            }
-            Log.i(Policy.TAG, "cmd " + fcmd + ": " + out);
-            pr.setResultCode(1);
-            pr.setResultData(out);
-            pr.finish();
-        }).start();
+                    String out;
+                    try {
+                        out = run(c, fcmd, value);
+                    } catch (Exception e) {
+                        out = "ERROR " + e;
+                    }
+                    Log.i(Policy.TAG, "cmd " + fcmd + ": " + out);
+                    pr.setResultCode(1);
+                    pr.setResultData(out);
+                    pr.finish();
+                })
+                .start();
     }
 
     private String run(Context c, String cmd, String value) throws Exception {
@@ -52,15 +53,24 @@ public class ConfigReceiver extends BroadcastReceiver {
                 Policy.setPin(c, value);
                 return "PIN set";
             case "apps":
-                Policy.prefs(c).edit().putString("apps", value == null ? "" : value).apply();
+                Policy.prefs(c)
+                        .edit()
+                        .putString("apps", value == null ? "" : value)
+                        .apply();
                 Policy.apply(c);
                 return "apps=" + Policy.visibleApps(c);
             case "support":
-                Policy.prefs(c).edit().putString("support", value == null ? "" : value).apply();
+                Policy.prefs(c)
+                        .edit()
+                        .putString("support", value == null ? "" : value)
+                        .apply();
                 Policy.apply(c);
                 return "support=" + Policy.extraSupport(c);
             case "hide":
-                Policy.prefs(c).edit().putString("hide", value == null ? "" : value).apply();
+                Policy.prefs(c)
+                        .edit()
+                        .putString("hide", value == null ? "" : value)
+                        .apply();
                 Policy.apply(c);
                 return "hide=" + value;
             case "dns":
@@ -71,12 +81,18 @@ public class ConfigReceiver extends BroadcastReceiver {
                 } else {
                     r = dpm.setGlobalPrivateDnsModeSpecifiedHost(a, value);
                 }
-                Policy.prefs(c).edit().putString("dns", value == null ? "" : value).apply();
+                Policy.prefs(c)
+                        .edit()
+                        .putString("dns", value == null ? "" : value)
+                        .apply();
                 Policy.apply(c);
-                return "dns result=" + r + " (0=ok) mode=" + dpm.getGlobalPrivateDnsMode(a)
-                        + " host=" + dpm.getGlobalPrivateDnsHost(a);
+                return "dns result=" + r + " (0=ok) mode=" + dpm.getGlobalPrivateDnsMode(a) + " host="
+                        + dpm.getGlobalPrivateDnsHost(a);
             case "debug":
-                Policy.prefs(c).edit().putBoolean("allow_debugging", "on".equals(value)).apply();
+                Policy.prefs(c)
+                        .edit()
+                        .putBoolean("allow_debugging", "on".equals(value))
+                        .apply();
                 Policy.apply(c);
                 return "allow_debugging=" + "on".equals(value);
             case "parent": {
@@ -95,7 +111,10 @@ public class ConfigReceiver extends BroadcastReceiver {
                 String v = value == null ? "" : value.trim();
                 String server = "https://ntfy.sh", topic = v;
                 int bar = v.indexOf('|');
-                if (bar > 0) { server = v.substring(0, bar); topic = v.substring(bar + 1); }
+                if (bar > 0) {
+                    server = v.substring(0, bar);
+                    topic = v.substring(bar + 1);
+                }
                 Pairing.setRemote(c, server, topic);
                 return "remote=" + server + "/" + topic;
             }
@@ -116,7 +135,9 @@ public class ConfigReceiver extends BroadcastReceiver {
                 // setup can't leave a device holding a secret no parent has, or no PIN.
                 org.json.JSONObject o = new org.json.JSONObject(value == null ? "{}" : value);
                 String pin = o.optString("pin");
-                if (pin.length() < 4 || o.optString("topic").isEmpty() || o.optString("secret").isEmpty()) {
+                if (pin.length() < 4
+                        || o.optString("topic").isEmpty()
+                        || o.optString("secret").isEmpty()) {
                     return "refused: incomplete pairing";
                 }
                 Policy.setPin(c, pin);

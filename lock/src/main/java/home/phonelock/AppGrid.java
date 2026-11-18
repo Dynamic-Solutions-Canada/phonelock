@@ -10,7 +10,6 @@ import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,7 +64,8 @@ final class AppGrid extends LinearLayout {
             try {
                 ApplicationInfo ai = pm.getApplicationInfo(p, PackageManager.MATCH_UNINSTALLED_PACKAGES);
                 out.add(new Entry(p, pm.getApplicationLabel(ai), pm.getApplicationIcon(ai)));
-            } catch (PackageManager.NameNotFoundException ignored) {}
+            } catch (PackageManager.NameNotFoundException ignored) {
+            }
         }
         return out;
     }

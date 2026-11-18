@@ -92,15 +92,27 @@ internal fun LanguageSection() {
     val matchDevice = stringResource(R.string.language_match_device)
 
     Section(stringResource(R.string.language_title)) {
-        ListRow(chosen?.let(AppLanguage::nameOf) ?: matchDevice,
+        ListRow(
+            chosen?.let(AppLanguage::nameOf) ?: matchDevice,
             AnnotatedString(stringResource(R.string.language_detail)),
-            leading = { SymbolBadge("🌐") }, onClick = { picking = true }, titleLines = 2)
+            leading = { SymbolBadge("🌐") },
+            onClick = { picking = true },
+            titleLines = 2,
+        )
     }
 
     if (picking) {
-        val options = listOf(MenuEntry(matchDevice) { AppLanguage.choose(ctx, null); picking = false }) +
+        val options = listOf(
+            MenuEntry(matchDevice) {
+                AppLanguage.choose(ctx, null)
+                picking = false
+            },
+        ) +
             AppLanguage.choices(ctx).map { locale ->
-                MenuEntry(AppLanguage.nameOf(locale)) { AppLanguage.choose(ctx, locale); picking = false }
+                MenuEntry(AppLanguage.nameOf(locale)) {
+                    AppLanguage.choose(ctx, locale)
+                    picking = false
+                }
             }
         OptionsDialog(stringResource(R.string.language_title), onDismiss = { picking = false }, options = options)
     }
@@ -118,18 +130,32 @@ internal fun DeviceLanguageSetting(dev: String, st: PhoneState?) {
     val matchDevice = stringResource(R.string.device_language_match)
     val current = if (lang.isEmpty()) matchDevice else AppLanguage.nameOf(Locale.forLanguageTag(lang))
 
-    ListRow(stringResource(R.string.device_language_title), AnnotatedString(current),
-        leading = { SymbolBadge("🌐") }, onClick = { picking = true }, titleLines = 2)
+    ListRow(
+        stringResource(R.string.device_language_title),
+        AnnotatedString(current),
+        leading = { SymbolBadge("🌐") },
+        onClick = { picking = true },
+        titleLines = 2,
+    )
 
     if (picking) {
-        val options = listOf(MenuEntry(matchDevice) { Hub.setDeviceLanguage(dev, ""); picking = false }) +
+        val options = listOf(
+            MenuEntry(matchDevice) {
+                Hub.setDeviceLanguage(dev, "")
+                picking = false
+            },
+        ) +
             AppLanguage.choices(ctx).map { locale ->
                 MenuEntry(AppLanguage.nameOf(locale)) {
                     Hub.setDeviceLanguage(dev, locale.toLanguageTag())
                     picking = false
                 }
             }
-        OptionsDialog(stringResource(R.string.device_language_title), onDismiss = { picking = false },
-            note = stringResource(R.string.device_language_note), options = options)
+        OptionsDialog(
+            stringResource(R.string.device_language_title),
+            onDismiss = { picking = false },
+            note = stringResource(R.string.device_language_note),
+            options = options,
+        )
     }
 }
