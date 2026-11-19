@@ -25,7 +25,7 @@ This repo follows the shared standards at https://github.com/Dynamic-Solutions-C
 | Wording for code with no Compose context | `Strings.kt` |
 | Languages | `res/xml/locales_config.xml` and `res/values*/` in each app |
 | Hub server | `server/` (see `server/README.md`) |
-| Gradle project (both apps, wrapper, debug key) | `android/` |
+| Gradle project (both apps, wrapper, version catalog, debug key, build container) | `android/` (`gradle/libs.versions.toml`, `docker/Dockerfile`, `buildSrc/` for build logic) |
 | Release and hub deploy scripts | `scripts/deploy/` |
 | Build runner, checks, adb and test scripts | `scripts/dev/` |
 | Command entry points, the capped Gradle runner, the translation and preferences checks | `package.json`, `scripts/dev/gradle`, `scripts/dev/check-l10n.py`, `scripts/dev/check-prefs.py` |
@@ -61,12 +61,13 @@ This repo follows the shared standards at https://github.com/Dynamic-Solutions-C
 | `npm run validate` | Format, lint, unit tests, the translation and preferences checks and debug builds, as CI runs it | Device behaviour or the protocol path |
 | `npm run verify:android` | Debug builds of the lock app and both parent-app flavours compile, with no secrets needed | Release signing |
 | `npm run test` | The JVM unit tests pass | Device behaviour |
-| `scripts/deploy/build.sh` | Both release APKs compile, pass the translation lint, and are signed (needs the signing files in `.secrets/`) | That they install or run |
+| `npm run build:image` | The build container image exists (needed once, and when `android/docker/Dockerfile` changes) | Anything about the apps |
+| `scripts/deploy/build.sh` | Both release APKs compile, pass the translation lint, and are signed with the existing release key (it refuses without the key in `.secrets/` and never creates one) | That they install or run |
 | `npm run test:device` | The on-device tests pass on a connected phone or emulator (manual, not in `validate`) | That the camera reads a real QR code |
 | `npm run check:listings` | The Play listing source has the app's nine locales and fits Play's limits (in `validate`) | That its claims are still true |
 | `scripts/dev/test-remote.sh` | A paired phone answers encrypted commands over the topic (manual, not in `validate`) | Anything without a paired test phone |
 
-Gradle tasks go through `scripts/dev/gradle`, which caps memory locally; the full list and what each proves is under **Checks** in `docs/development.md`.
+Gradle tasks go through `scripts/dev/gradle`, which runs them in the memory-capped build container (`PHONELOCK_GRADLE=local` runs them on this machine instead); the full list and what each proves is under **Checks** in `docs/development.md`.
 
 ## Release
 

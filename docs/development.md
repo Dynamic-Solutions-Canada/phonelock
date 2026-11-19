@@ -2,15 +2,23 @@
 
 How to build, set up, control and release PhoneLock. The parent ⇄ phone message format is in [protocol.md](protocol.md), and the hub server in [server/README.md](../server/README.md).
 
-## Build (WSL)
+## Build
+
+The Gradle project is in `android/`, and every Gradle task goes through `scripts/dev/gradle`, which runs it in a disposable container from the `phonelock-build` image (`android/docker/Dockerfile`: JDK 17, the Android SDK packages the build needs, and git) under a hard memory cap. Nothing but Docker is needed on the host for the Android build. Build the image once, and again when its Dockerfile changes:
+
+```bash
+npm run build:image
+```
+
+Then, for the release APKs:
 
 ```bash
 scripts/deploy/build.sh            # -> android/lock/build/outputs/apk/release/lock-release.apk
 ```
 
-`scripts/deploy/build.sh` builds the lock app and the GitHub flavour of the parent app (`android/companion/build/outputs/apk/github/release/companion-github-release.apk`). The Play flavour is `:companion:assemblePlayRelease`, built only when asked for.
+`scripts/deploy/build.sh` builds the lock app and the GitHub flavour of the parent app (`android/companion/build/outputs/apk/github/release/companion-github-release.apk`). The Play flavour is `:companion:assemblePlayRelease`, built only when asked for. It refuses to run without the release key in `.secrets/` and never creates one: every installed copy accepts only updates signed by the existing key.
 
-Needs JDK 17, Node (the version in `.nvmrc`; `npm ci` installs the dev tools), Python 3, and the Android SDK with the platform set by `compileSdk` in `android/companion/build.gradle.kts`, in `ANDROID_HOME` or `~/android-sdk`. Gradle comes from the committed wrapper (`./gradlew`), which downloads the pinned version.
+The npm checks need Node (the version in `.nvmrc`, with `nvm use`; `npm ci` installs the dev tools) and Python 3. `PHONELOCK_GRADLE=local` runs Gradle on this machine instead, with JDK 17 and an Android SDK in `ANDROID_HOME` or `~/android-sdk`; `npm run test:device` does, because the container can't reach a connected phone. Gradle itself comes from the committed wrapper (`android/gradlew`), and its cache lives in `android/.gradle`.
 
 Signing key and secrets live in `.secrets/` (git-ignored). Keep `.secrets/phonelock.keystore` safe: updates must be signed with the same key.
 
@@ -18,7 +26,7 @@ Debug builds are signed with the committed debug-only key in `android/keystore/d
 
 ## Checks
 
-The root `package.json` holds the entry points. Gradle tasks go through `scripts/dev/gradle`, which runs the wrapper under a memory cap (`PHONELOCK_GRADLE_MEMORY`, default 4G, no swap) with one worker; check `free -m` first. In CI it runs the wrapper directly.
+The root `package.json` holds the entry points. Gradle tasks go through `scripts/dev/gradle`, which runs the wrapper in the build container (or locally with `PHONELOCK_GRADLE=local`) under a memory cap (`PHONELOCK_GRADLE_MEMORY`, default 4G, no swap) with one worker; check `free -m` first and keep the cap plus 2.5 GiB free. In CI it runs the wrapper directly.
 
 | Command | Proves | Does not prove |
 | --- | --- | --- |

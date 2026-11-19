@@ -1,39 +1,70 @@
 #!/usr/bin/env bash
-# Run the committed Gradle wrapper with the given tasks, from any directory.
+# Run the Android Gradle wrapper (android/gradlew) with the given tasks, from any directory.
 #
-# In CI (CI is set) it runs ./gradlew as is: the runner installs the JDK and SDK and has the memory.
-# Locally it runs under a hard memory cap with no swap (PHONELOCK_GRADLE_MEMORY, default 4G), one worker
-# and the Kotlin compiler in-process, the settings that build reliably on a shared machine. Check `free -m`
-# first and keep the cap below what is free.
-# It exits with Gradle's status, or with a clear error when the Android SDK or systemd-run is missing.
+# Where Gradle runs, in order:
+#   1. Directly when CI is set: the runner installs the JDK and SDK and has the memory.
+#   2. On this machine when PHONELOCK_GRADLE=local, with a local JDK and Android SDK (ANDROID_HOME, else
+#      ~/android-sdk), under a hard memory cap (systemd-run, no swap).
+#   3. Otherwise (the default) in a disposable container from the phonelock-build image (android/docker/,
+#      built with `npm run build:image`), under a hard memory cap with no swap (PLAT-12).
+# Locally the cap is PHONELOCK_GRADLE_MEMORY (default 4G), with one worker and the Kotlin compiler in-process,
+# the settings that build reliably on a shared machine. Check `free -m` first: keep the cap plus 2.5 GiB free.
+# It exits with Gradle's status, or with a clear error when its runner is missing.
 set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-# The Gradle project is under android/ (LAYOUT-4).
-cd "$repo_root/android"
 
 if [ "$#" -eq 0 ]; then
   echo "usage: scripts/dev/gradle <task> [task...]" >&2
   exit 2
 fi
 
+memory="${PHONELOCK_GRADLE_MEMORY:-4G}"
+# The Gradle heaps stay well inside the cap, so Gradle fails with an error instead of being killed.
+gradle_args=(--no-daemon --max-workers=1 -Dorg.gradle.jvmargs=-Xmx2g -Pkotlin.compiler.execution.strategy=in-process)
+
+# 1. CI.
 if [ -n "${CI:-}" ]; then
+  cd "$repo_root/android"
   exec ./gradlew "$@"
 fi
 
-# The SDK location: ANDROID_HOME when set, else ~/android-sdk (where scripts/deploy/build.sh has always looked).
-export ANDROID_HOME="${ANDROID_HOME:-$HOME/android-sdk}"
-if [ ! -d "$ANDROID_HOME/platforms" ]; then
-  echo "scripts/dev/gradle: no Android SDK at $ANDROID_HOME. Set ANDROID_HOME to your SDK." >&2
+# 2. This machine's JDK and SDK, capped.
+if [ "${PHONELOCK_GRADLE:-}" = "local" ]; then
+  export ANDROID_HOME="${ANDROID_HOME:-$HOME/android-sdk}"
+  if [ ! -d "$ANDROID_HOME/platforms" ]; then
+    echo "scripts/dev/gradle: no Android SDK at $ANDROID_HOME. Set ANDROID_HOME, or leave PHONELOCK_GRADLE unset to build in the container." >&2
+    exit 1
+  fi
+  if ! command -v systemd-run >/dev/null 2>&1; then
+    echo "scripts/dev/gradle: systemd-run is not available to cap memory; build in the container instead." >&2
+    exit 1
+  fi
+  cd "$repo_root/android"
+  exec systemd-run --user --scope -q -p MemoryMax="$memory" -p MemorySwapMax=0 \
+    env GRADLE_OPTS=-Xmx512m ./gradlew "${gradle_args[@]}" "$@"
+fi
+
+# 3. The build container, capped.
+if ! command -v docker >/dev/null 2>&1; then
+  echo "scripts/dev/gradle: docker is not available. Install it, or set PHONELOCK_GRADLE=local to use a local JDK and Android SDK." >&2
   exit 1
 fi
-if ! command -v systemd-run >/dev/null 2>&1; then
-  echo "scripts/dev/gradle: systemd-run is not available to cap memory. Set CI=1 to run ./gradlew without a cap." >&2
+if ! docker image inspect phonelock-build >/dev/null 2>&1; then
+  echo "scripts/dev/gradle: no phonelock-build image. Build it with \`npm run build:image\` (see \"Build\" in docs/development.md)." >&2
   exit 1
 fi
 
-memory="${PHONELOCK_GRADLE_MEMORY:-4G}"
-# The Gradle heap stays well inside the cap, so Gradle fails with an error instead of being killed.
-exec systemd-run --user --scope -q -p MemoryMax="$memory" -p MemorySwapMax=0 \
-  env GRADLE_OPTS=-Xmx512m ./gradlew --no-daemon --max-workers=1 \
-  -Dorg.gradle.jvmargs=-Xmx2g -Pkotlin.compiler.execution.strategy=in-process "$@"
+# The whole repo is mounted, because the build reads the commit count from .git and release signing from
+# .secrets/ (Gradle only reads them; nothing prints them). The Gradle cache lives in android/.gradle
+# (git-ignored), so it survives between runs. Files are written as this user, not root.
+exec docker run --rm \
+  --memory "$memory" --memory-swap "$memory" \
+  -u "$(id -u):$(id -g)" \
+  -e HOME=/tmp \
+  -e GRADLE_USER_HOME=/repo/android/.gradle \
+  -e ANDROID_USER_HOME=/tmp/.android \
+  -e GRADLE_OPTS=-Xmx512m \
+  -v "$repo_root:/repo" -w /repo/android \
+  phonelock-build \
+  ./gradlew "${gradle_args[@]}" "$@"

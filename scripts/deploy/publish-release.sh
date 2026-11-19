@@ -16,25 +16,29 @@ git fetch -q origin main
 # (the release skill's procedure). Stop before building when they are missing or invalid; never fall back to
 # a fixed or generated text (REL-6).
 version=$(git rev-list --count HEAD)
-out=$(mktemp -d)
+# The release's files are staged under .artifacts/packages/<version>/ (LAYOUT-10, git-ignored), under the
+# fixed asset names installed apps fetch.
+out=.artifacts/packages/1.0.$version
+rm -rf "$out"
+mkdir -p "$out"
 node scripts/deploy/release-notes.mjs github "v1.0.$version" > "$out/notes.md" || { rm -rf "$out"; exit 1; }
 
-# Memory-capped, single worker with in-process Kotlin: the settings that build reliably on this machine
-# alongside other work (larger parallel builds have been OOM-killed). The 512 MiB client and 2 GiB Gradle heap,
-# as in scripts/dev/gradle, fit inside the cap; the 3 GiB in gradle.properties plus a larger client did not.
-systemd-run --user --scope -q -p MemoryMax=3500M -p MemorySwapMax=0 env GRADLE_OPTS=-Xmx512m \
-  bash scripts/deploy/build.sh --max-workers=1 -Dorg.gradle.jvmargs=-Xmx2g -Pkotlin.compiler.execution.strategy=in-process
+# Built through scripts/dev/gradle (the build container by default), single worker with in-process Kotlin,
+# under a 3.5 GiB cap unless PHONELOCK_GRADLE_MEMORY says otherwise: the settings that build reliably on this
+# machine alongside other work (larger parallel builds have been OOM-killed).
+PHONELOCK_GRADLE_MEMORY="${PHONELOCK_GRADLE_MEMORY:-3500M}" scripts/deploy/build.sh
 lock=android/lock/build/outputs/apk/release/lock-release.apk
 parent=android/companion/build/outputs/apk/github/release/companion-github-release.apk
+cp "$lock" "$out/lock-release.apk"
 cp "$parent" "$out/PhoneLock-parent.apk"
 # Each app checks its own version file before downloading: the lock app lock-version.json, the parent app
 # (GitHub build) parent-version.json.
 version_file() { printf '{"versionCode":%s,"sha256":"%s","size":%s}\n' "$version" \
   "$(sha256sum "$1" | cut -c1-64)" "$(stat -c %s "$1")"; }
-version_file "$lock" > "$out/lock-version.json"
-version_file "$parent" > "$out/parent-version.json"
+version_file "$out/lock-release.apk" > "$out/lock-version.json"
+version_file "$out/PhoneLock-parent.apk" > "$out/parent-version.json"
 
 gh release create "v1.0.$version" --repo "$REPO" --title "PhoneLock 1.0.$version" --latest \
   --notes-file "$out/notes.md" \
-  "$lock" "$out/lock-version.json" "$out/PhoneLock-parent.apk" "$out/parent-version.json"
-rm -rf "$out"
+  "$out/lock-release.apk" "$out/lock-version.json" "$out/PhoneLock-parent.apk" "$out/parent-version.json"
+echo "published v1.0.$version; its files are in $out"

@@ -1,26 +1,25 @@
 #!/bin/bash
-# Build both apps inside WSL.
+# Build both release APKs, signed with PhoneLock's release key, through scripts/dev/gradle (in the build
+# container by default, under its memory cap):
 #   android/lock/build/outputs/apk/release/lock-release.apk            (child's phone)
 #   android/companion/build/outputs/apk/github/release/companion-github-release.apk  (parents' phones, GitHub build;
 #   the Play build is companion:assemblePlayRelease, built only when asked for)
-set -e
+# Extra arguments go to Gradle.
+set -euo pipefail
 cd "$(dirname "$0")/../.."
-export ANDROID_HOME="${ANDROID_HOME:-$HOME/android-sdk}"
-export GRADLE_USER_HOME="$HOME/.gradle"
-echo "sdk.dir=$ANDROID_HOME" > android/local.properties
-# The secrets folder was renamed from secrets/ to .secrets/ (D-038). Stop rather than generate a new
-# signing key beside an old folder that still holds the real one.
+
+# The release key is the maintainer's and must already exist: every installed copy only accepts updates signed
+# by it. Never create one here. A build signed by a new key would be refused by every phone, or leave them
+# stuck on the old version. These checks look for the files only; nothing reads or prints them.
 if [ -d secrets ] && [ ! -d .secrets ]; then
-  echo "rename secrets/ to .secrets/ first: it holds the release signing key" >&2
+  echo "build.sh: rename secrets/ to .secrets/ first; it holds the release signing key." >&2
   exit 1
 fi
-mkdir -p .secrets
-if [ ! -f .secrets/phonelock.keystore ]; then
-  # New signing key with a random password, kept next to it in .secrets/ (git-ignored).
-  pw=$(head -c 18 /dev/urandom | base64 | tr -d '/+=')
-  keytool -genkeypair -keystore .secrets/phonelock.keystore -storepass "$pw" -keypass "$pw" \
-    -alias phonelock -keyalg RSA -keysize 2048 -validity 36500 -dname "CN=PhoneLock" >/dev/null
-  (umask 077; printf 'storePassword=%s\nkeyPassword=%s\n' "$pw" "$pw" > .secrets/signing.properties)
+if [ ! -f .secrets/phonelock.keystore ] || [ ! -f .secrets/signing.properties ]; then
+  echo "build.sh: the release key isn't here (.secrets/phonelock.keystore and signing.properties)." >&2
+  echo "Restore it from the maintainer's private storage; a release can't be built or signed without it." >&2
+  exit 1
 fi
-(cd android && ./gradlew --no-daemon -q :lock:assembleRelease :companion:assembleGithubRelease "$@")
+
+scripts/dev/gradle :lock:assembleRelease :companion:assembleGithubRelease "$@"
 ls -l android/lock/build/outputs/apk/release/*.apk android/companion/build/outputs/apk/github/release/*.apk
