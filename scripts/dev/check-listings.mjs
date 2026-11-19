@@ -1,10 +1,10 @@
 /**
  * Check the store listing source (LIST-3, LIST-5, LIST-7): store-assets/play/listings.json has schemaVersion 1,
- * exactly the app's locales in the app's order (companion/src/main/res/xml/locales_config.xml), aliases that
+ * exactly the app's locales in the app's order (android/companion/src/main/res/xml/locales_config.xml), aliases that
  * point at a full record, and every field of every full record within Play's limits. Over-long text fails; it is
  * never truncated. The parent app's About tagline must also equal each locale's short description.
  *
- *   node tools/check-listings.mjs        (used by `npm run validate`)
+ *   node scripts/dev/check-listings.mjs        (used by `npm run validate`)
  *
  * Length is counted in Unicode code points, which is how Play counts characters.
  */
@@ -90,10 +90,10 @@ export function problemsInTaglines(source, taglines) {
 }
 
 function main() {
-  const root = resolve(fileURLToPath(new URL('..', import.meta.url)))
+  const root = resolve(fileURLToPath(new URL('../..', import.meta.url)))
   const source = JSON.parse(readFileSync(join(root, 'store-assets/play/listings.json'), 'utf8'))
-  const locales = appLocales(readFileSync(join(root, 'companion/src/main/res/xml/locales_config.xml'), 'utf8'))
-  const res = join(root, 'companion/src/main/res')
+  const locales = appLocales(readFileSync(join(root, 'android/companion/src/main/res/xml/locales_config.xml'), 'utf8'))
+  const res = join(root, 'android/companion/src/main/res')
   const taglines = Object.fromEntries(
     Object.entries(CATALOG_FOLDERS).map(([identity, folder]) => [
       identity,

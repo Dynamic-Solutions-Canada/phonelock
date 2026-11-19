@@ -8,7 +8,7 @@ build/
 # The old name of the local secrets folder, kept until it has been renamed to .secrets/ (D-038). It also
 # covers server/secrets/ on the hub host, where the Firebase service-account key lives.
 secrets/
-# keystore/debug.keystore is tracked on purpose (DIST-8) although the shared block ignores *.keystore;
+# android/keystore/debug.keystore is tracked on purpose (DIST-8) although the shared block ignores *.keystore;
 # git keeps tracking it, and a replacement needs `git add -f`. It never signs a release.
 # Personal Claude Code settings (AI-10).
 .claude/settings.local.json

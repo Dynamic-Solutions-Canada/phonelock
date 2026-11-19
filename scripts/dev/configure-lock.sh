@@ -1,9 +1,9 @@
 #!/bin/bash
 # Push a device's topic, secret and name to its locked phone over adb, and switch on screen view and ring.
-#   tools/configure-lock.sh <slug> [adb-serial]
+#   scripts/dev/configure-lock.sh <slug> [adb-serial]
 # Uses WSL adb; set ADB=/path/to/adb(.exe) to use another (e.g. Windows adb for USB).
 set -e
-cd "$(dirname "$0")/.."
+cd "$(dirname "$0")/../.."
 P=.secrets/devices/${1:?slug}/pairing.properties
 A=${ADB:-$HOME/android-sdk/platform-tools/adb}
 S=${2:+-s $2}

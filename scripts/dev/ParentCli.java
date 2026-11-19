@@ -13,9 +13,9 @@ import javax.crypto.spec.SecretKeySpec;
 
 /**
  * Minimal desktop "parent" for testing, using only the JDK.
- *   java tools/ParentCli.java send '{"t":"status","full":true}'
- *   java tools/ParentCli.java read 10m        # decrypt recent messages
- *   java tools/ParentCli.java newsecret       # print a fresh 32-byte secret
+ *   java scripts/dev/ParentCli.java send '{"t":"status","full":true}'
+ *   java scripts/dev/ParentCli.java read 10m        # decrypt recent messages
+ *   java scripts/dev/ParentCli.java newsecret       # print a fresh 32-byte secret
  * Reads .secrets/devices/$DEVICE/pairing.properties (server, topic, secret).
  */
 public class ParentCli {

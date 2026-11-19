@@ -21,7 +21,7 @@ jobs:
     # Cold Gradle caches dominate the first run; later runs are much shorter.
     timeout-minutes: 45
     env:
-      # tools/gradle runs ./gradlew directly when CI is set (the runner has the memory).
+      # scripts/dev/gradle runs ./gradlew directly when CI is set (the runner has the memory).
       CI: true
     steps:
       - uses: actions/checkout@v7
@@ -45,7 +45,7 @@ jobs:
         with:
           cache-provider: basic
       # Explicit, so a runner image without the platform can't fail the build. compileSdk 37 is the
-      # android-37.0 package. Must match compileSdk in companion/build.gradle and lock/build.gradle.
+      # android-37.0 package. Must match compileSdk in android/companion/build.gradle and android/lock/build.gradle.
       - name: Install SDK platform 37
         run: sdkmanager "platforms;android-37.0"
       - name: Validate

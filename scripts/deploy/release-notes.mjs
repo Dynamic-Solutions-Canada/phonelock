@@ -2,9 +2,9 @@
  * Committed release notes (REL-6): check them, and turn one version's notes into the GitHub Release body.
  * Ported from SonarBridge's scripts/release-notes.mjs, without its Play step (PhoneLock is not on Play yet).
  *
- *   node tools/release-notes.mjs check
+ *   node scripts/deploy/release-notes.mjs check
  *       Validate every file in release-notes/ (used by `npm run validate`).
- *   node tools/release-notes.mjs github vX.Y.Z
+ *   node scripts/deploy/release-notes.mjs github vX.Y.Z
  *       Print the GitHub Release body: the en-US notes, how to get the apps, and the AI disclosure line.
  *
  * Notes are never generated from commits and never truncated: a missing sibling
@@ -133,7 +133,7 @@ export function githubReleaseBody(notes) {
 
 /** Command-line entry point; exits non-zero with a message on any problem. */
 function main(argv) {
-  const repoRoot = resolve(fileURLToPath(new URL('..', import.meta.url)))
+  const repoRoot = resolve(fileURLToPath(new URL('../..', import.meta.url)))
   const folder = join(repoRoot, 'release-notes')
   const [command, tag] = argv
 

@@ -1,7 +1,7 @@
 # UI conventions
 
 Read when: adding or changing a screen, dialog, list or wording in the parent app.
-Governs: `companion/src/main/java/home/phonelock/parent/**`, `companion/src/main/res/values*/strings*.xml`
+Governs: `android/companion/src/main/java/home/phonelock/parent/**`, `android/companion/src/main/res/values*/strings*.xml`
 
 The shared Android rules (Material 3 with dynamic colour, the About block, one dialog and one row shape) are UI-11 and BRAND-8 in the [app standards](https://github.com/Dynamic-Solutions-Canada/app-standards/blob/main/standards/ui.md). This guide records how the parent app meets them, and its own conventions on top. Match the sibling screen that already does the same thing before writing anything new.
 

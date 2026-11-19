@@ -1,12 +1,12 @@
 #!/bin/bash
 # Deploy the PhoneLock hub (server/) to the "apps" host, the same way other projects there deploy:
 # a git checkout under /home/apps, docker compose on the shared nginx network, and a site file in nginx.
-#   tools/deploy-hub.sh            # deploys origin/main
+#   scripts/deploy/deploy-hub.sh            # deploys origin/main
 # Needs on the host, once: /home/apps/phonelock/server/.env (from .env.example) and, for push,
 # server/secrets/firebase.json. Both are git-ignored and survive the reset below.
 # A changed nginx site needs root: run 'sudo apps-sudo-window' on the host first (15 minutes of sudo).
 set -euo pipefail
-cd "$(dirname "$0")/.."
+cd "$(dirname "$0")/../.."
 HOST=${DEPLOY_SSH_HOST:-apps}
 DIR=${DEPLOY_REPO_PATH:-/home/apps/phonelock}
 REPO=https://github.com/Dynamic-Solutions-Canada/phonelock.git

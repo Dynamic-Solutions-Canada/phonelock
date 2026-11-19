@@ -13,8 +13,8 @@ import re
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-SOURCES = [ROOT / "companion/src/main", ROOT / "companion/src/github", ROOT / "companion/src/play"]
+ROOT = Path(__file__).resolve().parents[2]
+SOURCES = [ROOT / "android/companion/src/main", ROOT / "android/companion/src/github", ROOT / "android/companion/src/play"]
 OWNER = "Prefs.kt"
 
 PATTERNS = [

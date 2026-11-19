@@ -9,13 +9,13 @@ apply from: 'third-party-notices.gradle'
 
 // Keystore passwords live with the keystore in .secrets/ (git-ignored), not in this public file.
 def signing = new Properties()
-def signingFile = rootProject.file('.secrets/signing.properties')
+def signingFile = rootProject.file('../.secrets/signing.properties')
 if (signingFile.exists()) signingFile.withInputStream { signing.load(it) }
 
 // Firebase (push through the PhoneLock hub) and the hub address, from .secrets/firebase.properties if present.
 // Without it the app keeps its own background connection, as before.
 def firebase = new Properties()
-def firebaseFile = rootProject.file('.secrets/firebase.properties')
+def firebaseFile = rootProject.file('../.secrets/firebase.properties')
 if (firebaseFile.exists()) firebaseFile.withInputStream { firebase.load(it) }
 def quoted = { String key -> '"' + (firebase.getProperty(key) ?: '') + '"' }
 
@@ -41,7 +41,7 @@ android {
     }
 
     signingConfigs {
-        // Debug builds use the committed debug-only key (keystore/debug.keystore, standard "android" passwords),
+        // Debug builds use the committed debug-only key (android/keystore/debug.keystore, standard "android" passwords),
         // so every machine and container signs them the same way and reinstalls work (DIST-8). It is not a secret.
         debug {
             storeFile rootProject.file('keystore/debug.keystore')
@@ -50,7 +50,7 @@ android {
             keyPassword 'android'
         }
         lock {
-            storeFile file('../.secrets/phonelock.keystore')
+            storeFile rootProject.file('../.secrets/phonelock.keystore')
             storePassword signing.getProperty('storePassword')
             keyAlias 'phonelock'
             keyPassword signing.getProperty('keyPassword')

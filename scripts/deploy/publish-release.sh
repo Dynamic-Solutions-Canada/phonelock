@@ -4,9 +4,9 @@
 # lock-version.json and parent-version.json to decide.
 # Anything published reaches children's devices unattended: only publish a build already tested on a device
 # over adb (a lock app that crashes on start can't be fixed remotely).
-#   tools/publish-release.sh            # builds from the committed, pushed HEAD
+#   scripts/deploy/publish-release.sh            # builds from the committed, pushed HEAD
 set -euo pipefail
-cd "$(dirname "$0")/.."
+cd "$(dirname "$0")/../.."
 REPO=Dynamic-Solutions-Canada/phonelock
 [ -z "$(git status --porcelain)" ] || { echo "commit first: releases must match a pushed commit"; exit 1; }
 git fetch -q origin main
@@ -17,15 +17,15 @@ git fetch -q origin main
 # a fixed or generated text (REL-6).
 version=$(git rev-list --count HEAD)
 out=$(mktemp -d)
-node tools/release-notes.mjs github "v1.0.$version" > "$out/notes.md" || { rm -rf "$out"; exit 1; }
+node scripts/deploy/release-notes.mjs github "v1.0.$version" > "$out/notes.md" || { rm -rf "$out"; exit 1; }
 
 # Memory-capped, single worker with in-process Kotlin: the settings that build reliably on this machine
 # alongside other work (larger parallel builds have been OOM-killed). The 512 MiB client and 2 GiB Gradle heap,
-# as in tools/gradle, fit inside the cap; the 3 GiB in gradle.properties plus a larger client did not.
+# as in scripts/dev/gradle, fit inside the cap; the 3 GiB in gradle.properties plus a larger client did not.
 systemd-run --user --scope -q -p MemoryMax=3500M -p MemorySwapMax=0 env GRADLE_OPTS=-Xmx512m \
-  bash ./build.sh --max-workers=1 -Dorg.gradle.jvmargs=-Xmx2g -Pkotlin.compiler.execution.strategy=in-process
-lock=lock/build/outputs/apk/release/lock-release.apk
-parent=companion/build/outputs/apk/github/release/companion-github-release.apk
+  bash scripts/deploy/build.sh --max-workers=1 -Dorg.gradle.jvmargs=-Xmx2g -Pkotlin.compiler.execution.strategy=in-process
+lock=android/lock/build/outputs/apk/release/lock-release.apk
+parent=android/companion/build/outputs/apk/github/release/companion-github-release.apk
 cp "$parent" "$out/PhoneLock-parent.apk"
 # Each app checks its own version file before downloading: the lock app lock-version.json, the parent app
 # (GitHub build) parent-version.json.

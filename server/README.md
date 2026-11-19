@@ -15,7 +15,7 @@ On the "apps" host (`ssh apps`), like the other projects there: a git checkout a
 ## Deploy
 
 ```bash
-tools/deploy-hub.sh
+scripts/deploy/deploy-hub.sh
 curl https://<hub name>/v1/health
 ```
 

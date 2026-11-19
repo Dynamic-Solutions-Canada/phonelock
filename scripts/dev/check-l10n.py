@@ -12,7 +12,7 @@ import xml.etree.ElementTree as ET
 from collections import Counter
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 APPS = ["companion", "lock"]
 # The seven wording catalogs of the nine-locale set: en-CA uses values/, fr-CA falls back to values-fr/.
 FOLDERS = {"values", "values-es", "values-fr", "values-de", "values-b+zh+Hans", "values-pt", "values-ja"}
@@ -50,7 +50,7 @@ def placeholders(text):
 
 def check_app(app, problems):
     """Compare every translated catalog of one app against its English catalog."""
-    res = ROOT / app / "src/main/res"
+    res = ROOT / "android" / app / "src/main/res"
     folders = {path.name for path in res.glob("values*") if any(path.glob("strings*.xml"))}
     if folders != FOLDERS:
         problems.append(f"{app}: unexpected or missing catalogs: {sorted(folders ^ FOLDERS)}")

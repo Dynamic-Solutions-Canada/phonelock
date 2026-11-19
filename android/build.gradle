@@ -21,7 +21,9 @@ spotless {
         ])
     }
     java {
-        target 'lock/src/**/*.java', 'tools/**/*.java'
+        // Only files inside this Gradle project can be formatted; scripts/dev/ParentCli.java, outside it, is kept
+        // in the same style by hand.
+        target 'lock/src/**/*.java'
         palantirJavaFormat('2.103.0')
     }
     groovyGradle {

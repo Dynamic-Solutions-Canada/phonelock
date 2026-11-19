@@ -5,20 +5,20 @@ How to build, set up, control and release PhoneLock. The parent ⇄ phone messag
 ## Build (WSL)
 
 ```bash
-./build.sh            # -> lock/build/outputs/apk/release/lock-release.apk
+scripts/deploy/build.sh            # -> android/lock/build/outputs/apk/release/lock-release.apk
 ```
 
-`build.sh` builds the lock app and the GitHub flavour of the parent app (`companion/build/outputs/apk/github/release/companion-github-release.apk`). The Play flavour is `:companion:assemblePlayRelease`, built only when asked for.
+`scripts/deploy/build.sh` builds the lock app and the GitHub flavour of the parent app (`android/companion/build/outputs/apk/github/release/companion-github-release.apk`). The Play flavour is `:companion:assemblePlayRelease`, built only when asked for.
 
-Needs JDK 17, Node (the version in `.nvmrc`; `npm ci` installs the dev tools), Python 3, and the Android SDK with the platform set by `compileSdk` in `companion/build.gradle`, in `ANDROID_HOME` or `~/android-sdk`. Gradle comes from the committed wrapper (`./gradlew`), which downloads the pinned version.
+Needs JDK 17, Node (the version in `.nvmrc`; `npm ci` installs the dev tools), Python 3, and the Android SDK with the platform set by `compileSdk` in `android/companion/build.gradle`, in `ANDROID_HOME` or `~/android-sdk`. Gradle comes from the committed wrapper (`./gradlew`), which downloads the pinned version.
 
 Signing key and secrets live in `.secrets/` (git-ignored). Keep `.secrets/phonelock.keystore` safe: updates must be signed with the same key.
 
-Debug builds are signed with the committed debug-only key in `keystore/debug.keystore` (passwords `android`), never the release key. A debug build cannot update over a release one, or the reverse, without an uninstall, and Maps shows only where the Maps key also allows the debug certificate.
+Debug builds are signed with the committed debug-only key in `android/keystore/debug.keystore` (passwords `android`), never the release key. A debug build cannot update over a release one, or the reverse, without an uninstall, and Maps shows only where the Maps key also allows the debug certificate.
 
 ## Checks
 
-The root `package.json` holds the entry points. Gradle tasks go through `tools/gradle`, which runs the wrapper under a memory cap (`PHONELOCK_GRADLE_MEMORY`, default 4G, no swap) with one worker; check `free -m` first. In CI it runs the wrapper directly.
+The root `package.json` holds the entry points. Gradle tasks go through `scripts/dev/gradle`, which runs the wrapper under a memory cap (`PHONELOCK_GRADLE_MEMORY`, default 4G, no swap) with one worker; check `free -m` first. In CI it runs the wrapper directly.
 
 | Command | Proves | Does not prove |
 | --- | --- | --- |
@@ -35,7 +35,7 @@ The root `package.json` holds the entry points. Gradle tasks go through `tools/g
 | `npm run install:android` | Installs the debug parent app on the connected phone | Anything on the child's phone |
 | `npm run test:device` | The on-device tests pass on the connected phone or emulator (the QR decoder on Android's image buffers); not in `validate`, since it needs a device. Uninstall a release build first: the debug build is signed with a different key | That the camera reads a real QR code (a real-phone scan before release, in the `release` skill) |
 
-`tools/test-remote.sh` is a manual check against a paired phone and is not part of `validate`; its header says what a pass looks like.
+`scripts/dev/test-remote.sh` is a manual check against a paired phone and is not part of `validate`; its header says what a pass looks like.
 
 ### Icons
 
@@ -43,11 +43,11 @@ The root `package.json` holds the entry points. Gradle tasks go through `tools/g
 
 ### Third-party notices
 
-Each parent-app build carries `assets/third_party_notices.txt`, which About > Third-party notices shows. `companion/third-party-notices.gradle` generates it per variant with the AboutLibraries Gradle plugin (no runtime library), and the build fails when a dependency's licence isn't on the allowed list there, or the list misses a module on the runtime classpath. A new dependency under a licence not on the list needs that licence read and added, for that dependency only where possible. The lock app has no third-party runtime dependencies, so it has no notices file.
+Each parent-app build carries `assets/third_party_notices.txt`, which About > Third-party notices shows. `android/companion/third-party-notices.gradle` generates it per variant with the AboutLibraries Gradle plugin (no runtime library), and the build fails when a dependency's licence isn't on the allowed list there, or the list misses a module on the runtime classpath. A new dependency under a licence not on the list needs that licence read and added, for that dependency only where possible. The lock app has no third-party runtime dependencies, so it has no notices file.
 
 ### Lint baseline
 
-Lint issues already in the code when lint joined `validate` are recorded in `lock/lint-baseline.xml` and `companion/lint-baseline.xml`, so only new issues fail. The baseline only shrinks: fix or deliberately suppress an entry (with a comment saying why), then regenerate it with `tools/gradle :lock:updateLintBaselineDebug :companion:updateLintBaselineGithubDebug`. Open work, largest first:
+Lint issues already in the code when lint joined `validate` are recorded in `android/lock/lint-baseline.xml` and `android/companion/lint-baseline.xml`, so only new issues fail. The baseline only shrinks: fix or deliberately suppress an entry (with a comment saying why), then regenerate it with `scripts/dev/gradle :lock:updateLintBaselineDebug :companion:updateLintBaselineGithubDebug`. Open work, largest first:
 
 - **MissingPermission** (lock app): calls that rely on permissions the lock app holds as device owner or checks at runtime; each needs a check or a reasoned suppression.
 - **WrongConstant** (lock app): user restriction keys and a Do Not Disturb filter passed as values lint doesn't recognise.
@@ -81,7 +81,7 @@ Both apps talk through an [ntfy](https://ntfy.sh) server. `server/` runs our own
 
 ## Languages
 
-The parent app's list lives in `companion/src/main/res/xml/locales_config.xml`, and the lock app's in `lock/src/main/res/xml/locales_config.xml`; keep the two lists the same. English wording is in `res/values/strings*.xml`, one file per area, and each language has the same files under `values-<language>/` with the same names. Parent-app code with no screen to draw on (notifications, services) gets its wording through `Strings`.
+The parent app's list lives in `android/companion/src/main/res/xml/locales_config.xml`, and the lock app's in `android/lock/src/main/res/xml/locales_config.xml`; keep the two lists the same. English wording is in `res/values/strings*.xml`, one file per area, and each language has the same files under `values-<language>/` with the same names. Parent-app code with no screen to draw on (notifications, services) gets its wording through `Strings`.
 
 Release builds fail if a language is missing a string, has an extra one, or has mismatched placeholders, so new wording needs every translation before a release.
 
@@ -89,8 +89,8 @@ Review status of every wording catalog (LOC-12). Update the row when a native sp
 
 | Catalog | Languages | Status |
 | --- | --- | --- |
-| Parent app (`companion/src/main/res/values*/strings*.xml`) | en-US source; es, fr, de, zh-Hans, pt, ja | AI-drafted, not reviewed |
-| Lock app (`lock/src/main/res/values*/strings*.xml`) | en-US source; es, fr, de, zh-Hans, pt, ja | AI-drafted, not reviewed |
+| Parent app (`android/companion/src/main/res/values*/strings*.xml`) | en-US source; es, fr, de, zh-Hans, pt, ja | AI-drafted, not reviewed |
+| Lock app (`android/lock/src/main/res/values*/strings*.xml`) | en-US source; es, fr, de, zh-Hans, pt, ja | AI-drafted, not reviewed |
 | Release notes (`release-notes/`) | en-US source; es-ES, fr-FR, de-DE, zh-CN, pt-BR, ja-JP | AI-drafted, not reviewed |
 | Play listing (`store-assets/play/listings.json`) | en-US source; es-ES, fr-FR, de-DE, zh-CN, pt-BR, ja-JP (en-CA and fr-CA copy en-US and fr-FR) | AI-drafted, not reviewed |
 
@@ -98,12 +98,12 @@ Product terms are translated the same way everywhere, so the listing, the releas
 
 ## Publish a release
 
-`tools/publish-release.sh` publishes both APKs with `lock-version.json` and `parent-version.json` to the GitHub releases the setup code downloads from. Installed lock apps check a few times a day and update themselves the next time the screen is off, and the parent app (GitHub build) offers its update in Settings > About. Anything published reaches children's phones unattended, so only publish a build already tested on a device.
+`scripts/deploy/publish-release.sh` publishes both APKs with `lock-version.json` and `parent-version.json` to the GitHub releases the setup code downloads from. Installed lock apps check a few times a day and update themselves the next time the screen is off, and the parent app (GitHub build) offers its update in Settings > About. Anything published reaches children's phones unattended, so only publish a build already tested on a device.
 
-The full procedure is the `release` skill (`.agents/skills/release/SKILL.md`). In short: the version is `1.0.<commit count>`, so the notes for the next version are committed as the last commit before publishing. They live in `release-notes/1.0.N.md` (en-US) with one sibling per other wording catalog (`1.0.N.es-ES.md`, and `fr-FR`, `de-DE`, `zh-CN`, `pt-BR`, `ja-JP`), written for users, under 500 characters, with no heading or disclosure line (`npm run check:release-notes` checks them). `tools/publish-release.sh` refuses to run without them, and builds the Release body from the en-US file, a "Get it" section and the AI disclosure line. It never falls back to a fixed or generated text.
+The full procedure is the `release` skill (`.agents/skills/release/SKILL.md`). In short: the version is `1.0.<commit count>`, so the notes for the next version are committed as the last commit before publishing. They live in `release-notes/1.0.N.md` (en-US) with one sibling per other wording catalog (`1.0.N.es-ES.md`, and `fr-FR`, `de-DE`, `zh-CN`, `pt-BR`, `ja-JP`), written for users, under 500 characters, with no heading or disclosure line (`npm run check:release-notes` checks them). `scripts/deploy/publish-release.sh` refuses to run without them, and builds the Release body from the en-US file, a "Get it" section and the AI disclosure line. It never falls back to a fixed or generated text.
 
 ```bash
-tools/publish-release.sh
+scripts/deploy/publish-release.sh
 ```
 
 ## Install on the child's phone with adb
@@ -118,7 +118,7 @@ adb shell dpm set-device-owner home.phonelock/.AdminReceiver
 Then pair it and switch on screen view and ringing through Do Not Disturb (needs USB debugging, so do it before `debug off`). It also exempts the lock app from Doze, so location logging keeps working while the phone sits still.
 
 ```bash
-tools/configure-lock.sh <slug> [adb-serial]
+scripts/dev/configure-lock.sh <slug> [adb-serial]
 ```
 
 ## adb control

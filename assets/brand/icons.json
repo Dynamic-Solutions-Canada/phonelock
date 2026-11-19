@@ -3,14 +3,14 @@
   "targets": {
     "android": [
       {
-        "res": "companion/src/main/res",
+        "res": "android/companion/src/main/res",
         "legacy": false,
         "play": true,
         "playPath": "store-assets/play/graphics/icon.png",
         "playMaster": "maskable"
       },
       {
-        "res": "lock/src/main/res",
+        "res": "android/lock/src/main/res",
         "legacy": false,
         "play": false
       }

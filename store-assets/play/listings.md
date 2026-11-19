@@ -63,7 +63,7 @@ Not collected: personal info, financial info, health, messages, photos and video
 - **Monitoring app (Stalkerware policy):** the manifest declares `isMonitoringTool` = `child_monitoring`, and the listing presents it as parental control only. The child is told on their device and it can't be hidden.
 - **Prominent disclosure:** the first-run "Before you start" screen (Disclosure.kt), before any device is added.
 - **Camera:** scanning pairing QR codes, decoded on the phone (ZXing); nothing about a scan is sent anywhere.
-- **Foreground service and battery-optimization exemption:** not in the Play build. Both live only in the `github` flavour (`companion/src/github/`), so the Play build declares neither.
+- **Foreground service and battery-optimization exemption:** not in the Play build. Both live only in the `github` flavour (`android/companion/src/github/`), so the Play build declares neither.
 
 ## Play app signing (D-021)
 
