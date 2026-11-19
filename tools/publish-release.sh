@@ -20,9 +20,9 @@ out=$(mktemp -d)
 node tools/release-notes.mjs github "v1.0.$version" > "$out/notes.md" || { rm -rf "$out"; exit 1; }
 
 # Memory-capped, single worker with in-process Kotlin: the settings that build reliably on this machine
-# alongside other work (larger parallel builds have been OOM-killed). The 2 GiB Gradle heap leaves room in the
-# cap; the 3 GiB in gradle.properties does not.
-systemd-run --user --scope -q -p MemoryMax=3500M -p MemorySwapMax=0 env GRADLE_OPTS=-Xmx1600m \
+# alongside other work (larger parallel builds have been OOM-killed). The 512 MiB client and 2 GiB Gradle heap,
+# as in tools/gradle, fit inside the cap; the 3 GiB in gradle.properties plus a larger client did not.
+systemd-run --user --scope -q -p MemoryMax=3500M -p MemorySwapMax=0 env GRADLE_OPTS=-Xmx512m \
   bash ./build.sh --max-workers=1 -Dorg.gradle.jvmargs=-Xmx2g -Pkotlin.compiler.execution.strategy=in-process
 lock=lock/build/outputs/apk/release/lock-release.apk
 parent=companion/build/outputs/apk/github/release/companion-github-release.apk
