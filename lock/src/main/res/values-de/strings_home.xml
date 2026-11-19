@@ -9,6 +9,7 @@
     <string name="home_mode_until">%1$s bis %2$s</string>
     <!-- Red pill under the date. %1$d is the battery level in percent -->
     <string name="home_battery_low">Akku fast leer (%1$d\u00A0%%). Bitte aufladen.</string>
+    <string name="home_key_lost">Deine Eltern können dieses Handy gerade nicht erreichen. Bitte einen Elternteil, es neu einzurichten.</string>
     <!-- Section titles above icon grids -->
     <string name="home_section_allowed">Gerade erlaubt</string>
     <string name="home_section_paused">Gerade pausiert</string>

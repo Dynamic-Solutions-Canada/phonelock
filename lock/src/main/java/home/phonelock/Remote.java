@@ -38,7 +38,7 @@ public final class Remote {
     private Remote() {}
 
     static String secret(Context c) {
-        return Policy.prefs(c).getString("secret", "");
+        return Pairing.secret(c);
     }
 
     static boolean paired(Context c) {

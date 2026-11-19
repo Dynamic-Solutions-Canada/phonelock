@@ -48,7 +48,8 @@
         android:localeConfig="@xml/locales_config"
         android:icon="@android:drawable/sym_def_app_icon"
         android:theme="@android:style/Theme.DeviceDefault.NoActionBar"
-        android:allowBackup="false">
+        android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules">
 
         <activity
             android:name=".HomeActivity"

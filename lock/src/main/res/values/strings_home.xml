@@ -9,6 +9,8 @@
     <string name="home_mode_until">%1$s until %2$s</string>
     <!-- Red pill under the date. %1$d is the battery level in percent -->
     <string name="home_battery_low">Battery low (%1$d%%). Plug in to charge.</string>
+    <!-- The lock app can't read its pairing key any more (it was lost), so parents can't reach it until set up again. -->
+    <string name="home_key_lost">Your parents can\'t reach this phone right now. Ask a parent to set this phone up again.</string>
     <!-- Section titles above icon grids -->
     <string name="home_section_allowed">Allowed for now</string>
     <string name="home_section_paused">Paused for now</string>

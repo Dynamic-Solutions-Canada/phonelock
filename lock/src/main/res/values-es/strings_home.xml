@@ -9,6 +9,7 @@
     <string name="home_mode_until">%1$s hasta %2$s</string>
     <!-- Red pill under the date. %1$d is the battery level in percent -->
     <string name="home_battery_low">Batería baja (%1$d%%). Ponlo a cargar.</string>
+    <string name="home_key_lost">Tus padres no pueden comunicarse con este teléfono ahora. Pide a uno de ellos que vuelva a configurarlo.</string>
     <!-- Section titles above icon grids -->
     <string name="home_section_allowed">Permitidas por ahora</string>
     <string name="home_section_paused">En pausa por ahora</string>

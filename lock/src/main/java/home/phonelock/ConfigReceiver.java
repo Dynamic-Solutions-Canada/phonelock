@@ -160,10 +160,21 @@ public class ConfigReceiver extends BroadcastReceiver {
                 Policy.releaseAll(c);
                 dpm.clearDeviceOwnerApp(c.getPackageName());
                 return "released; uninstall with: adb uninstall home.phonelock";
+            case "test-forget-key":
+                // Test hook for the lost-key path; a release build must never throw its pairing key away.
+                if (!testHooksAllowed(c.getApplicationInfo().flags)) return "refused: debug builds only";
+                try {
+                    Pairing.forgetKeyForTest();
+                    return "key forgotten";
+                } catch (Exception e) {
+                    return "failed: " + e;
+                }
             case "status":
             default:
                 return "owner=" + Policy.isOwner(c)
                         + " paired=" + Remote.paired(c)
+                        + " key=" + (Pairing.keyLost(c) ? "lost" : "ok")
+                        + " sealed=" + Pairing.storedSealed(c)
                         + " topic=" + topicHash(RemoteService.topic(c))
                         + " parent=" + Policy.inParentMode(c)
                         + " pin=" + Policy.hasPin(c)
@@ -172,6 +183,14 @@ public class ConfigReceiver extends BroadcastReceiver {
                         + " dns=" + (Policy.isOwner(c) ? dpm.getGlobalPrivateDnsHost(a) : "?")
                         + " debug=" + Policy.prefs(c).getBoolean("allow_debugging", true);
         }
+    }
+
+    /**
+     * Whether test-only commands run, from the app's ApplicationInfo flags: only in a debuggable (debug) build, so a
+     * release build on a child's phone always refuses them.
+     */
+    static boolean testHooksAllowed(int appFlags) {
+        return (appFlags & android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0;
     }
 
     /**

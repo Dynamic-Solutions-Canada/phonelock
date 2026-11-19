@@ -9,6 +9,7 @@
     <string name="home_mode_until">%1$s，到 %2$s</string>
     <!-- Red pill under the date. %1$d is the battery level in percent -->
     <string name="home_battery_low">电量低（%1$d%%）。快去充电吧。</string>
+    <string name="home_key_lost">你的父母现在无法联系到这部手机。请让家长重新设置这部手机。</string>
     <!-- Section titles above icon grids -->
     <string name="home_section_allowed">现在可以用</string>
     <string name="home_section_paused">现在暂停中</string>

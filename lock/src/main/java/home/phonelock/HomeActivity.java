@@ -48,6 +48,8 @@ public class HomeActivity extends Activity {
     private TextView modeText;
     /** "Battery low (12%). Plug in to charge." under the date; hidden unless low and not charging. */
     private TextView batteryText;
+
+    private TextView keyLostText;
     /** Situation the screen was last built for, so the tick refreshes when it changes. */
     private int shownMode = -1;
 
@@ -195,6 +197,22 @@ public class HomeActivity extends Activity {
         bl.gravity = Gravity.CENTER_HORIZONTAL;
         bl.topMargin = dp(8);
         root.addView(batteryText, bl);
+
+        // The same red pill: a phone its parents can't reach must say so, or nobody knows to fix it.
+        keyLostText = new TextView(this);
+        keyLostText.setText(getString(R.string.home_key_lost));
+        keyLostText.setTextColor(Color.rgb(255, 190, 185));
+        keyLostText.setTextSize(15);
+        keyLostText.setBackground(rounded(Color.argb(90, 220, 60, 50), 50));
+        keyLostText.setPadding(dp(16), dp(6), dp(16), dp(6));
+        keyLostText.setGravity(Gravity.CENTER);
+        keyLostText.setVisibility(View.GONE);
+        LinearLayout.LayoutParams kl = new LinearLayout.LayoutParams(-2, -2);
+        kl.gravity = Gravity.CENTER_HORIZONTAL;
+        kl.topMargin = dp(8);
+        kl.leftMargin = dp(16);
+        kl.rightMargin = dp(16);
+        root.addView(keyLostText, kl);
 
         parentBar = new LinearLayout(this);
         parentBar.setOrientation(LinearLayout.VERTICAL);
@@ -691,6 +709,7 @@ public class HomeActivity extends Activity {
      * while (with their end time).
      */
     private void refresh() {
+        keyLostText.setVisibility(Pairing.keyLost(this) ? View.VISIBLE : View.GONE);
         int mode = Schedule.currentMode(this);
         long until = Schedule.currentModeUntil(this);
         if (mode == Schedule.NORMAL) {
