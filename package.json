@@ -20,7 +20,8 @@
     "test:scripts": "node --test 'tools/*.test.mjs'",
     "test:device": "tools/gradle :companion:connectedGithubDebugAndroidTest",
     "check:l10n": "python3 tools/check-l10n.py",
+    "check:prefs": "python3 tools/check-prefs.py",
     "check:release-notes": "node tools/release-notes.mjs check",
-    "validate": "npm run format:check && npm run lint && npm run test && npm run check:l10n && npm run check:release-notes && npm run verify:android"
+    "validate": "npm run format:check && npm run lint && npm run test && npm run check:l10n && npm run check:prefs && npm run check:release-notes && npm run verify:android"
   }
 }

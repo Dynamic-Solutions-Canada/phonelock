@@ -61,7 +61,7 @@ object EmergencyAlerts {
     private const val UNNAMED = "A parent"
 
     private lateinit var app: Context
-    private val prefs by lazy { app.getSharedPreferences("emergency", Context.MODE_PRIVATE) }
+    private val prefs by lazy { EmergencyPrefs(app) }
     private val _alerts = MutableStateFlow<List<Sos>>(emptyList())
 
     /** Recent alerts, newest first. */
@@ -289,11 +289,11 @@ object EmergencyAlerts {
                     .also { o -> a.where?.let { o.put("lat", it.lat).put("lng", it.lng).put("at", it.to).put("acc", it.accuracyM) } },
             )
         }
-        prefs.edit().putString("alerts", arr.toString()).apply()
+        prefs.alerts = arr.toString()
     }
 
     private fun load(): List<Sos> = runCatching {
-        val arr = JSONArray(prefs.getString("alerts", "[]"))
+        val arr = JSONArray(prefs.alerts)
         (0 until arr.length()).map { i ->
             val o = arr.getJSONObject(i)
             fun list(n: String) = o.optJSONArray(n)?.let { a -> (0 until a.length()).map { a.getString(it) } } ?: emptyList()

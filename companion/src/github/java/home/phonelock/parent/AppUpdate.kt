@@ -41,7 +41,7 @@ object AppUpdate {
 
     private lateinit var app: Context
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-    private val prefs by lazy { app.getSharedPreferences("appupdate", Context.MODE_PRIVATE) }
+    private val prefs by lazy { AppUpdatePrefs(app) }
 
     private val _state = MutableStateFlow(UpdateState())
     val state: StateFlow<UpdateState> = _state.asStateFlow()
@@ -51,14 +51,14 @@ object AppUpdate {
         app = c.applicationContext
         _state.value = UpdateState(
             installed = installedVersion(),
-            latest = prefs.getInt("latest", 0),
-            size = prefs.getLong("size", 0),
+            latest = prefs.latest,
+            size = prefs.size,
         )
     }
 
     /** Checks for a newer release if the last check was long enough ago (the app came to the front). */
     fun checkIfDue() {
-        if (System.currentTimeMillis() - prefs.getLong("checked", 0) >= CHECK_EVERY_MS) check(asked = false)
+        if (System.currentTimeMillis() - prefs.checkedAt >= CHECK_EVERY_MS) check(asked = false)
     }
 
     /**
@@ -69,7 +69,7 @@ object AppUpdate {
         scope.launch {
             try {
                 val v = fetchVersion()
-                prefs.edit().putLong("checked", System.currentTimeMillis()).apply()
+                prefs.checkedAt = System.currentTimeMillis()
                 if (v == null) {
                     // Releases from before this updater have no version file for this app.
                     if (asked) Undo.notify(Strings.get(R.string.device_app_none_published))
@@ -82,8 +82,8 @@ object AppUpdate {
 
                     asked -> offer(st.latest)
 
-                    prefs.getInt("announced", 0) != st.latest -> {
-                        prefs.edit().putInt("announced", st.latest).apply()
+                    prefs.announced != st.latest -> {
+                        prefs.announced = st.latest
                         offer(st.latest)
                     }
                 }
@@ -129,8 +129,7 @@ object AppUpdate {
     /** Stores what [v] advertises, so Settings shows it now and after a restart. */
     private fun remember(v: JSONObject) {
         val latest = v.getInt("versionCode")
-        prefs.edit().putInt("latest", latest).putString("sha256", v.getString("sha256"))
-            .putLong("size", v.optLong("size")).apply()
+        prefs.remember(latest, v.getString("sha256"), v.optLong("size"))
         _state.update { it.copy(installed = installedVersion(), latest = latest, size = v.optLong("size")) }
     }
 
@@ -148,7 +147,7 @@ object AppUpdate {
         val info = Releases.inspect(app.packageManager, apk)
         val ownSigner = Releases.installedSigner(app.packageManager, app.packageName)
         val problem = when {
-            !sha.equals(prefs.getString("sha256", ""), ignoreCase = true) ->
+            !sha.equals(prefs.sha256, ignoreCase = true) ->
                 Strings.get(R.string.device_app_bad_checksum)
 
             info == null -> Strings.get(R.string.device_app_not_an_app)
@@ -164,7 +163,7 @@ object AppUpdate {
         if (problem != null) {
             apk.delete()
             // Forget the check, so the next one fetches the version file again.
-            prefs.edit().remove("checked").apply()
+            prefs.forgetCheck()
             throw IllegalStateException(problem)
         }
         return apk

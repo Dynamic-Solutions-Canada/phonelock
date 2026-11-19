@@ -88,7 +88,7 @@ data class Folder(val path: String, val entries: List<FileEntry>, val error: Str
  */
 object DeviceData {
     private lateinit var app: Context
-    private val prefs by lazy { app.getSharedPreferences("devicedata", Context.MODE_PRIVATE) }
+    private val prefs by lazy { DeviceDataPrefs(app) }
 
     private val _calls = MutableStateFlow<Map<String, List<CallEntry>>>(emptyMap())
     val calls: StateFlow<Map<String, List<CallEntry>>> = _calls.asStateFlow()
@@ -108,7 +108,7 @@ object DeviceData {
         // Files opened earlier are only needed while a viewer shows them.
         thread(name = "opened-cleanup") { pruneOpened() }
         runCatching {
-            val o = JSONObject(prefs.getString("calls", "{}")!!)
+            val o = JSONObject(prefs.calls)
             _calls.value = o.keys().asSequence().associateWith { k -> parseCalls(o.getJSONArray(k)) }
         }
     }
@@ -378,7 +378,7 @@ object DeviceData {
                 },
             )
         }
-        prefs.edit().putString("calls", o.toString()).apply()
+        prefs.calls = o.toString()
     }
 
     /** Deletes everything kept for [dev], including its saved call log (the device was removed). */

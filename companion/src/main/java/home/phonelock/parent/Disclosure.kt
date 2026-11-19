@@ -30,11 +30,11 @@ object Disclosure {
     /** Bump when the disclosure text changes materially, so parents see and accept the new version. */
     private const val VERSION = 2
 
-    private fun prefs(c: Context) = c.getSharedPreferences("hub", Context.MODE_PRIVATE)
+    fun accepted(c: Context) = HubPrefs(c).disclosureAccepted >= VERSION
 
-    fun accepted(c: Context) = prefs(c).getInt("disclosure_accepted", 0) >= VERSION
-
-    fun accept(c: Context) = prefs(c).edit().putInt("disclosure_accepted", VERSION).apply()
+    fun accept(c: Context) {
+        HubPrefs(c).disclosureAccepted = VERSION
+    }
 }
 
 @Composable

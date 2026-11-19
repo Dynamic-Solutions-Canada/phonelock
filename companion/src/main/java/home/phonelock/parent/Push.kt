@@ -34,8 +34,8 @@ object Push {
                 .build()
             if (FirebaseApp.getApps(c).isEmpty()) FirebaseApp.initializeApp(c, options)
             app = c.applicationContext
-            prefs = c.getSharedPreferences("push", Context.MODE_PRIVATE)
-            subscribed.addAll(prefs.getStringSet("subscribed", emptySet()) ?: emptySet())
+            prefs = PushPrefs(c)
+            subscribed.addAll(prefs.subscribed)
             enabled = true
         } catch (e: Exception) {
             Log.w(TAG, "firebase: $e")
@@ -45,7 +45,7 @@ object Push {
     /** The hub's address, or empty if this build has none. */
     val hub: String get() = BuildConfig.HUB_URL.trimEnd('/')
 
-    private lateinit var prefs: android.content.SharedPreferences
+    private lateinit var prefs: PushPrefs
 
     /** Topics Firebase confirmed this app is subscribed to; only these count as reached by push. */
     private val subscribed = java.util.Collections.synchronizedSet(HashSet<String>())
@@ -82,7 +82,7 @@ object Push {
     private fun markSubscribed(topic: String, on: Boolean) {
         val changed = if (on) subscribed.add(topic) else subscribed.remove(topic)
         if (!changed) return
-        prefs.edit().putStringSet("subscribed", HashSet(subscribed)).apply()
+        prefs.subscribed = subscribed
         // The background connection is only needed for devices push doesn't reach.
         BackgroundConnection.restart(app)
     }

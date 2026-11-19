@@ -43,7 +43,7 @@ object ScreenAlerts {
     private const val MAX_PER_DEVICE = 20
 
     private lateinit var app: Context
-    private val prefs by lazy { app.getSharedPreferences("screenalerts", Context.MODE_PRIVATE) }
+    private val prefs by lazy { ScreenAlertPrefs(app) }
     private val dir by lazy { File(app.filesDir, "screen-alerts").apply { mkdirs() } }
 
     private val _alerts = MutableStateFlow<List<Alert>>(emptyList())
@@ -149,11 +149,11 @@ object ScreenAlerts {
                     .put("name", it.name).put("from", it.from).put("image", it.image ?: "").put("error", it.error ?: ""),
             )
         }
-        prefs.edit().putString("alerts", a.toString()).apply()
+        prefs.alerts = a.toString()
     }
 
     private fun load(): List<Alert> = runCatching {
-        val a = JSONArray(prefs.getString("alerts", "[]"))
+        val a = JSONArray(prefs.alerts)
         (0 until a.length()).map { i ->
             val o = a.getJSONObject(i)
             Alert(

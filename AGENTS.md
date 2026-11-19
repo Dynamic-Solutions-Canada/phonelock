@@ -26,7 +26,7 @@ This repo follows the shared standards at https://github.com/Dynamic-Solutions-C
 | Languages | `res/xml/locales_config.xml` and `res/values*/` in each app |
 | Hub server | `server/` (see `server/README.md`) |
 | Release, hub deploy, adb and test scripts | `tools/` |
-| Command entry points, the capped Gradle runner and the translation check | `package.json`, `tools/gradle`, `tools/check-l10n.py` |
+| Command entry points, the capped Gradle runner, the translation and preferences checks | `package.json`, `tools/gradle`, `tools/check-l10n.py`, `tools/check-prefs.py` |
 | Release notes and the Release body | `release-notes/`, `tools/release-notes.mjs` |
 | Play listing drafts and open questions | `play/` |
 
@@ -43,6 +43,7 @@ This repo follows the shared standards at https://github.com/Dynamic-Solutions-C
 - Every third-party dependency has an `// ... (approved: <what>)` comment in its `build.gradle`; adding one needs the maintainer's approval, recorded the same way. The lock app has no third-party runtime dependencies, and it excludes the Kotlin standard library on purpose.
 - Every dialog in the parent app uses `AppDialog`, and every list row uses `ListRow`. Every activity's content sits inside `AppTheme`, the one place the theme is set.
 - Parent-app screens use `stringResource()`; services and notifications use `Strings`.
+- Parent-app settings go through the typed classes in `Prefs.kt`, which own every preferences file, key name and default; `npm run check:prefs` (in `validate`) fails on a key typed anywhere else. The stored names are what installed copies hold, so they don't change without a migration. The lock app still reads its preferences directly; it moves to the same pattern in a later change.
 - Every string exists in all nine locales with the same placeholders, or release lint fails. Keep the two apps' `locales_config.xml` lists the same. Translations are AI-written and unreviewed.
 - Debug builds are signed with the committed debug-only key in `keystore/debug.keystore` (passwords `android`). The production key signs releases only. A debug build can't update over a release one, or the reverse.
 - The `github` flavour has the self-updater and install permission, full-screen alerts, and the background connection with its battery-saving exemption; the `play` flavour has none of them, because Play forbids or restricts each. The Play build reaches phones only by push through its hub, so it refuses phones on any other server. Shared code calls `AppUpdate` and `BackgroundConnection`, which each flavour implements, never the flavour's classes directly.
@@ -52,7 +53,7 @@ This repo follows the shared standards at https://github.com/Dynamic-Solutions-C
 
 | Command | Proves | Does not prove |
 | --- | --- | --- |
-| `npm run validate` | Format, lint, unit tests, the translation check and debug builds, as CI runs it | Device behaviour or the protocol path |
+| `npm run validate` | Format, lint, unit tests, the translation and preferences checks and debug builds, as CI runs it | Device behaviour or the protocol path |
 | `npm run verify:android` | Debug builds of the lock app and both parent-app flavours compile, with no secrets needed | Release signing |
 | `npm run test` | The JVM unit tests pass | Device behaviour |
 | `./build.sh` | Both release APKs compile, pass the translation lint, and are signed (needs the signing files in `.secrets/`) | That they install or run |

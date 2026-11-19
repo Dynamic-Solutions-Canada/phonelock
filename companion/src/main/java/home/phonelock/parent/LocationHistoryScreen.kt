@@ -163,11 +163,11 @@ internal fun LocationHistoryScreen(dev: String, name: String, onBack: () -> Unit
     }
     // Whether the map shows; remembered on this phone, for parents who mostly want the list.
     val ctx = LocalContext.current
-    val uiPrefs = remember { ctx.getSharedPreferences("ui", android.content.Context.MODE_PRIVATE) }
-    var showMap by remember { mutableStateOf(uiPrefs.getBoolean("activity_map", true)) }
+    val uiPrefs = remember { UiPrefs(ctx) }
+    var showMap by remember { mutableStateOf(uiPrefs.activityMap) }
     fun setMap(on: Boolean) {
         showMap = on
-        uiPrefs.edit().putBoolean("activity_map", on).apply()
+        uiPrefs.activityMap = on
     }
 
     val dayEnd = nextDay(day) // not day + 24 h: days are 23 or 25 hours when the clocks change

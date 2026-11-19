@@ -27,6 +27,7 @@ The root `package.json` holds the entry points. Gradle tasks go through `tools/g
 | `npm run lint` | Android lint passes for the lock app and both parent-app flavours (debug) | Runtime behaviour |
 | `npm run test` | The JVM unit tests pass (emergency numbers, screen guard, usage report, SPAKE2), and the release-notes script's tests | Device behaviour |
 | `npm run check:l10n` | Every catalog in both apps has the same keys, placeholders and plurals as English | That the translations read well |
+| `npm run check:prefs` | The parent app reads and writes preferences only through `Prefs.kt`, which owns every file, key and default | That a key's meaning is right |
 | `npm run check:release-notes` | Every version in `release-notes/` has all seven files, within Play's 500-character limit | That they read well |
 | `npm run verify:android` | Debug builds of the lock app and both parent-app flavours compile | Release signing |
 | `npm run package:android` | Release APKs and the Play bundle build and sign (needs `.secrets/`) | That they install or run |

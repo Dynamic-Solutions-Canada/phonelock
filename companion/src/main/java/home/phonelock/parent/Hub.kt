@@ -135,7 +135,7 @@ class App : Application() {
 /** Process-wide state shared by the UI, the listener service and notification actions. */
 object Hub {
     private lateinit var app: Context
-    private val prefs by lazy { app.getSharedPreferences("hub", Context.MODE_PRIVATE) }
+    private val prefs by lazy { HubPrefs(app) }
 
     private val _devices = MutableStateFlow<List<Device>>(emptyList())
     val devices: StateFlow<List<Device>> = _devices.asStateFlow()
@@ -179,17 +179,17 @@ object Hub {
         seenIds.entries.removeAll { it.value < cutoff }
         seenIds[id] = ts
         while (seenIds.size > 5000) seenIds.remove(seenIds.keys.first())
-        prefs.edit().putString("seen_ids", JSONObject(seenIds as Map<*, *>).toString()).apply()
+        prefs.seenIds = JSONObject(seenIds as Map<*, *>).toString()
         true
     }
 
     fun init(c: Context) {
         app = c.applicationContext
-        _parentName.value = prefs.getString("parent_name", "") ?: ""
-        prefs.getString("seen_ids", null)?.let { j ->
+        _parentName.value = prefs.parentName
+        prefs.seenIds?.let { j ->
             runCatching { JSONObject(j).let { o -> o.keys().forEach { seenIds[it] = o.getLong(it) } } }
         }
-        prefs.getString("devices", null)?.let { s ->
+        prefs.devices?.let { s ->
             val loaded = deviceStore.decode(s)
             _devices.value = loaded.devices
             unreadableDevices = loaded.unreadable
@@ -199,19 +199,19 @@ object Hub {
             if (loaded.needsSealing) saveDevices()
         }
         // Migrate the single-phone config from version 1.
-        prefs.getString("config", null)?.let { s ->
+        prefs.legacyConfig?.let { s ->
             val o = JSONObject(s)
             if (_parentName.value.isEmpty()) setParentName(o.optString("name"))
             addDevice(Device(o.getString("server"), o.getString("topic"), o.getString("secret"), Setup.UNNAMED_DEVICE))
-            prefs.edit().remove("config").remove("state").remove("requests").remove("events").apply()
+            prefs.dropLegacy()
         }
-        prefs.getString("states", null)?.let { s ->
+        prefs.states?.let { s ->
             runCatching {
                 val o = JSONObject(s)
                 _states.value = o.keys().asSequence().associateWith { parseState(o.getJSONObject(it)) }
             }
         }
-        prefs.getString("vitals", null)?.let { s ->
+        prefs.vitals?.let { s ->
             runCatching {
                 val o = JSONObject(s)
                 _vitals.value = o.keys().asSequence().associateWith { k ->
@@ -227,7 +227,7 @@ object Hub {
                 }
             }
         }
-        prefs.getString("requests", null)?.let { s ->
+        prefs.requests?.let { s ->
             runCatching {
                 val a = JSONArray(s)
                 _requests.value = (0 until a.length()).map { a.getJSONObject(it) }.map {
@@ -242,7 +242,7 @@ object Hub {
                 }.filter { System.currentTimeMillis() - it.ts < 12 * 3600_000L }
             }
         }
-        prefs.getString("events", null)?.let { s ->
+        prefs.events?.let { s ->
             runCatching {
                 val o = JSONObject(s)
                 _events.value = o.keys().asSequence().associateWith { k ->
@@ -277,7 +277,7 @@ object Hub {
         // "phone" is how the locked phone signs its own messages; it ignores commands from that name.
         val n = name.trim().let { if (it.equals("phone", ignoreCase = true)) "Parent" else it }
         _parentName.value = n
-        prefs.edit().putString("parent_name", n).apply()
+        prefs.parentName = n
     }
 
     fun addDevice(d: Device) {
@@ -322,7 +322,7 @@ object Hub {
 
     private fun saveDevices() {
         // Written at once (commit), so the sealed list replaces the old one in a single step.
-        prefs.edit().putString("devices", deviceStore.encode(_devices.value, unreadableDevices)).commit()
+        prefs.writeDevices(deviceStore.encode(_devices.value, unreadableDevices))
     }
 
     /** Forgets the devices whose secret can't be read on this phone, once the parent has seen they are gone. */
@@ -335,9 +335,9 @@ object Hub {
     }
 
     var lastNtfyTime: Long
-        get() = prefs.getLong("ntfy_last_time", 0)
+        get() = prefs.ntfyLastTime
         set(v) {
-            prefs.edit().putLong("ntfy_last_time", v).apply()
+            prefs.ntfyLastTime = v
         }
 
     // ---------- outgoing ----------
@@ -800,7 +800,7 @@ object Hub {
     private fun saveStates() {
         val o = JSONObject()
         _states.value.forEach { (k, v) -> o.put(k, stateJson(v)) }
-        prefs.edit().putString("states", o.toString()).apply()
+        prefs.states = o.toString()
     }
 
     /**
@@ -834,7 +834,7 @@ object Hub {
                     .put("batteryAt", v.batteryAt).put("heard", v.heard),
             )
         }
-        prefs.edit().putString("vitals", o.toString()).apply()
+        prefs.vitals = o.toString()
     }
 
     private fun resolve(req: String) {
@@ -851,7 +851,7 @@ object Hub {
                     .put("label", it.label).put("minutes", it.minutes).put("ts", it.ts),
             )
         }
-        prefs.edit().putString("requests", a.toString()).apply()
+        prefs.requests = a.toString()
     }
 
     /**
@@ -872,7 +872,7 @@ object Hub {
             l.forEach { a.put(JSONObject().put("ts", it.ts).put("text", it.text)) }
             o.put(k, a)
         }
-        prefs.edit().putString("events", o.toString()).apply()
+        prefs.events = o.toString()
     }
 
     // ---------- notifications ----------

@@ -37,7 +37,7 @@ object QuietWatch {
     private const val TAG = "QuietWatch"
 
     private lateinit var app: Context
-    private val prefs by lazy { app.getSharedPreferences("quiet", Context.MODE_PRIVATE) }
+    private val prefs by lazy { QuietPrefs(app) }
 
     private val _minutes = MutableStateFlow<Map<String, Int>>(emptyMap())
 
@@ -46,8 +46,7 @@ object QuietWatch {
 
     fun init(c: Context) {
         app = c.applicationContext
-        _minutes.value = prefs.all.filterKeys { it.startsWith("min_") }
-            .mapNotNull { (k, v) -> (v as? Int)?.let { k.removePrefix("min_") to it } }.toMap()
+        _minutes.value = prefs.allMinutes()
         schedule()
     }
 
@@ -55,13 +54,13 @@ object QuietWatch {
     fun minutesFor(dev: String): Int = _minutes.value[dev] ?: DEFAULT_MINUTES
 
     fun setMinutes(dev: String, m: Int) {
-        prefs.edit().putInt("min_$dev", m).apply()
+        prefs.setMinutes(dev, m)
         _minutes.update { it + (dev to m) }
     }
 
     /** The device said it was turning off at [ts] (its clock). */
     fun noteOff(dev: String, ts: Long) {
-        prefs.edit().putLong("off_$dev", ts).apply()
+        prefs.setOffAt(dev, ts)
     }
 
     /**
@@ -69,8 +68,8 @@ object QuietWatch {
      * [lastSeen] is when it was heard from before this message.
      */
     fun heard(dev: String, lastSeen: Long) {
-        if (prefs.getLong("alerted_$dev", 0) == 0L) return
-        prefs.edit().remove("alerted_$dev").apply()
+        if (prefs.alertedAt(dev) == 0L) return
+        prefs.clearAlerted(dev)
         val gap = System.currentTimeMillis() - lastSeen
         val text = if (lastSeen > 0) {
             Strings.get(R.string.alerts_heard_again_after, duration(gap))
@@ -82,7 +81,7 @@ object QuietWatch {
 
     /** Drops this phone's settings for [dev] (the device was removed). */
     fun forget(dev: String) {
-        prefs.edit().remove("min_$dev").remove("off_$dev").remove("alerted_$dev").apply()
+        prefs.forget(dev)
         _minutes.update { it - dev }
     }
 
@@ -126,10 +125,10 @@ object QuietWatch {
             val vitals = Hub.vitals.value[d.id] ?: Vitals()
             val seen = maxOf(vitals.seen, Hub.states.value[d.id]?.updated ?: 0)
             if (seen == 0L || now - seen < limit) return@forEach
-            if (prefs.getLong("alerted_${d.id}", 0) == seen) return@forEach
-            if (prefs.getLong("off_${d.id}", 0) >= seen - OFF_MARGIN_MS) return@forEach
+            if (prefs.alertedAt(d.id) == seen) return@forEach
+            if (prefs.offAt(d.id) >= seen - OFF_MARGIN_MS) return@forEach
 
-            prefs.edit().putLong("alerted_${d.id}", seen).apply()
+            prefs.setAlertedAt(d.id, seen)
             Hub.notify(d.id, quietText(d.id, now - seen, vitals), null)
         }
     }
