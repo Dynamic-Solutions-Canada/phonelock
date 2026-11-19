@@ -10,7 +10,7 @@ scripts/deploy/build.sh            # -> android/lock/build/outputs/apk/release/l
 
 `scripts/deploy/build.sh` builds the lock app and the GitHub flavour of the parent app (`android/companion/build/outputs/apk/github/release/companion-github-release.apk`). The Play flavour is `:companion:assemblePlayRelease`, built only when asked for.
 
-Needs JDK 17, Node (the version in `.nvmrc`; `npm ci` installs the dev tools), Python 3, and the Android SDK with the platform set by `compileSdk` in `android/companion/build.gradle`, in `ANDROID_HOME` or `~/android-sdk`. Gradle comes from the committed wrapper (`./gradlew`), which downloads the pinned version.
+Needs JDK 17, Node (the version in `.nvmrc`; `npm ci` installs the dev tools), Python 3, and the Android SDK with the platform set by `compileSdk` in `android/companion/build.gradle.kts`, in `ANDROID_HOME` or `~/android-sdk`. Gradle comes from the committed wrapper (`./gradlew`), which downloads the pinned version.
 
 Signing key and secrets live in `.secrets/` (git-ignored). Keep `.secrets/phonelock.keystore` safe: updates must be signed with the same key.
 
@@ -43,7 +43,7 @@ The root `package.json` holds the entry points. Gradle tasks go through `scripts
 
 ### Third-party notices
 
-Each parent-app build carries `assets/third_party_notices.txt`, which About > Third-party notices shows. `android/companion/third-party-notices.gradle` generates it per variant with the AboutLibraries Gradle plugin (no runtime library), and the build fails when a dependency's licence isn't on the allowed list there, or the list misses a module on the runtime classpath. A new dependency under a licence not on the list needs that licence read and added, for that dependency only where possible. The lock app has no third-party runtime dependencies, so it has no notices file.
+Each parent-app build carries `assets/third_party_notices.txt`, which About > Third-party notices shows. `android/companion/build.gradle.kts` configures it and `android/buildSrc/src/main/kotlin/RenderThirdPartyNotices.kt` renders it per variant with the AboutLibraries Gradle plugin (no runtime library), and the build fails when a dependency's licence isn't on the allowed list there, or the list misses a module on the runtime classpath. A new dependency under a licence not on the list needs that licence read and added, for that dependency only where possible. The lock app has no third-party runtime dependencies, so it has no notices file.
 
 ### Lint baseline
 

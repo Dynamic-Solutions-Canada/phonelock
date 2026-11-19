@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Check that both apps' translations match English: same catalogs, keys, placeholders and plural forms.
 
-Release lint enforces the same rules (the fatal checks in each build.gradle); this check runs in seconds
+Release lint enforces the same rules (the fatal checks in each build.gradle.kts); this check runs in seconds
 without Gradle, so `validate` and CI catch a missing translation before a build. Adapted from SonarBridge's
 check, extended to PhoneLock's split string files (strings_<area>.xml) and plurals.
 Exits non-zero with every problem listed.

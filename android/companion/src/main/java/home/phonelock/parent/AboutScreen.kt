@@ -26,7 +26,7 @@ internal object AboutLinks {
     const val SUPPORT = "$REPO/issues"
     const val LICENSE = "$REPO/blob/main/LICENSE"
 
-    /** Generated per build variant by companion/third-party-notices.gradle (HYG-3). */
+    /** Generated per build variant by RenderThirdPartyNotices (android/buildSrc) (HYG-3). */
     const val NOTICES_ASSET = "third_party_notices.txt"
 }
 

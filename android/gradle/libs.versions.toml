@@ -1,0 +1,46 @@
+# Every plugin and library version, in one place (D-055, PLAT-12). Why each third-party dependency was approved
+# stays beside its use in the module's build.gradle.kts.
+
+[versions]
+agp = "9.5.1"
+kotlin = "2.4.21"
+spotless = "8.11.0"
+aboutlibraries = "15.3.0"
+ktlint = "1.8.0"
+palantirJavaFormat = "2.103.0"
+composeBom = "2026.09.00"
+activityCompose = "1.13.0"
+camerax = "1.4.2"
+firebaseBom = "35.2.0"
+zxing = "3.5.4"
+mapsCompose = "9.0.1"
+playServicesMaps = "20.1.0"
+junit = "4.13.2"
+spake2 = "1.1.1"
+androidxTestRunner = "1.7.0"
+androidxTestJunit = "1.3.0"
+
+[libraries]
+compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
+compose-ui = { module = "androidx.compose.ui:ui" }
+compose-material3 = { module = "androidx.compose.material3:material3" }
+compose-material-icons-core = { module = "androidx.compose.material:material-icons-core" }
+activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
+camerax-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "camerax" }
+camerax-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "camerax" }
+camerax-view = { module = "androidx.camera:camera-view", version.ref = "camerax" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
+zxing-core = { module = "com.google.zxing:core", version.ref = "zxing" }
+maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "mapsCompose" }
+play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMaps" }
+junit = { module = "junit:junit", version.ref = "junit" }
+spake2-java = { module = "com.github.Flyfish233:spake2-java", version.ref = "spake2" }
+androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidxTestRunner" }
+androidx-test-junit = { module = "androidx.test.ext:junit", version.ref = "androidxTestJunit" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
+aboutlibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutlibraries" }
