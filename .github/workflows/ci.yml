@@ -36,6 +36,13 @@ jobs:
           # Must match the JDK in docs/development.md and the Java 17 target in both build.gradle files.
           java-version: '17'
       - uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
+      # Gradle's dependency and wrapper caches, so a run downloads only what changed (CI-6). Without
+      # it every run pulls the whole Kotlin, AGP and AndroidX tree from Maven Central, which
+      # rate-limits shared CI addresses (429). `basic` is the open-source provider on the GitHub
+      # Actions cache. Only main writes the cache; pull requests restore it.
+      - uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
+        with:
+          cache-provider: basic
       # Explicit, so a runner image without the platform can't fail the build. compileSdk 37 is the
       # android-37.0 package. Must match compileSdk in companion/build.gradle and lock/build.gradle.
       - name: Install SDK platform 37
