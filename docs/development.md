@@ -34,6 +34,10 @@ The root `package.json` holds the entry points. Gradle tasks go through `tools/g
 
 `tools/test-remote.sh` is a manual check against a paired phone and is not part of `validate`; its header says what a pass looks like.
 
+### Third-party notices
+
+Each parent-app build carries `assets/third_party_notices.txt`, which About > Third-party notices shows. `companion/third-party-notices.gradle` generates it per variant with the AboutLibraries Gradle plugin (no runtime library), and the build fails when a dependency's licence isn't on the allowed list there, or the list misses a module on the runtime classpath. A new dependency under a licence not on the list needs that licence read and added, for that dependency only where possible. The lock app has no third-party runtime dependencies, so it has no notices file.
+
 ### Lint baseline
 
 Lint issues already in the code when lint joined `validate` are recorded in `lock/lint-baseline.xml` and `companion/lint-baseline.xml`, so only new issues fail. The baseline only shrinks: fix or deliberately suppress an entry (with a comment saying why), then regenerate it with `tools/gradle :lock:updateLintBaselineDebug :companion:updateLintBaselineGithubDebug`. Open work, largest first:
@@ -56,7 +60,7 @@ Release builds fail if a language is missing a string, has an extra one, or has 
 
 ## Publish a release
 
-`tools/publish-release.sh` publishes both APKs with `lock-version.json` and `parent-version.json` to the GitHub releases the setup code downloads from. Installed lock apps check a few times a day and update themselves the next time the screen is off, and the parent app (GitHub build) offers its update in Settings. Anything published reaches children's phones unattended, so only publish a build already tested on a device.
+`tools/publish-release.sh` publishes both APKs with `lock-version.json` and `parent-version.json` to the GitHub releases the setup code downloads from. Installed lock apps check a few times a day and update themselves the next time the screen is off, and the parent app (GitHub build) offers its update in Settings > About. Anything published reaches children's phones unattended, so only publish a build already tested on a device.
 
 The full procedure is the `release` skill (`.agents/skills/release/SKILL.md`). In short: the version is `1.0.<commit count>`, so the notes for the next version are committed as the last commit before publishing. They live in `release-notes/1.0.N.md` (en-US) with one sibling per other wording catalog (`1.0.N.es-ES.md`, and `fr-FR`, `de-DE`, `zh-CN`, `pt-BR`, `ja-JP`), written for users, under 500 characters, with no heading or disclosure line (`npm run check:release-notes` checks them). `tools/publish-release.sh` refuses to run without them, and builds the Release body from the en-US file, a "Get it" section and the AI disclosure line. It never falls back to a fixed or generated text.
 

@@ -5,12 +5,10 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -24,11 +22,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -122,29 +117,26 @@ class EmergencyActivity : ComponentActivity() {
         setShowWhenLocked(true)
         setTurnScreenOn(true)
         setContent {
-            val ctx = LocalContext.current
-            MaterialTheme(colorScheme = if (isSystemInDarkTheme()) dynamicDarkColorScheme(ctx) else dynamicLightColorScheme(ctx)) {
-                Surface(Modifier.fillMaxSize()) {
-                    val all by EmergencyAlerts.alerts.collectAsState()
-                    val id = intent.getStringExtra("sos")
-                    val a = all.firstOrNull { it.id == id } ?: all.firstOrNull()
-                    Column(
-                        Modifier.safeDrawingPadding().padding(16.dp).verticalScroll(rememberScrollState()),
-                        verticalArrangement = Arrangement.spacedBy(12.dp),
-                    ) {
-                        if (a == null) {
-                            EmptyNote(stringResource(R.string.alerts_emergency_none))
-                        } else {
-                            EmergencyPanel(a, onClose = { finish() })
-                        }
-                        TextButton(onClick = {
-                            startActivity(
-                                Intent(this@EmergencyActivity, MainActivity::class.java)
-                                    .putExtra("device", a?.dev).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
-                            )
-                            finish()
-                        }) { Text(stringResource(R.string.alerts_emergency_open_app)) }
+            AppTheme {
+                val all by EmergencyAlerts.alerts.collectAsState()
+                val id = intent.getStringExtra("sos")
+                val a = all.firstOrNull { it.id == id } ?: all.firstOrNull()
+                Column(
+                    Modifier.safeDrawingPadding().padding(16.dp).verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    if (a == null) {
+                        EmptyNote(stringResource(R.string.alerts_emergency_none))
+                    } else {
+                        EmergencyPanel(a, onClose = { finish() })
                     }
+                    TextButton(onClick = {
+                        startActivity(
+                            Intent(this@EmergencyActivity, MainActivity::class.java)
+                                .putExtra("device", a?.dev).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+                        )
+                        finish()
+                    }) { Text(stringResource(R.string.alerts_emergency_open_app)) }
                 }
             }
         }

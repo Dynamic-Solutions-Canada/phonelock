@@ -154,15 +154,12 @@
     <string name="device_remove_text">このアプリでの管理を終了します。お子様のデバイスは現在のロック状態のままになります。再び管理するには、他の保護者に共有してもらうか、もう一度セットアップしてください。</string>
 
     <!-- This app's own updates (GitHub build). Versions are written 1.0.N; %1$d is N. -->
-    <string name="device_app_section">このアプリ</string>
-    <string name="device_app_version">バージョン 1.0.%1$d</string>
     <!-- %1$d: the version, %2$d: percent downloaded -->
     <string name="device_app_downloading">バージョン 1.0.%1$d をダウンロード中：%2$d%%</string>
     <string name="device_app_installing">バージョン 1.0.%1$d をインストール中…</string>
     <string name="device_app_update_to">バージョン 1.0.%1$d にアップデート</string>
     <!-- %1$d: download size in MB -->
     <string name="device_app_update_detail">%1$d MB のダウンロード。インストール時に Android から確認を求められます。</string>
-    <string name="device_app_check">アップデートを確認</string>
     <string name="device_app_check_detail">GitHub の PhoneLock リリースから</string>
     <string name="device_app_none_published">このアプリのアップデートはまだ公開されていません</string>
     <string name="device_app_up_to_date">このアプリは最新です（バージョン 1.0.%1$d）</string>

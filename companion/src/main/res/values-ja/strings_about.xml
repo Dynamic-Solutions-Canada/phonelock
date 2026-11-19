@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The About screen (BRAND-8): labels from winui-app-kit's kit.about.* translations. -->
+<resources>
+    <string name="about_title">バージョン情報</string>
+    <string name="about_version">バージョン %1$s</string>
+    <string name="about_tagline">お子様の Android スマートフォンやタブレットのためのペアレンタル コントロール。プライベートで暗号化。</string>
+
+    <string name="about_updates">更新</string>
+    <string name="about_check_for_updates">更新プログラムの確認</string>
+
+    <string name="about_links">リンク</string>
+    <string name="about_source_code">ソース コード</string>
+    <string name="about_privacy_policy">プライバシー ポリシー</string>
+    <string name="about_support">サポート</string>
+    <string name="about_license">ライセンス</string>
+    <string name="about_third_party_notices">サード パーティに関する通知</string>
+    <string name="about_notices_detail">このアプリに含まれるライブラリとそのライセンス</string>
+</resources>

@@ -154,15 +154,12 @@
     <string name="device_remove_text">此应用将不再管理该设备。孩子的设备会保持当前的锁定状态。如需重新管理，可以让其他家长与你共享，或重新设置。</string>
 
     <!-- This app's own updates (GitHub build). Versions are written 1.0.N; %1$d is N. -->
-    <string name="device_app_section">此应用</string>
-    <string name="device_app_version">版本 1.0.%1$d</string>
     <!-- %1$d: the version, %2$d: percent downloaded -->
     <string name="device_app_downloading">正在下载版本 1.0.%1$d：%2$d%%</string>
     <string name="device_app_installing">正在安装版本 1.0.%1$d…</string>
     <string name="device_app_update_to">更新到版本 1.0.%1$d</string>
     <!-- %1$d: download size in MB -->
     <string name="device_app_update_detail">需下载 %1$d MB。Android 会请你确认安装。</string>
-    <string name="device_app_check">检查更新</string>
     <string name="device_app_check_detail">来自 GitHub 上的 PhoneLock 发布版本</string>
     <string name="device_app_none_published">此应用尚未发布任何更新</string>
     <string name="device_app_up_to_date">此应用已是最新版本（版本 1.0.%1$d）</string>

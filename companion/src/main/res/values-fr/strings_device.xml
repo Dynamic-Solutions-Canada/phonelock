@@ -158,15 +158,12 @@
     <string name="device_remove_text">Cette application cessera de le gérer. L’appareil de votre enfant reste verrouillé tel quel. Pour le gérer de nouveau, un autre parent peut le partager avec vous, ou vous pouvez le configurer de nouveau.</string>
 
     <!-- This app's own updates (GitHub build). Versions are written 1.0.N; %1$d is N. -->
-    <string name="device_app_section">Cette application</string>
-    <string name="device_app_version">Version 1.0.%1$d</string>
     <!-- %1$d: the version, %2$d: percent downloaded -->
     <string name="device_app_downloading">Téléchargement de la version 1.0.%1$d : %2$d %%</string>
     <string name="device_app_installing">Installation de la version 1.0.%1$d…</string>
     <string name="device_app_update_to">Mettre à jour vers la version 1.0.%1$d</string>
     <!-- %1$d: download size in MB -->
     <string name="device_app_update_detail">Téléchargement de %1$d Mo. Android vous demandera de confirmer l’installation.</string>
-    <string name="device_app_check">Rechercher une mise à jour</string>
     <string name="device_app_check_detail">Parmi les versions de PhoneLock publiées sur GitHub</string>
     <string name="device_app_none_published">Aucune mise à jour de cette application n’a encore été publiée</string>
     <string name="device_app_up_to_date">Cette application est à jour (version 1.0.%1$d)</string>

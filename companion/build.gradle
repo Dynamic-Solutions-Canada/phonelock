@@ -1,7 +1,11 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.plugin.compose'
+    id 'com.mikepenz.aboutlibraries.plugin'
 }
+
+// Renders assets/third_party_notices.txt for each variant and checks it covers the runtime classpath (HYG-3).
+apply from: 'third-party-notices.gradle'
 
 // Keystore passwords live with the keystore in .secrets/ (git-ignored), not in this public file.
 def signing = new Properties()

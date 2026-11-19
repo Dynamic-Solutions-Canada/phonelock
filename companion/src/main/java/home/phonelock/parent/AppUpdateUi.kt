@@ -28,16 +28,16 @@ data class UpdateState(
 }
 
 /**
- * Settings' "This app" section: its version, and either "Update to …" or "Check for update". Shown only in
- * builds that update themselves (the GitHub build); the Play Store build has nothing here.
+ * The About screen's "Updates" section: either "Update to …" or "Check for updates", with progress while an
+ * update downloads and installs. Shown only in builds that update themselves (the GitHub build); the Play
+ * Store build leaves updates to Play and omits the section (BRAND-8).
  */
 @Composable
 internal fun AppUpdateSection() {
     if (!AppUpdate.SUPPORTED) return
     val st by AppUpdate.state.collectAsState()
 
-    Section(stringResource(R.string.device_app_section)) {
-        Text(stringResource(R.string.device_app_version, st.installed))
+    Section(stringResource(R.string.about_updates)) {
         ProgressTrack(st.busy)
         when {
             st.busy -> Text(
@@ -55,7 +55,7 @@ internal fun AppUpdateSection() {
             )
 
             else -> ListRow(
-                stringResource(R.string.device_app_check),
+                stringResource(R.string.about_check_for_updates),
                 AnnotatedString(stringResource(R.string.device_app_check_detail)),
                 leading = { SymbolBadge("⬆") },
                 onClick = { AppUpdate.check(asked = true) },

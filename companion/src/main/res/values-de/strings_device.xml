@@ -156,15 +156,12 @@
     <string name="device_remove_text">Diese App verwaltet es dann nicht mehr. Das Gerät bleibt so gesperrt, wie es ist. Um es wieder zu verwalten, kann ein anderer Elternteil es mit dir teilen, oder du richtest es neu ein.</string>
 
     <!-- This app's own updates (GitHub build). Versions are written 1.0.N; %1$d is N. -->
-    <string name="device_app_section">Diese App</string>
-    <string name="device_app_version">Version 1.0.%1$d</string>
     <!-- %1$d: the version, %2$d: percent downloaded -->
     <string name="device_app_downloading">Version 1.0.%1$d wird heruntergeladen: %2$d\u00A0%%</string>
     <string name="device_app_installing">Version 1.0.%1$d wird installiert …</string>
     <string name="device_app_update_to">Auf Version 1.0.%1$d aktualisieren</string>
     <!-- %1$d: download size in MB -->
     <string name="device_app_update_detail">%1$d MB Download. Android bittet dich, die Installation zu bestätigen.</string>
-    <string name="device_app_check">Nach Update suchen</string>
     <string name="device_app_check_detail">Aus den PhoneLock-Releases auf GitHub</string>
     <string name="device_app_none_published">Für diese App wurde noch kein Update veröffentlicht</string>
     <string name="device_app_up_to_date">Diese App ist aktuell (Version 1.0.%1$d)</string>

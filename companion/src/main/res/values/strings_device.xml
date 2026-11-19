@@ -156,15 +156,12 @@
     <string name="device_remove_text">This app stops managing it. Their device stays locked as it is. To manage it again, another parent can share it with you, or set it up again.</string>
 
     <!-- This app's own updates (GitHub build). Versions are written 1.0.N; %1$d is N. -->
-    <string name="device_app_section">This app</string>
-    <string name="device_app_version">Version 1.0.%1$d</string>
     <!-- %1$d: the version, %2$d: percent downloaded -->
     <string name="device_app_downloading">Downloading version 1.0.%1$d: %2$d%%</string>
     <string name="device_app_installing">Installing version 1.0.%1$d…</string>
     <string name="device_app_update_to">Update to version 1.0.%1$d</string>
     <!-- %1$d: download size in MB -->
     <string name="device_app_update_detail">%1$d MB download. Android asks you to confirm the install.</string>
-    <string name="device_app_check">Check for update</string>
     <string name="device_app_check_detail">From the PhoneLock releases on GitHub</string>
     <string name="device_app_none_published">No update for this app has been published yet</string>
     <string name="device_app_up_to_date">This app is up to date (version 1.0.%1$d)</string>

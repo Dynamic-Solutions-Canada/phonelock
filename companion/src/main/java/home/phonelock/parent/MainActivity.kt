@@ -12,7 +12,6 @@ import android.text.format.DateFormat
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -34,11 +33,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -75,29 +71,27 @@ class MainActivity : ComponentActivity() {
         }
         BackgroundConnection.start(this)
         setContent {
-            val ctx = LocalContext.current
-            MaterialTheme(colorScheme = if (isSystemInDarkTheme()) dynamicDarkColorScheme(ctx) else dynamicLightColorScheme(ctx)) {
-                Surface(Modifier.fillMaxSize()) {
-                    Box(Modifier.fillMaxSize()) {
-                        val devices by Hub.devices.collectAsState()
-                        var adding by rememberSaveable { mutableStateOf(false) }
-                        val link by pendingLink
-                        // Shown until accepted, also to parents already using the app when the disclosure changes.
-                        var disclosed by remember { mutableStateOf(Disclosure.accepted(ctx)) }
-                        if (!disclosed) {
-                            DisclosureScreen { disclosed = true }
-                        } else if (devices.isEmpty() || adding || link != null) {
-                            AddDeviceScreen(link, canCancel = devices.isNotEmpty()) { added ->
-                                pendingLink.value = null
-                                adding = false
-                                if (added != null) selected.value = added
-                            }
-                        } else {
-                            val sel = selected.value?.takeIf { s -> devices.any { it.id == s } } ?: devices.first().id
-                            MainScreen(devices, sel, onSelect = { selected.value = it }, onAdd = { adding = true })
+            AppTheme {
+                val ctx = LocalContext.current
+                Box(Modifier.fillMaxSize()) {
+                    val devices by Hub.devices.collectAsState()
+                    var adding by rememberSaveable { mutableStateOf(false) }
+                    val link by pendingLink
+                    // Shown until accepted, also to parents already using the app when the disclosure changes.
+                    var disclosed by remember { mutableStateOf(Disclosure.accepted(ctx)) }
+                    if (!disclosed) {
+                        DisclosureScreen { disclosed = true }
+                    } else if (devices.isEmpty() || adding || link != null) {
+                        AddDeviceScreen(link, canCancel = devices.isNotEmpty()) { added ->
+                            pendingLink.value = null
+                            adding = false
+                            if (added != null) selected.value = added
                         }
-                        with(Undo) { UndoHost() }
+                    } else {
+                        val sel = selected.value?.takeIf { s -> devices.any { it.id == s } } ?: devices.first().id
+                        MainScreen(devices, sel, onSelect = { selected.value = it }, onAdd = { adding = true })
                     }
+                    with(Undo) { UndoHost() }
                 }
             }
         }
@@ -180,6 +174,17 @@ private fun MainScreen(devices: List<Device>, dev: String, onSelect: (String) ->
         // Opened from Settings, so they go back there.
         "diag" -> {
             DiagnosticsScreen(dev, name) { page = "settings" }
+            return
+        }
+
+        "about" -> {
+            AboutScreen(onNotices = { page = "notices" }) { page = "settings" }
+            return
+        }
+
+        // Opened from About, so it goes back there.
+        "notices" -> {
+            NoticesScreen { page = "about" }
             return
         }
 

@@ -18,9 +18,9 @@ import androidx.compose.ui.text.AnnotatedString
 
 /**
  * One device's settings, from the ⋮ on its header card: names, parent access (parent mode, PIN, battery
- * alert), the lock app (version, updates, diagnostics, repairs), and sharing or removing the device. A page
- * of sections rather than a long dialog, so each group is easy to find; [onOpen] opens Diagnostics or Fix
- * setup, which come back here.
+ * alert), the lock app (version, updates, diagnostics, repairs), sharing or removing the device, and this
+ * app's About. A page of sections rather than a long dialog, so each group is easy to find; [onOpen] opens
+ * Diagnostics, Fix setup or About, which come back here.
  */
 @Composable
 internal fun SettingsScreen(dev: String, name: String, onOpen: (String) -> Unit, onBack: () -> Unit) {
@@ -112,7 +112,6 @@ internal fun SettingsScreen(dev: String, name: String, onOpen: (String) -> Unit,
             }
         }
         ScreenRulesSection(dev, st)
-        AppUpdateSection()
         LanguageSection()
         Section(stringResource(R.string.device_sharing)) {
             Setting("👥", stringResource(R.string.device_share), stringResource(R.string.device_share_detail)) { sharing = true }
@@ -121,6 +120,8 @@ internal fun SettingsScreen(dev: String, name: String, onOpen: (String) -> Unit,
                 Text(stringResource(R.string.device_remove), color = MaterialTheme.colorScheme.error)
             }
         }
+        // Last, as on every Android app in the family (BRAND-8).
+        AboutSection { onOpen("about") }
     }
 
     if (recovery) {

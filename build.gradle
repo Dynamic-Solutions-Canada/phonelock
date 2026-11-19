@@ -3,6 +3,9 @@ plugins {
     id 'org.jetbrains.kotlin.plugin.compose' version '2.4.21' apply false
     // Formatting check and rewrite (approved: Spotless, STYLE-8, D-092). Build tooling, never shipped.
     id 'com.diffplug.spotless' version '8.11.0'
+    // Third-party notices for the parent app (approved: standards session for Ryan, HYG-3 (2026-11-19)).
+    // Build tooling only: the plugin collects licences at build time and no runtime library is shipped.
+    id 'com.mikepenz.aboutlibraries.plugin' version '15.3.0' apply false
 }
 
 // One formatter for the Kotlin, Java and Gradle sources (STYLE-8, D-092): spotlessApply rewrites files,
@@ -22,7 +25,7 @@ spotless {
         palantirJavaFormat('2.103.0')
     }
     groovyGradle {
-        target '*.gradle', '*/build.gradle'
+        target '*.gradle', '*/*.gradle'
         // Groovy-Eclipse indents with tabs by default; match .editorconfig and the 120-column Java instead.
         greclipse().configProperties('''
             org.eclipse.jdt.core.formatter.tabulation.char=space

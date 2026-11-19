@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The About screen (BRAND-8): labels from winui-app-kit's kit.about.* translations. -->
+<resources>
+    <string name="about_title">À propos</string>
+    <string name="about_version">Version %1$s</string>
+    <string name="about_tagline">Contrôle parental pour le téléphone ou la tablette Android de votre enfant. Privé et chiffré.</string>
+
+    <string name="about_updates">Mises à jour</string>
+    <string name="about_check_for_updates">Rechercher des mises à jour</string>
+
+    <string name="about_links">Liens</string>
+    <string name="about_source_code">Code source</string>
+    <string name="about_privacy_policy">Politique de confidentialité</string>
+    <string name="about_support">Assistance</string>
+    <string name="about_license">Licence</string>
+    <string name="about_third_party_notices">Mentions tierces</string>
+    <string name="about_notices_detail">Les bibliothèques incluses dans cette appli et leurs licences</string>
+</resources>

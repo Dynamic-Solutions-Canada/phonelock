@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The About screen (BRAND-8): labels from winui-app-kit's kit.about.* translations. -->
+<resources>
+    <string name="about_title">关于</string>
+    <string name="about_version">版本 %1$s</string>
+    <string name="about_tagline">为孩子的 Android 手机或平板电脑提供家长控制。私密且加密。</string>
+
+    <string name="about_updates">更新</string>
+    <string name="about_check_for_updates">检查更新</string>
+
+    <string name="about_links">链接</string>
+    <string name="about_source_code">源代码</string>
+    <string name="about_privacy_policy">隐私策略</string>
+    <string name="about_support">支持</string>
+    <string name="about_license">许可证</string>
+    <string name="about_third_party_notices">第三方声明</string>
+    <string name="about_notices_detail">此应用包含的库及其许可证</string>
+</resources>
