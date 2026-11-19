@@ -9,7 +9,7 @@ PhoneLock is a parental control app made by Dynamic Solutions ("we"). It has two
 - Information from your child's device goes only to the parents paired with it.
 - It is end-to-end encrypted on the devices. We run the relay server that passes messages along, and we cannot read them. Neither can Google's push service.
 - One exception: to draw the map and turn positions into street addresses, the parent app asks Google Maps, which then learns roughly which area is being looked at (not whose device it is).
-- We don't sell data, show ads or use analytics or tracking SDKs.
+- We don't sell data or show ads, and the apps collect no telemetry or crash reports: no analytics, tracking or crash-reporting SDKs.
 
 ## What the apps handle
 

@@ -49,6 +49,26 @@ Lint issues already in the code when lint joined `validate` are recorded in `loc
 - **QueryAllPackagesPermission** (lock app): needed by a launcher that lists every app; suppress with that reason, and justify it if the lock app is ever submitted to a store.
 - The parent app's 5 errors and both apps' warnings (StaticFieldLeak, UseKtx, ApplySharedPref and others): see the baseline files.
 
+## Where data lives
+
+Everything below is in the app's private storage, which Android deletes on uninstall, except where it says shared storage. Neither app is in Android's backup (`allowBackup="false"` in both manifests). This list is unconfirmed until a real uninstall of each app has been checked.
+
+Parent app:
+
+- **Preferences:** `hub` (paired devices and their keys, names, the disclosure), `devicedata`, `emergency`, `push`, `quiet`, `screenalerts`, `ui`, and `appupdate` in the GitHub build.
+- **Files:** `app-time.json`, `location-history.json`, `app-history.json`, `icons/` (app icons from the child's phone), `screen-alerts/` (screenshots of unfamiliar screens, at most 20 per device), and `adbkey.pk8` with `adbkey.crt` (this phone's identity for setting up a child's phone over Wireless debugging).
+- **Cache:** the downloaded `lock-release.apk` and, in the GitHub build, `parent-update.apk`; `upload.tmp` while a file is sent; `opened/` for files opened from the child's phone.
+- **Shared storage:** `Download/PhoneLock/`, for files a parent downloads from the child's phone. It stays after uninstall.
+
+Lock app:
+
+- **Preferences:** `phonelock` (policy, PIN, pairing key and settings).
+- **Files:** `track.json` (the location log), `app_days.json` (in device-protected storage, so time limits work before the phone is unlocked), and `update.apk` while an update installs.
+- **Shared storage:** files a parent sends to the child's phone are saved in its shared storage and stay there.
+- **Device policy:** the device-owner restrictions stay in force until the lock app is released (see adb control below).
+
+The hub keeps encrypted messages for 3 days and encrypted attachments for 24 hours (`server/server.yml`); see [server/README.md](../server/README.md).
+
 ## Hub
 
 Both apps talk through an [ntfy](https://ntfy.sh) server. `server/` runs our own (ntfy in Docker behind the apps host's shared nginx, Cloudflare-proxied) with Firebase Cloud Messaging, so parent phones get messages by push instead of a permanent background connection; see [server/README.md](../server/README.md). The parent app reads the hub address and Firebase settings from `.secrets/firebase.properties` (`hubUrl`, `appId`, `apiKey`, `projectId`, `senderId`); without it, it uses ntfy.sh and its own connection. That connection exists only in the GitHub build: the Play build has no background connection, so it relies on the hub's push and accepts only phones on the hub.

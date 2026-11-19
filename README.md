@@ -33,6 +33,14 @@ In the parent app, tap **Set up a child's device** and follow the steps it shows
 
 Afterwards, add the child's accounts back in parent mode: hold the clock on the home screen for 4 seconds and enter the PIN. A second parent adds the phone from the first parent's app: device settings > **Share with another parent**. **Fix setup over Wi-Fi** in the device settings re-applies the one-time grants on a phone already set up.
 
+## Your data
+
+PhoneLock collects no telemetry or crash reports, and there is no PhoneLock account. What the child's phone shares stays on the parents' phones: the relay server only passes encrypted messages along and deletes them within 3 days. The [privacy policy](PRIVACY.md) lists what is shared.
+
+- **Backup:** neither app is included in Android's backup, so the keys that pair the phones never leave them. On a new phone of your own, add the device again with **Share with another parent** from a phone that still has it.
+- **Export:** files you download from the child's phone are saved in your Downloads folder, under PhoneLock. There is nothing else to export.
+- **Deletion:** removing a device in the parent app deletes everything that app kept about it, and uninstalling either app deletes that app's data. Downloaded files stay in Downloads until you delete them. Removing PhoneLock from the child's phone currently needs a factory reset from recovery mode, or a computer over USB debugging.
+
 ## Languages
 
 PhoneLock is available in English (United States and Canada), Spanish, French (France and Canada), German, Simplified Chinese, Brazilian Portuguese and Japanese. The parent app follows your phone's language unless you pick one in a device's Settings > Language, which is the same setting as Android's per-app language. You set the child's phone's language per device in Settings > Lock app, and a phone set up from your app starts in your app's language. The translations were written with AI assistance and have not been reviewed by native speakers yet. The privacy policy is in English.
