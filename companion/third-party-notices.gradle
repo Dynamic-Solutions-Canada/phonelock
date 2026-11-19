@@ -14,8 +14,8 @@ import groovy.json.JsonSlurper
 
 /**
  * Licences the parent app may ship, as AboutLibraries identifies them. Add one only after reading
- * it. ASDKL, the Android Software Development Kit License, covers Google Play services, ML Kit and
- * the Firebase modules that push delivery and the map need; it is not open source, but it allows
+ * it. ASDKL, the Android Software Development Kit License, covers the Google Play services and
+ * Firebase modules that push delivery and the map need; it is not open source, but it allows
  * shipping them in an app and they are listed like the others.
  */
 def ALLOWED_LICENSES = [
@@ -29,19 +29,12 @@ def ALLOWED_LICENSES = [
 /**
  * Licences allowed only for the modules named, by AboutLibraries' licence name (lowercase) to module
  * ids or groups, so a new dependency under the same terms still fails the build until someone reads them.
- * Both were read on 2026-11-19.
+ * Read on 2026-11-19.
  * - libyuv's licence, which CameraX's core module bundles for image conversion. It is BSD-3-Clause; its POM
  *   only links to it, so its full text is supplied in notices/licenses/libyuv-bsd.json.
- * - The ML Kit Terms of Service, under which Google ships the on-device barcode scanner (the QR scan). They
- *   allow use in an app, forbid reverse engineering, and require telling users that ML Kit sends Google
- *   usage metrics, which PRIVACY.md does not say yet.
  */
 def ALLOWED_LICENSES_FOR = [
     'bsd license': ['androidx.camera:camera-core'],
-    'ml kit terms of service': [
-        'com.google.mlkit',
-        'com.google.android.gms:play-services-mlkit-barcode-scanning'
-    ],
 ]
 
 // Script plugins cannot import classes from the root buildscript classpath, so the enum is

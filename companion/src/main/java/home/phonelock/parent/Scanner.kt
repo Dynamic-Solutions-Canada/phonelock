@@ -31,10 +31,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
-import com.google.mlkit.vision.barcode.BarcodeScannerOptions
-import com.google.mlkit.vision.barcode.BarcodeScanning
-import com.google.mlkit.vision.barcode.common.Barcode
-import com.google.mlkit.vision.common.InputImage
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -60,14 +56,10 @@ fun QrScanner(onResult: (String) -> Unit, onCancel: () -> Unit) {
     val owner = LocalLifecycleOwner.current
     val done = remember { AtomicBoolean(false) }
     val executor = remember { Executors.newSingleThreadExecutor() }
-    val scanner = remember {
-        BarcodeScanning.getClient(BarcodeScannerOptions.Builder().setBarcodeFormats(Barcode.FORMAT_QR_CODE).build())
-    }
+    // Used only from the executor's one thread, as QrFrameDecoder requires.
+    val decoder = remember { QrFrameDecoder() }
     DisposableEffect(Unit) {
-        onDispose {
-            scanner.close()
-            executor.shutdown()
-        }
+        onDispose { executor.shutdown() }
     }
 
     Box(Modifier.fillMaxSize()) {
@@ -79,21 +71,17 @@ fun QrScanner(onResult: (String) -> Unit, onCancel: () -> Unit) {
                 val preview = Preview.Builder().build().also { it.surfaceProvider = view.surfaceProvider }
                 val analysis = ImageAnalysis.Builder()
                     .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST).build()
+                val main = ContextCompat.getMainExecutor(c)
                 analysis.setAnalyzer(executor) { proxy ->
-                    val media = proxy.image
-                    if (media == null || done.get()) {
-                        proxy.close()
-                        return@setAnalyzer
-                    }
-                    scanner.process(InputImage.fromMediaImage(media, proxy.imageInfo.rotationDegrees))
-                        .addOnSuccessListener { codes ->
-                            val hit = codes.firstNotNullOfOrNull { it.rawValue?.takeIf { v -> v.startsWith("phonelock://") } }
-                            if (hit != null && done.compareAndSet(false, true)) {
-                                provider.unbindAll()
-                                onResult(hit)
-                            }
+                    // Each frame is decoded here, off the main thread; the first pairing link ends the scan.
+                    val hit = proxy.use { if (done.get()) null else QrFrameDecoder.pairingLink(decoder.decode(it)) }
+                    if (hit != null && done.compareAndSet(false, true)) {
+                        // The camera and the result belong to the main thread.
+                        main.execute {
+                            provider.unbindAll()
+                            onResult(hit)
                         }
-                        .addOnCompleteListener { proxy.close() }
+                    }
                 }
                 provider.unbindAll()
                 provider.bindToLifecycle(owner, CameraSelector.DEFAULT_BACK_CAMERA, preview, analysis)

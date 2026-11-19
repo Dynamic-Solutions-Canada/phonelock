@@ -31,6 +31,7 @@ The root `package.json` holds the entry points. Gradle tasks go through `tools/g
 | `npm run verify:android` | Debug builds of the lock app and both parent-app flavours compile | Release signing |
 | `npm run package:android` | Release APKs and the Play bundle build and sign (needs `.secrets/`) | That they install or run |
 | `npm run install:android` | Installs the debug parent app on the connected phone | Anything on the child's phone |
+| `npm run test:device` | The on-device tests pass on the connected phone or emulator (the QR decoder on Android's image buffers); not in `validate`, since it needs a device. Uninstall a release build first: the debug build is signed with a different key | That the camera reads a real QR code (a real-phone scan before release, in the `release` skill) |
 
 `tools/test-remote.sh` is a manual check against a paired phone and is not part of `validate`; its header says what a pass looks like.
 

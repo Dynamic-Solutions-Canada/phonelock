@@ -55,6 +55,7 @@ This repo follows the shared standards at https://github.com/Dynamic-Solutions-C
 | `npm run verify:android` | Debug builds of the lock app and both parent-app flavours compile, with no secrets needed | Release signing |
 | `npm run test` | The JVM unit tests pass | Device behaviour |
 | `./build.sh` | Both release APKs compile, pass the translation lint, and are signed (needs the signing files in `.secrets/`) | That they install or run |
+| `npm run test:device` | The on-device tests pass on a connected phone or emulator (manual, not in `validate`) | That the camera reads a real QR code |
 | `tools/test-remote.sh` | A paired phone answers encrypted commands over the topic (manual, not in `validate`) | Anything without a paired test phone |
 
 Gradle tasks go through `tools/gradle`, which caps memory locally; the full list and what each proves is under **Checks** in `docs/development.md`.
