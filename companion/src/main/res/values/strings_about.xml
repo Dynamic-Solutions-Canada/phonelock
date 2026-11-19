@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- The About screen (BRAND-8) and its third-party notices. The labels are winui-app-kit's kit.about.* wording and translations, so every app in the family uses the same words; the tagline matches the Play short description. -->
+<!-- The About screen (BRAND-8) and its third-party notices. The labels are winui-app-kit's kit.about.* wording and translations, so every app in the family uses the same words; the tagline is the Play short description (store-assets/play/listings.json), word for word in every language. -->
 <resources>
     <string name="about_title">About</string>
     <!-- %1$s: the version, such as 1.0.120 -->
     <string name="about_version">Version %1$s</string>
-    <string name="about_tagline">Parental control for your child\'s Android phone or tablet. Private and encrypted.</string>
+    <string name="about_tagline">Parental control for your child\'s Android phone or tablet. Private, encrypted.</string>
 
     <string name="about_updates">Updates</string>
     <string name="about_check_for_updates">Check for updates</string>

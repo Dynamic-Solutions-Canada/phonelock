@@ -7,7 +7,7 @@ import java.security.SecureRandom
 /**
  * SPAKE2 over edwards25519, exactly as BoringSSL implements it (crypto/curve25519/spake25519.cc), which is
  * what Android's Wireless debugging uses to turn the 6-digit pairing code into a shared key. Ported from
- * BoringSSL (Copyright 2016 The BoringSSL Authors, Apache License 2.0); see play/setup-helper.md.
+ * BoringSSL (Copyright 2016 The BoringSSL Authors, Apache License 2.0); see docs/setup.md.
  *
  * Both sides mask an ephemeral public key with the password: A sends x·B + pw·M, B sends y·B + pw·N, and each
  * removes the other's mask to reach the same x·y·B. A wrong password, or any detail that differs from

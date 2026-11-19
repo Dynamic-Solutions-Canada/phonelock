@@ -28,6 +28,7 @@ The root `package.json` holds the entry points. Gradle tasks go through `tools/g
 | `npm run test` | The JVM unit tests pass (emergency numbers, screen guard, usage report, SPAKE2), and the release-notes script's tests | Device behaviour |
 | `npm run check:l10n` | Every catalog in both apps has the same keys, placeholders and plurals as English | That the translations read well |
 | `npm run check:prefs` | The parent app reads and writes preferences only through `Prefs.kt`, which owns every file, key and default | That a key's meaning is right |
+| `npm run check:listings` | `store-assets/play/listings.json` has the app's nine locales in order, aliases that resolve, and every field within Play's limits | That the listing reads well, or that its claims are still true (see `store-assets/play/listings.md`) |
 | `npm run check:release-notes` | Every version in `release-notes/` has all seven files, within Play's 500-character limit | That they read well |
 | `npm run verify:android` | Debug builds of the lock app and both parent-app flavours compile | Release signing |
 | `npm run package:android` | Release APKs and the Play bundle build and sign (needs `.secrets/`) | That they install or run |
@@ -78,7 +79,18 @@ Both apps talk through an [ntfy](https://ntfy.sh) server. `server/` runs our own
 
 The parent app's list lives in `companion/src/main/res/xml/locales_config.xml`, and the lock app's in `lock/src/main/res/xml/locales_config.xml`; keep the two lists the same. English wording is in `res/values/strings*.xml`, one file per area, and each language has the same files under `values-<language>/` with the same names. Parent-app code with no screen to draw on (notifications, services) gets its wording through `Strings`.
 
-Release builds fail if a language is missing a string, has an extra one, or has mismatched placeholders, so new wording needs every translation before a release. The translations were written with AI assistance and have not been reviewed by native speakers yet. Names, app labels and what people type are never translated. Wording the child reads uses the informal "you" (French "tu", German "du"). The diagnostics report stays in English for support.
+Release builds fail if a language is missing a string, has an extra one, or has mismatched placeholders, so new wording needs every translation before a release.
+
+Review status of every wording catalog (LOC-12). Update the row when a native speaker reviews one.
+
+| Catalog | Languages | Status |
+| --- | --- | --- |
+| Parent app (`companion/src/main/res/values*/strings*.xml`) | en-US source; es, fr, de, zh-Hans, pt, ja | AI-drafted, not reviewed |
+| Lock app (`lock/src/main/res/values*/strings*.xml`) | en-US source; es, fr, de, zh-Hans, pt, ja | AI-drafted, not reviewed |
+| Release notes (`release-notes/`) | en-US source; es-ES, fr-FR, de-DE, zh-CN, pt-BR, ja-JP | AI-drafted, not reviewed |
+| Play listing (`store-assets/play/listings.json`) | en-US source; es-ES, fr-FR, de-DE, zh-CN, pt-BR, ja-JP (en-CA and fr-CA copy en-US and fr-FR) | AI-drafted, not reviewed |
+
+Product terms are translated the same way everywhere, so the listing, the release notes and both apps agree: take a term's translation from the parent app's catalog (for example **parent mode** `device_parent_mode`, **normal hours**, **limited hours** and **bedtime** `apps_mode_*`, **Share with another parent** `device_share`, **Fix setup over Wi-Fi** `device_fix_setup`, and Android's own name for **Wireless debugging** in each language). The Play short description is also the About tagline (`about_tagline`), word for word. Names, app labels and what people type are never translated. Wording the child reads uses the informal "you" (French "tu", German "du"). The diagnostics report stays in English for support.
 
 ## Publish a release
 

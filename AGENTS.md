@@ -28,7 +28,8 @@ This repo follows the shared standards at https://github.com/Dynamic-Solutions-C
 | Release, hub deploy, adb and test scripts | `tools/` |
 | Command entry points, the capped Gradle runner, the translation and preferences checks | `package.json`, `tools/gradle`, `tools/check-l10n.py`, `tools/check-prefs.py` |
 | Release notes and the Release body | `release-notes/`, `tools/release-notes.mjs` |
-| Play listing drafts and open questions | `play/` |
+| Play listing source (nine locales), console settings, data safety and open questions | `store-assets/play/listings.json`, `store-assets/play/listings.md`, checked by `tools/check-listings.mjs` |
+| Phone-to-phone setup design record | `docs/setup.md` |
 
 ## Behaviour
 
@@ -58,6 +59,7 @@ This repo follows the shared standards at https://github.com/Dynamic-Solutions-C
 | `npm run test` | The JVM unit tests pass | Device behaviour |
 | `./build.sh` | Both release APKs compile, pass the translation lint, and are signed (needs the signing files in `.secrets/`) | That they install or run |
 | `npm run test:device` | The on-device tests pass on a connected phone or emulator (manual, not in `validate`) | That the camera reads a real QR code |
+| `npm run check:listings` | The Play listing source has the app's nine locales and fits Play's limits (in `validate`) | That its claims are still true |
 | `tools/test-remote.sh` | A paired phone answers encrypted commands over the topic (manual, not in `validate`) | Anything without a paired test phone |
 
 Gradle tasks go through `tools/gradle`, which caps memory locally; the full list and what each proves is under **Checks** in `docs/development.md`.
@@ -76,7 +78,7 @@ Use the `release` skill. Notes are committed per version in `release-notes/` (en
 | `README.md` | Changing a user-visible feature, requirement or the setup steps | The product as users see it |
 | `server/README.md` | Changing or deploying the hub | `server/`, `tools/deploy-hub.sh` |
 | `PRIVACY.md` | Changing what either app sends, stores or shares | Both apps, `Disclosure.kt` |
-| `play/` | Play listing, data safety and Play-flavour questions | `companion/src/play/`, the `play` flavour |
+| `store-assets/play/listings.md` | Play listing, data safety and Play-flavour questions | `store-assets/play/`, `companion/src/play/`, the `play` flavour |
 | `release` skill | Releasing a new version | `release-notes/`, `tools/publish-release.sh`, `tools/release-notes.mjs` |
 
 ## Keeping docs current
@@ -85,10 +87,11 @@ Use the `release` skill. Notes are committed per version in `release-notes/` (en
 | --- | --- |
 | A source file, area or script added, moved or removed | The Architecture table above |
 | A message type, field or the encryption | `docs/protocol.md`, both apps, `tools/ParentCli.java` |
-| What either app sends, stores or who can read it | `PRIVACY.md`, `play/data-safety.md` |
+| What either app sends, stores or who can read it | `PRIVACY.md`, Data safety in `store-assets/play/listings.md` |
 | Build, adb or release procedure | `docs/development.md`, Commands above, and the `release` skill |
 | User-visible features or setup steps | `README.md` |
-| Interface text or languages | Every `values*/strings*.xml` in that app; Languages in `docs/development.md` and the README |
+| Interface text or languages | Every `values*/strings*.xml` in that app; Languages in `docs/development.md` (and its review-status table) and the README |
 | A dependency added | Its `approved:` comment, and `PRIVACY.md` if it talks to a network |
 | A check, test suite or build command added | `package.json` (and `validate` when it is static), **Checks** in `docs/development.md`, Commands above |
 | Hub configuration or deployment | `server/README.md` |
+| A feature or claim the Play listing describes | `store-assets/play/listings.json` (every locale) and its claims list in `store-assets/play/listings.md` |

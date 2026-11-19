@@ -3,7 +3,7 @@
 <resources>
     <string name="about_title">À propos</string>
     <string name="about_version">Version %1$s</string>
-    <string name="about_tagline">Contrôle parental pour le téléphone ou la tablette Android de votre enfant. Privé et chiffré.</string>
+    <string name="about_tagline">Contrôle parental du mobile ou de la tablette Android de votre enfant. Chiffré.</string>
 
     <string name="about_updates">Mises à jour</string>
     <string name="about_check_for_updates">Rechercher des mises à jour</string>

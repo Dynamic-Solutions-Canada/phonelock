@@ -3,7 +3,7 @@
 <resources>
     <string name="about_title">关于</string>
     <string name="about_version">版本 %1$s</string>
-    <string name="about_tagline">为孩子的 Android 手机或平板电脑提供家长控制。私密且加密。</string>
+    <string name="about_tagline">为孩子的 Android 手机或平板电脑提供家长控制。私密、加密。</string>
 
     <string name="about_updates">更新</string>
     <string name="about_check_for_updates">检查更新</string>

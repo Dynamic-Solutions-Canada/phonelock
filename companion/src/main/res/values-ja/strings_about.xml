@@ -3,7 +3,7 @@
 <resources>
     <string name="about_title">バージョン情報</string>
     <string name="about_version">バージョン %1$s</string>
-    <string name="about_tagline">お子様の Android スマートフォンやタブレットのためのペアレンタル コントロール。プライベートで暗号化。</string>
+    <string name="about_tagline">お子様の Android スマートフォンやタブレットのためのペアレンタル コントロール。プライベート、暗号化。</string>
 
     <string name="about_updates">更新</string>
     <string name="about_check_for_updates">更新プログラムの確認</string>
