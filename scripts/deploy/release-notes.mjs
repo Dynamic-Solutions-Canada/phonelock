@@ -124,7 +124,7 @@ export function githubReleaseBody(notes) {
     '',
     '## Get it',
     '',
-    'Install `PhoneLock-parent.apk` on your own phone; it updates itself from here. The lock app for the child\'s phone (`lock-release.apk`) is installed by the parent app during setup, and keeps itself up to date.',
+    'Install `PhoneLock-parent-app.apk` on your own phone; it updates itself from here. The lock app for the child\'s phone (`lock-release.apk`) is installed by the parent app during setup, and keeps itself up to date.',
     '',
     DISCLOSURE_LINE,
     ''

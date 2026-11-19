@@ -205,4 +205,8 @@
     <!-- Viewing the child's screen -->
     <string name="setup_screenshot_no_image">No image received</string>
     <string name="setup_screenshot_unreadable">Couldn\'t open the screenshot</string>
+    <!-- Devices handed over by the parent app under its old id (ImportDevicesActivity); %1$s: their names -->
+    <string name="setup_import_title">Add devices from your old PhoneLock app</string>
+    <string name="setup_import_text">Add %1$s? Their settings on this phone, such as quiet-time alerts, start fresh here.</string>
+    <string name="setup_import_none">Your old PhoneLock app has no devices this app can add.</string>
 </resources>

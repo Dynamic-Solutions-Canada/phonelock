@@ -28,7 +28,8 @@ android {
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "home.phonelock.parent"
+        // The company namespace (D-011, BRAND-7); the code's own package, namespace above, stays.
+        applicationId = "ca.dynamicsolutions.phonelock.parent"
         minSdk = 33
         targetSdk = 36
         versionCode = gitVersionCode

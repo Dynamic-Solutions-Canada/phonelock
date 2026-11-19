@@ -71,7 +71,7 @@ test('The GitHub body is the en-US notes followed by the disclosure line', () =>
 
 test('The GitHub body names the two fixed assets the apps install from', () => {
   const body = githubReleaseBody({ 'en-US': '- Faster reconnects.' })
-  assert.ok(body.includes('`PhoneLock-parent.apk`'))
+  assert.ok(body.includes('`PhoneLock-parent-app.apk`'))
   assert.ok(body.includes('`lock-release.apk`'))
 })
 

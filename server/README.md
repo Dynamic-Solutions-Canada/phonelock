@@ -10,7 +10,7 @@ On the "apps" host (`ssh apps`), like the other projects there: a git checkout a
 
 1. Cloudflare: proxied `A` record for the hub name (`phonelock.dynamic-solutions.ca`) pointing at the apps host.
 2. On the host: `git clone https://github.com/Dynamic-Solutions-Canada/phonelock.git /home/apps/phonelock`, then create `server/.env` from `.env.example`.
-3. Firebase (for push): project with an Android app `home.phonelock.parent`; save the service-account key as `server/secrets/firebase.json` on the host and set `NTFY_FIREBASE_KEY_FILE` in `.env`. Put the app's `appId`, `apiKey`, `projectId`, `senderId` and the hub's `hubUrl` in `.secrets/firebase.properties` in the repo root for the parent app build.
+3. Firebase (for push): project with an Android app `ca.dynamicsolutions.phonelock.parent` (the parent app's id; `home.phonelock.parent`, its old id, stays registered for installed copies of the old app); save the service-account key as `server/secrets/firebase.json` on the host and set `NTFY_FIREBASE_KEY_FILE` in `.env`. Put the app's `appId`, `apiKey`, `projectId`, `senderId` and the hub's `hubUrl` in `.secrets/firebase.properties` in the repo root for the parent app build.
 
 ## Deploy
 

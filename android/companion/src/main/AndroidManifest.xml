@@ -52,6 +52,13 @@
             </intent-filter>
         </activity>
 
+        <!-- Receives the devices the parent app under its old id hands over (AppMove). Exported so that app
+             can start it; it accepts only a request for a result from that app, signed with this app's key. -->
+        <activity
+            android:name=".ImportDevicesActivity"
+            android:exported="true"
+            android:excludeFromRecents="true" />
+
         <!-- Pushes from the PhoneLock hub (Firebase Cloud Messaging). -->
         <service android:name=".PushService" android:exported="false">
             <intent-filter>
@@ -77,7 +84,7 @@
             android:exported="false"
             android:launchMode="singleTop"
             android:excludeFromRecents="true"
-            android:taskAffinity="home.phonelock.parent.emergency" />
+            android:taskAffinity="${applicationId}.emergency" />
         <receiver android:name=".EmergencyAlerts$Actions" android:exported="false" />
         <service
             android:name=".EmergencyAlerts$Alarm"

@@ -20,7 +20,7 @@ import java.io.FileNotFoundException
 
 /**
  * Updates this app (GitHub build) from the public PhoneLock releases, the same place the lock app updates
- * from. A small version file (parent-version.json: {versionCode, sha256, size}) is checked when the app
+ * from. A small version file (parent-app-version.json: {versionCode, sha256, size}) is checked when the app
  * comes to the front, at most every few hours; a newer version is announced once in the snackbar and offered
  * in Settings. Nothing is downloaded until the parent taps Update (the APK is large), and Android always asks
  * them to confirm the install, since this app isn't a device owner.
@@ -32,8 +32,11 @@ object AppUpdate {
     const val SUPPORTED = true
 
     private const val TAG = "AppUpdate"
-    private const val VERSION_FILE = "parent-version.json"
-    private const val APK_FILE = "PhoneLock-parent.apk"
+
+    // The new id's own release assets (PhoneLock-parent.apk and parent-version.json stay pinned to the last
+    // release under the old id, so old installs never fetch an app they can't install over themselves).
+    private const val VERSION_FILE = "parent-app-version.json"
+    private const val APK_FILE = "PhoneLock-parent-app.apk"
 
     /** The new-id parent app's version file; once a release has it, this app asks to move. */
     private const val NEW_APP_VERSION_FILE = "parent-app-version.json"
