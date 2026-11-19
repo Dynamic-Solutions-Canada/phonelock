@@ -31,11 +31,14 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 @SuppressLint("BatteryLife")
 @Composable
 internal fun SetupHints() {
-    PermissionHint(
-        stringResource(R.string.setup_hint_background),
-        granted = { it.getSystemService(PowerManager::class.java).isIgnoringBatteryOptimizations(it.packageName) },
-        settings = { Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, Uri.parse("package:${it.packageName}")) },
-    )
+    // Only a build with a background connection needs (or may ask for) the battery-saving exemption.
+    if (BackgroundConnection.SUPPORTED) {
+        PermissionHint(
+            stringResource(R.string.setup_hint_background),
+            granted = { it.getSystemService(PowerManager::class.java).isIgnoringBatteryOptimizations(it.packageName) },
+            settings = { Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, Uri.parse("package:${it.packageName}")) },
+        )
+    }
     // Android 14 and later ask for this separately: without it an emergency alert is only a notification,
     // not a screen that wakes the phone (the alarm still sounds).
     // Only the GitHub build asks for it (Play restricts full-screen alerts to calling and alarm apps).
@@ -61,10 +64,33 @@ private fun PermissionHint(text: String, granted: (Context) -> Boolean, settings
         onPauseOrDispose {}
     }
     if (ok) return
+    HintCard(text) {
+        TextButton(onClick = { runCatching { ctx.startActivity(settings(ctx)) } }) { Text(stringResource(R.string.allow)) }
+    }
+}
+
+/**
+ * The warning for [device] when its messages don't arrive while the app is closed: in the Play build, a
+ * phone push doesn't reach (yet). Nothing in the GitHub build, whose background connection reaches any phone.
+ * Re-checked whenever the app comes back to the front.
+ */
+@Composable
+internal fun PushWarning(device: Device) {
+    var reached by remember(device.id) { mutableStateOf(BackgroundConnection.reaches(device)) }
+    LifecycleResumeEffect(device.id) {
+        reached = BackgroundConnection.reaches(device)
+        onPauseOrDispose {}
+    }
+    if (!reached) HintCard(stringResource(R.string.main_push_not_reaching))
+}
+
+/** The shape every setup prompt and warning on the main screen shares: [text] and an optional [action]. */
+@Composable
+private fun HintCard(text: String, action: (@Composable () -> Unit)? = null) {
     Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer)) {
         Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text(text)
-            TextButton(onClick = { runCatching { ctx.startActivity(settings(ctx)) } }) { Text(stringResource(R.string.allow)) }
+            action?.invoke()
         }
     }
 }

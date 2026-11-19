@@ -33,6 +33,7 @@
     <string name="setup_paste_link">或粘贴配对链接</string>
     <string name="setup_code_recognised">已识别配对码</string>
     <string name="setup_not_a_link">这不是 PhoneLock 配对链接</string>
+    <string name="setup_server_not_supported">此代码对应的服务器是此版本的 PhoneLock 无法连接的。请让另一位家长在 PhoneLock 自己的服务器上设置该设备。</string>
     <!-- phonelock://pair is the start of the link itself: keep it as is -->
     <string name="setup_link_starts_with">以 phonelock://pair 开头</string>
     <string name="setup_add_device_button">添加设备</string>

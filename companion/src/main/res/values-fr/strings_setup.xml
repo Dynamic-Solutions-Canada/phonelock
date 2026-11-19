@@ -33,6 +33,7 @@
     <string name="setup_paste_link">Ou coller un lien d’association</string>
     <string name="setup_code_recognised">Code d’association reconnu</string>
     <string name="setup_not_a_link">Ce n’est pas un lien d’association PhoneLock</string>
+    <string name="setup_server_not_supported">Ce code concerne un serveur que cette version de PhoneLock ne peut pas joindre. Demandez à l’autre parent de configurer l’appareil sur le serveur de PhoneLock.</string>
     <!-- phonelock://pair is the start of the link itself: keep it as is -->
     <string name="setup_link_starts_with">Commence par phonelock://pair</string>
     <string name="setup_add_device_button">Ajouter l’appareil</string>

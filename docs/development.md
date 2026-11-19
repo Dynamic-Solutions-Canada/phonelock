@@ -46,7 +46,7 @@ Lint issues already in the code when lint joined `validate` are recorded in `loc
 
 ## Hub
 
-Both apps talk through an [ntfy](https://ntfy.sh) server. `server/` runs our own (ntfy in Docker behind the apps host's shared nginx, Cloudflare-proxied) with Firebase Cloud Messaging, so parent phones get messages by push instead of a permanent background connection; see [server/README.md](../server/README.md). The parent app reads the hub address and Firebase settings from `.secrets/firebase.properties` (`hubUrl`, `appId`, `apiKey`, `projectId`, `senderId`); without it, it uses ntfy.sh and its own connection.
+Both apps talk through an [ntfy](https://ntfy.sh) server. `server/` runs our own (ntfy in Docker behind the apps host's shared nginx, Cloudflare-proxied) with Firebase Cloud Messaging, so parent phones get messages by push instead of a permanent background connection; see [server/README.md](../server/README.md). The parent app reads the hub address and Firebase settings from `.secrets/firebase.properties` (`hubUrl`, `appId`, `apiKey`, `projectId`, `senderId`); without it, it uses ntfy.sh and its own connection. That connection exists only in the GitHub build: the Play build has no background connection, so it relies on the hub's push and accepts only phones on the hub.
 
 ## Languages
 

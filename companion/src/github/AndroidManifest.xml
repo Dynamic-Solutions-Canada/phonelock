@@ -1,14 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- GitHub build only: this app updates itself from the public releases (AppUpdate). Play forbids an app
-     updating itself outside the store, so the Play build has neither the permission nor the receiver. -->
+<!-- GitHub build only. This app updates itself from the public releases (AppUpdate): Play forbids an app
+     updating itself outside the store. It also keeps a live connection for phones push doesn't reach
+     (ParentService, through BackgroundConnection): Play restricts the special-use foreground service and the
+     battery-saving exemption, so the Play build relies on push through the hub alone (DIST-7). -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <!-- Emergency alerts open full screen, like an incoming call. Play allows this only for calling and alarm
          apps, so the Play build shows a notification instead (the alarm still sounds). -->
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <application>
         <receiver android:name=".AppUpdate$Result" android:exported="false" />
+
+        <service
+            android:name=".ParentService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Receives requests and alerts from a child's device" />
+        </service>
     </application>
 </manifest>

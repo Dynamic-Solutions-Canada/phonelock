@@ -15,7 +15,8 @@ import kotlin.concurrent.thread
 /**
  * Push delivery through the PhoneLock hub: the hub (self-hosted ntfy with Firebase) forwards each message
  * to the FCM topic named after the ntfy topic, so phones on the hub need no permanent background connection.
- * Phones on any other server (e.g. ntfy.sh) still use [ParentService]'s connection.
+ * Phones on any other server (e.g. ntfy.sh) use the GitHub build's [BackgroundConnection]; the Play build
+ * accepts only phones on the hub.
  */
 object Push {
     /** True when this build has a Firebase project (.secrets/firebase.properties) and it initialised. */
@@ -83,7 +84,7 @@ object Push {
         if (!changed) return
         prefs.edit().putStringSet("subscribed", HashSet(subscribed)).apply()
         // The background connection is only needed for devices push doesn't reach.
-        ParentService.restart(app)
+        BackgroundConnection.restart(app)
     }
 
     private lateinit var app: Context

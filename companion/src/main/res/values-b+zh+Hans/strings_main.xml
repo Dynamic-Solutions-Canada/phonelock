@@ -47,6 +47,7 @@
     <string name="main_screen_off_as_of">屏幕已关闭（截至 %1$s）</string>
     <!-- Whether the device is answering. %1$s: the rest of the status line -->
     <string name="main_status_connecting">正在连接… · %1$s</string>
+    <string name="main_push_not_reaching">此设备的请求和警报只会在 PhoneLock 打开时收到，因为推送暂时无法送达。如果一直如此，请在此应用中重新设置该设备。</string>
     <string name="main_status_no_reply">尚无回应</string>
     <!-- %1$s: how long ago, e.g. "18 min ago" -->
     <string name="main_status_not_answering">无响应 · 最后在线：%1$s</string>

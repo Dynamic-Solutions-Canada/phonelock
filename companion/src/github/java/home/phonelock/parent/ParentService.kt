@@ -3,7 +3,6 @@ package home.phonelock.parent
 import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
@@ -15,28 +14,13 @@ import java.net.URL
 import kotlin.concurrent.thread
 
 /**
- * Holds one streaming ntfy connection per server, subscribed to every paired phone's topic,
- * so requests and alerts arrive immediately.
+ * GitHub build only: holds one streaming ntfy connection per server, subscribed to every paired phone's
+ * topic that push doesn't reach, so requests and alerts arrive immediately. Started through
+ * [BackgroundConnection]; the Play build has neither this service nor its permissions (DIST-7).
  */
 class ParentService : Service() {
     @Volatile private var generation = 0
     private val conns = mutableListOf<HttpURLConnection>()
-
-    companion object {
-        fun start(c: Context) {
-            // No permanent notification when every phone is reached by push.
-            if (Hub.devices.value.none { !Push.covers(it) }) {
-                stop(c)
-                return
-            }
-            runCatching { c.startForegroundService(Intent(c, ParentService::class.java).setAction("restart")) }
-                .onFailure { Log.w(TAG, "start: $it") }
-        }
-        fun stop(c: Context) {
-            c.stopService(Intent(c, ParentService::class.java))
-        }
-        fun restart(c: Context) = start(c)
-    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Hub.channels(this)
@@ -117,29 +101,4 @@ class ParentService : Service() {
             backoff = (backoff * 2).coerceAtMost(120_000)
         }
     }
-}
-
-class ActionReceiver : BroadcastReceiver() {
-    override fun onReceive(c: Context, i: Intent) {
-        // A screen alert's "Mark OK" or "Block" carries the alert id instead of a request.
-        if (i.getStringExtra("kind") == "allowscreen") {
-            Hub.setScreenRule(i.getStringExtra("device") ?: return, i.getStringExtra("screen") ?: return, "ok", minutes = 30)
-            c.getSystemService(android.app.NotificationManager::class.java).cancel(i.getIntExtra("nid", 0))
-            return
-        }
-        val alert = i.getStringExtra("alert")
-        if (alert != null) {
-            ScreenAlerts.decide(alert, i.getStringExtra("kind") ?: return)
-            return
-        }
-        Hub.answer(
-            i.getStringExtra("req") ?: return,
-            i.getStringExtra("kind") ?: return,
-            i.getLongExtra("minutes", 60),
-        )
-    }
-}
-
-class BootReceiver : BroadcastReceiver() {
-    override fun onReceive(c: Context, i: Intent) = ParentService.start(c)
 }

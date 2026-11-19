@@ -33,6 +33,7 @@
     <string name="setup_paste_link">またはペア設定リンクを貼り付け</string>
     <string name="setup_code_recognised">ペア設定コードを認識しました</string>
     <string name="setup_not_a_link">PhoneLock のペア設定リンクではありません</string>
+    <string name="setup_server_not_supported">このコードは、このバージョンの PhoneLock が接続できないサーバー用です。もう一人の保護者に、PhoneLock のサーバーでデバイスを設定してもらってください。</string>
     <!-- phonelock://pair is the start of the link itself: keep it as is -->
     <string name="setup_link_starts_with">phonelock://pair で始まるリンク</string>
     <string name="setup_add_device_button">デバイスを追加</string>

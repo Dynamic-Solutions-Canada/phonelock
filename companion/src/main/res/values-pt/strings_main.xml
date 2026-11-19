@@ -51,6 +51,7 @@
     <string name="main_screen_off_as_of">Tela desligada, às %1$s</string>
     <!-- Whether the device is answering. %1$s: the rest of the status line -->
     <string name="main_status_connecting">Conectando… · %1$s</string>
+    <string name="main_push_not_reaching">Os pedidos e alertas deste dispositivo só chegam enquanto o PhoneLock está aberto, porque as notificações push ainda não chegam até ele. Se continuar assim, configure o dispositivo de novo por este app.</string>
     <string name="main_status_no_reply">Nenhuma resposta ainda</string>
     <!-- %1$s: how long ago, e.g. "18 min ago" -->
     <string name="main_status_not_answering">Sem resposta · visto por último %1$s</string>

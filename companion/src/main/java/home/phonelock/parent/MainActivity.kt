@@ -73,7 +73,7 @@ class MainActivity : ComponentActivity() {
         if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
         }
-        ParentService.start(this)
+        BackgroundConnection.start(this)
         setContent {
             val ctx = LocalContext.current
             MaterialTheme(colorScheme = if (isSystemInDarkTheme()) dynamicDarkColorScheme(ctx) else dynamicLightColorScheme(ctx)) {
@@ -243,6 +243,7 @@ private fun MainScreen(devices: List<Device>, dev: String, onSelect: (String) ->
                         onDismiss = { startingMode = false },
                     )
                 }
+                device?.let { PushWarning(it) }
                 SetupHints()
                 EmergencySection(dev)
 

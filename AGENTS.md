@@ -18,7 +18,7 @@ This repo follows the shared standards at https://github.com/Dynamic-Solutions-C
 | Lock app: self-update | `Updater.java` |
 | Parent app: screens and navigation | `companion/src/main/java/home/phonelock/parent/MainActivity.kt`, `DeviceScreens.kt`, `SettingsScreen.kt` |
 | Parent app: phone-to-phone setup and its adb client | `ChildSetup.kt`, `WifiSetupScreen.kt`, `Setup.kt`, `adb/` |
-| Parent app: transport, push and encryption | `Hub.kt`, `Push.kt`, `ParentService.kt`, `Crypto.kt` |
+| Parent app: transport, push and encryption | `Hub.kt`, `Push.kt`, `Crypto.kt`; the background connection in `companion/src/github/.../ParentService.kt` and `BackgroundConnection.kt`, the Play stub in `companion/src/play/` |
 | Parent app: downloads and signer checks | `Releases.kt`; self-update in `companion/src/github/.../AppUpdate.kt`, the Play stub in `companion/src/play/` |
 | Wording for code with no Compose context | `Strings.kt` |
 | Languages | `res/xml/locales_config.xml` and `res/values*/` in each app |
@@ -43,7 +43,7 @@ This repo follows the shared standards at https://github.com/Dynamic-Solutions-C
 - Parent-app screens use `stringResource()`; services and notifications use `Strings`.
 - Every string exists in all nine locales with the same placeholders, or release lint fails. Keep the two apps' `locales_config.xml` lists the same. Translations are AI-written and unreviewed.
 - Debug builds are signed with the committed debug-only key in `keystore/debug.keystore` (passwords `android`). The production key signs releases only. A debug build can't update over a release one, or the reverse.
-- The `github` flavour has the self-updater and install permission; the `play` flavour has neither, because Play forbids self-updating.
+- The `github` flavour has the self-updater and install permission, full-screen alerts, and the background connection with its battery-saving exemption; the `play` flavour has none of them, because Play forbids or restricts each. The Play build reaches phones only by push through its hub, so it refuses phones on any other server. Shared code calls `AppUpdate` and `BackgroundConnection`, which each flavour implements, never the flavour's classes directly.
 - Signing material, Firebase settings and pairing data live in the git-ignored `.secrets/` folder. Never open, print or copy anything there.
 
 ## Commands

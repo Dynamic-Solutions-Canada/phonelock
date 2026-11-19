@@ -49,6 +49,7 @@
     <string name="main_screen_off_as_of">Screen off, as of %1$s</string>
     <!-- Whether the device is answering. %1$s: the rest of the status line -->
     <string name="main_status_connecting">Connecting… · %1$s</string>
+    <string name="main_push_not_reaching">Requests and alerts from this device arrive only while PhoneLock is open, because push doesn\'t reach it yet. If this stays, set the device up again from this app.</string>
     <string name="main_status_no_reply">No reply yet</string>
     <!-- %1$s: how long ago, e.g. "18 min ago" -->
     <string name="main_status_not_answering">Not answering · last seen %1$s</string>

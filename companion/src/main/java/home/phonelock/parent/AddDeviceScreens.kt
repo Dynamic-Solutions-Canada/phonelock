@@ -89,8 +89,20 @@ private fun AddExistingDevice(initialLink: String?, done: (String?) -> Unit) {
     val heading = stringResource(R.string.setup_add_a_device)
     var link by remember { mutableStateOf(initialLink ?: "") }
     val parsed = Hub.parsePairing(link)
-    // A link opened from outside skips the explanation and the scan.
-    var step by rememberSaveable { mutableIntStateOf(if (parsed != null) 3 else 1) }
+    // The Play build reaches phones only through its hub, so a code for any other server can't be added.
+    val usable = parsed != null && BackgroundConnection.accepts(parsed.server)
+    // A link opened from outside skips the explanation and the scan, unless it can't be added.
+    var step by rememberSaveable {
+        mutableIntStateOf(
+            if (usable) {
+                3
+            } else if (parsed != null) {
+                2
+            } else {
+                1
+            },
+        )
+    }
     var scanning by remember { mutableStateOf(false) }
     val parentName by Hub.parentName.collectAsState()
     var you by remember { mutableStateOf(parentName) }
@@ -102,7 +114,7 @@ private fun AddExistingDevice(initialLink: String?, done: (String?) -> Unit) {
             onResult = {
                 link = it
                 scanning = false
-                if (Hub.parsePairing(it) != null) step = 3
+                if (Hub.parsePairing(it)?.let { d -> BackgroundConnection.accepts(d.server) } == true) step = 3
             },
             onCancel = { scanning = false },
         )
@@ -128,7 +140,7 @@ private fun AddExistingDevice(initialLink: String?, done: (String?) -> Unit) {
             2,
             stringResource(R.string.setup_scan_code_title),
             onBack = { step = 1 },
-            nextEnabled = parsed != null,
+            nextEnabled = usable,
             onNext = { step = 3 },
         ) {
             Text(
@@ -141,11 +153,12 @@ private fun AddExistingDevice(initialLink: String?, done: (String?) -> Unit) {
                 { link = it.trim() },
                 Modifier.fillMaxWidth(),
                 label = { Text(stringResource(R.string.setup_paste_link)) },
-                isError = link.isNotBlank() && parsed == null,
+                isError = link.isNotBlank() && !usable,
                 supportingText = {
                     Text(
                         stringResource(
                             when {
+                                parsed != null && !usable -> R.string.setup_server_not_supported
                                 parsed != null -> R.string.setup_code_recognised
                                 link.isNotBlank() -> R.string.setup_not_a_link
                                 else -> R.string.setup_link_starts_with
@@ -163,9 +176,9 @@ private fun AddExistingDevice(initialLink: String?, done: (String?) -> Unit) {
             stringResource(R.string.setup_name_it_title),
             onBack = { step = 2 },
             next = stringResource(R.string.setup_add_device_button),
-            nextEnabled = parsed != null && you.isNotBlank(),
+            nextEnabled = usable && you.isNotBlank(),
             onNext = {
-                parsed?.let {
+                parsed?.takeIf { usable }?.let {
                     Hub.setParentName(you)
                     Hub.addDevice(it.copy(name = deviceName.ifBlank { it.name }))
                     done(it.id)

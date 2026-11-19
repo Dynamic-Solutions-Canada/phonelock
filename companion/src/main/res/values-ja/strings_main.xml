@@ -47,6 +47,7 @@
     <string name="main_screen_off_as_of">画面オフ（%1$s 時点）</string>
     <!-- Whether the device is answering. %1$s: the rest of the status line -->
     <string name="main_status_connecting">接続中… · %1$s</string>
+    <string name="main_push_not_reaching">このデバイスからのリクエストやアラートは、PhoneLock を開いている間しか届きません。プッシュ通知がまだ届かないためです。このままの場合は、このアプリからデバイスを設定し直してください。</string>
     <string name="main_status_no_reply">まだ応答がありません</string>
     <!-- %1$s: how long ago, e.g. "18 min ago" -->
     <string name="main_status_not_answering">応答なし · 最終確認 %1$s</string>

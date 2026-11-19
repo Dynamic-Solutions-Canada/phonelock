@@ -272,7 +272,7 @@ object Hub {
         Push.sync(listOf(d))
         // Fetch its current state now rather than waiting for the next app resume.
         refresh(d.id)
-        ParentService.restart(app)
+        BackgroundConnection.restart(app)
     }
 
     fun renameDevice(id: String, name: String) {
@@ -303,7 +303,7 @@ object Hub {
         saveEvents()
         saveRequests()
         saveVitals()
-        if (_devices.value.isEmpty()) ParentService.stop(app) else ParentService.restart(app)
+        if (_devices.value.isEmpty()) BackgroundConnection.stop(app) else BackgroundConnection.restart(app)
     }
 
     private fun saveDevices() {
