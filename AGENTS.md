@@ -40,6 +40,7 @@ This repo follows the shared standards at https://github.com/Dynamic-Solutions-C
 - **Release asset names are a permanent interface.** Installed apps fetch `lock-release.apk`, `lock-version.json`, `PhoneLock-parent.apk` and `parent-version.json` from `releases/latest/download/` by those exact names. Don't rename them.
 - **The lock app's certificate is pinned.** `Setup.LOCK_SIGNATURE_SHA256` is the release key's certificate hash. Setup refuses a downloaded lock app signed by anything else, and both updaters require the installed app's signer. Debug builds keep the release pin, because setup always downloads the released lock app.
 - **The version code is the commit count** (`git rev-list --count HEAD`, in `android/build.gradle.kts`). History is never rewritten: a lower count would make every installed copy refuse the update.
+- **The device move between the parent app's ids is a permanent interface.** `AppMove.kt` (contract version 1: the action, the receiving activity's component and the extras) is what installed copies of the old app (`home.phonelock.parent`) send to the new one (`ca.dynamicsolutions.phonelock.parent`). Never change it; a new payload is a new version the receiver accepts alongside version 1. Both sides check the other is signed by PhoneLock's key.
 - **Messages are end-to-end encrypted.** The topic name alone must never be enough to control a phone, and the hub only relays ciphertext.
 
 ## Conventions and gotchas

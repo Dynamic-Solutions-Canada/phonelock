@@ -52,6 +52,12 @@
     <string name="main_push_not_reaching">Anfragen und Warnungen von diesem Gerät kommen nur an, solange PhoneLock geöffnet ist, weil Push-Nachrichten es noch nicht erreichen. Wenn das so bleibt, richte das Gerät in dieser App neu ein.</string>
     <string name="main_lost_devices">Dieses Smartphone kann den Kopplungsschlüssel für %1$s nicht mehr lesen. Füge es von einem Smartphone, das es noch hat, mit „Mit anderem Elternteil teilen“ wieder hinzu oder richte es neu ein.</string>
     <string name="main_lost_devices_forget">Entfernen</string>
+    <string name="main_move_install">PhoneLock hat eine neue App. Installiere sie, um weiter Updates zu bekommen, und verschiebe dann deine Geräte von hier aus dorthin.</string>
+    <string name="main_move_get_app">Neue App holen</string>
+    <string name="main_move_ready">Verschiebe deine Geräte in die neue PhoneLock-App. Danach kannst du diese deinstallieren.</string>
+    <string name="main_move_devices">Geräte verschieben</string>
+    <string name="main_move_done">Geräte verschoben. Öffne die neue PhoneLock-App; du kannst diese jetzt deinstallieren.</string>
+    <string name="main_move_not_supported">Die neue PhoneLock-App ist zu alt, um deine Geräte zu übernehmen. Aktualisiere sie und versuche es erneut.</string>
     <string name="main_status_no_reply">Noch keine Antwort</string>
     <!-- %1$s: how long ago, e.g. "18 min ago" -->
     <string name="main_status_not_answering">Antwortet nicht · zuletzt gesehen %1$s</string>

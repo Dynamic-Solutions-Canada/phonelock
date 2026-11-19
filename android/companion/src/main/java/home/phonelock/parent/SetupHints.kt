@@ -1,13 +1,17 @@
 package home.phonelock.parent
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.NotificationManager
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.PowerManager
 import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -83,6 +87,46 @@ internal fun PushWarning(device: Device) {
         onPauseOrDispose {}
     }
     if (!reached) HintCard(stringResource(R.string.main_push_not_reaching))
+}
+
+/**
+ * On the parent app's old id only (AppMove): once a release carries the app under its new id, asks the parent to
+ * install it; once it is installed and signed by PhoneLock's key, offers to move every device to it. Shown until
+ * this old app is uninstalled.
+ */
+@Composable
+internal fun MoveHint() {
+    val ctx = LocalContext.current
+    if (!AppMove.isOldApp(ctx)) return
+    val published by AppUpdate.newAppPublished.collectAsState()
+    var ready by remember { mutableStateOf(AppMove.newAppReady(ctx)) }
+    // The new app is usually installed while this one is in the background.
+    LifecycleResumeEffect(Unit) {
+        ready = AppMove.newAppReady(ctx)
+        onPauseOrDispose {}
+    }
+    val move = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) Undo.notify(Strings.get(R.string.main_move_done))
+    }
+
+    when {
+        ready -> HintCard(stringResource(R.string.main_move_ready)) {
+            TextButton(onClick = {
+                // An older new app without the import screen: nothing is sent.
+                try {
+                    move.launch(AppMove.moveIntent())
+                } catch (_: ActivityNotFoundException) {
+                    Undo.notify(Strings.get(R.string.main_move_not_supported))
+                }
+            }) { Text(stringResource(R.string.main_move_devices)) }
+        }
+
+        published -> HintCard(stringResource(R.string.main_move_install)) {
+            TextButton(onClick = { ctx.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(AppMove.RELEASES_PAGE))) }) {
+                Text(stringResource(R.string.main_move_get_app))
+            }
+        }
+    }
 }
 
 /**

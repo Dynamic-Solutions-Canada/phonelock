@@ -53,6 +53,13 @@
     <!-- %1$s: the names of devices whose pairing key this phone can no longer read -->
     <string name="main_lost_devices">This phone can\'t read the pairing key for %1$s any more. Add it again from a phone that still has it, with Share with another parent, or set it up again.</string>
     <string name="main_lost_devices_forget">Forget</string>
+    <!-- Moving devices from the parent app's old id to its new one (AppMove) -->
+    <string name="main_move_install">PhoneLock has a new app. Install it to keep getting updates, then move your devices to it from here.</string>
+    <string name="main_move_get_app">Get the new app</string>
+    <string name="main_move_ready">Move your devices to the new PhoneLock app. Afterwards you can uninstall this one.</string>
+    <string name="main_move_devices">Move devices</string>
+    <string name="main_move_done">Devices moved. Open the new PhoneLock app; you can now uninstall this one.</string>
+    <string name="main_move_not_supported">The new PhoneLock app is too old to take your devices. Update it, then try again.</string>
     <string name="main_status_no_reply">No reply yet</string>
     <!-- %1$s: how long ago, e.g. "18 min ago" -->
     <string name="main_status_not_answering">Not answering · last seen %1$s</string>

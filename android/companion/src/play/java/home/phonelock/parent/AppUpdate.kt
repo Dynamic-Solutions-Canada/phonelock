@@ -15,6 +15,9 @@ object AppUpdate {
     private val _state = MutableStateFlow(UpdateState())
     val state: StateFlow<UpdateState> = _state.asStateFlow()
 
+    /** Play updates this app itself, so it never asks to move to another (AppMove). */
+    val newAppPublished: StateFlow<Boolean> = MutableStateFlow(false).asStateFlow()
+
     fun init(c: Context) {}
 
     fun checkIfDue() {}

@@ -34,6 +34,9 @@ object AppUpdate {
     private const val TAG = "AppUpdate"
     private const val VERSION_FILE = "parent-version.json"
     private const val APK_FILE = "PhoneLock-parent.apk"
+
+    /** The new-id parent app's version file; once a release has it, this app asks to move. */
+    private const val NEW_APP_VERSION_FILE = "parent-app-version.json"
     private const val CHECK_EVERY_MS = 6 * 3600_000L
 
     /** Far above the real size (about 55 MB), only to stop a runaway download. */
@@ -46,6 +49,11 @@ object AppUpdate {
     private val _state = MutableStateFlow(UpdateState())
     val state: StateFlow<UpdateState> = _state.asStateFlow()
 
+    private val _newAppPublished = MutableStateFlow(false)
+
+    /** Whether PhoneLock's parent app under its new id has been released, so this one asks to move (AppMove). */
+    val newAppPublished: StateFlow<Boolean> = _newAppPublished.asStateFlow()
+
     /** Called once at app start; shows a newer version found by an earlier check straight away. */
     fun init(c: Context) {
         app = c.applicationContext
@@ -54,6 +62,7 @@ object AppUpdate {
             latest = prefs.latest,
             size = prefs.size,
         )
+        _newAppPublished.value = prefs.newAppPublished
     }
 
     /** Checks for a newer release if the last check was long enough ago (the app came to the front). */
@@ -76,6 +85,7 @@ object AppUpdate {
                     return@launch
                 }
                 remember(v)
+                _newAppPublished.value = newAppPublished().also { prefs.newAppPublished = it }
                 val st = _state.value
                 when {
                     !st.available -> if (asked) Undo.notify(Strings.get(R.string.device_app_up_to_date, st.installed))
@@ -121,6 +131,19 @@ object AppUpdate {
             JSONObject(f.readText())
         } catch (e: FileNotFoundException) {
             null
+        } finally {
+            f.delete()
+        }
+    }
+
+    /** Whether the newest release carries the new-id parent app's version file (AppMove). */
+    private fun newAppPublished(): Boolean {
+        val f = File(app.cacheDir, NEW_APP_VERSION_FILE)
+        return try {
+            Releases.download(Releases.LATEST + NEW_APP_VERSION_FILE, f, maxBytes = 64 * 1024)
+            true
+        } catch (e: FileNotFoundException) {
+            false
         } finally {
             f.delete()
         }
