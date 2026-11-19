@@ -895,7 +895,7 @@ object Hub {
             PendingIntent.FLAG_IMMUTABLE,
         )
         val b = Notification.Builder(app, channel ?: if (r != null) "requests" else "events")
-            .setSmallIcon(android.R.drawable.ic_lock_lock)
+            .setSmallIcon(R.drawable.ic_stat)
             .setContentTitle(deviceName(dev))
             .setContentText(text)
             .setContentIntent(open)

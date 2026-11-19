@@ -888,7 +888,7 @@ public final class Remote {
         nm.createNotificationChannel(new NotificationChannel(
                 "parent", c.getString(R.string.events_channel_from_parents), NotificationManager.IMPORTANCE_DEFAULT));
         Notification n = new Notification.Builder(c, "parent")
-                .setSmallIcon(android.R.drawable.ic_dialog_info)
+                .setSmallIcon(R.drawable.ic_stat)
                 .setContentTitle(text)
                 .setAutoCancel(true)
                 .build();

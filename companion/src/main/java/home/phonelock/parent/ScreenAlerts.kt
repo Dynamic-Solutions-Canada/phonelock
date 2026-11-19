@@ -199,7 +199,7 @@ object ScreenAlerts {
             Strings.get(R.string.alerts_screen_notification)
         }
         val b = Notification.Builder(app, "requests")
-            .setSmallIcon(android.R.drawable.ic_lock_lock)
+            .setSmallIcon(R.drawable.ic_stat)
             .setContentTitle(Hub.deviceName(a.dev))
             .setContentText(text)
             .setContentIntent(open)

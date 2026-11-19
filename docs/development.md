@@ -39,7 +39,7 @@ The root `package.json` holds the entry points. Gradle tasks go through `tools/g
 
 ### Icons
 
-`npm run icons` (devkit-icons, from devkit) writes every launcher, notification and Play icon from the SVG masters in `assets/brand/`, and `npm run check:icons` fails when a committed icon differs from what the masters give. The masters (flat `<path d fill>` elements only, text as outlines) are still to come from the maintainer, so both apps use Android system icons for now and `check:icons` is not in `validate` yet; `assets/brand/README.md` lists what is needed and what changes when they land. Run npm with the Node version in `.nvmrc` (`nvm use`), since `.npmrc` refuses any other.
+`npm run icons` (devkit-icons, from devkit) writes every launcher, notification and Play icon from the SVG masters in `assets/brand/`, and `npm run check:icons` fails when a committed icon differs from what the masters give. `check:icons` is part of `validate`. Both apps share one mark; how the masters are drawn, and the limits devkit puts on them, are in `assets/brand/README.md`. Run npm with the Node version in `.nvmrc` (`nvm use`), since `.npmrc` refuses any other.
 
 ### Third-party notices
 

@@ -80,5 +80,5 @@ PhoneLock's parent app manages a separate child device, set up from the parent a
 
 - **Ryan reviews the English listing text** (`en-US` in `listings.json`) before the first Play publish that uses it.
 - **Reviewer access:** a setup and feature video, and possibly a demo device reviewers can pair with.
-- **Store assets:** icon, feature graphic, phone screenshots.
+- **Store assets:** feature graphic and phone screenshots (the 512 px icon is generated into `graphics/icon.png` by `npm run icons`).
 - **First release on GitHub,** after a build passes testing on a real child device (needed for the lock app download and the updater).

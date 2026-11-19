@@ -1,5 +1,5 @@
 {
-  "background": "#1B1D24",
+  "background": "#0B0F19",
   "targets": {
     "android": [
       {
@@ -7,9 +7,13 @@
         "legacy": false,
         "play": true,
         "playPath": "store-assets/play/graphics/icon.png",
-        "playMaster": "icon"
+        "playMaster": "maskable"
       },
-      { "res": "lock/src/main/res", "legacy": false, "play": false }
+      {
+        "res": "lock/src/main/res",
+        "legacy": false,
+        "play": false
+      }
     ]
   }
 }

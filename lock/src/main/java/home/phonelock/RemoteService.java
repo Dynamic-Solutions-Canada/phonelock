@@ -54,7 +54,7 @@ public class RemoteService extends Service {
         nm.createNotificationChannel(new NotificationChannel(
                 "lock", getString(R.string.events_channel_parent_controls), NotificationManager.IMPORTANCE_MIN));
         Notification n = new Notification.Builder(this, "lock")
-                .setSmallIcon(android.R.drawable.ic_lock_lock)
+                .setSmallIcon(R.drawable.ic_stat)
                 .setContentTitle(getString(R.string.events_parent_controls_active))
                 .setOngoing(true)
                 .build();

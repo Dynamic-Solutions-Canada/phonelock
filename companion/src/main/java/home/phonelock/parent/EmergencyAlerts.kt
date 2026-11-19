@@ -212,7 +212,7 @@ object EmergencyAlerts {
         ).build()
 
         val b = Notification.Builder(app, CHANNEL)
-            .setSmallIcon(android.R.drawable.ic_dialog_alert)
+            .setSmallIcon(R.drawable.ic_stat)
             .setContentTitle(title(a))
             .setContentText(summary(a))
             .setStyle(Notification.BigTextStyle().bigText(summary(a)))
@@ -322,7 +322,7 @@ object EmergencyAlerts {
 
         override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
             val n = Notification.Builder(this, CHANNEL_SERVICE)
-                .setSmallIcon(android.R.drawable.ic_dialog_alert)
+                .setSmallIcon(R.drawable.ic_stat)
                 .setContentTitle(Strings.get(R.string.alerts_emergency_alarm))
                 .setContentIntent(
                     PendingIntent.getActivity(

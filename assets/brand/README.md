@@ -1,12 +1,13 @@
 # Brand masters
 
-The PhoneLock mark's hand-authored masters live here (ASSET-1, ASSET-2), and `npm run icons` (devkit-icons) writes every icon both apps and the Play listing need from them; `npm run check:icons` fails when a committed icon no longer matches its master. `icons.json` says where the outputs go. Nothing else draws icons.
+The PhoneLock mark's hand-authored masters live here (ASSET-1, ASSET-2): a phone with a padlock on its screen, in the family palette (navy `#0B0F19`, blues `#6EA8FE` and `#416397`). Both apps use the same mark. `npm run icons` (devkit-icons) writes every launcher, notification and Play icon from them, and `npm run check:icons`, part of `validate`, fails when a committed icon no longer matches its master. `icons.json` says where the outputs go: one Android entry per app, and only the parent app's writes the Play icon. Nothing else draws icons, and generated files are never edited by hand.
 
-Waiting for the maintainer's approval of the drafted design:
+- `icon.svg`: the full-colour mark.
+- `icon-mono.svg`: the single-colour silhouette, used for Android's themed launcher icon and the notification icon. Holes are drawn with reversed winding, so the screen, keyhole and home bar stay open.
+- `icon-maskable.svg`: the same art on the full 108 dp canvas, used for the Play icon (`playMaster`), so it keeps a margin.
 
-- `icon.svg`: the full-colour mark, text converted to outlines, the art inside the central 66 of a 108 dp canvas.
-- `icon-mono.svg`: a single-colour silhouette, used for Android's themed launcher icon and the notification icon.
-- `icon-maskable.svg` (optional): full-bleed art, if the Play icon should use it (`playMaster`).
-- The background colour (`background` in `icons.json`; the current value is a placeholder).
+When changing them:
 
-Both apps use the same masters: `icons.json` lists one Android entry per app (only the parent app's writes the Play icon). Until the masters exist, both apps still use Android system icons and `check:icons` is not part of `validate`. When the masters land, in the same change: run `npm run icons`, point both manifests at `@mipmap/ic_launcher` and `@mipmap/ic_launcher_round`, switch every `setSmallIcon` to `R.drawable.ic_stat`, and add `check:icons` to `validate`.
+- Use flat `<path d fill>` elements only (no `<rect>`, `<circle>` or strokes) and no text; devkit rejects anything else.
+- devkit maps a master's whole viewBox into the central 66 dp of the 108 dp adaptive canvas, and Android's safe zone is a circle of that size. `icon.svg` and `icon-mono.svg` therefore use `viewBox="12 12 84 84"` around art drawn on the 108 grid, which keeps every corner inside the circle so round launchers don't clip it.
+- Check the result at launcher, round, themed and 24 px notification sizes before committing.
