@@ -23,6 +23,15 @@
     "check:prefs": "python3 tools/check-prefs.py",
     "check:listings": "node tools/check-listings.mjs",
     "check:release-notes": "node tools/release-notes.mjs check",
-    "validate": "npm run format:check && npm run lint && npm run test && npm run check:l10n && npm run check:prefs && npm run check:listings && npm run check:release-notes && npm run verify:android"
+    "validate": "npm run format:check && npm run lint && npm run test && npm run check:l10n && npm run check:prefs && npm run check:listings && npm run check:release-notes && npm run verify:android",
+    "icons": "devkit-icons",
+    "check:icons": "devkit-icons --check"
+  },
+  "//": [
+    "devDependencies are build tools only, never shipped. @dynamic-solutions-canada/devkit and @resvg/resvg-js: the shared icon generator, devkit-icons, and the renderer it asks repos to install (approved: standards session for Ryan, ASSET-3 (2026-11-19))."
+  ],
+  "devDependencies": {
+    "@dynamic-solutions-canada/devkit": "github:Dynamic-Solutions-Canada/devkit#v0.25.0",
+    "@resvg/resvg-js": "2.6.2"
   }
 }

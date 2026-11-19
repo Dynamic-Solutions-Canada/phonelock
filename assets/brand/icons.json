@@ -1,0 +1,15 @@
+{
+  "background": "#1B1D24",
+  "targets": {
+    "android": [
+      {
+        "res": "companion/src/main/res",
+        "legacy": false,
+        "play": true,
+        "playPath": "store-assets/play/graphics/icon.png",
+        "playMaster": "icon"
+      },
+      { "res": "lock/src/main/res", "legacy": false, "play": false }
+    ]
+  }
+}

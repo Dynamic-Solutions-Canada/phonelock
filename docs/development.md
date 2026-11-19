@@ -10,7 +10,7 @@ How to build, set up, control and release PhoneLock. The parent ⇄ phone messag
 
 `build.sh` builds the lock app and the GitHub flavour of the parent app (`companion/build/outputs/apk/github/release/companion-github-release.apk`). The Play flavour is `:companion:assemblePlayRelease`, built only when asked for.
 
-Needs JDK 17, Node (the version in `.nvmrc`), Python 3, and the Android SDK with the platform set by `compileSdk` in `companion/build.gradle`, in `ANDROID_HOME` or `~/android-sdk`. Gradle comes from the committed wrapper (`./gradlew`), which downloads the pinned version.
+Needs JDK 17, Node (the version in `.nvmrc`; `npm ci` installs the dev tools), Python 3, and the Android SDK with the platform set by `compileSdk` in `companion/build.gradle`, in `ANDROID_HOME` or `~/android-sdk`. Gradle comes from the committed wrapper (`./gradlew`), which downloads the pinned version.
 
 Signing key and secrets live in `.secrets/` (git-ignored). Keep `.secrets/phonelock.keystore` safe: updates must be signed with the same key.
 
@@ -36,6 +36,10 @@ The root `package.json` holds the entry points. Gradle tasks go through `tools/g
 | `npm run test:device` | The on-device tests pass on the connected phone or emulator (the QR decoder on Android's image buffers); not in `validate`, since it needs a device. Uninstall a release build first: the debug build is signed with a different key | That the camera reads a real QR code (a real-phone scan before release, in the `release` skill) |
 
 `tools/test-remote.sh` is a manual check against a paired phone and is not part of `validate`; its header says what a pass looks like.
+
+### Icons
+
+`npm run icons` (devkit-icons, from devkit) writes every launcher, notification and Play icon from the SVG masters in `assets/brand/`, and `npm run check:icons` fails when a committed icon differs from what the masters give. The masters (flat `<path d fill>` elements only, text as outlines) are still to come from the maintainer, so both apps use Android system icons for now and `check:icons` is not in `validate` yet; `assets/brand/README.md` lists what is needed and what changes when they land. Run npm with the Node version in `.nvmrc` (`nvm use`), since `.npmrc` refuses any other.
 
 ### Third-party notices
 

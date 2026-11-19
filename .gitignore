@@ -12,6 +12,8 @@ secrets/
 # git keeps tracking it, and a replacement needs `git add -f`. It never signs a release.
 # Personal Claude Code settings (AI-10).
 .claude/settings.local.json
+# npm dev tools (the icon generator); package-lock.json is committed.
+/node_modules/
 
 # Shared block (HYG-6), from winui-app-kit build/shared.gitignore. Paste it unchanged as the last part
 # of every repo's .gitignore, so no earlier line can un-ignore what it covers. Change it in the kit.

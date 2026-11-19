@@ -28,6 +28,7 @@ This repo follows the shared standards at https://github.com/Dynamic-Solutions-C
 | Release, hub deploy, adb and test scripts | `tools/` |
 | Command entry points, the capped Gradle runner, the translation and preferences checks | `package.json`, `tools/gradle`, `tools/check-l10n.py`, `tools/check-prefs.py` |
 | Release notes and the Release body | `release-notes/`, `tools/release-notes.mjs` |
+| Brand masters and the icon generator's config (icons come from `npm run icons`, devkit-icons) | `assets/brand/` (see its README) |
 | Play listing source (nine locales), console settings, data safety and open questions | `store-assets/play/listings.json`, `store-assets/play/listings.md`, checked by `tools/check-listings.mjs` |
 | Phone-to-phone setup design record | `docs/setup.md` |
 
@@ -41,7 +42,7 @@ This repo follows the shared standards at https://github.com/Dynamic-Solutions-C
 
 ## Conventions and gotchas
 
-- Every third-party dependency has an `// ... (approved: <what>)` comment in its `build.gradle`; adding one needs the maintainer's approval, recorded the same way. The lock app has no third-party runtime dependencies, and it excludes the Kotlin standard library on purpose.
+- Every third-party dependency has an `// ... (approved: <what>)` comment in its `build.gradle`, or, for the npm dev tools, in the `"//"` note in `package.json`; adding one needs the maintainer's approval, recorded the same way. The lock app has no third-party runtime dependencies, and it excludes the Kotlin standard library on purpose.
 - Every dialog in the parent app uses `AppDialog`, and every list row uses `ListRow`. Every activity's content sits inside `AppTheme`, the one place the theme is set.
 - Parent-app screens use `stringResource()`; services and notifications use `Strings`.
 - Parent-app settings go through the typed classes in `Prefs.kt`, which own every preferences file, key name and default; `npm run check:prefs` (in `validate`) fails on a key typed anywhere else. The stored names are what installed copies hold, so they don't change without a migration. The lock app still reads its preferences directly; it moves to the same pattern in a later change.

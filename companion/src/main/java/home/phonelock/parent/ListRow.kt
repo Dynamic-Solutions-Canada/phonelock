@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -57,11 +58,15 @@ internal fun InitialAvatar(name: String) {
     }
 }
 
-/** A round 40 dp badge holding [symbol] (an emoji), on a soft background, for rows that aren't people. */
+/**
+ * A round 40 dp badge holding [symbol] (an emoji), on a soft background, for rows that aren't people. It is
+ * decorative (UI-14): the row's title says what it is, so screen readers skip the emoji's name rather than read
+ * "stethoscope" before "Diagnostics".
+ */
 @Composable
 internal fun SymbolBadge(symbol: String) {
     Box(
-        Modifier.size(40.dp).background(MaterialTheme.colorScheme.secondaryContainer, CircleShape),
+        Modifier.size(40.dp).background(MaterialTheme.colorScheme.secondaryContainer, CircleShape).clearAndSetSemantics {},
         contentAlignment = Alignment.Center,
     ) {
         Text(symbol, style = MaterialTheme.typography.titleMedium)
