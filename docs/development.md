@@ -25,8 +25,9 @@ The root `package.json` holds the entry points. Gradle tasks go through `tools/g
 | `npm run validate` | Everything below, as CI runs it on every push and pull request | Device behaviour or the protocol path |
 | `npm run format:check` | Kotlin, Java and Gradle sources match the Spotless format (`npm run format` rewrites them) | Behaviour |
 | `npm run lint` | Android lint passes for the lock app and both parent-app flavours (debug) | Runtime behaviour |
-| `npm run test` | The JVM unit tests pass (emergency numbers, screen guard, usage report, SPAKE2) | Device behaviour |
+| `npm run test` | The JVM unit tests pass (emergency numbers, screen guard, usage report, SPAKE2), and the release-notes script's tests | Device behaviour |
 | `npm run check:l10n` | Every catalog in both apps has the same keys, placeholders and plurals as English | That the translations read well |
+| `npm run check:release-notes` | Every version in `release-notes/` has all seven files, within Play's 500-character limit | That they read well |
 | `npm run verify:android` | Debug builds of the lock app and both parent-app flavours compile | Release signing |
 | `npm run package:android` | Release APKs and the Play bundle build and sign (needs `.secrets/`) | That they install or run |
 | `npm run install:android` | Installs the debug parent app on the connected phone | Anything on the child's phone |
@@ -56,6 +57,8 @@ Release builds fail if a language is missing a string, has an extra one, or has 
 ## Publish a release
 
 `tools/publish-release.sh` publishes both APKs with `lock-version.json` and `parent-version.json` to the GitHub releases the setup code downloads from. Installed lock apps check a few times a day and update themselves the next time the screen is off, and the parent app (GitHub build) offers its update in Settings. Anything published reaches children's phones unattended, so only publish a build already tested on a device.
+
+The full procedure is the `release` skill (`.agents/skills/release/SKILL.md`). In short: the version is `1.0.<commit count>`, so the notes for the next version are committed as the last commit before publishing. They live in `release-notes/1.0.N.md` (en-US) with one sibling per other wording catalog (`1.0.N.es-ES.md`, and `fr-FR`, `de-DE`, `zh-CN`, `pt-BR`, `ja-JP`), written for users, under 500 characters, with no heading or disclosure line (`npm run check:release-notes` checks them). `tools/publish-release.sh` refuses to run without them, and builds the Release body from the en-US file, a "Get it" section and the AI disclosure line. It never falls back to a fixed or generated text.
 
 ```bash
 tools/publish-release.sh

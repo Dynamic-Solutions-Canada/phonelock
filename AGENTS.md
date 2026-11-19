@@ -25,11 +25,12 @@ This repo follows the shared standards at https://github.com/Dynamic-Solutions-C
 | Hub server | `server/` (see `server/README.md`) |
 | Release, hub deploy, adb and test scripts | `tools/` |
 | Command entry points, the capped Gradle runner and the translation check | `package.json`, `tools/gradle`, `tools/check-l10n.py` |
+| Release notes and the Release body | `release-notes/`, `tools/release-notes.mjs` |
 | Play listing drafts and open questions | `play/` |
 
 ## Behaviour
 
-- **Anything published reaches children's phones unattended.** `tools/publish-release.sh` publishes a GitHub Release; the lock app installs it by itself when the screen is off, and a lock app that crashes on start can't be fixed remotely. Never run it, or `tools/deploy-hub.sh`, unless the maintainer asks; only a build tested on a device gets published.
+- **Anything published reaches children's phones unattended.** `tools/publish-release.sh` publishes a GitHub Release; the lock app installs it by itself when the screen is off, and a lock app that crashes on start can't be fixed remotely. Run it only through the `release` skill, and `tools/deploy-hub.sh` only when the maintainer asks; only a build tested on a device gets published.
 - **Release asset names are a permanent interface.** Installed apps fetch `lock-release.apk`, `lock-version.json`, `PhoneLock-parent.apk` and `parent-version.json` from `releases/latest/download/` by those exact names. Don't rename them.
 - **The lock app's certificate is pinned.** `Setup.LOCK_SIGNATURE_SHA256` is the release key's certificate hash. Setup refuses a downloaded lock app signed by anything else, and both updaters require the installed app's signer. Debug builds keep the release pin, because setup always downloads the released lock app.
 - **The version code is the commit count** (`git rev-list --count HEAD`, in the root `build.gradle`). History is never rewritten: a lower count would make every installed copy refuse the update.
@@ -59,7 +60,7 @@ Gradle tasks go through `tools/gradle`, which caps memory locally; the full list
 
 ## Release
 
-`tools/publish-release.sh` builds from the pushed `HEAD` and creates release `v1.0.<commit count>` with the four fixed assets. Run it only when the maintainer asks, after a device test.
+Use the `release` skill. Notes are committed per version in `release-notes/` (en-US plus six siblings) as the last commit before publishing, because the version is the commit count. `tools/publish-release.sh` then builds from the pushed `HEAD` and creates release `v1.0.<commit count>` with the four fixed assets, and refuses to run without the notes.
 
 ## Guidance map
 
@@ -71,6 +72,7 @@ Gradle tasks go through `tools/gradle`, which caps memory locally; the full list
 | `server/README.md` | Changing or deploying the hub | `server/`, `tools/deploy-hub.sh` |
 | `PRIVACY.md` | Changing what either app sends, stores or shares | Both apps, `Disclosure.kt` |
 | `play/` | Play listing, data safety and Play-flavour questions | `companion/src/play/`, the `play` flavour |
+| `release` skill | Releasing a new version | `release-notes/`, `tools/publish-release.sh`, `tools/release-notes.mjs` |
 
 ## Keeping docs current
 
@@ -79,7 +81,7 @@ Gradle tasks go through `tools/gradle`, which caps memory locally; the full list
 | A source file, area or script added, moved or removed | The Architecture table above |
 | A message type, field or the encryption | `docs/protocol.md`, both apps, `tools/ParentCli.java` |
 | What either app sends, stores or who can read it | `PRIVACY.md`, `play/data-safety.md` |
-| Build, adb or release procedure | `docs/development.md`, Commands above |
+| Build, adb or release procedure | `docs/development.md`, Commands above, and the `release` skill |
 | User-visible features or setup steps | `README.md` |
 | Interface text or languages | Every `values*/strings*.xml` in that app; Languages in `docs/development.md` and the README |
 | A dependency added | Its `approved:` comment, and `PRIVACY.md` if it talks to a network |

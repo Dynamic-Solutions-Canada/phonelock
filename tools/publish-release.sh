@@ -12,14 +12,20 @@ REPO=Dynamic-Solutions-Canada/phonelock
 git fetch -q origin main
 [ "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)" ] || { echo "push first"; exit 1; }
 
-# Memory-capped, single worker with in-process Kotlin: the settings that build reliably on this machine
-# alongside other work (larger parallel builds have been OOM-killed).
-systemd-run --user --scope -q -p MemoryMax=3500M -p MemorySwapMax=0 env GRADLE_OPTS=-Xmx1600m \
-  bash ./build.sh --max-workers=1 -Pkotlin.compiler.execution.strategy=in-process
-lock=lock/build/outputs/apk/release/lock-release.apk
-parent=companion/build/outputs/apk/github/release/companion-github-release.apk
+# The version is the commit count, so the notes for it are committed as the last commit before this runs
+# (the release skill's procedure). Stop before building when they are missing or invalid; never fall back to
+# a fixed or generated text (REL-6).
 version=$(git rev-list --count HEAD)
 out=$(mktemp -d)
+node tools/release-notes.mjs github "v1.0.$version" > "$out/notes.md" || { rm -rf "$out"; exit 1; }
+
+# Memory-capped, single worker with in-process Kotlin: the settings that build reliably on this machine
+# alongside other work (larger parallel builds have been OOM-killed). The 2 GiB Gradle heap leaves room in the
+# cap; the 3 GiB in gradle.properties does not.
+systemd-run --user --scope -q -p MemoryMax=3500M -p MemorySwapMax=0 env GRADLE_OPTS=-Xmx1600m \
+  bash ./build.sh --max-workers=1 -Dorg.gradle.jvmargs=-Xmx2g -Pkotlin.compiler.execution.strategy=in-process
+lock=lock/build/outputs/apk/release/lock-release.apk
+parent=companion/build/outputs/apk/github/release/companion-github-release.apk
 cp "$parent" "$out/PhoneLock-parent.apk"
 # Each app checks its own version file before downloading: the lock app lock-version.json, the parent app
 # (GitHub build) parent-version.json.
@@ -29,6 +35,6 @@ version_file "$lock" > "$out/lock-version.json"
 version_file "$parent" > "$out/parent-version.json"
 
 gh release create "v1.0.$version" --repo "$REPO" --title "PhoneLock 1.0.$version" --latest \
-  --notes "Lock app installs from the parent app's \"Set up a new device\" and updates itself. Parent app: PhoneLock-parent.apk (updates itself from here once installed)." \
+  --notes-file "$out/notes.md" \
   "$lock" "$out/lock-version.json" "$out/PhoneLock-parent.apk" "$out/parent-version.json"
 rm -rf "$out"
