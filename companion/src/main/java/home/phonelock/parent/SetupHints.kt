@@ -17,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -82,6 +83,20 @@ internal fun PushWarning(device: Device) {
         onPauseOrDispose {}
     }
     if (!reached) HintCard(stringResource(R.string.main_push_not_reaching))
+}
+
+/**
+ * Names the devices whose pairing key this phone can no longer read (its keystore key is gone, or the app's data
+ * came from another phone), with how to get them back and a way to forget them. Shown on the main screen and on
+ * the first screen of adding a device, since it may be the only device there was.
+ */
+@Composable
+internal fun LostDevicesHint() {
+    val lost by Hub.lostDevices.collectAsState()
+    if (lost.isEmpty()) return
+    HintCard(stringResource(R.string.main_lost_devices, lost.joinToString(", "))) {
+        TextButton(onClick = { Hub.forgetLostDevices() }) { Text(stringResource(R.string.main_lost_devices_forget)) }
+    }
 }
 
 /** The shape every setup prompt and warning on the main screen shares: [text] and an optional [action]. */

@@ -30,7 +30,7 @@ The parent app sends the parent's instructions (for example "allow this app for 
 
 ## Who can read it
 
-Each child device has its own secret key, created at setup and shared only with the parents' apps through the pairing code. Every message, file and screenshot is encrypted with that key (AES-256-GCM) before it leaves the device and decrypted only on the paired devices. Without the key, nobody can read it, including us.
+Each child device has its own secret key, created at setup and shared only with the parents' apps through the pairing code. Every message, file and screenshot is encrypted with that key (AES-256-GCM) before it leaves the device and decrypted only on the paired devices. Without the key, nobody can read it, including us. On each phone the key is stored encrypted with a key that the phone's own secure keystore holds, and neither app's data is included in backups or copied to a new phone.
 
 ## Servers and services
 

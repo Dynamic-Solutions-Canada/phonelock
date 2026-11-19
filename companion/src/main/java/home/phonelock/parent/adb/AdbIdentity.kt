@@ -2,6 +2,7 @@ package home.phonelock.parent.adb
 
 import android.content.Context
 import home.phonelock.parent.R
+import home.phonelock.parent.SecretBox
 import home.phonelock.parent.Strings
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -106,27 +107,62 @@ internal class AdbIdentity private constructor(val privateKey: PrivateKey, val c
     companion object {
         private const val ALIAS = "adb"
 
-        /** Loads this phone's identity from [c]'s private files, creating it the first time. */
+        /**
+         * Loads this phone's identity from [c]'s private files, creating it the first time. The private key is
+         * stored sealed by the keystore (SEC-2); an older version's plain key file is sealed on first load. If the
+         * stored key can't be read, a new identity is made: setup pairs with a code every time, so nothing is lost
+         * but the old entry in a child's device's list of trusted computers.
+         */
         @Synchronized
         fun load(c: Context): AdbIdentity {
-            val keyFile = File(c.filesDir, "adbkey.pk8")
+            val sealedFile = File(c.filesDir, "adbkey.pk8.enc")
+            val plainFile = File(c.filesDir, "adbkey.pk8")
             val certFile = File(c.filesDir, "adbkey.crt")
-            if (keyFile.isFile && certFile.isFile) {
-                runCatching {
-                    val key = KeyFactory.getInstance("RSA").generatePrivate(PKCS8EncodedKeySpec(keyFile.readBytes()))
-                    val cert = certFile.inputStream().use {
-                        CertificateFactory.getInstance("X.509").generateCertificate(it) as X509Certificate
-                    }
-                    // Only a matching pair is usable (a crash while saving could leave a new key and an old cert).
-                    val pub = cert.publicKey as RSAPublicKey
-                    if ((key as java.security.interfaces.RSAPrivateCrtKey).modulus == pub.modulus) return AdbIdentity(key, cert)
+            if (certFile.isFile) {
+                // The sealed key first; a plain one is an older version's, or left by a save that stopped part way.
+                val sealed = sealedFile.takeIf { it.isFile }?.let { f -> runCatching { SecretBox.open(f.readText()) }.getOrNull() }
+                val stored = sealed ?: plainFile.takeIf { it.isFile }?.readBytes()
+                stored?.let { matching(it, certFile) }?.let { id ->
+                    if (sealed == null) saveKey(c, id.privateKey.encoded)
+                    return id
                 }
             }
             val pair = KeyPairGenerator.getInstance("RSA").apply { initialize(2048) }.generateKeyPair()
             val cert = selfSigned(pair.private, pair.public.encoded)
-            writeAtomically(keyFile, pair.private.encoded)
+            saveKey(c, pair.private.encoded)
             writeAtomically(certFile, cert.encoded)
             return AdbIdentity(pair.private, cert)
+        }
+
+        /** The identity in [keyBytes] (PKCS#8) and [certFile], or null unless they are a matching pair. */
+        private fun matching(keyBytes: ByteArray, certFile: File): AdbIdentity? = runCatching {
+            val key = KeyFactory.getInstance("RSA").generatePrivate(PKCS8EncodedKeySpec(keyBytes))
+            val cert = certFile.inputStream().use {
+                CertificateFactory.getInstance("X.509").generateCertificate(it) as X509Certificate
+            }
+            // Only a matching pair is usable (a crash while saving could leave a new key and an old cert).
+            val pub = cert.publicKey as RSAPublicKey
+            if ((key as java.security.interfaces.RSAPrivateCrtKey).modulus == pub.modulus) AdbIdentity(key, cert) else null
+        }.getOrNull()
+
+        /**
+         * Stores the private key sealed, then removes any plain copy, checking the sealed one first so a failure
+         * always leaves one readable copy. If the keystore can't seal it, the key is kept plain and sealed on a
+         * later load.
+         */
+        private fun saveKey(c: Context, keyBytes: ByteArray) {
+            val sealedFile = File(c.filesDir, "adbkey.pk8.enc")
+            val plainFile = File(c.filesDir, "adbkey.pk8")
+            val sealed = runCatching { SecretBox.seal(keyBytes).takeIf { SecretBox.open(it).contentEquals(keyBytes) } }
+                .onFailure { android.util.Log.w(home.phonelock.parent.TAG, "adb key stored unsealed for now", it) }
+                .getOrNull()
+            if (sealed != null) {
+                writeAtomically(sealedFile, sealed.toByteArray())
+                plainFile.delete()
+            } else {
+                writeAtomically(plainFile, keyBytes)
+                sealedFile.delete()
+            }
         }
 
         /**

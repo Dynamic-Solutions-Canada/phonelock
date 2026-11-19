@@ -54,6 +54,7 @@ private fun ChooseHowToAdd(canCancel: Boolean, onPick: (String) -> Unit, onCance
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Text(stringResource(R.string.setup_add_child_device), style = MaterialTheme.typography.headlineSmall)
+        LostDevicesHint()
         Text(stringResource(R.string.setup_already_installed_question))
         ChoiceCard(
             stringResource(R.string.setup_set_up_new_device),

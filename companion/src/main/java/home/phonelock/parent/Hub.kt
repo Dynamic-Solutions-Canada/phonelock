@@ -139,6 +139,17 @@ object Hub {
 
     private val _devices = MutableStateFlow<List<Device>>(emptyList())
     val devices: StateFlow<List<Device>> = _devices.asStateFlow()
+
+    /** Stored devices whose pairing secret can't be read right now, kept as stored so saving never erases them. */
+    private var unreadableDevices: List<JSONObject> = emptyList()
+    private val deviceStore = DeviceStore()
+
+    /** The stored entries of [lostDevices], so forgetting them removes exactly those. */
+    private var lostEntries: List<JSONObject> = emptyList()
+    private val _lostDevices = MutableStateFlow<List<String>>(emptyList())
+
+    /** Names of devices whose pairing secret can never be read on this phone; they must be added again. */
+    val lostDevices: StateFlow<List<String>> = _lostDevices.asStateFlow()
     private val _parentName = MutableStateFlow("")
     val parentName: StateFlow<String> = _parentName.asStateFlow()
     private val _states = MutableStateFlow<Map<String, PhoneState>>(emptyMap())
@@ -179,10 +190,13 @@ object Hub {
             runCatching { JSONObject(j).let { o -> o.keys().forEach { seenIds[it] = o.getLong(it) } } }
         }
         prefs.getString("devices", null)?.let { s ->
-            val a = JSONArray(s)
-            _devices.value = (0 until a.length()).map { a.getJSONObject(it) }.map {
-                Device(it.getString("server"), it.getString("topic"), it.getString("secret"), it.getString("name"))
-            }
+            val loaded = deviceStore.decode(s)
+            _devices.value = loaded.devices
+            unreadableDevices = loaded.unreadable
+            lostEntries = loaded.lost
+            _lostDevices.value = loaded.lost.map { it.optString("name") }
+            // Secrets saved by an older version are sealed now (saveDevices checks each before writing).
+            if (loaded.needsSealing) saveDevices()
         }
         // Migrate the single-phone config from version 1.
         prefs.getString("config", null)?.let { s ->
@@ -307,11 +321,17 @@ object Hub {
     }
 
     private fun saveDevices() {
-        val a = JSONArray()
-        _devices.value.forEach {
-            a.put(JSONObject().put("server", it.server).put("topic", it.topic).put("secret", it.secret).put("name", it.name))
-        }
-        prefs.edit().putString("devices", a.toString()).apply()
+        // Written at once (commit), so the sealed list replaces the old one in a single step.
+        prefs.edit().putString("devices", deviceStore.encode(_devices.value, unreadableDevices)).commit()
+    }
+
+    /** Forgets the devices whose secret can't be read on this phone, once the parent has seen they are gone. */
+    fun forgetLostDevices() {
+        val lost = lostEntries
+        unreadableDevices = unreadableDevices.filterNot { e -> lost.any { it === e } }
+        lostEntries = emptyList()
+        _lostDevices.value = emptyList()
+        saveDevices()
     }
 
     var lastNtfyTime: Long

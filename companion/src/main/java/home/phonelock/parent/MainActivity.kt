@@ -249,6 +249,7 @@ private fun MainScreen(devices: List<Device>, dev: String, onSelect: (String) ->
                     )
                 }
                 device?.let { PushWarning(it) }
+                LostDevicesHint()
                 SetupHints()
                 EmergencySection(dev)
 

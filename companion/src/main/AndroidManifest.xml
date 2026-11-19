@@ -17,7 +17,8 @@
         android:icon="@android:drawable/ic_lock_lock"
         android:theme="@android:style/Theme.Material.NoActionBar"
         android:localeConfig="@xml/locales_config"
-        android:allowBackup="false">
+        android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules">
 
         <!-- Google Play: this is a parental control (child monitoring) app. -->
         <meta-data android:name="isMonitoringTool" android:value="child_monitoring" />

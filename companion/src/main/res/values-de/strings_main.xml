@@ -50,6 +50,8 @@
     <!-- Whether the device is answering. %1$s: the rest of the status line -->
     <string name="main_status_connecting">Verbindet … · %1$s</string>
     <string name="main_push_not_reaching">Anfragen und Warnungen von diesem Gerät kommen nur an, solange PhoneLock geöffnet ist, weil Push-Nachrichten es noch nicht erreichen. Wenn das so bleibt, richte das Gerät in dieser App neu ein.</string>
+    <string name="main_lost_devices">Dieses Smartphone kann den Kopplungsschlüssel für %1$s nicht mehr lesen. Füge es von einem Smartphone, das es noch hat, mit „Mit anderem Elternteil teilen“ wieder hinzu oder richte es neu ein.</string>
+    <string name="main_lost_devices_forget">Entfernen</string>
     <string name="main_status_no_reply">Noch keine Antwort</string>
     <!-- %1$s: how long ago, e.g. "18 min ago" -->
     <string name="main_status_not_answering">Antwortet nicht · zuletzt gesehen %1$s</string>

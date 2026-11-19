@@ -48,6 +48,8 @@
     <!-- Whether the device is answering. %1$s: the rest of the status line -->
     <string name="main_status_connecting">正在连接… · %1$s</string>
     <string name="main_push_not_reaching">此设备的请求和警报只会在 PhoneLock 打开时收到，因为推送暂时无法送达。如果一直如此，请在此应用中重新设置该设备。</string>
+    <string name="main_lost_devices">此手机已无法读取 %1$s 的配对密钥。请在仍有该设备的手机上通过“与其他家长共享”重新添加，或重新设置该设备。</string>
+    <string name="main_lost_devices_forget">忽略</string>
     <string name="main_status_no_reply">尚无回应</string>
     <!-- %1$s: how long ago, e.g. "18 min ago" -->
     <string name="main_status_not_answering">无响应 · 最后在线：%1$s</string>

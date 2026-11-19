@@ -48,6 +48,8 @@
     <!-- Whether the device is answering. %1$s: the rest of the status line -->
     <string name="main_status_connecting">接続中… · %1$s</string>
     <string name="main_push_not_reaching">このデバイスからのリクエストやアラートは、PhoneLock を開いている間しか届きません。プッシュ通知がまだ届かないためです。このままの場合は、このアプリからデバイスを設定し直してください。</string>
+    <string name="main_lost_devices">このスマートフォンでは %1$s のペアリング キーを読み取れなくなりました。まだ登録されているスマートフォンから「他の保護者と共有」でもう一度追加するか、設定し直してください。</string>
+    <string name="main_lost_devices_forget">削除</string>
     <string name="main_status_no_reply">まだ応答がありません</string>
     <!-- %1$s: how long ago, e.g. "18 min ago" -->
     <string name="main_status_not_answering">応答なし · 最終確認 %1$s</string>

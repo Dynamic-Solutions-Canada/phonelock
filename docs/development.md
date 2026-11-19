@@ -51,18 +51,18 @@ Lint issues already in the code when lint joined `validate` are recorded in `loc
 
 ## Where data lives
 
-Everything below is in the app's private storage, which Android deletes on uninstall, except where it says shared storage. Neither app is in Android's backup (`allowBackup="false"` in both manifests). This list is unconfirmed until a real uninstall of each app has been checked.
+Everything below is in the app's private storage, which Android deletes on uninstall, except where it says shared storage. Neither app is in Android's backup or a transfer to a new phone (`allowBackup="false"` and `data_extraction_rules.xml`, which excludes everything, in both manifests). Pairing keys and the parent app's adb key are sealed with a key held by the phone's keystore (`SecretBox` in each app), so a copy of the files can't be read on another phone. This list is unconfirmed until a real uninstall of each app has been checked.
 
 Parent app:
 
-- **Preferences:** `hub` (paired devices and their keys, names, the disclosure), `devicedata`, `emergency`, `push`, `quiet`, `screenalerts`, `ui`, and `appupdate` in the GitHub build.
-- **Files:** `app-time.json`, `location-history.json`, `app-history.json`, `icons/` (app icons from the child's phone), `screen-alerts/` (screenshots of unfamiliar screens, at most 20 per device), and `adbkey.pk8` with `adbkey.crt` (this phone's identity for setting up a child's phone over Wireless debugging).
+- **Preferences:** `hub` (paired devices with their sealed keys, names, the disclosure), `devicedata`, `emergency`, `push`, `quiet`, `screenalerts`, `ui`, and `appupdate` in the GitHub build.
+- **Files:** `app-time.json`, `location-history.json`, `app-history.json`, `icons/` (app icons from the child's phone), `screen-alerts/` (screenshots of unfamiliar screens, at most 20 per device), and `adbkey.pk8.enc` (sealed) with `adbkey.crt`: this phone's identity for setting up a child's phone over Wireless debugging. A plain `adbkey.pk8` from an older version is sealed on first use.
 - **Cache:** the downloaded `lock-release.apk` and, in the GitHub build, `parent-update.apk`; `upload.tmp` while a file is sent; `opened/` for files opened from the child's phone.
 - **Shared storage:** `Download/PhoneLock/`, for files a parent downloads from the child's phone. It stays after uninstall.
 
 Lock app:
 
-- **Preferences:** `phonelock` (policy, PIN, pairing key and settings).
+- **Preferences:** `phonelock` (policy, PIN hash, sealed pairing key and settings). A plain key from an older version is sealed on first start; `adb shell am broadcast ... --es cmd status` reports `key=lost` if the phone can no longer read it, and the home screen asks the child to have a parent set it up again (Fix setup over Wi-Fi re-sends it).
 - **Files:** `track.json` (the location log), `app_days.json` (in device-protected storage, so time limits work before the phone is unlocked), and `update.apk` while an update installs.
 - **Shared storage:** files a parent sends to the child's phone are saved in its shared storage and stay there.
 - **Device policy:** the device-owner restrictions stay in force until the lock app is released (see adb control below).

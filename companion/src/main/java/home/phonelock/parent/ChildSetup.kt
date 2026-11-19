@@ -174,6 +174,8 @@ object ChildSetup {
             var owned = false
             var mine: Device? = null
             var othersDevice = false
+            // This app's device, but it holds no readable pairing key (it lost it): it is sent again below.
+            var needsKey = false
             step(2) {
                 val sdk = device.shell("getprop ro.build.version.sdk").output.trim().toIntOrNull() ?: 0
                 if (sdk < MIN_SDK) throw SetupError(Strings.get(R.string.setup_android_too_old))
@@ -192,6 +194,7 @@ object ChildSetup {
                             throw SetupError(Strings.get(R.string.setup_wrong_device, req.existing.name))
                         }
                         othersDevice = paired && mine == null
+                        needsKey = mine != null && !paired
                         when {
                             req.existing != null -> Strings.get(R.string.setup_note_checking_features)
                             mine != null -> Strings.get(R.string.setup_note_already_mine)
@@ -241,6 +244,7 @@ object ChildSetup {
             when {
                 dev != null -> {
                     set(6, StepState.RUNNING, Strings.get(R.string.setup_checking_answers))
+                    mine?.takeIf { needsKey }?.let { resendKey(device, it) }
                     reachable = awaitReply(dev)
                     if (reachable) {
                         set(6, StepState.DONE, Strings.get(R.string.setup_already_connected))
@@ -314,6 +318,17 @@ object ChildSetup {
     }
 
     private val NOT_ANSWERING = R.string.setup_not_answering
+
+    /**
+     * Gives [d]'s pairing key back to a device this app set up that can no longer read its own (its keystore key
+     * was lost). The topic already matches, so only the key is sent; the device reconnects by itself.
+     */
+    private fun resendKey(device: AdbConnection, d: Device) {
+        val reply = runCatching {
+            broadcastReply(device.shell("am broadcast $CONFIG --es cmd secret --es value ${quote(d.secret)}").output)
+        }.getOrNull()
+        Log.i(TAG, "pairing key sent again: ${reply ?: "no reply"}")
+    }
 
     /**
      * Hands the new device its pairing and parent PIN in one go, after first saving it in this app, so the
