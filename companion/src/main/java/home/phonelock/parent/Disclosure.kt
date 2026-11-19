@@ -25,7 +25,8 @@ import androidx.compose.ui.unit.dp
  * requires this prominent disclosure and consent for monitoring apps; it is also simply the honest start.
  */
 object Disclosure {
-    const val PRIVACY_POLICY_URL = "https://github.com/Dynamic-Solutions-Canada/phonelock/blob/main/PRIVACY.md"
+    /** The policy page on the company site (D-017); this address is fixed, because installed copies keep it. */
+    const val PRIVACY_POLICY_URL = "https://dynamic-solutions.ca/privacy/phonelock"
 
     /** Bump when the disclosure text changes materially, so parents see and accept the new version. */
     private const val VERSION = 2

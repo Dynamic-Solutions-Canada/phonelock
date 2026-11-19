@@ -20,7 +20,7 @@ The listing translations were written with AI assistance and have not been revie
 A release that changes any of these updates the listing in the same change.
 
 - Everything between the phones is end-to-end encrypted, and the relay server can't read it (docs/protocol.md).
-- No ads, no tracking, no accounts, no telemetry (PRIVACY.md, LOG-9).
+- No ads, no tracking, no accounts, no telemetry (the privacy policy, LOG-9).
 - The child's device needs Android 13 or later (minSdk 33 in both apps).
 - Setup is from the parent's phone over Wi-Fi with Wireless debugging: no computer, no cable, nothing erased; the child's device has no accounts signed in during setup.
 - Location history covers the last 7 days.
@@ -34,7 +34,7 @@ A release that changes any of these updates the listing in the same change.
 - **Category:** Parenting
 - **Contains ads:** No
 - **Target audience:** adults (parents). Not designed for children.
-- **Privacy policy URL:** https://github.com/Dynamic-Solutions-Canada/phonelock/blob/main/PRIVACY.md, until the policy moves to a website page (see open questions).
+- **Privacy policy URL:** https://dynamic-solutions.ca/privacy/phonelock (the company site, D-017)
 
 ## Data safety
 
@@ -72,9 +72,8 @@ PhoneLock's parent app manages a separate child device, set up from the parent a
 ## Open questions
 
 1. **Play build without the background connection (done, decided 2026-11-18).** The parent app's foreground service (type `specialUse`, `ParentService`) and the battery-optimization exemption live only in the `github` flavour, reached through `BackgroundConnection`. The Play build has neither, accepts only phones on PhoneLock's own hub, and warns about a phone push doesn't reach yet.
-2. **Removing PhoneLock (planned, decided 2026-11-18).** The lock app can already give up device owner (`ConfigReceiver` `release`, over adb), but parents have no button for it. Play and the privacy policy expect a way out. Planned: "Remove PhoneLock from this device…" in the parent app's device menu, which releases and uninstalls. Until it ships, `PRIVACY.md` "Your choices" says removal needs a factory reset from recovery mode or a computer over USB debugging; update that sentence in the same change that adds the button.
+2. **Removing PhoneLock (planned, decided 2026-11-18).** The lock app can already give up device owner (`ConfigReceiver` `release`, over adb), but parents have no button for it. Play and the privacy policy expect a way out. Planned: "Remove PhoneLock from this device…" in the parent app's device menu, which releases and uninstalls. Until it ships, the privacy policy's "Your choices" says removal needs a factory reset from recovery mode or a computer over USB debugging; update that sentence in the same change that adds the button.
 3. **One signer for the GitHub and Play builds (decided 2026-11-16, D-021).** Play installs can only update over, and be updated by, builds with the same signing key. Decided: enrol the existing PhoneLock release key as Play's app signing key in Play Console before the first upload. That step, and anything that reads the key, is the maintainer's. If Google refuses the key, the GitHub and Play builds take separate application ids. Either way it happens after the parent app's id rename (D-011) and before the first Play upload, because both are permanent after it.
-4. **Privacy policy URL.** The listing points at PRIVACY.md on GitHub until the policy becomes a page on the website (D-017); the URL changes here and in the app (Disclosure.kt) together.
 
 ## Still to do before the first submission
 

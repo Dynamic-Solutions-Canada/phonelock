@@ -49,6 +49,7 @@ This repo follows the shared standards at https://github.com/Dynamic-Solutions-C
 - Every string exists in all nine locales with the same placeholders, or release lint fails. Keep the two apps' `locales_config.xml` lists the same. Translations are AI-written and unreviewed.
 - Debug builds are signed with the committed debug-only key in `keystore/debug.keystore` (passwords `android`). The production key signs releases only. A debug build can't update over a release one, or the reverse.
 - The `github` flavour has the self-updater and install permission, full-screen alerts, and the background connection with its battery-saving exemption; the `play` flavour has none of them, because Play forbids or restricts each. The Play build reaches phones only by push through its hub, so it refuses phones on any other server. Shared code calls `AppUpdate` and `BackgroundConnection`, which each flavour implements, never the flavour's classes directly.
+- `PRIVACY.md` at the root is only a pointer to the policy page, a deliberate exception to the root file set (DOCS-1): installed copies link to its old GitHub address, which must keep landing somewhere useful (BRAND-11). Never put policy text back in it; the policy is edited on the website.
 - Signing material, Firebase settings and pairing data live in the git-ignored `.secrets/` folder. Never open, print or copy anything there.
 
 ## Commands
@@ -78,7 +79,7 @@ Use the `release` skill. Notes are committed per version in `release-notes/` (en
 | `docs/development.md` | Building, the hub settings, languages, releasing, adb install and control | `build.sh`, `tools/`, `res/values*/` |
 | `README.md` | Changing a user-visible feature, requirement or the setup steps | The product as users see it |
 | `server/README.md` | Changing or deploying the hub | `server/`, `tools/deploy-hub.sh` |
-| `PRIVACY.md` | Changing what either app sends, stores or shares | Both apps, `Disclosure.kt` |
+| The privacy policy, https://dynamic-solutions.ca/privacy/phonelock (source: `privacy/phonelock.php` in the dynamic-solutions-website repo) | Changing what either app sends, stores or shares | Both apps, `Disclosure.kt` |
 | `store-assets/play/listings.md` | Play listing, data safety and Play-flavour questions | `store-assets/play/`, `companion/src/play/`, the `play` flavour |
 | `release` skill | Releasing a new version | `release-notes/`, `tools/publish-release.sh`, `tools/release-notes.mjs` |
 
@@ -88,11 +89,11 @@ Use the `release` skill. Notes are committed per version in `release-notes/` (en
 | --- | --- |
 | A source file, area or script added, moved or removed | The Architecture table above |
 | A message type, field or the encryption | `docs/protocol.md`, both apps, `tools/ParentCli.java` |
-| What either app sends, stores or who can read it | `PRIVACY.md`, Data safety in `store-assets/play/listings.md` |
+| What either app sends, stores or who can read it | The privacy policy page in the website repo, in the same piece of work; Data safety in `store-assets/play/listings.md` |
 | Build, adb or release procedure | `docs/development.md`, Commands above, and the `release` skill |
 | User-visible features or setup steps | `README.md` |
 | Interface text or languages | Every `values*/strings*.xml` in that app; Languages in `docs/development.md` (and its review-status table) and the README |
-| A dependency added | Its `approved:` comment, and `PRIVACY.md` if it talks to a network |
+| A dependency added | Its `approved:` comment, and the privacy policy page if it talks to a network |
 | A check, test suite or build command added | `package.json` (and `validate` when it is static), **Checks** in `docs/development.md`, Commands above |
 | Hub configuration or deployment | `server/README.md` |
 | A feature or claim the Play listing describes | `store-assets/play/listings.json` (every locale) and its claims list in `store-assets/play/listings.md` |

@@ -19,7 +19,7 @@ PhoneLock is for parents who want to give a child a phone that does only what th
 - **Location history and battery:** The phone logs its location every 15 minutes and keeps it for 7 days, and reports its battery with every message. You choose a low-battery alert, and get "Turning off" and "Turned on" notices, so a dead battery can be told apart from lost signal. The child's home screen says that location and battery are shared.
 - **An SOS button:** The child can call the local emergency number from the home screen at any time.
 - **Set up from your phone:** No computer and no factory reset: your phone sets up the child's phone over Wi-Fi. A second parent can be added from the first parent's app.
-- **Private by design:** Every message between the phones is end-to-end encrypted, so the server that relays them sees only ciphertext. See the [privacy policy](PRIVACY.md).
+- **Private by design:** Every message between the phones is end-to-end encrypted, so the server that relays them sees only ciphertext. See the [privacy policy](https://dynamic-solutions.ca/privacy/phonelock).
 
 ## Get it
 
@@ -35,7 +35,7 @@ Afterwards, add the child's accounts back in parent mode: hold the clock on the 
 
 ## Your data
 
-PhoneLock collects no telemetry or crash reports, and there is no PhoneLock account. What the child's phone shares stays on the parents' phones: the relay server only passes encrypted messages along and deletes them within 3 days. The [privacy policy](PRIVACY.md) lists what is shared.
+PhoneLock collects no telemetry or crash reports, and there is no PhoneLock account. What the child's phone shares stays on the parents' phones: the relay server only passes encrypted messages along and deletes them within 3 days. The [privacy policy](https://dynamic-solutions.ca/privacy/phonelock) lists what is shared.
 
 - **Backup:** neither app is included in Android's backup, so the keys that pair the phones never leave them. On a new phone of your own, add the device again with **Share with another parent** from a phone that still has it.
 - **Export:** files you download from the child's phone are saved in your Downloads folder, under PhoneLock. There is nothing else to export.
