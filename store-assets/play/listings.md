@@ -65,6 +65,23 @@ Not collected: personal info, financial info, health, messages, photos and video
 - **Camera:** scanning pairing QR codes, decoded on the phone (ZXing); nothing about a scan is sent anywhere.
 - **Foreground service and battery-optimization exemption:** not in the Play build. Both live only in the `github` flavour (`companion/src/github/`), so the Play build declares neither.
 
+## Play app signing (D-021)
+
+Every PhoneLock build that users can install under one application id must have one signer, so the GitHub build's updater and Play can replace each other (DIST-8, SEC-11). Play enrols every new app in a Google-generated signing key by default, and its key can only be changed before a release reaches open testing or production, so the existing release key is enrolled first, before any upload at all. Every step is the maintainer's, and nothing here names, reads or copies key material: the release keystore stays only in its private storage and backup.
+
+Checklist, after the parent app's id rename (package 13) and before the first upload to any track:
+
+1. In Play Console, create the app under its final application id. Upload nothing yet.
+2. Open **Protected with Play > Play Store protection > Manage Play app signing** and choose **Change key**, then the option to provide a copy of your own key from a Java keystore. Follow the console's instructions, which give the encryption tool (PEPK) and the public key to encrypt the export with. Keep the exported, encrypted file out of the repo and delete it after the upload.
+3. Create a separate **upload key** (RSA 2048-bit or larger), as Google recommends, store it with its index and backup per the credential rule, and register its certificate in the same page. The release key then never leaves private storage for Play.
+4. Check the **app signing key certificate** SHA-256 that the console shows against the published fingerprints. The lock app's, pinned in `Setup.LOCK_SIGNATURE_SHA256`, is `8A:E1:B1:1F:4A:E8:CC:92:5D:96:DD:7C:2D:A6:DB:B0:23:E1:C4:3D:D1:E5:64:EC:22:CD:DA:EE:11:B9:43:23`. The parent app's is the certificate in a released `PhoneLock-parent.apk` (`apksigner verify --print-certs`); it must match the console's, or Play and GitHub installs can't update each other.
+5. Record the certificate fingerprints and the upload certificate's in BRAND-10's registry row for PhoneLock (SEC-11).
+6. Only then make the first upload, signed with the upload key, to internal testing.
+
+Open before step 2: Play now offers new apps "quantum-ready" hybrid signing with Google-generated keys; check in the console whether providing your own key gives up anything a parent would notice. It doesn't change the decision, since a Google-generated key would end updates between the GitHub and Play builds.
+
+**Fallback, if Google refuses the key:** the GitHub and Play builds take separate application ids (DIST-8), for example a suffix on the `play` flavour, each with its own Firebase app and Maps key restriction. A parent moving between them re-adds devices like any new install. That is a build change with its own package, decided then.
+
 ## Reviewer access
 
 PhoneLock's parent app manages a separate child device, set up from the parent app over Wireless debugging, so reviewers need two devices to exercise it fully. A video of the setup and of each feature is at [VIDEO LINK]. To try the parent app's screens without a child device, [describe a demo device or pairing link the reviewer can use, if we provide one]. Never put reviewer credentials in this file (D-083).
@@ -73,7 +90,7 @@ PhoneLock's parent app manages a separate child device, set up from the parent a
 
 1. **Play build without the background connection (done, decided 2026-11-18).** The parent app's foreground service (type `specialUse`, `ParentService`) and the battery-optimization exemption live only in the `github` flavour, reached through `BackgroundConnection`. The Play build has neither, accepts only phones on PhoneLock's own hub, and warns about a phone push doesn't reach yet.
 2. **Removing PhoneLock (planned, decided 2026-11-18).** The lock app can already give up device owner (`ConfigReceiver` `release`, over adb), but parents have no button for it. Play and the privacy policy expect a way out. Planned: "Remove PhoneLock from this device…" in the parent app's device menu, which releases and uninstalls. Until it ships, the privacy policy's "Your choices" says removal needs a factory reset from recovery mode or a computer over USB debugging; update that sentence in the same change that adds the button.
-3. **One signer for the GitHub and Play builds (decided 2026-11-16, D-021).** Play installs can only update over, and be updated by, builds with the same signing key. Decided: enrol the existing PhoneLock release key as Play's app signing key in Play Console before the first upload. That step, and anything that reads the key, is the maintainer's. If Google refuses the key, the GitHub and Play builds take separate application ids. Either way it happens after the parent app's id rename (D-011) and before the first Play upload, because both are permanent after it.
+3. **One signer for the GitHub and Play builds (decided 2026-11-16, D-021).** The steps are under **Play app signing** below; all of them are the maintainer's.
 
 ## Still to do before the first submission
 
