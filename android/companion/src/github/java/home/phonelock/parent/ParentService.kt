@@ -36,7 +36,14 @@ class ParentService : Service() {
             .setContentIntent(open)
             .setOngoing(true)
             .build()
+        // Always first, for every start, including one that only stops the service (BackgroundConnection.stop).
         startForeground(1, n, ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
+        BackgroundConnection.starts.answered()
+        if (intent?.action == BackgroundConnection.ACTION_STOP) {
+            stopForeground(STOP_FOREGROUND_REMOVE)
+            stopSelf()
+            return START_NOT_STICKY
+        }
         // (Re)subscribe with the current device list.
         val gen = ++generation
         synchronized(conns) {

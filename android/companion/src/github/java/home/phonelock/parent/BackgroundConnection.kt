@@ -13,6 +13,12 @@ object BackgroundConnection {
     /** This build can keep a connection in the background (and asks to be exempt from battery saving). */
     const val SUPPORTED = true
 
+    /** The service action that shows the notification, as every start must, then stops the service. */
+    internal const val ACTION_STOP = "stop"
+
+    /** Starts the service has yet to answer with startForeground(); see [stop]. */
+    internal val starts = PendingStarts()
+
     /** Starts, or re-subscribes, the connection; stops it instead when every phone is reached by push. */
     fun start(c: Context) {
         // No permanent notification when every phone is reached by push.
@@ -20,12 +26,26 @@ object BackgroundConnection {
             stop(c)
             return
         }
-        runCatching { c.startForegroundService(Intent(c, ParentService::class.java).setAction("restart")) }
-            .onFailure { Log.w(TAG, "start: $it") }
+        runCatching {
+            c.startForegroundService(Intent(c, ParentService::class.java).setAction("restart"))
+            starts.requested()
+        }.onFailure { Log.w(TAG, "start: $it") }
     }
 
+    /**
+     * Stops the connection. While a start is still waiting for the service to call startForeground(), stopping
+     * it outright would make Android kill the app, so the stop is sent through the service instead: it answers
+     * the start, then stops itself.
+     */
     fun stop(c: Context) {
-        c.stopService(Intent(c, ParentService::class.java))
+        if (!starts.stopNeedsService()) {
+            c.stopService(Intent(c, ParentService::class.java))
+            return
+        }
+        runCatching {
+            c.startForegroundService(Intent(c, ParentService::class.java).setAction(ACTION_STOP))
+            starts.requested()
+        }.onFailure { Log.w(TAG, "stop: $it") }
     }
 
     fun restart(c: Context) = start(c)
