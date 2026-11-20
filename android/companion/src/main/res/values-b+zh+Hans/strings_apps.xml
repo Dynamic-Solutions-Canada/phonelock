@@ -161,7 +161,7 @@
 
     <!-- Parent mode, PIN and starting a situation by hand; %1$s is the child's device name -->
     <string name="apps_parent_mode_title">要为家长解锁 %1$s 吗？</string>
-    <string name="apps_parent_mode_note">孩子的设备上会开放“设置”和 Play Store，任何拿着设备的人都能使用。时间结束或屏幕关闭后会重新锁定。</string>
+    <string name="apps_parent_mode_note">孩子的设备上会开放“设置”和 Play Store，任何拿着设备的人都能使用。时间结束后会重新锁定，即使屏幕在此之前关闭也一样。</string>
     <!-- %1$s is a length of time such as "15 min" -->
     <string name="apps_for_length">持续 %1$s</string>
     <string name="apps_pin_title">更改家长 PIN 码</string>

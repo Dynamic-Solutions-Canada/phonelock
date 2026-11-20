@@ -67,6 +67,7 @@
     <string name="home_parent_lock_now">Verrouiller</string>
     <!-- Text of the parent mode bar. %1$s is a time such as "4:15 PM" -->
     <string name="home_parent_mode_until">Mode parent. Se verrouille de nouveau à %1$s ou quand l’écran s’éteint.</string>
+    <string name="home_parent_mode_until_time">Mode parent. Se verrouille de nouveau à %1$s.</string>
     <!-- Bottom button in parent mode: opens every app -->
     <string name="home_all_apps">Toutes les applications</string>
     <string name="home_open_an_app">Ouvrir une application</string>

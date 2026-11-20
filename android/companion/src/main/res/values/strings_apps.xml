@@ -161,7 +161,7 @@
 
     <!-- Parent mode, PIN and starting a situation by hand; %1$s is the child's device name -->
     <string name="apps_parent_mode_title">Unlock %1$s for a parent?</string>
-    <string name="apps_parent_mode_note">Settings and the Play Store open on their device for anyone holding it. It locks again when the time ends or the screen turns off.</string>
+    <string name="apps_parent_mode_note">Settings and the Play Store open on their device for anyone holding it. It locks again when the time ends, even if the screen turns off before then.</string>
     <!-- %1$s is a length of time such as "15 min" -->
     <string name="apps_for_length">For %1$s</string>
     <string name="apps_pin_title">Change parent PIN</string>

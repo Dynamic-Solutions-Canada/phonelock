@@ -35,7 +35,7 @@ Plaintext is JSON with common fields:
 | `calllog` | | phone replies with `calls` (`req` = this message's `id`): up to 200 recent calls |
 | `contacts` | `op` (`list` / `add` {`name`, `number`} / `remove` {`key`: the contact's lookup key; dropped if more than 30 minutes late}) | phone replies with `contacts` |
 | `files` | `op` (`ls` / `get` / `put` {`name`, with a file attachment} / `rm` / `mkdir` / `mv` {`to`}), `path` (relative to shared storage; `Android/` refused in any letter case; top-level folders can't be deleted; `rm`/`mv`/`put` dropped if more than 30 minutes late; uploads never overwrite, a taken name gets " (1)") | phone replies with `files` (`req`, `error`?, `dir`, `entries`) or, for `get`, `file`; only the requesting parent app acts on these replies |
-| `parentmode` | `minutes` (0 ends it, up to 720) | parent mode on the device (Settings and Play Store) until then or until the screen turns off; dropped if more than 5 minutes late |
+| `parentmode` | `minutes` (0 ends it, up to 720) | parent mode on the device (Settings and Play Store) until then, even if the screen turns off meanwhile (parent mode from the PIN on the device ends when the screen turns off); dropped if more than 5 minutes late |
 | `pin` | `pin` (4–8 digits) | sets the parent PIN; never echoed or logged |
 | `locate` | | phone replies with `loc` (`req` = this message's `id`) |
 | `battery` | `alert` (percent, 0 = off, up to 50) | low-battery alert threshold, shared by all parents; phone replies with `state` (`full`) and an `event` |

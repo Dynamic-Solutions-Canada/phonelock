@@ -246,6 +246,19 @@ public final class Policy {
         return System.currentTimeMillis() < prefs(c).getLong("parent_until", 0);
     }
 
+    /** Set while the current parent mode was started with the PIN on the device itself. */
+    static final String PARENT_BY_PIN = "parent_by_pin";
+
+    /**
+     * Whether locking the screen ends the current parent mode. Only parent mode started with the PIN on the
+     * device does: a parent holding the phone who locks it is done with it. Parent mode a parent started
+     * from their own phone lasts until the time they chose, since locking the child's phone says nothing
+     * about that parent being finished.
+     */
+    static boolean parentModeEndsOnScreenOff(Context c) {
+        return prefs(c).getBoolean(PARENT_BY_PIN, false);
+    }
+
     /**
      * Turns parent mode on until {@code untilMs} (0 turns it off), re-applies the policy, and brings the
      * home screen forward so it shows or hides the parent bar.

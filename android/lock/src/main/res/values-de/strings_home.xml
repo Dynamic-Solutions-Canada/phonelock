@@ -65,6 +65,7 @@
     <string name="home_parent_lock_now">Jetzt sperren</string>
     <!-- Text of the parent mode bar. %1$s is a time such as "4:15 PM" -->
     <string name="home_parent_mode_until">Elternmodus. Sperrt sich wieder um %1$s oder wenn der Bildschirm ausgeht.</string>
+    <string name="home_parent_mode_until_time">Elternmodus. Sperrt sich wieder um %1$s.</string>
     <!-- Bottom button in parent mode: opens every app -->
     <string name="home_all_apps">Alle Apps</string>
     <string name="home_open_an_app">App öffnen</string>

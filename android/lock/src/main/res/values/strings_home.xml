@@ -66,6 +66,7 @@
     <string name="home_parent_lock_now">Lock now</string>
     <!-- Text of the parent mode bar. %1$s is a time such as "4:15 PM" -->
     <string name="home_parent_mode_until">Parent mode. Locks again at %1$s or when the screen turns off.</string>
+    <string name="home_parent_mode_until_time">Parent mode. Locks again at %1$s.</string>
     <!-- Bottom button in parent mode: opens every app -->
     <string name="home_all_apps">All apps</string>
     <string name="home_open_an_app">Open an app</string>

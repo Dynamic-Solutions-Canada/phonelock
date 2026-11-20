@@ -63,6 +63,7 @@
     <string name="home_parent_lock_now">今すぐロック</string>
     <!-- Text of the parent mode bar. %1$s is a time such as "4:15 PM" -->
     <string name="home_parent_mode_until">保護者モード中です。%1$s になるか画面がオフになると、再びロックされます。</string>
+    <string name="home_parent_mode_until_time">保護者モード中です。%1$s になると、再びロックされます。</string>
     <!-- Bottom button in parent mode: opens every app -->
     <string name="home_all_apps">すべてのアプリ</string>
     <string name="home_open_an_app">アプリを開く</string>

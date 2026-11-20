@@ -161,7 +161,7 @@
 
     <!-- Parent mode, PIN and starting a situation by hand; %1$s is the child's device name -->
     <string name="apps_parent_mode_title">%1$s を保護者用にロック解除しますか？</string>
-    <string name="apps_parent_mode_note">お子様のデバイスで設定と Play Store が開けるようになり、手にしている人なら誰でも使えます。時間が終わるか画面がオフになると、再びロックされます。</string>
+    <string name="apps_parent_mode_note">お子様のデバイスで設定と Play Store が開けるようになり、手にしている人なら誰でも使えます。時間が終わると再びロックされます。それまでに画面がオフになっても変わりません。</string>
     <!-- %1$s is a length of time such as "15 min" -->
     <string name="apps_for_length">%1$s</string>
     <string name="apps_pin_title">保護者 PIN を変更</string>

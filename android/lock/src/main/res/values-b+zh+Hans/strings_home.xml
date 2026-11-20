@@ -63,6 +63,7 @@
     <string name="home_parent_lock_now">立即锁定</string>
     <!-- Text of the parent mode bar. %1$s is a time such as "4:15 PM" -->
     <string name="home_parent_mode_until">家长模式。将在 %1$s 或屏幕关闭时重新锁定。</string>
+    <string name="home_parent_mode_until_time">家长模式。将在 %1$s 重新锁定。</string>
     <!-- Bottom button in parent mode: opens every app -->
     <string name="home_all_apps">所有应用</string>
     <string name="home_open_an_app">打开应用</string>

@@ -161,7 +161,7 @@
 
     <!-- Parent mode, PIN and starting a situation by hand; %1$s is the child's device name -->
     <string name="apps_parent_mode_title">¿Desbloquear %1$s para un padre o madre?</string>
-    <string name="apps_parent_mode_note">Ajustes y Play Store se abren en su dispositivo para cualquiera que lo tenga. Se vuelve a bloquear cuando se acaba el tiempo o se apaga la pantalla.</string>
+    <string name="apps_parent_mode_note">Ajustes y Play Store se abren en su dispositivo para cualquiera que lo tenga. Se vuelve a bloquear cuando se acaba el tiempo, aunque la pantalla se apague antes.</string>
     <!-- %1$s is a length of time such as "15 min" -->
     <string name="apps_for_length">Durante %1$s</string>
     <string name="apps_pin_title">Cambiar PIN parental</string>

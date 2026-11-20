@@ -67,6 +67,7 @@
     <string name="home_parent_lock_now">Bloquear ahora</string>
     <!-- Text of the parent mode bar. %1$s is a time such as "4:15 PM" -->
     <string name="home_parent_mode_until">Modo padres. Se vuelve a bloquear a las %1$s o cuando se apague la pantalla.</string>
+    <string name="home_parent_mode_until_time">Modo padres. Se vuelve a bloquear a las %1$s.</string>
     <!-- Bottom button in parent mode: opens every app -->
     <string name="home_all_apps">Todas las aplicaciones</string>
     <string name="home_open_an_app">Abrir una aplicación</string>

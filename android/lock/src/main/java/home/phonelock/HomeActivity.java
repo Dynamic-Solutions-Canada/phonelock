@@ -89,7 +89,7 @@ public class HomeActivity extends Activity {
     private final BroadcastReceiver screenOff = new BroadcastReceiver() {
         @Override
         public void onReceive(Context c, Intent i) {
-            if (Policy.inParentMode(c)) endParentMode();
+            if (Policy.inParentMode(c) && Policy.parentModeEndsOnScreenOff(c)) endParentMode();
         }
     };
 
@@ -560,16 +560,17 @@ public class HomeActivity extends Activity {
         parentBar.setVisibility(p ? View.VISIBLE : View.GONE);
         if (p) {
             long until = Policy.prefs(this).getLong("parent_until", 0);
-            parentText.setText(getString(
-                    R.string.home_parent_mode_until,
-                    DateFormat.getTimeFormat(this).format(new java.util.Date(until))));
+            int text = Policy.parentModeEndsOnScreenOff(this)
+                    ? R.string.home_parent_mode_until
+                    : R.string.home_parent_mode_until_time;
+            parentText.setText(getString(text, DateFormat.getTimeFormat(this).format(new java.util.Date(until))));
         }
     }
 
     private void endParentMode() {
         Policy.storeParentUntil(this, 0);
-        if (Policy.prefs(this).getBoolean("parent_by_pin", false)) {
-            Policy.prefs(this).edit().remove("parent_by_pin").apply();
+        if (Policy.prefs(this).getBoolean(Policy.PARENT_BY_PIN, false)) {
+            Policy.prefs(this).edit().remove(Policy.PARENT_BY_PIN).apply();
             Outbox.note(this, getString(R.string.home_event_parent_mode_ended));
         }
         Policy.applySoon(this);
@@ -662,7 +663,7 @@ public class HomeActivity extends Activity {
             Policy.applySoon(this);
             enforceLockTask();
             // Parents always hear about a PIN unlock on the phone itself: if she learned the PIN, they'd know.
-            Policy.prefs(this).edit().putBoolean("parent_by_pin", true).apply();
+            Policy.prefs(this).edit().putBoolean(Policy.PARENT_BY_PIN, true).apply();
             Outbox.alert(this, getString(R.string.home_event_pin_unlocked, Remote.time(this, until)));
         } else if (r > 0) {
             Toast.makeText(this, getString(R.string.home_pin_try_again, r), Toast.LENGTH_LONG)

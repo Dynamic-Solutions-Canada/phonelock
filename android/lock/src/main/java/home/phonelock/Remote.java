@@ -378,10 +378,13 @@ public final class Remote {
             }
             case "parentmode": {
                 // Remote parent mode: Settings and Play Store unlocked on the device, ending by itself.
-                // minutes 0 ends it now; the screen turning off also ends it, as with the PIN.
+                // minutes 0 ends it now. Unlike parent mode from the PIN, it lasts through the screen
+                // turning off, until the time the parent chose (Policy#parentModeEndsOnScreenOff).
                 if (!live(m)) break;
                 long mins = Math.max(0, Math.min(12 * 60, m.optLong("minutes", 15)));
                 long until = mins == 0 ? 0 : System.currentTimeMillis() + mins * 60_000L;
+                // This parent's choice now decides when it ends, even over a PIN unlock still running.
+                Policy.prefs(c).edit().remove(Policy.PARENT_BY_PIN).commit();
                 // Store it now so the state sent below already shows it; the UI change runs on the main thread.
                 Policy.storeParentUntil(c, until);
                 c.getMainExecutor().execute(() -> Policy.setParentMode(c, until));

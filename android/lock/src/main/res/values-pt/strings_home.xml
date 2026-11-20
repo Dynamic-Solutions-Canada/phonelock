@@ -67,6 +67,7 @@
     <string name="home_parent_lock_now">Bloquear agora</string>
     <!-- Text of the parent mode bar. %1$s is a time such as "4:15 PM" -->
     <string name="home_parent_mode_until">Modo dos pais. Bloqueia de novo às %1$s ou quando a tela desligar.</string>
+    <string name="home_parent_mode_until_time">Modo dos pais. Bloqueia de novo às %1$s.</string>
     <!-- Bottom button in parent mode: opens every app -->
     <string name="home_all_apps">Todos os apps</string>
     <string name="home_open_an_app">Abrir um app</string>

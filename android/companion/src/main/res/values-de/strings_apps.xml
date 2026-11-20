@@ -161,7 +161,7 @@
 
     <!-- Parent mode, PIN and starting a situation by hand; %1$s is the child's device name -->
     <string name="apps_parent_mode_title">%1$s für einen Elternteil entsperren?</string>
-    <string name="apps_parent_mode_note">Einstellungen und Play Store sind dann auf dem Gerät für alle offen, die es in der Hand haben. Es sperrt sich wieder, wenn die Zeit abläuft oder der Bildschirm ausgeht.</string>
+    <string name="apps_parent_mode_note">Einstellungen und Play Store sind dann auf dem Gerät für alle offen, die es in der Hand haben. Es sperrt sich wieder, wenn die Zeit abläuft, auch wenn der Bildschirm vorher ausgeht.</string>
     <!-- %1$s is a length of time such as "15 min" -->
     <string name="apps_for_length">Für %1$s</string>
     <string name="apps_pin_title">Eltern-PIN ändern</string>
