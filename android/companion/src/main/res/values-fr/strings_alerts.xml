@@ -12,6 +12,8 @@
     <string name="alerts_channel_emergency">Alertes d’urgence</string>
     <string name="alerts_channel_emergency_description">Quand un enfant appuie sur SOS. L’alarme sonne à part, comme une alarme.</string>
     <string name="alerts_channel_emergency_service">Alarme d’urgence en cours</string>
+    <string name="alerts_channel_emergency_quiet">Alertes d’urgence, alarme en pause</string>
+    <string name="alerts_channel_emergency_quiet_description">Quand un enfant appuie sur SOS alors que vous avez mis en pause l’alarme de ce téléphone. Un son de notification normal au lieu de l’alarme.</string>
 
     <!-- Ongoing notification while this app keeps a connection open -->
     <string name="alerts_service_listening">À l’écoute des appareils associés</string>
@@ -88,6 +90,19 @@
     <string name="alerts_emergency_none">Aucune alerte d’urgence pour le moment.</string>
     <string name="alerts_emergency_open_app">Ouvrir PhoneLock</string>
 
+    <!-- Pausing the emergency alarm for one child's phone, on this parent's phone only. -->
+    <string name="alerts_emergency_pause">Mettre l’alarme en pause</string>
+    <!-- Notification button: keep it short. -->
+    <string name="alerts_emergency_pause_hour">Pause 1 h</string>
+    <!-- %1$s is the child's name -->
+    <string name="alerts_emergency_pause_title">Mettre en pause l’alarme de %1$s ?</string>
+    <string name="alerts_emergency_pause_note">Sur ce téléphone uniquement. Ses alertes arrivent toujours avec un son de notification, sa position et ses messages, mais ne sonnent pas comme une alarme.</string>
+    <!-- %1$s is the child's name, %2$s a time of day -->
+    <string name="alerts_emergency_paused_hint">L’alarme d’urgence de %1$s est en pause sur ce téléphone jusqu’à %2$s. Les alertes arrivent toujours en notification.</string>
+    <string name="alerts_emergency_resume">Réactiver l’alarme</string>
+    <!-- %1$s is a time of day -->
+    <string name="alerts_emergency_paused_event">Alarme d’urgence en pause sur ce téléphone jusqu’à %1$s</string>
+
     <!-- Unfamiliar Google screens. %1$s is the app it was opened from, %2$s a short screen name. -->
     <string name="alerts_screen_shot_failed">Impossible d’ouvrir la capture d’écran</string>
     <string name="alerts_screen_event_from">A ouvert un écran inconnu des services Google depuis %1$s (%2$s)</string>
@@ -117,8 +132,7 @@
     <string name="alerts_rule_blocked">Bloqué</string>
     <string name="alerts_rule_blocked_default">Bloqué (par défaut)</string>
     <string name="alerts_rule_reported">Signalé à l’ouverture</string>
-    <string name="alerts_rule_allow_15_min">Autoriser 15 min</string>
-    <string name="alerts_rule_allow_1_hour">Autoriser 1 heure</string>
+    <string name="alerts_rule_allow_for">Autoriser un moment…</string>
     <string name="alerts_rule_allow_until_bedtime">Autoriser jusqu’à l’heure du coucher</string>
     <string name="alerts_rule_back_to_blocked">Bloquer de nouveau</string>
     <string name="alerts_rule_forget">Oublier la décision</string>

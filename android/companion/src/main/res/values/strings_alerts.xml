@@ -12,6 +12,8 @@
     <string name="alerts_channel_emergency">Emergency alerts</string>
     <string name="alerts_channel_emergency_description">When a child presses SOS. The alarm plays separately, as an alarm.</string>
     <string name="alerts_channel_emergency_service">Emergency alarm playing</string>
+    <string name="alerts_channel_emergency_quiet">Emergency alerts, alarm paused</string>
+    <string name="alerts_channel_emergency_quiet_description">When a child presses SOS while you have paused the alarm for that phone. A normal notification sound instead of the alarm.</string>
 
     <!-- Ongoing notification while this app keeps a connection open -->
     <string name="alerts_service_listening">Listening for paired devices</string>
@@ -88,6 +90,19 @@
     <string name="alerts_emergency_none">No emergency alert right now.</string>
     <string name="alerts_emergency_open_app">Open PhoneLock</string>
 
+    <!-- Pausing the emergency alarm for one child's phone, on this parent's phone only. -->
+    <string name="alerts_emergency_pause">Pause alarm</string>
+    <!-- Notification button: keep it short. -->
+    <string name="alerts_emergency_pause_hour">Pause 1 h</string>
+    <!-- %1$s is the child's name -->
+    <string name="alerts_emergency_pause_title">Pause the alarm for %1$s?</string>
+    <string name="alerts_emergency_pause_note">On this phone only. Alerts from it still arrive with a notification sound, her location and messages, but don\'t ring as an alarm.</string>
+    <!-- %1$s is the child's name, %2$s a time of day -->
+    <string name="alerts_emergency_paused_hint">The emergency alarm for %1$s is paused on this phone until %2$s. Alerts still arrive as notifications.</string>
+    <string name="alerts_emergency_resume">Resume alarm</string>
+    <!-- %1$s is a time of day -->
+    <string name="alerts_emergency_paused_event">Emergency alarm paused on this phone until %1$s</string>
+
     <!-- Unfamiliar Google screens. %1$s is the app it was opened from, %2$s a short screen name. -->
     <string name="alerts_screen_shot_failed">Couldn\'t open the screenshot</string>
     <string name="alerts_screen_event_from">Opened an unfamiliar Google services screen from %1$s (%2$s)</string>
@@ -117,8 +132,7 @@
     <string name="alerts_rule_blocked">Blocked</string>
     <string name="alerts_rule_blocked_default">Blocked (default)</string>
     <string name="alerts_rule_reported">Reported when it opens</string>
-    <string name="alerts_rule_allow_15_min">Allow for 15 min</string>
-    <string name="alerts_rule_allow_1_hour">Allow for 1 hour</string>
+    <string name="alerts_rule_allow_for">Allow for a while…</string>
     <string name="alerts_rule_allow_until_bedtime">Allow until bedtime</string>
     <string name="alerts_rule_back_to_blocked">Back to blocked</string>
     <string name="alerts_rule_forget">Forget decision</string>

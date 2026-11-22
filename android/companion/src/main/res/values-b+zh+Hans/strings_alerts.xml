@@ -12,6 +12,8 @@
     <string name="alerts_channel_emergency">紧急警报</string>
     <string name="alerts_channel_emergency_description">孩子按下 SOS 时通知。警报声会作为闹钟单独响起。</string>
     <string name="alerts_channel_emergency_service">紧急警报声正在响起</string>
+    <string name="alerts_channel_emergency_quiet">紧急警报（警报声已暂停）</string>
+    <string name="alerts_channel_emergency_quiet_description">在你暂停了该手机的警报声时，孩子按下 SOS 时通知。播放普通通知音，而不是警报声。</string>
 
     <!-- Ongoing notification while this app keeps a connection open -->
     <string name="alerts_service_listening">正在接收已配对设备的消息</string>
@@ -88,6 +90,19 @@
     <string name="alerts_emergency_none">目前没有紧急警报。</string>
     <string name="alerts_emergency_open_app">打开 PhoneLock</string>
 
+    <!-- Pausing the emergency alarm for one child's phone, on this parent's phone only. -->
+    <string name="alerts_emergency_pause">暂停警报声</string>
+    <!-- Notification button: keep it short. -->
+    <string name="alerts_emergency_pause_hour">暂停 1 小时</string>
+    <!-- %1$s is the child's name -->
+    <string name="alerts_emergency_pause_title">暂停 %1$s 的警报声？</string>
+    <string name="alerts_emergency_pause_note">仅限这台手机。来自该手机的警报仍会带通知音、位置和消息送达，但不会像闹钟一样响起。</string>
+    <!-- %1$s is the child's name, %2$s a time of day -->
+    <string name="alerts_emergency_paused_hint">%1$s 的紧急警报声在这台手机上已暂停至 %2$s。警报仍会以通知形式送达。</string>
+    <string name="alerts_emergency_resume">恢复警报声</string>
+    <!-- %1$s is a time of day -->
+    <string name="alerts_emergency_paused_event">这台手机上的紧急警报声已暂停至 %1$s</string>
+
     <!-- Unfamiliar Google screens. %1$s is the app it was opened from, %2$s a short screen name. -->
     <string name="alerts_screen_shot_failed">无法打开屏幕截图</string>
     <string name="alerts_screen_event_from">从 %1$s 打开了一个陌生的 Google 服务界面（%2$s）</string>
@@ -117,8 +132,7 @@
     <string name="alerts_rule_blocked">已屏蔽</string>
     <string name="alerts_rule_blocked_default">已屏蔽（默认）</string>
     <string name="alerts_rule_reported">打开时通知</string>
-    <string name="alerts_rule_allow_15_min">允许 15 分钟</string>
-    <string name="alerts_rule_allow_1_hour">允许 1 小时</string>
+    <string name="alerts_rule_allow_for">暂时允许…</string>
     <string name="alerts_rule_allow_until_bedtime">允许至就寝时间</string>
     <string name="alerts_rule_back_to_blocked">恢复屏蔽</string>
     <string name="alerts_rule_forget">清除决定</string>

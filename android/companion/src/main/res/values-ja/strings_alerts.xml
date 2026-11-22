@@ -12,6 +12,8 @@
     <string name="alerts_channel_emergency">緊急アラート</string>
     <string name="alerts_channel_emergency_description">お子様が SOS を押したときに通知します。アラーム音はアラームとして別に鳴ります。</string>
     <string name="alerts_channel_emergency_service">緊急アラームを再生中</string>
+    <string name="alerts_channel_emergency_quiet">緊急アラート（アラーム一時停止中）</string>
+    <string name="alerts_channel_emergency_quiet_description">その端末のアラームを一時停止中にお子様が SOS を押したときに通知します。アラームの代わりに通常の通知音が鳴ります。</string>
 
     <!-- Ongoing notification while this app keeps a connection open -->
     <string name="alerts_service_listening">ペア設定済みのデバイスを待機中</string>
@@ -88,6 +90,19 @@
     <string name="alerts_emergency_none">現在、緊急アラートはありません。</string>
     <string name="alerts_emergency_open_app">PhoneLock を開く</string>
 
+    <!-- Pausing the emergency alarm for one child's phone, on this parent's phone only. -->
+    <string name="alerts_emergency_pause">アラームを一時停止</string>
+    <!-- Notification button: keep it short. -->
+    <string name="alerts_emergency_pause_hour">1 時間停止</string>
+    <!-- %1$s is the child's name -->
+    <string name="alerts_emergency_pause_title">%1$s のアラームを一時停止しますか？</string>
+    <string name="alerts_emergency_pause_note">この端末のみです。アラートは通知音、位置情報、メッセージとともに届きますが、アラームとしては鳴りません。</string>
+    <!-- %1$s is the child's name, %2$s a time of day -->
+    <string name="alerts_emergency_paused_hint">%1$s の緊急アラームはこの端末で %2$s まで一時停止中です。アラートは通知として届きます。</string>
+    <string name="alerts_emergency_resume">アラームを再開</string>
+    <!-- %1$s is a time of day -->
+    <string name="alerts_emergency_paused_event">この端末で緊急アラームを %1$s まで一時停止</string>
+
     <!-- Unfamiliar Google screens. %1$s is the app it was opened from, %2$s a short screen name. -->
     <string name="alerts_screen_shot_failed">スクリーンショットを開けませんでした</string>
     <string name="alerts_screen_event_from">%1$s から見慣れない Google サービスの画面を開きました（%2$s）</string>
@@ -117,8 +132,7 @@
     <string name="alerts_rule_blocked">ブロック中</string>
     <string name="alerts_rule_blocked_default">ブロック中（デフォルト）</string>
     <string name="alerts_rule_reported">開いたときに通知</string>
-    <string name="alerts_rule_allow_15_min">15 分許可</string>
-    <string name="alerts_rule_allow_1_hour">1 時間許可</string>
+    <string name="alerts_rule_allow_for">しばらく許可…</string>
     <string name="alerts_rule_allow_until_bedtime">おやすみ時間まで許可</string>
     <string name="alerts_rule_back_to_blocked">ブロックに戻す</string>
     <string name="alerts_rule_forget">設定をリセット</string>

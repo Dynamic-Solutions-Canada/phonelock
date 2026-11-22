@@ -17,20 +17,22 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 
-/** Lengths offered for remote parent mode, in minutes. */
-private val PARENT_MODE_MINUTES = listOf(15L, 60L, 240L)
+/** Longest remote parent mode the phone accepts (it cuts a longer request to this). */
+private const val MAX_PARENT_MODE_MINUTES = 12 * 60L
 
 /**
- * Confirms remote parent mode and asks for how long. It unlocks Settings and the Play Store for whoever
- * holds the device, so the dialog says so; it always ends by itself or when the screen turns off.
+ * Confirms remote parent mode and asks for how long, with the app's usual length choices up to the phone's
+ * 12-hour limit. It unlocks Settings and the Play Store for whoever holds the device, so the dialog says so; it
+ * always ends by itself.
  */
 @Composable
 internal fun ParentModeDialog(name: String, onPick: (Long) -> Unit, onDismiss: () -> Unit) {
-    OptionsDialog(
+    LengthDialog(
         stringResource(R.string.apps_parent_mode_title, name),
-        onDismiss,
+        onPick = onPick,
+        onDismiss = onDismiss,
         note = stringResource(R.string.apps_parent_mode_note),
-        options = PARENT_MODE_MINUTES.map { m -> MenuEntry(stringResource(R.string.apps_for_length, fmtMinutes(m))) { onPick(m) } },
+        maxMinutes = MAX_PARENT_MODE_MINUTES,
     )
 }
 

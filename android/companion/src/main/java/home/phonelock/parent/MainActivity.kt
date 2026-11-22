@@ -258,13 +258,26 @@ private fun MainScreen(devices: List<Device>, dev: String, onSelect: (String) ->
                     Section(stringResource(R.string.main_requests_title)) {
                         requests.forEach { r ->
                             // The child suggests a length; the parent picks the actual one (preselected to the ask).
+                            // "Choose time…" opens the app's usual length dialog, and its pick joins the chips.
                             var mins by remember(r.req) { mutableLongStateOf(r.minutes) }
+                            var choosing by remember(r.req) { mutableStateOf(false) }
                             AppName(dev, r.app, r.label)
                             Text(stringResource(R.string.main_asked_for, fmtMinutes(r.minutes), time(r.ts)), style = MaterialTheme.typography.bodySmall)
                             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                (GRANT_DURATIONS + r.minutes).distinct().sorted().forEach { m ->
+                                (GRANT_DURATIONS + r.minutes + mins).distinct().sorted().forEach { m ->
                                     FilterChip(selected = mins == m, onClick = { mins = m }, label = { Text(fmtMinutes(m)) })
                                 }
+                                FilterChip(selected = false, onClick = { choosing = true }, label = { Text(stringResource(R.string.alerts_action_choose_time)) })
+                            }
+                            if (choosing) {
+                                LengthDialog(
+                                    stringResource(R.string.apps_allow_how_long, r.label),
+                                    onPick = { m ->
+                                        mins = m
+                                        choosing = false
+                                    },
+                                    onDismiss = { choosing = false },
+                                )
                             }
                             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                 Button(onClick = { Hub.grant(dev, r.app, mins, r.req) }) { Text(stringResource(R.string.main_allow_for, fmtMinutes(mins))) }

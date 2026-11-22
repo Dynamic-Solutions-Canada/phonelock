@@ -79,11 +79,28 @@ internal class HubPrefs(c: Context) : PrefsFile(c, "hub") {
     }
 }
 
-/** "emergency": the emergency alerts received, as JSON. */
+/**
+ * "emergency": the emergency alerts received, as JSON, and per device when this phone's paused alarm for it
+ * ends (SosPause). Pause keys are the prefix and the device id.
+ */
 internal class EmergencyPrefs(c: Context) : PrefsFile(c, "emergency") {
     var alerts: String
         get() = p.getString("alerts", "[]") ?: "[]"
         set(v) = save { putString("alerts", v) }
+
+    /** Every device's pause end (ms); a device that isn't listed isn't paused. */
+    fun allPaused(): Map<String, Long> = p.all.filterKeys { it.startsWith(PAUSED) }
+        .mapNotNull { (k, v) -> (v as? Long)?.let { k.removePrefix(PAUSED) to it } }
+        .toMap()
+
+    fun setPausedUntil(dev: String, until: Long) = save { putLong(PAUSED + dev, until) }
+
+    /** Ends [dev]'s pause (resumed, or the device was removed). */
+    fun clearPaused(dev: String) = save { remove(PAUSED + dev) }
+
+    private companion object {
+        const val PAUSED = "paused_"
+    }
 }
 
 /** "screenalerts": screenshots of unfamiliar screens waiting for a parent, as JSON. */

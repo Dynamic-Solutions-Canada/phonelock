@@ -30,6 +30,8 @@
     <string name="duration_minutes">%1$d min</string>
     <string name="duration_hours">%1$d h</string>
     <string name="duration_hours_minutes">%1$d h %2$d min</string>
+    <!-- Under a length field or as a message. %1$s is the longest length allowed, such as "4 h". -->
+    <string name="length_at_most">No máximo %1$s.</string>
 
     <!-- Settings > Language -->
     <string name="language_title">Idioma</string>

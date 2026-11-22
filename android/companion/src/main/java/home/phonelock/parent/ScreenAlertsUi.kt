@@ -161,8 +161,8 @@ private fun ScreenRuleRow(
     }
     // Menu labels, read here in composition rather than inside the list builder.
     val allowLabel = stringResource(R.string.allow)
-    val allow15Label = stringResource(R.string.alerts_rule_allow_15_min)
-    val allowHourLabel = stringResource(R.string.alerts_rule_allow_1_hour)
+    val allowForLabel = stringResource(R.string.alerts_rule_allow_for)
+    var choosingLength by remember { mutableStateOf(false) }
     val allowBedtimeLabel = stringResource(R.string.alerts_rule_allow_until_bedtime)
     val blockLabel = stringResource(R.string.alerts_block)
     val resetLabel = stringResource(if (blockedByDefault) R.string.alerts_rule_back_to_blocked else R.string.alerts_rule_forget)
@@ -172,11 +172,22 @@ private fun ScreenRuleRow(
 
     val entries = buildList {
         if (rule != "ok") add(MenuEntry(allowLabel) { set("ok") })
-        add(MenuEntry(allow15Label) { set("ok", minutes = 15) })
-        add(MenuEntry(allowHourLabel) { set("ok", minutes = 60) })
+        add(MenuEntry(allowForLabel) { choosingLength = true })
         if (bedtimeAhead) add(MenuEntry(allowBedtimeLabel) { set("ok", untilBedtime = true) })
         if (rule != "block") add(MenuEntry(blockLabel) { set("block") })
         if (decided) add(MenuEntry(resetLabel) { set("") })
     }
     ListRow(title, AnnotatedString(status), leading = { SymbolBadge(if (allowed) "✓" else "⛔") }, actions = entries)
+
+    // "Allow for a while…": the app's usual lengths, a clock time or a custom length (up to 24 hours).
+    if (choosingLength) {
+        LengthDialog(
+            stringResource(R.string.apps_allow_how_long, title),
+            onPick = { minutes ->
+                set("ok", minutes = minutes.toInt())
+                choosingLength = false
+            },
+            onDismiss = { choosingLength = false },
+        )
+    }
 }

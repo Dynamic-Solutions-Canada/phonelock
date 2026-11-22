@@ -31,12 +31,16 @@ import kotlin.concurrent.thread
  * one and an ongoing notification otherwise. Later parts of the same alert add a fresh location or her
  * message; "Sent by mistake" stops the ringing. "I'm on it" tells her and the other parents (`sosack`) and
  * stops this phone's ringing only: each parent's phone rings until that parent answers.
+ *
+ * A parent can pause the alarm for one child's phone on this phone (SosPause), for when SOS is pressed over
+ * and over: alerts from it then arrive on a channel with a normal notification sound instead of ringing.
  */
 object EmergencyAlerts {
     /**
      * One alert from [dev]: [since] when she pressed SOS, [where] her latest known position with [address]
      * once looked up, [number] her phone's number (to call back), [messages] what she sent, [acks] parents on
-     * it, [cancelled] sent by mistake, and whether this phone is still [ringing] for it.
+     * it, [cancelled] sent by mistake, whether this phone is still [ringing] for it, and whether it arrived
+     * [quiet] (its alarm was paused on this phone, so it never rang).
      */
     data class Sos(
         val dev: String,
@@ -50,11 +54,15 @@ object EmergencyAlerts {
         val acks: List<String> = emptyList(),
         val cancelled: Boolean = false,
         val ringing: Boolean = true,
+        val quiet: Boolean = false,
     )
 
     /** Alerts are shown for this long after she pressed SOS (her phone sends readings for 30 minutes). */
     private const val SHOW_MS = 2 * 3600_000L
     private const val CHANNEL = "emergency"
+
+    /** Alerts that arrived while their alarm was paused: an ordinary notification sound, no full screen. */
+    private const val CHANNEL_QUIET = "emergency_quiet"
     private const val TAG = "EmergencyAlerts"
 
     /** Stored name of a parent who hasn't set one (see [me]); kept as it was before translation. */
@@ -67,9 +75,19 @@ object EmergencyAlerts {
     /** Recent alerts, newest first. */
     val alerts: StateFlow<List<Sos>> = _alerts.asStateFlow()
 
+    private val _paused = MutableStateFlow<Map<String, Long>>(emptyMap())
+
+    /** Per device, when this phone's paused alarm for it ends (ms). An ended pause may still be listed. */
+    val paused: StateFlow<Map<String, Long>> = _paused.asStateFlow()
+
     fun init(c: Context) {
         app = c.applicationContext
         _alerts.value = load().filter { System.currentTimeMillis() - it.since < SHOW_MS }
+        // Ended pauses are dropped here, so they don't pile up in storage.
+        val now = System.currentTimeMillis()
+        val (live, ended) = prefs.allPaused().entries.partition { SosPause.holds(it.value, now) }
+        ended.forEach { prefs.clearPaused(it.key) }
+        _paused.value = live.associate { it.key to it.value }
     }
 
     /** The newest alert from [dev] still worth showing, if any. */
@@ -83,7 +101,9 @@ object EmergencyAlerts {
         val since = m.optLong("since", m.optLong("ts"))
         if (System.currentTimeMillis() - since > SHOW_MS) return // replayed from long ago
         val known = _alerts.value.firstOrNull { it.id == id }
-        val base = known ?: Sos(d.id, id, since, ringing = m.optString("op") != "cancel")
+        // Whether it rings is decided once, when the alert first arrives on this phone.
+        val quiet = known == null && pausedUntil(d.id) > 0
+        val base = known ?: Sos(d.id, id, since, ringing = m.optString("op") != "cancel" && !quiet, quiet = quiet)
         var next = base.copy(
             battery = if (m.has("batt")) m.optInt("batt") else base.battery,
             number = m.optString("number").takeIf { it.isNotEmpty() } ?: base.number,
@@ -102,7 +122,7 @@ object EmergencyAlerts {
         when {
             known == null && !next.cancelled -> {
                 Hub.addEvent(d.id, Strings.get(R.string.alerts_emergency_event, name), since)
-                Alarm.start(app)
+                if (!next.quiet) Alarm.start(app)
             }
 
             m.optString("op") == "cancel" -> {
@@ -165,9 +185,50 @@ object EmergencyAlerts {
         app.getSystemService(NotificationManager::class.java).cancel(id.hashCode())
     }
 
-    /** Drops [dev]'s alerts (the device was removed). */
+    /** Drops [dev]'s alerts and its pause (the device was removed). */
     fun forget(dev: String) {
         _alerts.value.filter { it.dev == dev }.forEach { dismiss(it.id) }
+        prefs.clearPaused(dev)
+        _paused.update { it - dev }
+    }
+
+    // ---------- pausing the alarm ----------
+
+    /** When this phone's paused alarm for [dev] ends (ms), or 0 when it isn't paused. */
+    fun pausedUntil(dev: String): Long {
+        val until = _paused.value[dev] ?: return 0
+        return if (SosPause.holds(until, System.currentTimeMillis())) until else 0
+    }
+
+    /**
+     * Pauses the alarm for [dev]'s alerts on this phone until [until] (ms): its alerts still arrive, with a
+     * notification sound, but don't ring. Stops anything from [dev] ringing now, and notes it in Activity.
+     */
+    fun pause(dev: String, until: Long) {
+        prefs.setPausedUntil(dev, until)
+        _paused.update { it + (dev to until) }
+        Hub.addEvent(dev, Strings.get(R.string.alerts_emergency_paused_event, LocationHistory.clock(until)))
+
+        // Silence what is ringing from this phone now; other children's alerts keep ringing.
+        _alerts.value.filter { it.dev == dev && it.ringing }.forEach { a -> update(a.id) { it.copy(ringing = false) } }
+        if (_alerts.value.none { it.ringing }) Alarm.stop(app)
+        refresh(dev)
+    }
+
+    /** Ends the pause for [dev], so its next alert rings again. */
+    fun resume(dev: String) {
+        prefs.clearPaused(dev)
+        _paused.update { it - dev }
+        refresh(dev)
+    }
+
+    /**
+     * Re-posts [dev]'s alert notifications still showing, whose buttons depend on the pause. Ones the parent
+     * swiped away stay gone: posting them again would bring back (and sound) every alert of a spam run.
+     */
+    private fun refresh(dev: String) {
+        val showing = app.getSystemService(NotificationManager::class.java).activeNotifications.map { it.id }.toSet()
+        _alerts.value.filter { it.dev == dev && it.id.hashCode() in showing }.forEach(::notify)
     }
 
     private fun afterAnswer(id: String) {
@@ -177,7 +238,10 @@ object EmergencyAlerts {
 
     // ---------- notification ----------
 
-    /** The alert's notification: full screen while ringing (where allowed), with I'm on it / Silence. */
+    /**
+     * The alert's notification: full screen while ringing (where allowed), with I'm on it / Silence; I'm on it
+     * while it still needs an answer; and Pause 1 h unless the alarm for that phone is already paused.
+     */
     // The Play build has no USE_FULL_SCREEN_INTENT on purpose (Play allows it only for calling and alarm
     // apps; see companion/src/github/AndroidManifest.xml). There Android ignores the full-screen intent and
     // shows the alarm notification instead, so the call is safe without the permission.
@@ -189,6 +253,14 @@ object EmergencyAlerts {
                 description = Strings.get(R.string.alerts_channel_emergency_description)
                 setSound(null, null) // the alarm service plays the sound
                 enableVibration(false)
+                setBypassDnd(true)
+            },
+        )
+        // A paused alert has no alarm, so its channel keeps the default sound and vibration to still be heard.
+        nm.createNotificationChannel(
+            NotificationChannel(CHANNEL_QUIET, Strings.get(R.string.alerts_channel_emergency_quiet), NotificationManager.IMPORTANCE_HIGH).apply {
+                description = Strings.get(R.string.alerts_channel_emergency_quiet_description)
+                enableVibration(true)
                 setBypassDnd(true)
             },
         )
@@ -211,7 +283,7 @@ object EmergencyAlerts {
             ),
         ).build()
 
-        val b = Notification.Builder(app, CHANNEL)
+        val b = Notification.Builder(app, if (a.quiet) CHANNEL_QUIET else CHANNEL)
             .setSmallIcon(R.drawable.ic_stat)
             .setContentTitle(title(a))
             .setContentText(summary(a))
@@ -220,10 +292,29 @@ object EmergencyAlerts {
             .setContentIntent(open)
             .setOngoing(a.ringing)
             .setOnlyAlertOnce(true)
+        // At most three buttons, which Android shows on one line.
         if (a.ringing) {
             b.setFullScreenIntent(open, true)
             b.addAction(action(Strings.get(R.string.alerts_emergency_ack), "ack"))
             b.addAction(action(Strings.get(R.string.alerts_emergency_silence), "silence"))
+        } else if (!a.cancelled && me() !in a.acks) {
+            b.addAction(action(Strings.get(R.string.alerts_emergency_ack), "ack"))
+        }
+        // Offered on cancelled alerts too: pressing, cancelling and pressing again is the usual pattern.
+        if (pausedUntil(a.dev) == 0L) {
+            b.addAction(action(Strings.get(R.string.alerts_emergency_pause_hour), "pause"))
+            // Other lengths are picked on the alert screen, as for app requests. A ringing alert already has
+            // Android's three buttons; tapping it opens the same screen.
+            if (!a.ringing) {
+                val choose = PendingIntent.getActivity(
+                    app,
+                    (a.id + "choose").hashCode(),
+                    Intent(app, EmergencyActivity::class.java).putExtra("sos", a.id).putExtra("pause", true)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+                )
+                b.addAction(Notification.Action.Builder(null, Strings.get(R.string.alerts_action_choose_time), choose).build())
+            }
         }
         try {
             nm.notify(a.id.hashCode(), b.build())
@@ -263,6 +354,7 @@ object EmergencyAlerts {
             when (i.getStringExtra("kind")) {
                 "ack" -> ack(id)
                 "silence" -> silence(id)
+                "pause" -> _alerts.value.firstOrNull { it.id == id }?.let { pause(it.dev, SosPause.forMinutes(System.currentTimeMillis(), SosPause.QUICK_MINUTES)) }
             }
         }
     }
@@ -285,7 +377,7 @@ object EmergencyAlerts {
             arr.put(
                 JSONObject().put("dev", a.dev).put("id", a.id).put("since", a.since).put("address", a.address ?: "")
                     .put("number", a.number ?: "").put("battery", a.battery).put("messages", JSONArray(a.messages))
-                    .put("acks", JSONArray(a.acks)).put("cancelled", a.cancelled).put("ringing", a.ringing)
+                    .put("acks", JSONArray(a.acks)).put("cancelled", a.cancelled).put("ringing", a.ringing).put("quiet", a.quiet)
                     .also { o -> a.where?.let { o.put("lat", it.lat).put("lng", it.lng).put("at", it.to).put("acc", it.accuracyM) } },
             )
         }
@@ -304,6 +396,7 @@ object EmergencyAlerts {
                 o.optInt("battery", -1), list("messages"), list("acks"), o.optBoolean("cancelled"),
                 // After a restart nothing is ringing any more; the alert is still shown.
                 ringing = false,
+                quiet = o.optBoolean("quiet"),
             )
         }
     }.getOrDefault(emptyList())

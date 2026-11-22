@@ -34,7 +34,6 @@
     <string name="apps_custom_length">Eigene Dauer …</string>
     <string name="apps_hours">Stunden</string>
     <string name="apps_minutes">Minuten</string>
-    <string name="apps_at_most_24_hours">Höchstens 24 Stunden.</string>
     <!-- Button that confirms a custom length -->
     <string name="apps_set">Festlegen</string>
 
@@ -162,8 +161,6 @@
     <!-- Parent mode, PIN and starting a situation by hand; %1$s is the child's device name -->
     <string name="apps_parent_mode_title">%1$s für einen Elternteil entsperren?</string>
     <string name="apps_parent_mode_note">Einstellungen und Play Store sind dann auf dem Gerät für alle offen, die es in der Hand haben. Es sperrt sich wieder, wenn die Zeit abläuft, auch wenn der Bildschirm vorher ausgeht.</string>
-    <!-- %1$s is a length of time such as "15 min" -->
-    <string name="apps_for_length">Für %1$s</string>
     <string name="apps_pin_title">Eltern-PIN ändern</string>
     <string name="apps_pin_new">Neue PIN (4 bis 8 Ziffern)</string>
     <string name="apps_pin_again">Noch einmal eingeben</string>
@@ -183,7 +180,5 @@
     <!-- Debugging; %1$s is the child's device name -->
     <string name="apps_debugging_title">Debugging einschalten?</string>
     <string name="apps_debugging_note">Für Reparaturen: Schaltet USB-Debugging und Debugging über WLAN auf %1$s ein, damit es sich von einem Computer aus reparieren oder aktualisieren lässt, auch wenn seine Bildschirme nicht funktionieren. Es schaltet sich von selbst wieder aus.\n\nSolange es an ist, kann jeder mit einem gekoppelten Computer das Gerät steuern. Unter „Letzte Ereignisse“ steht, wohin du dich verbinden kannst.</string>
-    <!-- %1$s is a length of time such as "30 min" -->
-    <string name="apps_debugging_on_for">An für %1$s</string>
     <string name="apps_debugging_off">Jetzt ausschalten</string>
 </resources>

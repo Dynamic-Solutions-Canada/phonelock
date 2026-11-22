@@ -14,7 +14,8 @@ The shared Android rules (Material 3 with dynamic colour, the About block, one d
 - **Dialogs:** every dialog is `AppDialog` (`AppDialog.kt`), with confirm on the right and Cancel to its left. A destructive confirm is `DangerButton`. In Settings, the one destructive setting (Remove this device) is a red text button, not a row.
 - **Step-by-step flows:** adding a device and setup use `WizardStep` (`Wizard.kt`): one thing per step, "Step N of M", the primary button, then Back.
 - **Empty and waiting states:** an empty list shows `EmptyNote`; waiting shows `ProgressTrack`, never the word "Loading".
-- **Setup prompts and warnings** on the main screen share `HintCard` (`SetupHints.kt`).
+- **Setup prompts and warnings** on the main screen share `HintCard` (`SetupHints.kt`), as does the note that an emergency alarm is paused (`EmergencyUi.kt`).
+- **Lengths of time:** every "for how long" question uses `LengthDialog` (`LengthDialog.kt`): the usual lengths, "Until a time…" and "Custom length…", up to 24 hours. A notification offers one quick length plus "Choose time…", which opens the app at the same picker.
 - **Confirmations:** a change that can be undone shows `Undo.offer` with an Undo button; a request whose result comes later shows `Undo.notify`, a plain message saying it was sent.
 
 ## Wording

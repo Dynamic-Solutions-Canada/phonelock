@@ -145,7 +145,7 @@ internal fun LostDevicesHint() {
 
 /** The shape every setup prompt and warning on the main screen shares: [text] and an optional [action]. */
 @Composable
-private fun HintCard(text: String, action: (@Composable () -> Unit)? = null) {
+internal fun HintCard(text: String, action: (@Composable () -> Unit)? = null) {
     Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer)) {
         Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text(text)

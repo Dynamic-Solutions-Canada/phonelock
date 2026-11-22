@@ -34,7 +34,6 @@
     <string name="apps_custom_length">Outra duração…</string>
     <string name="apps_hours">Horas</string>
     <string name="apps_minutes">Minutos</string>
-    <string name="apps_at_most_24_hours">No máximo 24 horas.</string>
     <!-- Button that confirms a custom length -->
     <string name="apps_set">Definir</string>
 
@@ -163,8 +162,6 @@
     <!-- Parent mode, PIN and starting a situation by hand; %1$s is the child's device name -->
     <string name="apps_parent_mode_title">Desbloquear %1$s para um responsável?</string>
     <string name="apps_parent_mode_note">As Configurações e a Play Store ficam abertas no dispositivo da criança para quem estiver com ele. Ele volta a bloquear quando o tempo acaba, mesmo que a tela desligue antes.</string>
-    <!-- %1$s is a length of time such as "15 min" -->
-    <string name="apps_for_length">Por %1$s</string>
     <string name="apps_pin_title">Alterar PIN dos pais</string>
     <string name="apps_pin_new">Novo PIN (4 a 8 dígitos)</string>
     <string name="apps_pin_again">Digite de novo</string>
@@ -185,7 +182,5 @@
     <!-- Debugging; %1$s is the child's device name -->
     <string name="apps_debugging_title">Ativar a depuração?</string>
     <string name="apps_debugging_note">Para reparos: ativa a depuração USB e por Wi-Fi em %1$s, para que ele possa ser corrigido ou atualizado por um computador mesmo que as telas dele não estejam funcionando. Ela se desativa sozinha depois.\n\nEnquanto estiver ativa, qualquer pessoa com um computador pareado pode controlar o dispositivo. Eventos recentes vão mostrar onde se conectar.</string>
-    <!-- %1$s is a length of time such as "30 min" -->
-    <string name="apps_debugging_on_for">Ativar por %1$s</string>
     <string name="apps_debugging_off">Desativar agora</string>
 </resources>

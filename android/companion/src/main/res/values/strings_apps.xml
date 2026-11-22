@@ -34,7 +34,6 @@
     <string name="apps_custom_length">Custom length…</string>
     <string name="apps_hours">Hours</string>
     <string name="apps_minutes">Minutes</string>
-    <string name="apps_at_most_24_hours">At most 24 hours.</string>
     <!-- Button that confirms a custom length -->
     <string name="apps_set">Set</string>
 
@@ -162,8 +161,6 @@
     <!-- Parent mode, PIN and starting a situation by hand; %1$s is the child's device name -->
     <string name="apps_parent_mode_title">Unlock %1$s for a parent?</string>
     <string name="apps_parent_mode_note">Settings and the Play Store open on their device for anyone holding it. It locks again when the time ends, even if the screen turns off before then.</string>
-    <!-- %1$s is a length of time such as "15 min" -->
-    <string name="apps_for_length">For %1$s</string>
     <string name="apps_pin_title">Change parent PIN</string>
     <string name="apps_pin_new">New PIN (4 to 8 digits)</string>
     <string name="apps_pin_again">Type it again</string>
@@ -183,7 +180,5 @@
     <!-- Debugging; %1$s is the child's device name -->
     <string name="apps_debugging_title">Turn on debugging?</string>
     <string name="apps_debugging_note">For repairs: turns on USB and wireless debugging on %1$s, so it can be fixed or updated from a computer even if its screens aren\'t working. It turns off again by itself.\n\nWhile it\'s on, anyone with a paired computer can control the device. Recent events will show where to connect.</string>
-    <!-- %1$s is a length of time such as "30 min" -->
-    <string name="apps_debugging_on_for">On for %1$s</string>
     <string name="apps_debugging_off">Turn it off now</string>
 </resources>

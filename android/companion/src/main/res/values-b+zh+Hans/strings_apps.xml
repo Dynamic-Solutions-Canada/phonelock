@@ -34,7 +34,6 @@
     <string name="apps_custom_length">自定义时长…</string>
     <string name="apps_hours">小时</string>
     <string name="apps_minutes">分钟</string>
-    <string name="apps_at_most_24_hours">最长 24 小时。</string>
     <!-- Button that confirms a custom length -->
     <string name="apps_set">确定</string>
 
@@ -162,8 +161,6 @@
     <!-- Parent mode, PIN and starting a situation by hand; %1$s is the child's device name -->
     <string name="apps_parent_mode_title">要为家长解锁 %1$s 吗？</string>
     <string name="apps_parent_mode_note">孩子的设备上会开放“设置”和 Play Store，任何拿着设备的人都能使用。时间结束后会重新锁定，即使屏幕在此之前关闭也一样。</string>
-    <!-- %1$s is a length of time such as "15 min" -->
-    <string name="apps_for_length">持续 %1$s</string>
     <string name="apps_pin_title">更改家长 PIN 码</string>
     <string name="apps_pin_new">新 PIN 码（4 到 8 位数字）</string>
     <string name="apps_pin_again">再输入一次</string>
@@ -182,7 +179,5 @@
     <!-- Debugging; %1$s is the child's device name -->
     <string name="apps_debugging_title">要开启调试吗？</string>
     <string name="apps_debugging_note">用于维修：在 %1$s 上开启 USB 调试和无线调试，这样即使它的界面无法正常使用，也能通过电脑修复或更新。之后会自动关闭。\n\n开启期间，任何已配对的电脑都能控制该设备。“最近事件”中会显示连接方式。</string>
-    <!-- %1$s is a length of time such as "30 min" -->
-    <string name="apps_debugging_on_for">开启 %1$s</string>
     <string name="apps_debugging_off">立即关闭</string>
 </resources>

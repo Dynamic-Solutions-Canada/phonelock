@@ -31,6 +31,8 @@
     <string name="duration_minutes">%1$d 分</string>
     <string name="duration_hours">%1$d 時間</string>
     <string name="duration_hours_minutes">%1$d 時間 %2$d 分</string>
+    <!-- Under a length field or as a message. %1$s is the longest length allowed, such as "4 h". -->
+    <string name="length_at_most">最大 %1$s までです。</string>
 
     <!-- Settings > Language -->
     <string name="language_title">言語</string>

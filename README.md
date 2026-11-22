@@ -17,7 +17,7 @@ PhoneLock is for parents who want to give a child a phone that does only what th
 - **Daily app time limits:** Set how long an app may be used each day, or on weekdays and weekends, and see how much time it has had.
 - **Find, ring and view:** See where the phone is, ring it at full volume even on silent, or view its screen. Your child gets a notice whenever a parent views the screen, and every view is recorded in the activity log.
 - **Location history and battery:** The phone logs its location every 15 minutes and keeps it for 7 days, and reports its battery with every message. You choose a low-battery alert, and get "Turning off" and "Turned on" notices, so a dead battery can be told apart from lost signal. The child's home screen says that location and battery are shared.
-- **An SOS button:** The child can call the local emergency number from the home screen at any time.
+- **An SOS button:** The child can call the local emergency number from the home screen at any time. Holding it sends an emergency alert that rings your phone like an alarm, with the child's location. If the button is being pressed over and over, you can pause the alarm for that phone on your phone, for any length up to 24 hours or until a set time; alerts still arrive as ordinary notifications.
 - **Set up from your phone:** No computer and no factory reset: your phone sets up the child's phone over Wi-Fi. A second parent can be added from the first parent's app.
 - **Private by design:** Every message between the phones is end-to-end encrypted, so the server that relays them sees only ciphertext. See the [privacy policy](https://dynamic-solutions.ca/privacy/phonelock).
 

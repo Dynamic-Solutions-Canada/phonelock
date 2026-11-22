@@ -12,6 +12,8 @@
     <string name="alerts_channel_emergency">Notfallalarme</string>
     <string name="alerts_channel_emergency_description">Wenn ein Kind SOS drückt. Der Alarmton wird separat als Wecker abgespielt.</string>
     <string name="alerts_channel_emergency_service">Notfallalarm läuft</string>
+    <string name="alerts_channel_emergency_quiet">Notfallalarme, Alarm pausiert</string>
+    <string name="alerts_channel_emergency_quiet_description">Wenn ein Kind SOS drückt, während du den Alarm für dieses Handy pausiert hast. Ein normaler Benachrichtigungston statt des Alarms.</string>
 
     <!-- Ongoing notification while this app keeps a connection open -->
     <string name="alerts_service_listening">Wartet auf gekoppelte Geräte</string>
@@ -88,6 +90,19 @@
     <string name="alerts_emergency_none">Gerade kein Notfallalarm.</string>
     <string name="alerts_emergency_open_app">PhoneLock öffnen</string>
 
+    <!-- Pausing the emergency alarm for one child's phone, on this parent's phone only. -->
+    <string name="alerts_emergency_pause">Alarm pausieren</string>
+    <!-- Notification button: keep it short. -->
+    <string name="alerts_emergency_pause_hour">1 Std. pausieren</string>
+    <!-- %1$s is the child's name -->
+    <string name="alerts_emergency_pause_title">Alarm für %1$s pausieren?</string>
+    <string name="alerts_emergency_pause_note">Nur auf diesem Handy. Alarme von dort kommen weiter mit Benachrichtigungston, Standort und Nachrichten an, klingeln aber nicht als Wecker.</string>
+    <!-- %1$s is the child's name, %2$s a time of day -->
+    <string name="alerts_emergency_paused_hint">Der Notfallalarm für %1$s ist auf diesem Handy bis %2$s pausiert. Alarme kommen weiter als Benachrichtigungen an.</string>
+    <string name="alerts_emergency_resume">Alarm fortsetzen</string>
+    <!-- %1$s is a time of day -->
+    <string name="alerts_emergency_paused_event">Notfallalarm auf diesem Handy bis %1$s pausiert</string>
+
     <!-- Unfamiliar Google screens. %1$s is the app it was opened from, %2$s a short screen name. -->
     <string name="alerts_screen_shot_failed">Screenshot konnte nicht geöffnet werden</string>
     <string name="alerts_screen_event_from">Unbekannten Google-Dienste-Bildschirm aus %1$s geöffnet (%2$s)</string>
@@ -117,8 +132,7 @@
     <string name="alerts_rule_blocked">Blockiert</string>
     <string name="alerts_rule_blocked_default">Blockiert (Standard)</string>
     <string name="alerts_rule_reported">Wird beim Öffnen gemeldet</string>
-    <string name="alerts_rule_allow_15_min">15 Min. erlauben</string>
-    <string name="alerts_rule_allow_1_hour">1 Stunde erlauben</string>
+    <string name="alerts_rule_allow_for">Eine Weile erlauben…</string>
     <string name="alerts_rule_allow_until_bedtime">Bis zur Schlafenszeit erlauben</string>
     <string name="alerts_rule_back_to_blocked">Wieder blockieren</string>
     <string name="alerts_rule_forget">Entscheidung vergessen</string>

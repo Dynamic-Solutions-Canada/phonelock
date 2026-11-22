@@ -17,9 +17,10 @@ This repo follows the shared standards at https://github.com/Dynamic-Solutions-C
 | Both apps: secrets sealed at rest by the keystore | `SecretBox.java` (lock app), `SecretBox.kt` and `DeviceStore.kt` (parent app) |
 | Lock app: adb config broadcasts (pairing, release) | `ConfigReceiver.java` |
 | Lock app: self-update | `Updater.java` |
-| Parent app: screens and navigation | `android/companion/src/main/java/home/phonelock/parent/MainActivity.kt`, `DeviceScreens.kt`, `SettingsScreen.kt` |
+| Parent app: screens and navigation | `android/companion/src/main/java/home/phonelock/parent/MainActivity.kt`, `DeviceScreens.kt`, `SettingsScreen.kt`; `LengthDialog.kt`, the one "for how long" picker (usual lengths, a clock time or a custom length) |
 | Parent app: phone-to-phone setup and its adb client | `ChildSetup.kt`, `WifiSetupScreen.kt`, `Setup.kt`, `adb/` |
 | Parent app: transport, push and encryption | `Hub.kt`, `Push.kt`, `Crypto.kt`; the background connection in `android/companion/src/github/.../ParentService.kt` and `BackgroundConnection.kt`, the Play stub in `android/companion/src/play/` |
+| Parent app: emergency (SOS) alerts, their alarm and pausing it per phone | `EmergencyAlerts.kt`, `EmergencyUi.kt`, `SosPause.kt` |
 | Parent app: theme, About screen and third-party notices | `AppTheme.kt`, `AboutScreen.kt`; the notices file is generated from `android/companion/build.gradle.kts` by `android/buildSrc/.../RenderThirdPartyNotices.kt` |
 | Parent app: downloads and signer checks | `Releases.kt`; self-update in `android/companion/src/github/.../AppUpdate.kt`, the Play stub in `android/companion/src/play/` |
 | Wording for code with no Compose context | `Strings.kt` |

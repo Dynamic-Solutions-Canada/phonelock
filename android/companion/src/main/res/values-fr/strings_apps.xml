@@ -34,7 +34,6 @@
     <string name="apps_custom_length">Durée personnalisée…</string>
     <string name="apps_hours">Heures</string>
     <string name="apps_minutes">Minutes</string>
-    <string name="apps_at_most_24_hours">24 heures au maximum.</string>
     <!-- Button that confirms a custom length -->
     <string name="apps_set">Valider</string>
 
@@ -163,8 +162,6 @@
     <!-- Parent mode, PIN and starting a situation by hand; %1$s is the child's device name -->
     <string name="apps_parent_mode_title">Déverrouiller %1$s pour un parent ?</string>
     <string name="apps_parent_mode_note">Paramètres et le Play Store s’ouvrent sur l’appareil de votre enfant pour toute personne qui le tient. Il se verrouille de nouveau à la fin du délai, même si l’écran s’éteint avant.</string>
-    <!-- %1$s is a length of time such as "15 min" -->
-    <string name="apps_for_length">Pendant %1$s</string>
     <string name="apps_pin_title">Modifier le code PIN parent</string>
     <string name="apps_pin_new">Nouveau code PIN (4 à 8 chiffres)</string>
     <string name="apps_pin_again">Saisissez-le de nouveau</string>
@@ -185,7 +182,5 @@
     <!-- Debugging; %1$s is the child's device name -->
     <string name="apps_debugging_title">Activer le débogage ?</string>
     <string name="apps_debugging_note">Pour les réparations : active le débogage USB et le débogage sans fil sur %1$s, pour que l’appareil puisse être réparé ou mis à jour depuis un ordinateur même si ses écrans ne fonctionnent pas. Il se désactive ensuite tout seul.\n\nTant qu’il est activé, toute personne disposant d’un ordinateur associé peut contrôler l’appareil. La section Événements récents indiquera où se connecter.</string>
-    <!-- %1$s is a length of time such as "30 min" -->
-    <string name="apps_debugging_on_for">Activé pendant %1$s</string>
     <string name="apps_debugging_off">Le désactiver maintenant</string>
 </resources>
