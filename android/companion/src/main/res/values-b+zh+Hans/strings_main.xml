@@ -50,12 +50,6 @@
     <string name="main_push_not_reaching">此设备的请求和警报只会在 PhoneLock 打开时收到，因为推送暂时无法送达。如果一直如此，请在此应用中重新设置该设备。</string>
     <string name="main_lost_devices">此手机已无法读取 %1$s 的配对密钥。请在仍有该设备的手机上通过“与其他家长共享”重新添加，或重新设置该设备。</string>
     <string name="main_lost_devices_forget">忽略</string>
-    <string name="main_move_install">PhoneLock 有了新应用。请安装它以继续获得更新，然后从这里将你的设备移到新应用。</string>
-    <string name="main_move_get_app">获取新应用</string>
-    <string name="main_move_ready">将你的设备移到新的 PhoneLock 应用。之后可以卸载此应用。</string>
-    <string name="main_move_devices">移动设备</string>
-    <string name="main_move_done">设备已移动。请打开新的 PhoneLock 应用；现在可以卸载此应用。</string>
-    <string name="main_move_not_supported">新的 PhoneLock 应用版本太旧，无法接收你的设备。请更新后重试。</string>
     <string name="main_status_no_reply">尚无回应</string>
     <!-- %1$s: how long ago, e.g. "18 min ago" -->
     <string name="main_status_not_answering">无响应 · 最后在线：%1$s</string>

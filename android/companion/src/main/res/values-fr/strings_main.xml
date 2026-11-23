@@ -54,12 +54,6 @@
     <string name="main_push_not_reaching">Les demandes et alertes de cet appareil n’arrivent que lorsque PhoneLock est ouvert, car les notifications push ne l’atteignent pas encore. Si cela persiste, configurez à nouveau l’appareil depuis cette app.</string>
     <string name="main_lost_devices">Ce téléphone ne peut plus lire la clé d’association de %1$s. Ajoutez-le de nouveau depuis un téléphone qui l’a encore, avec Partager avec un autre parent, ou configurez-le de nouveau.</string>
     <string name="main_lost_devices_forget">Oublier</string>
-    <string name="main_move_install">PhoneLock a une nouvelle appli. Installez-la pour continuer à recevoir les mises à jour, puis déplacez-y vos appareils depuis ici.</string>
-    <string name="main_move_get_app">Obtenir la nouvelle appli</string>
-    <string name="main_move_ready">Déplacez vos appareils vers la nouvelle appli PhoneLock. Vous pourrez ensuite désinstaller celle-ci.</string>
-    <string name="main_move_devices">Déplacer les appareils</string>
-    <string name="main_move_done">Appareils déplacés. Ouvrez la nouvelle appli PhoneLock ; vous pouvez maintenant désinstaller celle-ci.</string>
-    <string name="main_move_not_supported">La nouvelle appli PhoneLock est trop ancienne pour recevoir vos appareils. Mettez-la à jour, puis réessayez.</string>
     <string name="main_status_no_reply">Pas encore de réponse</string>
     <!-- %1$s: how long ago, e.g. "18 min ago" -->
     <string name="main_status_not_answering">Ne répond pas · vu pour la dernière fois %1$s</string>

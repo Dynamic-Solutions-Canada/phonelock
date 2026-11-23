@@ -54,12 +54,6 @@
     <string name="main_push_not_reaching">Las solicitudes y alertas de este dispositivo solo llegan mientras PhoneLock está abierto, porque las notificaciones push aún no lo alcanzan. Si sigue así, vuelve a configurar el dispositivo desde esta app.</string>
     <string name="main_lost_devices">Este teléfono ya no puede leer la clave de vinculación de %1$s. Vuelve a añadirlo desde un teléfono que aún lo tenga, con Compartir con otro padre o madre, o vuelve a configurarlo.</string>
     <string name="main_lost_devices_forget">Olvidar</string>
-    <string name="main_move_install">PhoneLock tiene una app nueva. Instálala para seguir recibiendo actualizaciones y luego mueve tus dispositivos a ella desde aquí.</string>
-    <string name="main_move_get_app">Obtener la app nueva</string>
-    <string name="main_move_ready">Mueve tus dispositivos a la nueva app PhoneLock. Después puedes desinstalar esta.</string>
-    <string name="main_move_devices">Mover dispositivos</string>
-    <string name="main_move_done">Dispositivos movidos. Abre la nueva app PhoneLock; ya puedes desinstalar esta.</string>
-    <string name="main_move_not_supported">La nueva app PhoneLock es demasiado antigua para recibir tus dispositivos. Actualízala e inténtalo de nuevo.</string>
     <string name="main_status_no_reply">Aún sin respuesta</string>
     <!-- %1$s: how long ago, e.g. "18 min ago" -->
     <string name="main_status_not_answering">No responde · visto por última vez %1$s</string>

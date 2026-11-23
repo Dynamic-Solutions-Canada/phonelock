@@ -11,13 +11,6 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
-    <!-- The parent app's old and new ids see each other, so each can check the other is signed by PhoneLock's key
-         before devices are moved between them (AppMove). -->
-    <queries>
-        <package android:name="home.phonelock.parent" />
-        <package android:name="ca.dynamicsolutions.phonelock.parent" />
-    </queries>
-
     <application
         android:name=".App"
         android:label="@string/app_name"
@@ -51,13 +44,6 @@
                 <data android:scheme="phonelock" android:host="pair" />
             </intent-filter>
         </activity>
-
-        <!-- Receives the devices the parent app under its old id hands over (AppMove). Exported so that app
-             can start it; it accepts only a request for a result from that app, signed with this app's key. -->
-        <activity
-            android:name=".ImportDevicesActivity"
-            android:exported="true"
-            android:excludeFromRecents="true" />
 
         <!-- Pushes from the PhoneLock hub (Firebase Cloud Messaging). -->
         <service android:name=".PushService" android:exported="false">

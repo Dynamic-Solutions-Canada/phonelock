@@ -50,12 +50,6 @@
     <string name="main_push_not_reaching">このデバイスからのリクエストやアラートは、PhoneLock を開いている間しか届きません。プッシュ通知がまだ届かないためです。このままの場合は、このアプリからデバイスを設定し直してください。</string>
     <string name="main_lost_devices">このスマートフォンでは %1$s のペアリング キーを読み取れなくなりました。まだ登録されているスマートフォンから「他の保護者と共有」でもう一度追加するか、設定し直してください。</string>
     <string name="main_lost_devices_forget">削除</string>
-    <string name="main_move_install">PhoneLock の新しいアプリが公開されました。アップデートを受け取り続けるにはインストールし、ここからデバイスを新しいアプリに移してください。</string>
-    <string name="main_move_get_app">新しいアプリを入手</string>
-    <string name="main_move_ready">デバイスを新しい PhoneLock アプリに移します。その後、このアプリはアンインストールできます。</string>
-    <string name="main_move_devices">デバイスを移す</string>
-    <string name="main_move_done">デバイスを移しました。新しい PhoneLock アプリを開いてください。このアプリはアンインストールできます。</string>
-    <string name="main_move_not_supported">新しい PhoneLock アプリが古いため、デバイスを受け取れません。アップデートしてから、もう一度お試しください。</string>
     <string name="main_status_no_reply">まだ応答がありません</string>
     <!-- %1$s: how long ago, e.g. "18 min ago" -->
     <string name="main_status_not_answering">応答なし · 最終確認 %1$s</string>

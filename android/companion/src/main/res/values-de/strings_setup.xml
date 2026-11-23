@@ -205,7 +205,4 @@
     <!-- Viewing the child's screen -->
     <string name="setup_screenshot_no_image">Kein Bild empfangen</string>
     <string name="setup_screenshot_unreadable">Screenshot konnte nicht geöffnet werden</string>
-    <string name="setup_import_title">Geräte aus deiner alten PhoneLock-App hinzufügen</string>
-    <string name="setup_import_text">%1$s hinzufügen? Ihre Einstellungen auf diesem Smartphone, etwa Funkstille-Warnungen, beginnen hier neu.</string>
-    <string name="setup_import_none">Deine alte PhoneLock-App hat keine Geräte, die diese App hinzufügen kann.</string>
 </resources>

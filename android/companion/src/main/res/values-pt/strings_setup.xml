@@ -205,7 +205,4 @@
     <!-- Viewing the child's screen -->
     <string name="setup_screenshot_no_image">Nenhuma imagem recebida</string>
     <string name="setup_screenshot_unreadable">Não foi possível abrir a captura de tela</string>
-    <string name="setup_import_title">Adicionar dispositivos do seu app PhoneLock antigo</string>
-    <string name="setup_import_text">Adicionar %1$s? As configurações deles neste celular, como os alertas de silêncio, começam do zero aqui.</string>
-    <string name="setup_import_none">Seu app PhoneLock antigo não tem dispositivos que este app possa adicionar.</string>
 </resources>

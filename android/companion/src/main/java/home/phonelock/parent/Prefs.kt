@@ -195,11 +195,6 @@ internal class AppUpdatePrefs(c: Context) : PrefsFile(c, "appupdate") {
 
     fun forgetCheck() = save { remove("checked") }
 
-    /** Whether the last check found the parent app under its new id released (AppMove). */
-    var newAppPublished: Boolean
-        get() = p.getBoolean("new_app_published", false)
-        set(v) = save { putBoolean("new_app_published", v) }
-
     /** The version a notification was last shown for, so each is announced once. */
     var announced: Int
         get() = p.getInt("announced", 0)
