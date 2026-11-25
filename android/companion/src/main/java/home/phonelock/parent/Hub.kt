@@ -101,6 +101,7 @@ data class Vitals(
     val heard: Long = 0,
 )
 
+/** A child's "Ask for an app" request, waiting for a parent to allow or deny it. */
 data class Request(
     val device: String,
     val req: String,
@@ -108,7 +109,19 @@ data class Request(
     val label: String,
     val minutes: Long,
     val ts: Long,
-)
+) {
+    /**
+     * Whether this request replaces [other]: a different request from the same device for the same app, sent no
+     * earlier. A child asking again means the newest ask (and its length) is the one to answer, so parents see
+     * one request per app rather than a pile of repeats.
+     */
+    fun replaces(other: Request): Boolean = other.device == device && other.app == app && other.req != req && other.ts <= ts
+
+    companion object {
+        /** [list] without the requests a newer one in it replaces, keeping the rest in order. */
+        fun newestOnly(list: List<Request>): List<Request> = list.filter { r -> list.none { it.replaces(r) } }
+    }
+}
 data class Event(val ts: Long, val text: String)
 
 /** A group of Google services screens the device blocks by default ("account", "Manage your Google Account"). */
@@ -242,6 +255,8 @@ object Hub {
                         it.optLong("ts"),
                     )
                 }.filter { System.currentTimeMillis() - it.ts < 12 * 3600_000L }
+                    // Lists saved before repeats were collapsed can hold several asks for one app.
+                    .let(Request::newestOnly)
             }
         }
         prefs.events?.let { s ->
@@ -685,10 +700,9 @@ object Hub {
                     ts,
                 )
                 if (_requests.value.none { it.req == r.req }) {
-                    _requests.update { it + r }
-                    saveRequests()
+                    // Every ask stays in the activity history, but only the newest one per app waits for an answer.
                     addEvent(dev, Strings.get(R.string.alerts_request_event, r.label, fmtMinutes(r.minutes)), ts)
-                    notify(dev, Strings.get(R.string.alerts_request_notification, r.label, fmtMinutes(r.minutes)), r)
+                    onRequest(r)
                 }
             }
 
@@ -863,6 +877,23 @@ object Hub {
             )
         }
         prefs.vitals = o.toString()
+    }
+
+    /**
+     * Shows the child's request [r], replacing any older unanswered request from that device for the same app
+     * (its notification goes too). An ask that arrives after a newer one for the same app (delayed in transit)
+     * is left out, since the newer one already stands for it.
+     */
+    private fun onRequest(r: Request) {
+        if (_requests.value.any { it.replaces(r) }) return
+
+        val replaced = _requests.value.filter { r.replaces(it) }
+        _requests.update { l -> l.filterNot { r.replaces(it) } + r }
+        saveRequests()
+
+        val nm = app.getSystemService(NotificationManager::class.java)
+        replaced.forEach { nm.cancel(it.req.hashCode()) }
+        notify(r.device, Strings.get(R.string.alerts_request_notification, r.label, fmtMinutes(r.minutes)), r)
     }
 
     private fun resolve(req: String) {
