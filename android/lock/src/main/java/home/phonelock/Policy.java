@@ -378,7 +378,9 @@ public final class Policy {
                 parent ? new LinkedHashSet<>(Arrays.asList(RESTRICTIONS_LIFTED_FOR_PARENT)) : new LinkedHashSet<>();
         // Debugging stays available until setup is finished and it is switched off explicitly.
         if (prefs(c).getBoolean("allow_debugging", true)) lifted.add("no_debugging_features");
-        if (grants.containsKey(Grants.SMS_APP)) lifted.add("no_sms");
+        // Texting is blocked unless Messages may run now (parent mode, its schedule, or allowed for a while):
+        // with no_sms on, Android refuses to open Messages at all, so an allowed Messages would be unusable.
+        if (lockPkgs.contains(Grants.SMS_APP)) lifted.add("no_sms");
         for (String r : RESTRICTIONS_LOCKED) {
             try {
                 if (lifted.contains(r)) dpm.clearUserRestriction(a, r);

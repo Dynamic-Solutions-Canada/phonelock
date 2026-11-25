@@ -12,7 +12,7 @@ PhoneLock is for parents who want to give a child a phone that does only what th
 
 ## Features
 
-- **Only the apps you allow:** The child's home screen shows the apps you pick. Everything else is hidden, and settings that would undo the lock (installing apps, adding accounts, factory reset, safe mode, SMS) are switched off.
+- **Only the apps you allow:** The child's home screen shows the apps you pick. Everything else is hidden, and settings that would undo the lock (installing apps, adding accounts, factory reset, safe mode) are switched off. Texting works only while Messages is allowed.
 - **Answer requests from your phone:** Your child can ask for an app, and you can allow it for a while or turn it off again from anywhere.
 - **Daily app time limits:** Set how long an app may be used each day, or on weekdays and weekends, and see how much time it has had.
 - **Find, ring and view:** See where the phone is, ring it at full volume even on silent, or view its screen. Your child gets a notice whenever a parent views the screen, and every view is recorded in the activity log.
