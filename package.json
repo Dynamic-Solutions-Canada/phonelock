@@ -32,7 +32,7 @@
     "devDependencies are build tools only, never shipped. @dynamic-solutions-canada/devkit and @resvg/resvg-js: the shared icon generator, devkit-icons, and the renderer it asks repos to install (approved: standards session for Ryan, ASSET-3 (2026-11-19))."
   ],
   "devDependencies": {
-    "@dynamic-solutions-canada/devkit": "github:Dynamic-Solutions-Canada/devkit#v0.25.0",
+    "@dynamic-solutions-canada/devkit": "github:Dynamic-Solutions-Canada/devkit#v0.29.0",
     "@resvg/resvg-js": "2.6.2"
   }
 }
