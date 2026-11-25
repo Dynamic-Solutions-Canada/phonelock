@@ -54,6 +54,9 @@ public class ConnectionsActivity extends Activity {
     private Map<String, BluetoothDevice> found;
 
     private String btNote;
+
+    /** The device a pairing was started with from here, until its outcome has been shown; null otherwise. */
+    private BluetoothDevice pairingWith;
     /** Re-checks the schedule while open, so a grant running out closes the screen. */
     private final Handler handler = new Handler(Looper.getMainLooper());
 
@@ -89,11 +92,13 @@ public class ConnectionsActivity extends Activity {
                 int state = i.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.BOND_NONE);
                 int prev = i.getIntExtra(BluetoothDevice.EXTRA_PREVIOUS_BOND_STATE, BluetoothDevice.BOND_NONE);
                 if (state == BluetoothDevice.BOND_BONDED) {
-                    BluetoothControl.onPaired(c, d);
+                    // BluetoothControl reports the new device to the parents.
                     if (found != null) found.remove(d.getAddress());
                     btNote = c.getString(R.string.tools_bluetooth_paired, BluetoothControl.name(d));
+                    pairingWith = null;
                 } else if (state == BluetoothDevice.BOND_NONE && prev == BluetoothDevice.BOND_BONDING) {
                     btNote = c.getString(R.string.tools_bluetooth_pair_failed, BluetoothControl.name(d));
+                    pairingWith = null;
                 }
             }
             show();
@@ -151,7 +156,21 @@ public class ConnectionsActivity extends Activity {
         f.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
         registerReceiver(systemRadios, f, Context.RECEIVER_EXPORTED);
         WifiControl.scan(this);
+        notePairingOutcome();
         show();
+    }
+
+    /**
+     * Back from Android's pairing dialog: this screen stopped listening while the dialog covered it, so the
+     * outcome may have been missed. Once the pairing has settled, say how it went.
+     */
+    private void notePairingOutcome() {
+        if (pairingWith == null || BluetoothControl.pairing()) return;
+        boolean paired = BluetoothControl.isPaired(pairingWith);
+        btNote = getString(
+                paired ? R.string.tools_bluetooth_paired : R.string.tools_bluetooth_pair_failed,
+                BluetoothControl.name(pairingWith));
+        pairingWith = null;
     }
 
     @Override
@@ -323,8 +342,14 @@ public class ConnectionsActivity extends Activity {
                     row.setOnClickListener(v -> {
                         if (!allowedNow()) return;
                         btNote = getString(R.string.tools_bluetooth_pairing, BluetoothControl.name(d));
-                        if (!BluetoothControl.pair(this, d))
+                        pairingWith = d;
+                        if (!BluetoothControl.accessory(d)) {
+                            pairingWith = null;
+                            btNote = getString(R.string.tools_bluetooth_pair_failed, BluetoothControl.name(d));
+                        } else if (!BluetoothControl.pair(this, d)) {
+                            pairingWith = null;
                             btNote = getString(R.string.tools_bluetooth_pairing_failed_start);
+                        }
                         show();
                     });
                     list.addView(row);

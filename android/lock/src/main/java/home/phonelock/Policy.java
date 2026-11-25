@@ -352,6 +352,8 @@ public final class Policy {
         lockPkgs.addAll(extraSupport(c));
         java.util.Map<String, Long> grants = Grants.load(c);
         lockPkgs.addAll(grants.keySet());
+        // Android's pairing dialog belongs to Settings: it may run while a pairing the child started is in progress.
+        if (BluetoothControl.pairing()) lockPkgs.add(BluetoothControl.SETTINGS);
         if (parent) {
             // Parent mode: every app may run (the home screen's "All apps" opens them), not just Settings and
             // the Play Store. Step 4 then shows them all; they're hidden again when parent mode ends.
