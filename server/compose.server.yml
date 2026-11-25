@@ -3,7 +3,7 @@
 # Messages are end-to-end encrypted by the apps; the hub only relays and stores ciphertext.
 services:
   hub:
-    image: binwiederhier/ntfy:v2.37.2
+    image: binwiederhier/ntfy:v2.38.1
     command: serve
     container_name: phonelock-hub
     restart: unless-stopped
