@@ -21,7 +21,7 @@ RUN mkdir -p $ANDROID_HOME/cmdline-tools \
     && mv $ANDROID_HOME/cmdline-tools/cmdline-tools $ANDROID_HOME/cmdline-tools/latest \
     && rm /tmp/clt.zip
 
-# compileSdk 37 is the android-37.0 package; build-tools 36.0.0 is what AGP 9.5.1 uses.
+# compileSdk is the android-37.2 package; build-tools 36.0.0 is what AGP 9.5 uses.
 RUN yes | sdkmanager --licenses >/dev/null \
-    && sdkmanager "platforms;android-37.0" "build-tools;36.0.0" >/dev/null \
+    && sdkmanager "platforms;android-37.2" "build-tools;36.0.0" >/dev/null \
     && chmod -R a+rX $ANDROID_HOME
