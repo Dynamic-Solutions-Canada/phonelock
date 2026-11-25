@@ -2,7 +2,7 @@
 # version code is the commit count). scripts/dev/gradle runs Gradle in a disposable container from it, under a
 # hard memory cap; nothing is installed on the host. Build it with `npm run build:image`.
 # Versions are pinned: change them here, and keep them matching compileSdk in the build files.
-FROM eclipse-temurin:17.0.21_9-jdk-noble
+FROM eclipse-temurin:17.0.21.1_2-jdk-noble
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends git unzip curl ca-certificates \
