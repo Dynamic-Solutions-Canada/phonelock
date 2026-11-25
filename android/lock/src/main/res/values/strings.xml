@@ -5,8 +5,9 @@
      and parents (parent mode, connections, diagnostics, and events sent to the parent app); comments say
      which when it matters. Names, app labels and anything typed by a person are never translated. -->
 <resources>
-    <!-- The app's name as Android shows it (it is the child's home screen) -->
-    <string name="app_name">Home</string>
+    <!-- The app's name as Android shows it (the home screen picker, app info, the uninstall prompt). A product
+         name, so it is never translated. -->
+    <string name="app_name" translatable="false">PhoneLock</string>
 
     <!-- Common buttons: use these rather than adding another copy -->
     <string name="cancel">Cancel</string>

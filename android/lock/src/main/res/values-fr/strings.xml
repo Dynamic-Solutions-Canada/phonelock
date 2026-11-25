@@ -8,9 +8,6 @@
      parent app's French terms (appareil, mode parent, code PIN parent, Heures limitées, Heure du coucher,
      liste de confiance, Réparer la configuration par Wi-Fi). "Ask for an app" = "Demander une application". -->
 <resources>
-    <!-- The app's name as Android shows it (it is the child's home screen) -->
-    <string name="app_name">Accueil</string>
-
     <!-- Common buttons: use these rather than adding another copy -->
     <string name="cancel">Annuler</string>
     <string name="ok">OK</string>

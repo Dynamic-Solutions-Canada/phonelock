@@ -8,9 +8,6 @@
      parent app's Chinese (its glossary is in companion values-b+zh+Hans/strings.xml): device = 设备;
      parent mode = 家长模式; limited hours = 限时时段; bedtime = 就寝时间; "Ask for an app" = “申请应用”. -->
 <resources>
-    <!-- The app's name as Android shows it (it is the child's home screen) -->
-    <string name="app_name">主屏幕</string>
-
     <!-- Common buttons: use these rather than adding another copy -->
     <string name="cancel">取消</string>
     <string name="ok">确定</string>

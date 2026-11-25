@@ -5,9 +5,6 @@
      and parents (parent mode, connections, diagnostics, and events sent to the parent app); comments say
      which when it matters. Names, app labels and anything typed by a person are never translated. -->
 <resources>
-    <!-- The app's name as Android shows it (it is the child's home screen) -->
-    <string name="app_name">Tela inicial</string>
-
     <!-- Common buttons: use these rather than adding another copy -->
     <string name="cancel">Cancelar</string>
     <string name="ok">OK</string>
