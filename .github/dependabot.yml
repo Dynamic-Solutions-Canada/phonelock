@@ -17,3 +17,41 @@ updates:
       all-deps:
         patterns:
           - "*"
+
+  # The root package.json holds the npm dev tools (devkit and its icon renderer); nothing npm ships.
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    ignore:
+      # devkit is pinned to a release tag and bumped by hand, following the consumer steps in its
+      # release notes. Dependabot misreads its git tags and proposes downgrades (KIT-6, HYG-8).
+      - dependency-name: "@dynamic-solutions-canada/devkit"
+    groups:
+      all-deps:
+        patterns:
+          - "*"
+
+  # The build container's JDK image (PLAT-11).
+  - package-ecosystem: "docker"
+    directory: "/android/docker"
+    schedule:
+      interval: "weekly"
+    ignore:
+      # The JDK stays on 17, matching the apps' Java and Kotlin targets (PLAT-11); a new JDK major is its own change.
+      - dependency-name: "eclipse-temurin"
+        update-types: ["version-update:semver-major"]
+    groups:
+      all-deps:
+        patterns:
+          - "*"
+
+  # The hub's ntfy image in server/compose.server.yml.
+  - package-ecosystem: "docker-compose"
+    directory: "/server"
+    schedule:
+      interval: "weekly"
+    groups:
+      all-deps:
+        patterns:
+          - "*"

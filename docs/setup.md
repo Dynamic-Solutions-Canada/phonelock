@@ -1,3 +1,6 @@
+> **Scope:** Design record for setting up a child's phone from the parent app over Wireless debugging: the options weighed and why this one was chosen.
+> **Governs:** `android/companion/src/main/java/home/phonelock/parent/ChildSetup.kt`, `android/companion/src/main/java/home/phonelock/parent/WifiSetupScreen.kt`, `android/companion/src/main/java/home/phonelock/parent/Setup.kt`, `android/companion/src/main/java/home/phonelock/parent/adb/**`
+
 # Phone-to-phone setup: design record
 
 **Decided (Nov 2026):** option A, built into the parent app (ChildSetup.kt, WifiSetupScreen.kt) with our own adb client (companion `adb/` package: pairing, SPAKE2 ported from BoringSSL, connection, shell, install, discovery). No third-party adb library: Kadb was tried, but its pairing dependency is GPL-3.0, which can't ship alongside Google's proprietary libraries. No cables, no web pages. QR setup is no longer offered.

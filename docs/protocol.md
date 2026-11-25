@@ -1,3 +1,6 @@
+> **Scope:** Every message between the parent app and the child's phone, and how it is encrypted. A protocol change updates this file and both apps in the same commit.
+> **Governs:** `android/lock/src/main/java/home/phonelock/Remote.java`, `android/lock/src/main/java/home/phonelock/Crypto.java`, `android/companion/src/main/java/home/phonelock/parent/Hub.kt`, `android/companion/src/main/java/home/phonelock/parent/Crypto.kt`, `scripts/dev/ParentCli.java`
+
 # Parent ⇄ phone protocol
 
 Transport: one private ntfy topic (on ntfy.sh or the PhoneLock hub; on the hub every message is also pushed through Firebase to the FCM topic of the same name, and the phone marks requests, notable events, `loc`, `shot`, `seen` and `sos` with ntfy priority 4 for high-priority delivery) (`.secrets/pairing.properties`). Every message body is `base64url(iv[12] ‖ AES-256-GCM(ciphertext ‖ tag))` with AAD `phonelock/1`, keyed by the 32-byte pairing secret. Anything that doesn't decrypt is ignored, so the topic name alone can't control the phone and readers of the topic see only ciphertext.

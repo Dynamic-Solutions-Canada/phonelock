@@ -15,6 +15,12 @@ android {
     namespace = "home.phonelock"
     compileSdk = 37
 
+    // Ship only the app's languages (LOC-10): the nine in res/xml/locales_config.xml, plus the
+    // qualifiers libraries use for the same languages (zh-rCN, pt-rBR), so their built-in text matches.
+    androidResources {
+        localeFilters += listOf("en", "en-rCA", "es", "fr", "fr-rCA", "de", "b+zh+Hans", "zh-rCN", "pt", "pt-rBR", "ja")
+    }
+
     defaultConfig {
         applicationId = "home.phonelock"
         minSdk = 33

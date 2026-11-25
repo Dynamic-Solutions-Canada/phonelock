@@ -1,3 +1,6 @@
+> **Scope:** Building, the hub settings, languages, releasing, and installing and controlling a phone over adb.
+> **Governs:** `package.json`, `scripts/`, `android/docker/`, `android/*/src/main/res/values*/`, `android/*/src/main/res/xml/locales_config.xml`, `release-notes/**`
+
 # Development
 
 How to build, set up, control and release PhoneLock. The parent ⇄ phone message format is in [protocol.md](protocol.md), and the hub server in [server/README.md](../server/README.md).
@@ -102,7 +105,14 @@ Review status of every wording catalog (LOC-12). Update the row when a native sp
 | Release notes (`release-notes/`) | en-US source; es-ES, fr-FR, de-DE, zh-CN, pt-BR, ja-JP | AI-drafted, not reviewed |
 | Play listing (`store-assets/play/listings.json`) | en-US source; es-ES, fr-FR, de-DE, zh-CN, pt-BR, ja-JP (en-CA and fr-CA copy en-US and fr-FR) | AI-drafted, not reviewed |
 
-Product terms are translated the same way everywhere, so the listing, the release notes and both apps agree: take a term's translation from the parent app's catalog (for example **parent mode** `device_parent_mode`, **normal hours**, **limited hours** and **bedtime** `apps_mode_*`, **Share with another parent** `device_share`, **Fix setup over Wi-Fi** `device_fix_setup`, and Android's own name for **Wireless debugging** in each language). The Play short description is also the About tagline (`about_tagline`), word for word. Names, app labels and what people type are never translated. Wording the child reads uses the informal "you" (French "tu", German "du"). The diagnostics report stays in English for support.
+Product terms are translated the same way everywhere, so the listing, the release notes and both apps agree: take a term's translation from the parent app's catalog (for example **parent mode** `device_parent_mode`, **normal hours**, **limited hours** and **bedtime** `apps_mode_*`, **Share with another parent** `device_share`, **Fix setup over Wi-Fi** `device_fix_setup`, and Android's own name for **Wireless debugging** in each language). The Play short description is also the About tagline (`about_tagline`), word for word. Names, app labels and what people type are never translated. Wording the child reads uses the informal "you" (French "tu", German "du").
+
+Deliberately English (LOC-13):
+
+- The third-party notices and licences on the parent app's About screen, like the licences themselves.
+- The privacy policy page, which the README also says.
+- The diagnostics report, for support.
+- Log lines, replies to the adb config commands, the hub server and the developer tools in `scripts/`, which only developers see.
 
 ## Publish a release
 

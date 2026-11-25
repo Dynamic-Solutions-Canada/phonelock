@@ -8,33 +8,9 @@ This repo follows the shared standards at https://github.com/Dynamic-Solutions-C
 
 ## Architecture
 
-`docs/protocol.md` is the source of truth for every message between the parent app and the phone. A protocol change updates it in the same commit as both apps.
+`ARCHITECTURE.md` has the data flow and which files own each area. `docs/protocol.md` is the source of truth for every message between the apps; a protocol change updates it in the same commit as both apps.
 
-| Area | Files |
-| --- | --- |
-| Lock app: policy, kiosk mode, restrictions | `android/lock/src/main/java/home/phonelock/Policy.java`, `AdminReceiver.java`, `HomeActivity.java` |
-| Lock app: messages from and to parents | `Remote.java`, `RemoteService.java`, `Outbox.java`, `Crypto.java`, `Pairing.java` |
-| Both apps: secrets sealed at rest by the keystore | `SecretBox.java` (lock app), `SecretBox.kt` and `DeviceStore.kt` (parent app) |
-| Lock app: adb config broadcasts (pairing, release) | `ConfigReceiver.java` |
-| Lock app: release (ending its control, from a parent or adb) | `Release.java` |
-| Lock app: self-update | `Updater.java` |
-| Parent app: screens and navigation | `android/companion/src/main/java/home/phonelock/parent/MainActivity.kt`, `DeviceScreens.kt`, `SettingsScreen.kt`; `LengthDialog.kt`, the one "for how long" picker (usual lengths, a clock time or a custom length) |
-| Parent app: phone-to-phone setup and its adb client | `ChildSetup.kt`, `WifiSetupScreen.kt`, `Setup.kt`, `adb/` |
-| Parent app: transport, push and encryption | `Hub.kt`, `Push.kt`, `Crypto.kt`; the background connection in `android/companion/src/github/.../ParentService.kt` and `BackgroundConnection.kt`, the Play stub in `android/companion/src/play/` |
-| Parent app: emergency (SOS) alerts, their alarm and pausing it per phone | `EmergencyAlerts.kt`, `EmergencyUi.kt`, `SosPause.kt` |
-| Parent app: theme, About screen and third-party notices | `AppTheme.kt`, `AboutScreen.kt`; the notices file is generated from `android/companion/build.gradle.kts` by `android/buildSrc/.../RenderThirdPartyNotices.kt` |
-| Parent app: downloads and signer checks | `Releases.kt`; self-update in `android/companion/src/github/.../AppUpdate.kt`, the Play stub in `android/companion/src/play/` |
-| Wording for code with no Compose context | `Strings.kt` |
-| Languages | `res/xml/locales_config.xml` and `res/values*/` in each app |
-| Hub server | `server/` (see `server/README.md`) |
-| Gradle project (both apps, wrapper, version catalog, debug key, build container) | `android/` (`gradle/libs.versions.toml`, `docker/Dockerfile`, `buildSrc/` for build logic) |
-| Release and hub deploy scripts | `scripts/deploy/` |
-| Build runner, checks, adb and test scripts | `scripts/dev/` |
-| Command entry points, the capped Gradle runner, the translation and preferences checks | `package.json`, `scripts/dev/gradle`, `scripts/dev/check-l10n.py`, `scripts/dev/check-prefs.py` |
-| Release notes and the Release body | `release-notes/`, `scripts/deploy/release-notes.mjs` |
-| Brand masters and the icon generator's config (icons come from `npm run icons`, devkit-icons) | `assets/brand/` (see its README) |
-| Play listing source (nine locales), console settings, data safety and open questions | `store-assets/play/listings.json`, `store-assets/play/listings.md`, checked by `scripts/dev/check-listings.mjs` |
-| Phone-to-phone setup design record | `docs/setup.md` |
+Both apps need Android 13 or newer (`minSdk` 33); raising it strands installed phones, so it changes only on the maintainer's decision.
 
 ## Behaviour
 
@@ -79,6 +55,7 @@ Use the `release` skill. Notes are committed per version in `release-notes/` (en
 
 | Guide, doc, or skill | Read or use when | Governs |
 | --- | --- | --- |
+| `ARCHITECTURE.md` | Finding which files own an area, or changing how the parts fit together | The whole repo |
 | `.agents/guides/ui-conventions.md` | Adding or changing a parent-app screen, dialog, list or wording | `android/companion/src/main/java/home/phonelock/parent/**`, `android/companion/src/main/res/values*/strings*.xml` |
 | `docs/protocol.md` | Any message, field or encryption change | `Remote.java`, `Hub.kt`, `Crypto.*`, `scripts/dev/ParentCli.java` |
 | `docs/development.md` | Building, the hub settings, languages, releasing, adb install and control | `scripts/deploy/build.sh`, `scripts/`, `res/values*/` |
@@ -92,7 +69,7 @@ Use the `release` skill. Notes are committed per version in `release-notes/` (en
 
 | What changed | Update |
 | --- | --- |
-| A source file, area or script added, moved or removed | The Architecture table above |
+| A source file, area or script added, moved or removed | The table in `ARCHITECTURE.md` |
 | A message type, field or the encryption | `docs/protocol.md`, both apps, `scripts/dev/ParentCli.java` |
 | What either app sends, stores or who can read it | The privacy policy page in the website repo, in the same piece of work; Data safety in `store-assets/play/listings.md` |
 | Build, adb or release procedure | `docs/development.md`, Commands above, and the `release` skill |
