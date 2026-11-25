@@ -13,7 +13,11 @@ val gitVersionCode = rootProject.extra["gitVersionCode"] as Int
 
 android {
     namespace = "home.phonelock"
-    compileSdk = 37
+    // Platform android-37.2: Compose 1.13 needs 37.1 or later. Keep the platform in
+    // android/docker/Dockerfile and .github/workflows/ci.yml the same.
+    compileSdk {
+        version = release(37) { minorApiLevel = 2 }
+    }
 
     // Ship only the app's languages (LOC-10): the nine in res/xml/locales_config.xml, plus the
     // qualifiers libraries use for the same languages (zh-rCN, pt-rBR), so their built-in text matches.
