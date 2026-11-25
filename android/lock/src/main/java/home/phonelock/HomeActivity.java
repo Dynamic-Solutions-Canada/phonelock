@@ -472,6 +472,11 @@ public class HomeActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        // Released: this screen is disabled and the phone's own launcher takes over.
+        if (Release.done(this)) {
+            finish();
+            return;
+        }
         if (!receiversOn) {
             IntentFilter pf = new IntentFilter();
             pf.addAction(Intent.ACTION_PACKAGE_ADDED);

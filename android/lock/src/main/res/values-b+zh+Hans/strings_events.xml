@@ -120,6 +120,10 @@
     <!-- %2$d: battery percentage -->
     <string name="events_battery_alert_set">%1$s 将低电量提醒设为 %2$d%%</string>
     <string name="events_debugging_off">%1$s 关闭了调试</string>
+    <string name="events_released">%1$s 解除了此手机的管控：PhoneLock 不再控制它</string>
+    <string name="events_release_failed">无法解除此手机的管控：PhoneLock 仍在控制它</string>
+    <string name="events_released_child">PhoneLock 不再控制此手机</string>
+    <string name="events_released_child_uninstall">点按即可卸载 PhoneLock</string>
     <!-- %2$s: contact's name -->
     <string name="events_contact_added">%1$s：添加了联系人 %2$s</string>
     <string name="events_contact_removed">%1$s：删除了联系人 %2$s</string>

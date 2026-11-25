@@ -81,6 +81,8 @@ data class PhoneState(
      * follows the device, or null when the lock app is too old to change language.
      */
     val lang: String? = null,
+    /** Whether the lock app on the device can be released from here (lock apps too old to say can't). */
+    val canRelease: Boolean = false,
 ) {
     fun label(pkg: String) = labels[pkg] ?: pkg
 }
@@ -502,6 +504,16 @@ object Hub {
         Undo.notify(Strings.get(if (minutes > 0) R.string.alerts_debugging_on_sent else R.string.alerts_debugging_off_sent, deviceName(dev)))
     }
 
+    /**
+     * Ends PhoneLock's control of [dev]: the device lifts every restriction, stops reporting and asks to
+     * uninstall the lock app. It is removed from every parent's app once it confirms (see [onReleased]); a
+     * device that doesn't get the message within 5 minutes ignores it, so it stays locked and listed.
+     */
+    fun release(dev: String) {
+        send(dev, msg("release"))
+        Undo.notify(Strings.get(R.string.alerts_release_sent, deviceName(dev)))
+    }
+
     /** Sets the lock app's language on [dev] to [tag] (e.g. "es-ES"), or "" to follow the device's. */
     fun setDeviceLanguage(dev: String, tag: String) {
         editState(dev) { it.copy(lang = tag) }
@@ -620,7 +632,7 @@ object Hub {
                                 dev to old.copy(
                                     others = s.others.filterNot { p -> p in old.home },
                                     notOffered = s.notOffered, labels = s.labels + old.labels, masks = s.masks,
-                                    schedule = s.schedule, calls = s.calls, canFiles = s.canFiles, canCallLog = s.canCallLog,
+                                    schedule = s.schedule, calls = s.calls, canFiles = s.canFiles, canCallLog = s.canCallLog, canRelease = s.canRelease,
                                     removable = s.removable, battAlert = s.battAlert, screenRules = s.screenRules, screenAreas = s.screenAreas, full = true,
                                 )
                                 )
@@ -637,7 +649,7 @@ object Hub {
                     s.copy(
                         others = old.others.filterNot { it in s.home }, notOffered = old.notOffered, labels = old.labels + s.labels,
                         masks = old.masks, schedule = old.schedule, full = old.full, calls = old.calls,
-                        canFiles = old.canFiles, canCallLog = old.canCallLog, removable = old.removable,
+                        canFiles = old.canFiles, canCallLog = old.canCallLog, canRelease = old.canRelease, removable = old.removable,
                         battAlert = old.battAlert, screenRules = old.screenRules, screenAreas = old.screenAreas,
                     )
                 }
@@ -647,6 +659,11 @@ object Hub {
             }
 
             "event" -> if (from == "phone") {
+                // The device was released: it can't be reached any more, so every parent's app forgets it.
+                if (m.optBoolean("released")) {
+                    onReleased(dev, m.optString("text"))
+                    return
+                }
                 if (m.optBoolean("off")) QuietWatch.noteOff(dev, ts)
                 // A last-gasp notice (low battery, turning off) says where the phone last was: add the place to
                 // the text, which means looking up the address first, off this thread.
@@ -729,6 +746,16 @@ object Hub {
         }
     }
 
+    /**
+     * [dev] confirmed a parent released it ([text] says who). Its pairing is gone on the device, so it is
+     * removed here as Remove this device would, after a notification that says so (to every parent, including
+     * the one who released it: the device leaves their list).
+     */
+    private fun onReleased(dev: String, text: String) {
+        notify(dev, Strings.get(R.string.alerts_released_removed, text), null)
+        removeDevice(dev)
+    }
+
     /** " · last near 12 Main St at 2:40 p.m." for a last-gasp notice's [where] {lat, lng, at}. */
     private fun lastPlaceText(where: JSONObject): String {
         val at = where.optLong("at")
@@ -775,6 +802,7 @@ object Hub {
                 (0 until a.length()).mapNotNull { i -> a.optJSONObject(i)?.let { ScreenArea(it.optString("key"), it.optString("name")) } }
             } ?: emptyList(),
             lang = if (m.has("lang")) m.optString("lang") else null,
+            canRelease = m.optJSONObject("can")?.optBoolean("release") ?: false,
         )
     }
 
@@ -788,7 +816,7 @@ object Hub {
         .put("blocks", JSONObject(s.blocks as Map<*, *>)).put("version", s.version).put("updateReady", s.updateReady)
         .put("manual", JSONObject().put("mode", s.manualMode).put("until", s.manualUntil))
         .put("removable", JSONArray(s.removable.toList())).put("parentUntil", s.parentUntil).put("calls", s.calls.toJson())
-        .put("can", JSONObject().put("files", s.canFiles).put("calllog", s.canCallLog))
+        .put("can", JSONObject().put("files", s.canFiles).put("calllog", s.canCallLog).put("release", s.canRelease))
         .put("battAlert", s.battAlert).put("full", s.full).put("screenRules", JSONObject(s.screenRules as Map<*, *>))
         .put("screenAreas", JSONArray(s.screenAreas.map { JSONObject().put("key", it.key).put("name", it.name) }))
         .also { o ->

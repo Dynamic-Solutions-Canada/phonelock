@@ -149,6 +149,12 @@ final class Pairing {
         lost = false;
     }
 
+    /** Forgets the pairing (server, topic and secret) without reconnecting: the phone was released. */
+    static void forget(Context c) {
+        storeRemote(c, "", "");
+        storeSecret(c, "");
+    }
+
     /** Sets the name the parent apps show for this phone, and tells them. */
     static void setName(Context c, String name) {
         Policy.prefs(c)

@@ -124,6 +124,10 @@
     <!-- %2$d: battery percentage -->
     <string name="events_battery_alert_set">%1$s ha puesto el aviso de batería baja al %2$d%%</string>
     <string name="events_debugging_off">%1$s ha desactivado la depuración</string>
+    <string name="events_released">%1$s ha liberado este teléfono: PhoneLock ya no lo controla</string>
+    <string name="events_release_failed">No se ha podido liberar este teléfono: PhoneLock sigue controlándolo</string>
+    <string name="events_released_child">PhoneLock ya no controla este teléfono</string>
+    <string name="events_released_child_uninstall">Toca para desinstalar PhoneLock</string>
     <!-- %2$s: contact's name -->
     <string name="events_contact_added">%1$s: ha añadido el contacto %2$s</string>
     <string name="events_contact_removed">%1$s: ha eliminado el contacto %2$s</string>

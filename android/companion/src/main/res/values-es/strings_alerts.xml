@@ -19,6 +19,8 @@
     <string name="alerts_service_listening">Escuchando a los dispositivos emparejados</string>
 
     <!-- Short messages after asking a device to do something. %1$s is the child's name. -->
+    <string name="alerts_release_sent">Liberación enviada al dispositivo de %1$s. Desaparecerá de esta aplicación cuando el dispositivo lo confirme.</string>
+    <string name="alerts_released_removed">%1$s. Quitado de esta aplicación.</string>
     <string name="alerts_debugging_on_sent">Se ha pedido al dispositivo de %1$s que active la depuración</string>
     <string name="alerts_debugging_off_sent">Se ha pedido al dispositivo de %1$s que desactive la depuración</string>
     <string name="alerts_update_sent">Se ha pedido al dispositivo de %1$s que busque una actualización. Los resultados aparecen en Eventos recientes.</string>

@@ -19,6 +19,8 @@
     <string name="alerts_service_listening">À l’écoute des appareils associés</string>
 
     <!-- Short messages after asking a device to do something. %1$s is the child's name. -->
+    <string name="alerts_release_sent">Libération envoyée à l’appareil de %1$s. Il disparaîtra de cette application dès que l’appareil confirmera.</string>
+    <string name="alerts_released_removed">%1$s. Retiré de cette application.</string>
     <string name="alerts_debugging_on_sent">Activation du débogage demandée à l’appareil de %1$s</string>
     <string name="alerts_debugging_off_sent">Désactivation du débogage demandée à l’appareil de %1$s</string>
     <string name="alerts_update_sent">Recherche de mise à jour demandée à l’appareil de %1$s. Les résultats s’affichent dans Événements récents.</string>

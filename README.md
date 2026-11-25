@@ -39,7 +39,7 @@ PhoneLock collects no telemetry or crash reports, and there is no PhoneLock acco
 
 - **Backup:** neither app is included in Android's backup, so the keys that pair the phones never leave them. On a new phone of your own, add the device again with **Share with another parent** from a phone that still has it.
 - **Export:** files you download from the child's phone are saved in your Downloads folder, under PhoneLock. There is nothing else to export.
-- **Deletion:** removing a device in the parent app deletes everything that app kept about it, and uninstalling either app deletes that app's data. Downloaded files stay in Downloads until you delete them. Removing PhoneLock from the child's phone currently needs a factory reset from recovery mode, or a computer over USB debugging.
+- **Deletion:** removing a device in the parent app deletes everything that app kept about it, and uninstalling either app deletes that app's data. Downloaded files stay in Downloads until you delete them. To take PhoneLock off the child's phone, use **Remove PhoneLock from this device** in its settings: the phone unlocks everything, stops sending anything, leaves every parent's app, and asks to uninstall PhoneLock. Nothing on it is erased.
 
 ## Languages
 

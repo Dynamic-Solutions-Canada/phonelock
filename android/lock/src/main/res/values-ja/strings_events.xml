@@ -120,6 +120,10 @@
     <!-- %2$d: battery percentage -->
     <string name="events_battery_alert_set">%1$s がバッテリー低下の通知を %2$d%% に設定しました</string>
     <string name="events_debugging_off">%1$s がデバッグをオフにしました</string>
+    <string name="events_released">%1$s がこのスマートフォンを解除しました。PhoneLock による管理は終了しました</string>
+    <string name="events_release_failed">このスマートフォンを解除できませんでした。PhoneLock による管理は続いています</string>
+    <string name="events_released_child">PhoneLock はこのスマートフォンを管理しなくなりました</string>
+    <string name="events_released_child_uninstall">タップして PhoneLock をアンインストール</string>
     <!-- %2$s: contact's name -->
     <string name="events_contact_added">%1$s：連絡先 %2$s を追加しました</string>
     <string name="events_contact_removed">%1$s：連絡先 %2$s を削除しました</string>

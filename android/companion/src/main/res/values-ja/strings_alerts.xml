@@ -19,6 +19,8 @@
     <string name="alerts_service_listening">ペア設定済みのデバイスを待機中</string>
 
     <!-- Short messages after asking a device to do something. %1$s is the child's name. -->
+    <string name="alerts_release_sent">%1$s のデバイスに解除を送信しました。デバイスが確認すると、このアプリから削除されます。</string>
+    <string name="alerts_released_removed">%1$s。このアプリから削除しました。</string>
     <string name="alerts_debugging_on_sent">%1$s のデバイスにデバッグをオンにするよう依頼しました</string>
     <string name="alerts_debugging_off_sent">%1$s のデバイスにデバッグをオフにするよう依頼しました</string>
     <string name="alerts_update_sent">%1$s のデバイスにアップデートの確認を依頼しました。結果は「最近のイベント」に表示されます。</string>

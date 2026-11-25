@@ -30,6 +30,7 @@ internal fun SettingsScreen(dev: String, name: String, onOpen: (String) -> Unit,
     var rename by remember(dev) { mutableStateOf(name) }
     var you by remember { mutableStateOf(parentName) }
     var confirmRemove by remember { mutableStateOf(false) }
+    var confirmRelease by remember { mutableStateOf(false) }
     var sharing by remember { mutableStateOf(false) }
     var parentMode by remember { mutableStateOf(false) }
     var changingPin by remember { mutableStateOf(false) }
@@ -115,7 +116,13 @@ internal fun SettingsScreen(dev: String, name: String, onOpen: (String) -> Unit,
         LanguageSection()
         Section(stringResource(R.string.device_sharing)) {
             Setting("👥", stringResource(R.string.device_share), stringResource(R.string.device_share_detail)) { sharing = true }
-            // Removing is the one destructive setting, so it's a red button rather than a row like the others.
+            // Releasing and removing are the destructive settings, so they're red buttons rather than rows.
+            // Release only shows for lock apps that understand it (older ones would ignore the message).
+            if (st?.canRelease == true) {
+                TextButton(onClick = { confirmRelease = true }) {
+                    Text(stringResource(R.string.device_release), color = MaterialTheme.colorScheme.error)
+                }
+            }
             TextButton(onClick = { confirmRemove = true }) {
                 Text(stringResource(R.string.device_remove), color = MaterialTheme.colorScheme.error)
             }
@@ -150,6 +157,20 @@ internal fun SettingsScreen(dev: String, name: String, onOpen: (String) -> Unit,
         Hub.devices.value.firstOrNull { it.id == dev }?.let { d ->
             SharePhoneDialog(d.copy(name = name)) { sharing = false }
         }
+    }
+    if (confirmRelease) {
+        AppDialog(
+            onDismissRequest = { confirmRelease = false },
+            title = { Text(stringResource(R.string.device_release_title, name)) },
+            text = { Text(stringResource(R.string.device_release_text)) },
+            confirmButton = {
+                DangerButton(stringResource(R.string.device_release_confirm)) {
+                    Hub.release(dev)
+                    confirmRelease = false
+                }
+            },
+            dismissButton = { TextButton(onClick = { confirmRelease = false }) { Text(stringResource(R.string.cancel)) } },
+        )
     }
     if (confirmRemove) {
         AppDialog(

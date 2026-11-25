@@ -16,6 +16,7 @@ This repo follows the shared standards at https://github.com/Dynamic-Solutions-C
 | Lock app: messages from and to parents | `Remote.java`, `RemoteService.java`, `Outbox.java`, `Crypto.java`, `Pairing.java` |
 | Both apps: secrets sealed at rest by the keystore | `SecretBox.java` (lock app), `SecretBox.kt` and `DeviceStore.kt` (parent app) |
 | Lock app: adb config broadcasts (pairing, release) | `ConfigReceiver.java` |
+| Lock app: release (ending its control, from a parent or adb) | `Release.java` |
 | Lock app: self-update | `Updater.java` |
 | Parent app: screens and navigation | `android/companion/src/main/java/home/phonelock/parent/MainActivity.kt`, `DeviceScreens.kt`, `SettingsScreen.kt`; `LengthDialog.kt`, the one "for how long" picker (usual lengths, a clock time or a custom length) |
 | Parent app: phone-to-phone setup and its adb client | `ChildSetup.kt`, `WifiSetupScreen.kt`, `Setup.kt`, `adb/` |

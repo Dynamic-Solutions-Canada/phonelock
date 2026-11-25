@@ -89,7 +89,7 @@ PhoneLock's parent app manages a separate child device, set up from the parent a
 ## Open questions
 
 1. **Play build without the background connection (done, decided 2026-11-18).** The parent app's foreground service (type `specialUse`, `ParentService`) and the battery-optimization exemption live only in the `github` flavour, reached through `BackgroundConnection`. The Play build has neither, accepts only phones on PhoneLock's own hub, and warns about a phone push doesn't reach yet.
-2. **Removing PhoneLock (planned, decided 2026-11-18).** The lock app can already give up device owner (`ConfigReceiver` `release`, over adb), but parents have no button for it. Play and the privacy policy expect a way out. Planned: "Remove PhoneLock from this device…" in the parent app's device menu, which releases and uninstalls. Until it ships, the privacy policy's "Your choices" says removal needs a factory reset from recovery mode or a computer over USB debugging; update that sentence in the same change that adds the button.
+2. **Removing PhoneLock (resolved 2026-11-24).** "Remove PhoneLock from this device…" in a device's Settings releases the phone (the `release` message): it lifts every restriction, stops being device owner and reporting, and asks to uninstall the lock app. The privacy policy's "Your choices" sentence about a factory reset needs updating to match, on the website.
 3. **One signer for the GitHub and Play builds (decided 2026-11-16, D-021).** The steps are under **Play app signing** below; all of them are the maintainer's.
 
 ## Still to do before the first submission

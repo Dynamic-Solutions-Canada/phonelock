@@ -19,7 +19,7 @@ import android.util.Log;
  *   ... --es cmd lock
  *   ... --es cmd apply
  *   ... --es cmd status
- *   ... --es cmd release   (remove all policy and stop being device owner)
+ *   ... --es cmd release   (remove all policy, stop being device owner and stop reporting; see Release)
  */
 public class ConfigReceiver extends BroadcastReceiver {
     @Override
@@ -157,9 +157,7 @@ public class ConfigReceiver extends BroadcastReceiver {
                 return "paired topic=" + topicHash(o.optString("topic"));
             }
             case "release":
-                Policy.releaseAll(c);
-                dpm.clearDeviceOwnerApp(c.getPackageName());
-                return "released; uninstall with: adb uninstall home.phonelock";
+                return Release.run(c, "adb") + "; uninstall with: adb uninstall home.phonelock";
             case "test-forget-key":
                 // Test hook for the lost-key path; a release build must never throw its pairing key away.
                 if (!testHooksAllowed(c.getApplicationInfo().flags)) return "refused: debug builds only";

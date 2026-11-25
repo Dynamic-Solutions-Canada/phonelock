@@ -19,6 +19,8 @@
     <string name="alerts_service_listening">Wartet auf gekoppelte Geräte</string>
 
     <!-- Short messages after asking a device to do something. %1$s is the child's name. -->
+    <string name="alerts_release_sent">Freigabe an das Gerät von %1$s gesendet. Es verschwindet aus dieser App, sobald das Gerät sie bestätigt.</string>
+    <string name="alerts_released_removed">%1$s. Aus dieser App entfernt.</string>
     <string name="alerts_debugging_on_sent">Gerät von %1$s gebeten, Debugging einzuschalten</string>
     <string name="alerts_debugging_off_sent">Gerät von %1$s gebeten, Debugging auszuschalten</string>
     <string name="alerts_update_sent">Gerät von %1$s gebeten, nach Updates zu suchen. Ergebnisse erscheinen unter „Letzte Ereignisse“.</string>

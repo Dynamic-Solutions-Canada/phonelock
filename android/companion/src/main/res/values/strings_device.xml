@@ -150,6 +150,12 @@
     <string name="device_sharing">Sharing</string>
     <string name="device_share">Share with another parent…</string>
     <string name="device_share_detail">Lets another parent\'s phone manage this device</string>
+    <!-- Ends PhoneLock's control of the child's device (lock app released, then removed here) -->
+    <string name="device_release">Remove PhoneLock from this device…</string>
+    <!-- %1$s: device name -->
+    <string name="device_release_title">Remove PhoneLock from %1$s?</string>
+    <string name="device_release_text">PhoneLock stops controlling their device: every app and setting unlocks, it stops sending you anything, and it asks to uninstall PhoneLock. It then leaves this app for every parent. Their device must get this within 5 minutes, or it stays locked. To manage it again, set it up again.</string>
+    <string name="device_release_confirm">Remove PhoneLock</string>
     <string name="device_remove">Remove this device…</string>
     <!-- %1$s: the child's device name -->
     <string name="device_remove_title">Remove %1$s?</string>

@@ -122,6 +122,13 @@
     <!-- %2$d: battery percentage -->
     <string name="events_battery_alert_set">%1$s set the low-battery alert to %2$d%%</string>
     <string name="events_debugging_off">%1$s turned debugging off</string>
+    <!-- Audience: parent. A parent ended PhoneLock's control of the phone; %1$s: who -->
+    <string name="events_released">%1$s released this phone: PhoneLock no longer controls it</string>
+    <!-- Audience: parent -->
+    <string name="events_release_failed">Couldn\'t release this phone: PhoneLock still controls it</string>
+    <!-- Audience: child. Notification after the phone was released; tapping it opens the uninstall prompt -->
+    <string name="events_released_child">PhoneLock no longer controls this phone</string>
+    <string name="events_released_child_uninstall">Tap to uninstall PhoneLock</string>
     <!-- %2$s: contact's name -->
     <string name="events_contact_added">%1$s: added contact %2$s</string>
     <string name="events_contact_removed">%1$s: removed contact %2$s</string>

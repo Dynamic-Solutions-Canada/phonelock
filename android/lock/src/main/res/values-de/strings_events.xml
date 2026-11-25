@@ -122,6 +122,10 @@
     <!-- %2$d: battery percentage -->
     <string name="events_battery_alert_set">%1$s hat die Warnung bei niedrigem Akku auf %2$d\u00A0%% gesetzt</string>
     <string name="events_debugging_off">%1$s hat Debugging ausgeschaltet</string>
+    <string name="events_released">%1$s hat dieses Handy freigegeben: PhoneLock steuert es nicht mehr</string>
+    <string name="events_release_failed">Dieses Handy konnte nicht freigegeben werden: PhoneLock steuert es weiter</string>
+    <string name="events_released_child">PhoneLock steuert dieses Handy nicht mehr</string>
+    <string name="events_released_child_uninstall">Tippe, um PhoneLock zu deinstallieren</string>
     <!-- %2$s: contact's name -->
     <string name="events_contact_added">%1$s: Kontakt %2$s hinzugefügt</string>
     <string name="events_contact_removed">%1$s: Kontakt %2$s entfernt</string>

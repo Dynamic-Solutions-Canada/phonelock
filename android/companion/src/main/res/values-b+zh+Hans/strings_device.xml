@@ -148,6 +148,10 @@
     <string name="device_sharing">共享</string>
     <string name="device_share">与其他家长共享…</string>
     <string name="device_share_detail">让其他家长的手机也能管理此设备</string>
+    <string name="device_release">从此设备移除 PhoneLock…</string>
+    <string name="device_release_title">从 %1$s 移除 PhoneLock？</string>
+    <string name="device_release_text">PhoneLock 将不再控制孩子的设备：所有应用和设置都会解锁，设备不再向你发送任何信息，并提示卸载 PhoneLock。之后它会从所有家长的此应用中消失。孩子的设备必须在 5 分钟内收到此指令，否则会保持锁定。如需重新管理，请重新设置。</string>
+    <string name="device_release_confirm">移除 PhoneLock</string>
     <string name="device_remove">移除此设备…</string>
     <!-- %1$s: the child's device name -->
     <string name="device_remove_title">要移除 %1$s 吗？</string>

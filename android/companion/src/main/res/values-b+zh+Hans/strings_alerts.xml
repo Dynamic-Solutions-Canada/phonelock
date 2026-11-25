@@ -19,6 +19,8 @@
     <string name="alerts_service_listening">正在接收已配对设备的消息</string>
 
     <!-- Short messages after asking a device to do something. %1$s is the child's name. -->
+    <string name="alerts_release_sent">已向 %1$s 的设备发送解除管控指令。设备确认后，它会从此应用中消失。</string>
+    <string name="alerts_released_removed">%1$s。已从此应用中移除。</string>
     <string name="alerts_debugging_on_sent">已请求 %1$s 的设备开启调试</string>
     <string name="alerts_debugging_off_sent">已请求 %1$s 的设备关闭调试</string>
     <string name="alerts_update_sent">已请求 %1$s 的设备检查更新。结果会显示在“最近事件”中。</string>

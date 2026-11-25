@@ -148,6 +148,10 @@
     <string name="device_sharing">共有</string>
     <string name="device_share">他の保護者と共有…</string>
     <string name="device_share_detail">他の保護者のスマートフォンからこのデバイスを管理できるようにします</string>
+    <string name="device_release">このデバイスから PhoneLock を削除…</string>
+    <string name="device_release_title">%1$s から PhoneLock を削除しますか？</string>
+    <string name="device_release_text">PhoneLock はお子様のデバイスを管理しなくなります。すべてのアプリと設定のロックが解除され、情報は送信されなくなり、PhoneLock のアンインストールを求める表示が出ます。その後、すべての保護者のこのアプリから削除されます。お子様のデバイスが 5 分以内に受け取らないと、ロックされたままになります。再び管理するには、もう一度セットアップしてください。</string>
+    <string name="device_release_confirm">PhoneLock を削除</string>
     <string name="device_remove">このデバイスを削除…</string>
     <!-- %1$s: the child's device name -->
     <string name="device_remove_title">%1$s を削除しますか？</string>

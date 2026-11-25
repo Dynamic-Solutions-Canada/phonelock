@@ -376,6 +376,11 @@ public final class Remote {
                 FileManager.handle(c, m, who, attachmentUrl);
                 break;
             }
+            case "release":
+                // A parent ends PhoneLock's control of this phone. Irreversible, so only acted on promptly.
+                if (!Release.onTime(m.optLong("ts"), System.currentTimeMillis())) break;
+                new Thread(() -> Release.run(c, who), "release").start();
+                break;
             case "parentmode": {
                 // Remote parent mode: Settings and Play Store unlocked on the device, ending by itself.
                 // minutes 0 ends it now. Unlike parent mode from the PIN, it lasts through the screen
@@ -683,7 +688,8 @@ public final class Remote {
                         "can",
                         new JSONObject()
                                 .put("files", FileManager.permitted())
-                                .put("calllog", CallLogFeed.permitted(c)));
+                                .put("calllog", CallLogFeed.permitted(c))
+                                .put("release", true));
                 o.put("schedule", Schedule.rulesJson(c));
                 o.put("battAlert", Battery.alertAt(c));
                 o.put("screenRules", ScreenGuard.rulesJson(c));

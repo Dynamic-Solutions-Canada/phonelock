@@ -124,6 +124,10 @@
     <!-- %2$d: battery percentage -->
     <string name="events_battery_alert_set">%1$s definiu o alerta de bateria fraca para %2$d%%</string>
     <string name="events_debugging_off">%1$s desativou a depuração</string>
+    <string name="events_released">%1$s liberou este celular: o PhoneLock não o controla mais</string>
+    <string name="events_release_failed">Não foi possível liberar este celular: o PhoneLock continua controlando</string>
+    <string name="events_released_child">O PhoneLock não controla mais este celular</string>
+    <string name="events_released_child_uninstall">Toque para desinstalar o PhoneLock</string>
     <!-- %2$s: contact's name -->
     <string name="events_contact_added">%1$s: adicionou o contato %2$s</string>
     <string name="events_contact_removed">%1$s: removeu o contato %2$s</string>

@@ -19,6 +19,10 @@
     <string name="alerts_service_listening">Listening for paired devices</string>
 
     <!-- Short messages after asking a device to do something. %1$s is the child's name. -->
+    <!-- %1$s: device name -->
+    <string name="alerts_release_sent">Sent the release to %1$s\'s device. It leaves this app once the device confirms.</string>
+    <!-- %1$s: the device's own message saying who released it -->
+    <string name="alerts_released_removed">%1$s. Removed from this app.</string>
     <string name="alerts_debugging_on_sent">Asked %1$s\'s device to turn on debugging</string>
     <string name="alerts_debugging_off_sent">Asked %1$s\'s device to turn off debugging</string>
     <string name="alerts_update_sent">Asked %1$s\'s device to check for an update. Results appear in Recent events.</string>

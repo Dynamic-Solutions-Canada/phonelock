@@ -152,6 +152,10 @@
     <string name="device_sharing">Compartilhamento</string>
     <string name="device_share">Compartilhar com outro responsável…</string>
     <string name="device_share_detail">Permite que o celular de outro responsável gerencie este dispositivo</string>
+    <string name="device_release">Remover o PhoneLock deste dispositivo…</string>
+    <string name="device_release_title">Remover o PhoneLock de %1$s?</string>
+    <string name="device_release_text">O PhoneLock deixa de controlar o dispositivo da criança: todos os apps e configurações são desbloqueados, ele para de enviar informações para você e pede para desinstalar o PhoneLock. Depois ele sai deste app para todos os responsáveis. O dispositivo precisa receber isso em 5 minutos, senão continua bloqueado. Para gerenciá-lo de novo, configure-o de novo.</string>
+    <string name="device_release_confirm">Remover o PhoneLock</string>
     <string name="device_remove">Remover este dispositivo…</string>
     <!-- %1$s: the child's device name -->
     <string name="device_remove_title">Remover %1$s?</string>

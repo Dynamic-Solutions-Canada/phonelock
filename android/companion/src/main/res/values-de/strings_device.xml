@@ -150,6 +150,10 @@
     <string name="device_sharing">Teilen</string>
     <string name="device_share">Mit anderem Elternteil teilen …</string>
     <string name="device_share_detail">Lässt das Smartphone eines anderen Elternteils dieses Gerät verwalten</string>
+    <string name="device_release">PhoneLock von diesem Gerät entfernen …</string>
+    <string name="device_release_title">PhoneLock von %1$s entfernen?</string>
+    <string name="device_release_text">PhoneLock steuert das Gerät dann nicht mehr: Alle Apps und Einstellungen werden entsperrt, es schickt dir nichts mehr und bietet an, PhoneLock zu deinstallieren. Danach verschwindet es für alle Eltern aus dieser App. Das Gerät muss das innerhalb von 5 Minuten erhalten, sonst bleibt es gesperrt. Um es wieder zu verwalten, richte es neu ein.</string>
+    <string name="device_release_confirm">PhoneLock entfernen</string>
     <string name="device_remove">Dieses Gerät entfernen …</string>
     <!-- %1$s: the child's device name -->
     <string name="device_remove_title">%1$s entfernen?</string>
