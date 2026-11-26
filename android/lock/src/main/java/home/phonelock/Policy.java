@@ -180,6 +180,8 @@ public final class Policy {
 
     /** Installed for this user, hidden or not. */
     static boolean isPresent(Context c, String pkg) {
+        // Chat is offered only where ChatLog.available; elsewhere it is treated as not installed.
+        if (BuiltInApps.CHAT.equals(pkg)) return ChatLog.available(c);
         if (BuiltInApps.is(pkg)) return true;
         try {
             ApplicationInfo ai =

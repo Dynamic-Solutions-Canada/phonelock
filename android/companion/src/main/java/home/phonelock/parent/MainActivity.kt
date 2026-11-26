@@ -61,6 +61,9 @@ class MainActivity : ComponentActivity() {
     private val pendingLink = mutableStateOf<String?>(null)
     private val selected = mutableStateOf<String?>(null)
 
+    /** A page a notification asked to open on the selected device (such as "chat"), until the screen opens it. */
+    private val pageRequest = mutableStateOf<String?>(null)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // A recreated activity still carries its original intent; read it only if it wasn't used yet.
@@ -89,7 +92,14 @@ class MainActivity : ComponentActivity() {
                         }
                     } else {
                         val sel = selected.value?.takeIf { s -> devices.any { it.id == s } } ?: devices.first().id
-                        MainScreen(devices, sel, onSelect = { selected.value = it }, onAdd = { adding = true })
+                        MainScreen(
+                            devices,
+                            sel,
+                            onSelect = { selected.value = it },
+                            onAdd = { adding = true },
+                            pageRequest = pageRequest.value,
+                            onPageOpened = { pageRequest.value = null },
+                        )
                     }
                     with(Undo) { UndoHost() }
                 }
@@ -97,11 +107,19 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    /** Takes a pairing link or a device to show from [i], then clears them so they're used once. */
+    /** Takes a pairing link, a device to show, or a page of it to open from [i], then clears them so they're used once. */
     private fun readIntent(i: Intent?) {
         i?.dataString?.let { pendingLink.value = it }
         i?.getStringExtra("device")?.let { selected.value = it }
-        i?.let { setIntent(Intent(it).setData(null).apply { removeExtra("device") }) }
+        i?.getStringExtra("page")?.let { pageRequest.value = it }
+        i?.let {
+            setIntent(
+                Intent(it).setData(null).apply {
+                    removeExtra("device")
+                    removeExtra("page")
+                },
+            )
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -120,13 +138,21 @@ class MainActivity : ComponentActivity() {
         super.onResume()
         Hub.refreshStale()
         Push.catchUp()
+        Chat.syncAll()
         AppUpdate.checkIfDue()
     }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun MainScreen(devices: List<Device>, dev: String, onSelect: (String) -> Unit, onAdd: () -> Unit) {
+private fun MainScreen(
+    devices: List<Device>,
+    dev: String,
+    onSelect: (String) -> Unit,
+    onAdd: () -> Unit,
+    pageRequest: String? = null,
+    onPageOpened: () -> Unit = {},
+) {
     val states by Hub.states.collectAsState()
     val allRequests by Hub.requests.collectAsState()
     val allEvents by Hub.events.collectAsState()
@@ -145,6 +171,13 @@ private fun MainScreen(devices: List<Device>, dev: String, onSelect: (String) ->
     // Calls, Contacts or Files open as their own page over the main screen.
     var page by rememberSaveable(dev) { mutableStateOf<String?>(null) }
     var startingMode by remember(dev) { mutableStateOf(false) }
+    // A notification's page (a new chat message opens the chat), once this device is the one shown.
+    LaunchedEffect(dev, pageRequest) {
+        if (pageRequest != null) {
+            page = pageRequest
+            onPageOpened()
+        }
+    }
     when (page) {
         "calls" -> {
             CallsScreen(dev, state) { page = null }
@@ -163,6 +196,11 @@ private fun MainScreen(devices: List<Device>, dev: String, onSelect: (String) ->
 
         "history" -> {
             LocationHistoryScreen(dev, name) { page = null }
+            return
+        }
+
+        "chat" -> {
+            ChatScreen(dev, name, state) { page = null }
             return
         }
 

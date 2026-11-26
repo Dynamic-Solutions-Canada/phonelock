@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Wording for the family chat: the child's Chat screen and its notifications, and the events parents get when
+     one of them limits the child's sending (see ChatLog). -->
+<resources>
+
+    <!-- Audience: child and parent. The chat's name on the child's home screen (it appears there like an app)
+         and in the parents' app list. -->
+    <string name="chat_app_name">聊天</string>
+    <!-- Audience: child. Notification channel name for chat messages, shown in Android's notification settings. -->
+    <string name="chat_channel">家庭聊天</string>
+    <!-- Audience: child. Shown as the sender of the child's own messages. -->
+    <string name="chat_you">你</string>
+    <!-- Audience: child. Placeholder in the empty text box. -->
+    <string name="chat_hint">写条消息</string>
+    <!-- Audience: child. The button that sends the message. -->
+    <string name="chat_send">发送</string>
+    <!-- Audience: child. Shown instead of the thread before anyone has written. -->
+    <string name="chat_empty">还没有消息。你可以在这里给爸爸妈妈发消息。</string>
+    <!-- Audience: child. Under one of her messages that hasn't reached the parents yet (no connection); it is
+         sent by itself later. -->
+    <string name="chat_not_sent">还没发出去</string>
+    <!-- Audience: child. Under the thread while slow mode stops her sending. %1$s is a time (e.g. 7:05 PM). -->
+    <string name="chat_wait_slow">%1$s 后可以再发</string>
+    <!-- Audience: child. Under the thread while a parent's timeout stops her sending. %1$s is a time, with the
+         weekday when it isn't today. -->
+    <string name="chat_wait_timeout">爸爸妈妈暂停了你的消息，到 %1$s 结束</string>
+    <!-- Audience: child. Notification when a parent pauses her chat messages. %1$s: the time it ends; %2$s:
+         parent's name. -->
+    <string name="chat_limit_timeout_child">你的聊天消息已暂停，到 %1$s 结束（%2$s）</string>
+    <!-- Audience: child. Notification when a parent turns on slow mode. %1$d: minutes between messages (1, 5 or
+         15); %2$s: parent's name. -->
+    <plurals name="chat_limit_slow_child">
+        <item quantity="other">你每 %1$d 分钟可以发一条聊天消息（%2$s）</item>
+    </plurals>
+    <!-- Audience: child. Notification when a parent ends slow mode and the timeout. %1$s: parent's name. -->
+    <string name="chat_limit_off_child">你又可以随意发聊天消息了（%1$s）</string>
+    <!-- Audience: parent. Event: a parent paused the child's chat sending. %1$s: parent's name; %2$s: the time
+         it ends. -->
+    <string name="chat_event_timeout">%1$s：聊天消息暂停至 %2$s</string>
+    <!-- Audience: parent. Event: as above, with slow mode once the pause ends. %1$s: parent's name; %2$s: the
+         time; %3$d: minutes between messages. -->
+    <plurals name="chat_event_timeout_slow">
+        <item quantity="other">%1$s：聊天消息暂停至 %2$s，之后每 %3$d 分钟一条</item>
+    </plurals>
+    <!-- Audience: parent. Event: a parent turned on slow mode. %1$s: parent's name; %2$d: minutes between
+         messages. -->
+    <plurals name="chat_event_slow">
+        <item quantity="other">%1$s：聊天慢速模式，每 %2$d 分钟一条消息</item>
+    </plurals>
+    <!-- Audience: parent. Event: a parent ended slow mode and the timeout. %1$s: parent's name. -->
+    <string name="chat_event_off">%1$s：聊天消息不再受限</string>
+</resources>

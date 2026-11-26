@@ -89,7 +89,7 @@
     <string name="device_disclosure_intro">PhoneLock is a parental control app. It lets you manage your child\'s phone or tablet and see information from it.</string>
     <string name="device_disclosure_seen_title">What you\'ll see from your child\'s device</string>
     <!-- A bulleted list: keep one item per line -->
-    <string name="device_disclosure_seen">• Its location: on request, and a log every 15 minutes (every 2 while moving), kept 7 days\n• Battery level, and when it turns off or on\n• Installed apps, requests to use them, and which apps they use and for how long\n• Wi-Fi networks they join and Bluetooth devices they pair\n• Calls (call log) and contacts\n• Files, photos and videos in its shared storage, when you open them\n• Its screen, when you tap View screen</string>
+    <string name="device_disclosure_seen">• Its location: on request, and a log every 15 minutes (every 2 while moving), kept 7 days\n• Battery level, and when it turns off or on\n• Installed apps, requests to use them, and which apps they use and for how long\n• Wi-Fi networks they join and Bluetooth devices they pair\n• Calls (call log) and contacts\n• Files, photos and videos in its shared storage, when you open them\n• Its screen, when you tap View screen\n• Messages in the family chat</string>
     <string name="device_disclosure_readers_title">Who can read it</string>
     <string name="device_disclosure_readers">Only you and other parents you share the device with. Everything is end-to-end encrypted on the devices; the relay server that passes messages along, and Google\'s push service, only ever see encrypted data. Nothing is sold or used for ads.</string>
     <string name="device_disclosure_child_title">Your child is told</string>

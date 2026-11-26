@@ -34,6 +34,8 @@ GitHub Releases ──► the lock app's and the GitHub parent app's self-update
 | Lock app: adb config broadcasts (pairing, release) | `ConfigReceiver.java` |
 | Lock app: release (ending its control, from a parent or adb) | `Release.java` |
 | Lock app: self-update | `Updater.java` |
+| Lock app: family chat (design in `docs/chat.md`) | `ChatLog.java` (stored thread, messages, notifications), `ChatHistory.java` (its rules, unit tested), `ChatActivity.java` (the child's screen); a built-in app like Wi-Fi and Bluetooth (`BuiltInApps.java`, `ConnectionsActivity.java`), with the look they share in `ScreenStyle.java` |
+| Parent app: family chat | `Chat.kt` (transport, sync, resends, notifications, sealed history), `ChatStore.kt` (thread rules, unit tested), `ChatScreen.kt` (the chat page, the Chat row and the slow mode and timeout controls) |
 | Parent app: screens and navigation | `android/companion/src/main/java/home/phonelock/parent/MainActivity.kt`, `DeviceScreens.kt`, `SettingsScreen.kt`; `LengthDialog.kt`, the one "for how long" picker (usual lengths, a clock time or a custom length) |
 | Parent app: phone-to-phone setup and its adb client | `ChildSetup.kt`, `WifiSetupScreen.kt`, `Setup.kt`, `adb/` |
 | Parent app: transport, push and encryption | `Hub.kt`, `Push.kt`, `Crypto.kt`; the background connection in `android/companion/src/github/.../ParentService.kt` and `BackgroundConnection.kt`, the Play stub in `android/companion/src/play/` |

@@ -87,7 +87,7 @@
     <string name="device_disclosure_intro">PhoneLock 是一款家长控制应用。它可以让你管理孩子的手机或平板电脑，并查看其中的信息。</string>
     <string name="device_disclosure_seen_title">你能从孩子的设备上看到什么</string>
     <!-- A bulleted list: keep one item per line -->
-    <string name="device_disclosure_seen">• 设备位置：按需查询，并每 15 分钟记录一次（移动时每 2 分钟一次），保留 7 天\n• 电量，以及设备何时关机或开机\n• 已安装的应用、使用应用的请求，以及孩子使用了哪些应用、用了多久\n• 孩子连接的 Wi-Fi 网络和配对的 Bluetooth 设备\n• 通话（通话记录）和联系人\n• 共享存储空间中的文件、照片和视频（在你打开时）\n• 设备屏幕（在你点按“查看屏幕”时）</string>
+    <string name="device_disclosure_seen">• 设备位置：按需查询，并每 15 分钟记录一次（移动时每 2 分钟一次），保留 7 天\n• 电量，以及设备何时关机或开机\n• 已安装的应用、使用应用的请求，以及孩子使用了哪些应用、用了多久\n• 孩子连接的 Wi-Fi 网络和配对的 Bluetooth 设备\n• 通话（通话记录）和联系人\n• 共享存储空间中的文件、照片和视频（在你打开时）\n• 设备屏幕（在你点按“查看屏幕”时）\n• 家庭聊天中的消息</string>
     <string name="device_disclosure_readers_title">谁能看到这些信息</string>
     <string name="device_disclosure_readers">只有你和与你共享此设备的其他家长。所有内容都在设备上进行端到端加密；负责转发消息的中继服务器和 Google 推送服务只能看到加密数据。任何内容都不会被出售或用于广告。</string>
     <string name="device_disclosure_child_title">孩子会知道</string>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Wording for the family chat: the child's Chat screen and its notifications, and the events parents get when
+     one of them limits the child's sending (see ChatLog). -->
+<resources>
+
+    <!-- Audience: child and parent. The chat's name on the child's home screen (it appears there like an app)
+         and in the parents' app list. -->
+    <string name="chat_app_name">チャット</string>
+    <!-- Audience: child. Notification channel name for chat messages, shown in Android's notification settings. -->
+    <string name="chat_channel">家族チャット</string>
+    <!-- Audience: child. Shown as the sender of the child's own messages. -->
+    <string name="chat_you">あなた</string>
+    <!-- Audience: child. Placeholder in the empty text box. -->
+    <string name="chat_hint">メッセージを書く</string>
+    <!-- Audience: child. The button that sends the message. -->
+    <string name="chat_send">送信</string>
+    <!-- Audience: child. Shown instead of the thread before anyone has written. -->
+    <string name="chat_empty">まだメッセージはありません。ここから保護者にメッセージを送れます。</string>
+    <!-- Audience: child. Under one of her messages that hasn't reached the parents yet (no connection); it is
+         sent by itself later. -->
+    <string name="chat_not_sent">まだ送信されていません</string>
+    <!-- Audience: child. Under the thread while slow mode stops her sending. %1$s is a time (e.g. 7:05 PM). -->
+    <string name="chat_wait_slow">%1$s になったらまた送れます</string>
+    <!-- Audience: child. Under the thread while a parent's timeout stops her sending. %1$s is a time, with the
+         weekday when it isn't today. -->
+    <string name="chat_wait_timeout">保護者がメッセージを %1$s まで一時停止しています</string>
+    <!-- Audience: child. Notification when a parent pauses her chat messages. %1$s: the time it ends; %2$s:
+         parent's name. -->
+    <string name="chat_limit_timeout_child">チャットのメッセージは %1$s までお休みです（%2$s）</string>
+    <!-- Audience: child. Notification when a parent turns on slow mode. %1$d: minutes between messages (1, 5 or
+         15); %2$s: parent's name. -->
+    <plurals name="chat_limit_slow_child">
+        <item quantity="other">チャットのメッセージは %1$d 分ごとに 1 通送れます（%2$s）</item>
+    </plurals>
+    <!-- Audience: child. Notification when a parent ends slow mode and the timeout. %1$s: parent's name. -->
+    <string name="chat_limit_off_child">チャットのメッセージを制限なしで送れるようになりました（%1$s）</string>
+    <!-- Audience: parent. Event: a parent paused the child's chat sending. %1$s: parent's name; %2$s: the time
+         it ends. -->
+    <string name="chat_event_timeout">%1$s：チャットのメッセージを %2$s まで一時停止しました</string>
+    <!-- Audience: parent. Event: as above, with slow mode once the pause ends. %1$s: parent's name; %2$s: the
+         time; %3$d: minutes between messages. -->
+    <plurals name="chat_event_timeout_slow">
+        <item quantity="other">%1$s：チャットのメッセージを %2$s まで一時停止し、その後は %3$d 分ごとに 1 通にしました</item>
+    </plurals>
+    <!-- Audience: parent. Event: a parent turned on slow mode. %1$s: parent's name; %2$d: minutes between
+         messages. -->
+    <plurals name="chat_event_slow">
+        <item quantity="other">%1$s：チャットのスローモード、%2$d 分ごとに 1 通</item>
+    </plurals>
+    <!-- Audience: parent. Event: a parent ended slow mode and the timeout. %1$s: parent's name. -->
+    <string name="chat_event_off">%1$s：チャットのメッセージの制限を解除しました</string>
+</resources>

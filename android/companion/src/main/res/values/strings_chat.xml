@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The family chat: the Chat row on a child's page, the chat page, the parents' limits on the child's sending, and chat notifications. -->
+<resources>
+    <!-- Title of the chat page and of its row on a child's device page -->
+    <string name="chat_title">Chat</string>
+    <!-- Notification channel for new chat messages -->
+    <string name="chat_channel">Family chat</string>
+    <string name="chat_empty">No messages yet.</string>
+    <string name="chat_you">You</string>
+    <!-- A message with its sender. %1$s: who wrote it (a name, or "You"); %2$s: the message -->
+    <string name="chat_notification_line">%1$s: %2$s</string>
+    <!-- Under this parent's own message: not stored by the child's phone yet -->
+    <string name="chat_sending">Sending</string>
+    <!-- Under this parent's own message: the child's phone has it -->
+    <string name="chat_delivered">Delivered</string>
+    <!-- Under this parent's own message: the child has opened the chat since -->
+    <string name="chat_seen">Seen</string>
+    <!-- Placeholder of the field where a parent writes a message -->
+    <string name="chat_message_hint">Message</string>
+    <string name="chat_send">Send</string>
+    <!-- Chip: the child can send only one message every few minutes -->
+    <string name="chat_slow_mode">Slow mode</string>
+    <!-- Chip while slow mode is on. %1$s: a length of time, such as "5 min" -->
+    <string name="chat_slow_mode_on">Slow mode: %1$s</string>
+    <string name="chat_slow_mode_off">Off</string>
+    <!-- Choice in the slow mode dialog. %1$s: a length of time, such as "5 min" -->
+    <string name="chat_slow_mode_every">One message every %1$s</string>
+    <!-- %1$s: the child's name or device name -->
+    <string name="chat_slow_mode_title">How often can %1$s send messages?</string>
+    <string name="chat_slow_mode_note">Only your child\'s messages are limited. Parents can always send, and everyone can always read.</string>
+    <!-- Chip: the child can't send messages for a while -->
+    <string name="chat_timeout">Timeout</string>
+    <!-- Chip while a timeout runs. %1$s: a time, such as 6:00 p.m. -->
+    <string name="chat_timeout_until">Timeout until %1$s</string>
+    <!-- %1$s: the child's name or device name -->
+    <string name="chat_timeout_title">No messages from %1$s for how long?</string>
+    <string name="chat_timeout_note">Your child can still read the chat and your messages.</string>
+    <string name="chat_timeout_end">End the timeout now</string>
+    <!-- On the Chat row. %1$d: how many messages from the child or other parents haven't been shown here -->
+    <plurals name="chat_unread">
+        <item quantity="one">%1$d unread message</item>
+        <item quantity="other">%1$d unread messages</item>
+    </plurals>
+</resources>

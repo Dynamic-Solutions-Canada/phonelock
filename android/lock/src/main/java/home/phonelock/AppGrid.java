@@ -57,6 +57,7 @@ final class AppGrid extends LinearLayout {
         List<Entry> out = new ArrayList<>();
         for (String p : pkgs) {
             if (BuiltInApps.is(p)) {
+                if (!Policy.isPresent(c, p)) continue; // Chat where it isn't offered
                 out.add(new Entry(p, BuiltInApps.label(c, p), BuiltInApps.icon(c, p)));
                 continue;
             }

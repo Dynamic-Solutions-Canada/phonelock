@@ -113,6 +113,7 @@ final class Diagnostics {
                         : lm.hasProvider(LocationManager.GPS_PROVIDER) ? "GPS only" : "none");
         info(a, "Location log", LocationLog.summary(c));
         info(a, "Alerts waiting to send", String.valueOf(Outbox.pendingAlerts(c)));
+        info(a, "Chat messages waiting to send", String.valueOf(ChatLog.pending(c)));
 
         // Features that need a one-time grant at setup (tools/configure-lock.sh).
         check(a, "Screen view (accessibility service)", screenViewOn(c), "Re-run the setup script");

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Wording for the family chat: the child's Chat screen and its notifications, and the events parents get when
+     one of them limits the child's sending (see ChatLog). -->
+<resources>
+
+    <!-- Audience: child and parent. The chat's name on the child's home screen (it appears there like an app)
+         and in the parents' app list. -->
+    <string name="chat_app_name">Chat</string>
+    <!-- Audience: child. Notification channel name for chat messages, shown in Android's notification settings. -->
+    <string name="chat_channel">Familienchat</string>
+    <!-- Audience: child. Shown as the sender of the child's own messages. -->
+    <string name="chat_you">Du</string>
+    <!-- Audience: child. Placeholder in the empty text box. -->
+    <string name="chat_hint">Nachricht schreiben</string>
+    <!-- Audience: child. The button that sends the message. -->
+    <string name="chat_send">Senden</string>
+    <!-- Audience: child. Shown instead of the thread before anyone has written. -->
+    <string name="chat_empty">Noch keine Nachrichten. Hier kannst du deinen Eltern schreiben.</string>
+    <!-- Audience: child. Under one of her messages that hasn't reached the parents yet (no connection); it is
+         sent by itself later. -->
+    <string name="chat_not_sent">Noch nicht gesendet</string>
+    <!-- Audience: child. Under the thread while slow mode stops her sending. %1$s is a time (e.g. 7:05 PM). -->
+    <string name="chat_wait_slow">Du kannst um %1$s wieder senden</string>
+    <!-- Audience: child. Under the thread while a parent's timeout stops her sending. %1$s is a time, with the
+         weekday when it isn't today. -->
+    <string name="chat_wait_timeout">Deine Eltern haben deine Nachrichten bis %1$s pausiert</string>
+    <!-- Audience: child. Notification when a parent pauses her chat messages. %1$s: the time it ends; %2$s:
+         parent's name. -->
+    <string name="chat_limit_timeout_child">Deine Chatnachrichten sind bis %1$s pausiert (%2$s)</string>
+    <!-- Audience: child. Notification when a parent turns on slow mode. %1$d: minutes between messages (1, 5 or
+         15); %2$s: parent's name. -->
+    <plurals name="chat_limit_slow_child">
+        <item quantity="one">Du kannst jede Minute eine Chatnachricht senden (%2$s)</item>
+        <item quantity="other">Du kannst alle %1$d Minuten eine Chatnachricht senden (%2$s)</item>
+    </plurals>
+    <!-- Audience: child. Notification when a parent ends slow mode and the timeout. %1$s: parent's name. -->
+    <string name="chat_limit_off_child">Du kannst wieder ohne Limit Chatnachrichten senden (%1$s)</string>
+    <!-- Audience: parent. Event: a parent paused the child's chat sending. %1$s: parent's name; %2$s: the time
+         it ends. -->
+    <string name="chat_event_timeout">%1$s: Chatnachrichten bis %2$s pausiert</string>
+    <!-- Audience: parent. Event: as above, with slow mode once the pause ends. %1$s: parent's name; %2$s: the
+         time; %3$d: minutes between messages. -->
+    <plurals name="chat_event_timeout_slow">
+        <item quantity="one">%1$s: Chatnachrichten bis %2$s pausiert, danach eine pro Minute</item>
+        <item quantity="other">%1$s: Chatnachrichten bis %2$s pausiert, danach eine alle %3$d Minuten</item>
+    </plurals>
+    <!-- Audience: parent. Event: a parent turned on slow mode. %1$s: parent's name; %2$d: minutes between
+         messages. -->
+    <plurals name="chat_event_slow">
+        <item quantity="one">%1$s: Chat-Langsammodus, eine Nachricht pro Minute</item>
+        <item quantity="other">%1$s: Chat-Langsammodus, eine Nachricht alle %2$d Minuten</item>
+    </plurals>
+    <!-- Audience: parent. Event: a parent ended slow mode and the timeout. %1$s: parent's name. -->
+    <string name="chat_event_off">%1$s: Chatnachrichten nicht mehr begrenzt</string>
+</resources>

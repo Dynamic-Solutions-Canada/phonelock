@@ -90,6 +90,8 @@ class ParentService : Service() {
                         Hub.refreshAll()
                         first = false
                     }
+                    // Every (re)connect catches up the family chats; messages missed while away are on the phone.
+                    Chat.syncAll()
                     while (gen == generation) {
                         val line = r.readLine() ?: break
                         val o = runCatching { JSONObject(line) }.getOrNull() ?: continue

@@ -116,6 +116,8 @@ internal fun FindAndReach(dev: String, name: String, state: PhoneState, now: Lon
         LaunchedEffect(state.ringing) { if (state.ringing) Pending.clear(dev, "ring") }
         // Second row: pages for calls, contacts, files and app time.
         MoreRow(onOpen)
+        // The family chat, for phones whose lock app has it.
+        ChatEntry(dev, state, onOpen)
 
         screens[dev]?.let { ScreenResult(dev, it, capturing = dev in capturing) }
     }

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The family chat: the Chat row on a child's page, the chat page, the parents' limits on the child's sending, and chat notifications. -->
+<resources>
+    <!-- Title of the chat page and of its row on a child's device page -->
+    <string name="chat_title">チャット</string>
+    <!-- Notification channel for new chat messages -->
+    <string name="chat_channel">家族チャット</string>
+    <string name="chat_empty">まだメッセージはありません。</string>
+    <string name="chat_you">あなた</string>
+    <!-- A message with its sender. %1$s: who wrote it (a name, or "You"); %2$s: the message -->
+    <string name="chat_notification_line">%1$s：%2$s</string>
+    <!-- Under this parent's own message: not stored by the child's phone yet -->
+    <string name="chat_sending">送信中</string>
+    <!-- Under this parent's own message: the child's phone has it -->
+    <string name="chat_delivered">配信済み</string>
+    <!-- Under this parent's own message: the child has opened the chat since -->
+    <string name="chat_seen">既読</string>
+    <!-- Placeholder of the field where a parent writes a message -->
+    <string name="chat_message_hint">メッセージ</string>
+    <string name="chat_send">送信</string>
+    <!-- Chip: the child can send only one message every few minutes -->
+    <string name="chat_slow_mode">スローモード</string>
+    <!-- Chip while slow mode is on. %1$s: a length of time, such as "5 min" -->
+    <string name="chat_slow_mode_on">スローモード：%1$s</string>
+    <string name="chat_slow_mode_off">オフ</string>
+    <!-- Choice in the slow mode dialog. %1$s: a length of time, such as "5 min" -->
+    <string name="chat_slow_mode_every">%1$s に 1 通</string>
+    <!-- %1$s: the child's name or device name -->
+    <string name="chat_slow_mode_title">%1$s がメッセージを送れる間隔</string>
+    <string name="chat_slow_mode_note">制限されるのはお子さんのメッセージだけです。保護者はいつでも送信でき、全員がいつでも読めます。</string>
+    <!-- Chip: the child can't send messages for a while -->
+    <string name="chat_timeout">一時停止</string>
+    <!-- Chip while a timeout runs. %1$s: a time, such as 6:00 p.m. -->
+    <string name="chat_timeout_until">%1$s まで一時停止</string>
+    <!-- %1$s: the child's name or device name -->
+    <string name="chat_timeout_title">%1$s のメッセージを止める時間</string>
+    <string name="chat_timeout_note">お子さんはチャットとあなたのメッセージを引き続き読めます。</string>
+    <string name="chat_timeout_end">今すぐ一時停止を終了</string>
+    <!-- On the Chat row. %1$d: how many messages from the child or other parents haven't been shown here -->
+    <plurals name="chat_unread">
+        <item quantity="other">未読メッセージ %1$d 件</item>
+    </plurals>
+</resources>

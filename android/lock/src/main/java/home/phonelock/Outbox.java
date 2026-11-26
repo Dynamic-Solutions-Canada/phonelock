@@ -9,9 +9,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
- * Messages the parents must get even if the device is offline when they happen: low-battery alerts and the
- * location log. Ordinary messages are sent once and lost without a connection; these are kept until the hub
- * accepts them, and retried whenever the device reconnects or takes its next location reading.
+ * Messages the parents must get even if the device is offline when they happen: low-battery alerts, the
+ * child's chat messages ({@link ChatLog}) and the location log. Ordinary messages are sent once and lost without
+ * a connection; these are kept until the hub accepts them, and retried whenever the device reconnects or takes
+ * its next location reading.
  */
 final class Outbox {
     /** How long to wait for one send (longer than a post's own 15 s connect + 30 s read limits). */
@@ -76,8 +77,19 @@ final class Outbox {
     private static volatile long lastFlush;
 
     /**
-     * Sends whatever is waiting: alerts first, then location readings. Returns at once. Called on every
-     * service start (each return to the home screen), so at most once a minute.
+     * Sends the child's chat messages that are waiting, now: unlike {@link #flush}, not limited to once a
+     * minute, since the child may send several in a row. Returns at once.
+     */
+    static void flushChat(Context c) {
+        Context app = c.getApplicationContext();
+        WORKER.execute(() -> {
+            if (Remote.paired(app)) ChatLog.flush(app, SEND_TIMEOUT_MS);
+        });
+    }
+
+    /**
+     * Sends whatever is waiting: alerts first, then chat messages, then location readings. Returns at once.
+     * Called on every service start (each return to the home screen), so at most once a minute.
      */
     static void flush(Context c) {
         long now = System.currentTimeMillis();
@@ -87,6 +99,7 @@ final class Outbox {
         WORKER.execute(() -> {
             if (!Remote.paired(app)) return;
             flushAlerts(app);
+            ChatLog.flush(app, SEND_TIMEOUT_MS);
             LocationLog.flush(app, SEND_TIMEOUT_MS, false);
         });
     }
@@ -100,6 +113,7 @@ final class Outbox {
         java.util.concurrent.Future<?> f = WORKER.submit(() -> {
             if (!Remote.paired(app)) return;
             flushAlerts(app);
+            ChatLog.flush(app, SEND_TIMEOUT_MS);
             LocationLog.flush(app, SEND_TIMEOUT_MS, true);
         });
         try {

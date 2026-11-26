@@ -96,6 +96,16 @@
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden"
             android:windowSoftInputMode="adjustResize" />
 
+        <!-- The family chat (see ChatLog). singleTop: a message's notification tapped while it's open
+             reuses it. -->
+        <activity
+            android:name=".ChatActivity"
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:excludeFromRecents="true"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden"
+            android:windowSoftInputMode="adjustResize" />
+
         <!-- The SOS button's screen: call 911, what was sent, a message for the parents. -->
         <activity
             android:name=".EmergencyActivity"

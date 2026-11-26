@@ -83,6 +83,14 @@ data class PhoneState(
     val lang: String? = null,
     /** Whether the lock app on the device can be released from here (lock apps too old to say can't). */
     val canRelease: Boolean = false,
+    /** Whether the device has the family chat (lock apps too old to say don't); from a full state. */
+    val canChat: Boolean = false,
+    /**
+     * The parents' limits on the child's chat messages (full state): minutes between them (0 = no slow mode), and
+     * when the child may send again (ms; 0 = no timeout).
+     */
+    val chatEvery: Int = 0,
+    val chatUntil: Long = 0,
 ) {
     fun label(pkg: String) = labels[pkg] ?: pkg
 }
@@ -138,6 +146,7 @@ class App : Application() {
         ScreenAlerts.init(this)
         EmergencyAlerts.init(this)
         LocationHistory.init(this)
+        Chat.init(this)
         AppTime.init(this)
         ChildSetup.init(this)
         AppUpdate.init(this)
@@ -328,6 +337,7 @@ object Hub {
         ScreenAlerts.forget(id)
         QuietWatch.forget(id)
         EmergencyAlerts.forget(id)
+        Chat.forget(id)
         _requests.update { l -> l.filterNot { it.device == id } }
         saveDevices()
         saveStates()
@@ -559,6 +569,15 @@ object Hub {
         send(dev, msg("calls").put("limitOut", calls.limitOut).put("limitIn", calls.limitIn).put("safe", calls.safeJson()))
     }
 
+    /**
+     * Limits the child's chat messages on [dev]: one every [every] minutes (0 = no slow mode), and none before
+     * [until] (ms; 0 = no timeout). Replaces both, so callers pass the setting they aren't changing as it is.
+     */
+    fun setChatLimit(dev: String, every: Int, until: Long) {
+        editState(dev) { it.copy(chatEvery = every, chatUntil = until) }
+        send(dev, msg("chatlimit").put("every", every).put("until", until))
+    }
+
     /** Puts [app] on ([on]) or takes it off the phone's "Give access" list and the child's Ask picker. */
     fun offer(dev: String, app: String, on: Boolean) {
         editState(dev) { st ->
@@ -577,7 +596,22 @@ object Hub {
     /** Seals [o] with [dev]'s key and posts it to the phone's topic, logging failures to its activity. */
     internal fun send(dev: String, o: JSONObject) {
         val d = _devices.value.firstOrNull { it.id == dev } ?: return
-        thread {
+        thread { post(d, o) }
+    }
+
+    /**
+     * Sends [messages] to [dev] one after another, each once the previous has been accepted, so the phone
+     * receives them in this order (the family chat numbers messages as they arrive).
+     */
+    internal fun sendInOrder(dev: String, messages: List<JSONObject>) {
+        val d = _devices.value.firstOrNull { it.id == dev } ?: return
+        thread { messages.forEach { post(d, it) } }
+    }
+
+    /** Seals [o] with [d]'s key and posts it to the phone's topic, blocking; failures go to its activity. */
+    private fun post(d: Device, o: JSONObject) {
+        val dev = d.id
+        run {
             try {
                 val key = Crypto.key(d.secret)
                 var body = Crypto.seal(key, o.toString())
@@ -631,6 +665,8 @@ object Hub {
         if (from == "phone") noteVitals(dev, m, ts)
         // Any reply ends the wait its screen may be showing (handlers below still check it's for them).
         if (from == "phone") Pending.answered(dev, m.optString("req"))
+        // The phone is reachable again: this parent's chat messages it may have missed while off are resent.
+        if (from == "phone") Chat.heardFromPhone(dev)
         when (m.optString("t")) {
             "state" -> if (from == "phone") {
                 // Limits and today's app use are kept by their own module (which keeps the newest itself).
@@ -648,6 +684,7 @@ object Hub {
                                     others = s.others.filterNot { p -> p in old.home },
                                     notOffered = s.notOffered, labels = s.labels + old.labels, masks = s.masks,
                                     schedule = s.schedule, calls = s.calls, canFiles = s.canFiles, canCallLog = s.canCallLog, canRelease = s.canRelease,
+                                    canChat = s.canChat,
                                     removable = s.removable, battAlert = s.battAlert, screenRules = s.screenRules, screenAreas = s.screenAreas, full = true,
                                 )
                                 )
@@ -665,6 +702,11 @@ object Hub {
                         others = old.others.filterNot { it in s.home }, notOffered = old.notOffered, labels = old.labels + s.labels,
                         masks = old.masks, schedule = old.schedule, full = old.full, calls = old.calls,
                         canFiles = old.canFiles, canCallLog = old.canCallLog, canRelease = old.canRelease, removable = old.removable,
+                        canChat = old.canChat,
+                        // Every state carries the chat limits (a chatlimit is answered with a partial one); older
+                        // lock apps' partial states don't, so keep what was known.
+                        chatEvery = if (m.has("chat")) s.chatEvery else old.chatEvery,
+                        chatUntil = if (m.has("chat")) s.chatUntil else old.chatUntil,
                         battAlert = old.battAlert, screenRules = old.screenRules, screenAreas = old.screenAreas,
                     )
                 }
@@ -725,6 +767,9 @@ object Hub {
             "sosack" -> if (from != "phone" && from != _parentName.value) EmergencyAlerts.otherAck(dev, m, from)
 
             "track" -> if (from == "phone") LocationHistory.handle(dev, m)
+
+            // The family chat: the child's and other parents' messages, and the phone's record of them.
+            "chat", "chatin", "chatread", "chatlog" -> Chat.handle(dev, m, from)
 
             "diag" -> if (from == "phone") Diagnostics.handle(dev, m)
 
@@ -817,6 +862,9 @@ object Hub {
             } ?: emptyList(),
             lang = if (m.has("lang")) m.optString("lang") else null,
             canRelease = m.optJSONObject("can")?.optBoolean("release") ?: false,
+            canChat = m.optJSONObject("can")?.optBoolean("chat") ?: false,
+            chatEvery = m.optJSONObject("chat")?.optInt("every") ?: 0,
+            chatUntil = m.optJSONObject("chat")?.optLong("until") ?: 0,
         )
     }
 
@@ -830,7 +878,8 @@ object Hub {
         .put("blocks", JSONObject(s.blocks as Map<*, *>)).put("version", s.version).put("updateReady", s.updateReady)
         .put("manual", JSONObject().put("mode", s.manualMode).put("until", s.manualUntil))
         .put("removable", JSONArray(s.removable.toList())).put("parentUntil", s.parentUntil).put("calls", s.calls.toJson())
-        .put("can", JSONObject().put("files", s.canFiles).put("calllog", s.canCallLog).put("release", s.canRelease))
+        .put("can", JSONObject().put("files", s.canFiles).put("calllog", s.canCallLog).put("release", s.canRelease).put("chat", s.canChat))
+        .put("chat", JSONObject().put("every", s.chatEvery).put("until", s.chatUntil))
         .put("battAlert", s.battAlert).put("full", s.full).put("screenRules", JSONObject(s.screenRules as Map<*, *>))
         .put("screenAreas", JSONArray(s.screenAreas.map { JSONObject().put("key", it.key).put("name", it.name) }))
         .also { o ->
@@ -940,6 +989,7 @@ object Hub {
         val nm = c.getSystemService(NotificationManager::class.java)
         nm.createNotificationChannel(NotificationChannel("requests", Strings.get(R.string.alerts_channel_requests), NotificationManager.IMPORTANCE_HIGH))
         nm.createNotificationChannel(NotificationChannel("events", Strings.get(R.string.alerts_channel_events), NotificationManager.IMPORTANCE_DEFAULT))
+        nm.createNotificationChannel(NotificationChannel(Chat.CHANNEL, Strings.get(R.string.chat_channel), NotificationManager.IMPORTANCE_HIGH))
         nm.createNotificationChannel(NotificationChannel("others", Strings.get(R.string.alerts_channel_others), NotificationManager.IMPORTANCE_LOW))
         nm.createNotificationChannel(NotificationChannel("service", Strings.get(R.string.alerts_channel_service), NotificationManager.IMPORTANCE_MIN))
     }

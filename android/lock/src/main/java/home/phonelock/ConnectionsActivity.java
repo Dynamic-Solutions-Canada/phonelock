@@ -45,10 +45,10 @@ public class ConnectionsActivity extends Activity {
     static final int TAB_WIFI = 0;
     static final int TAB_BLUETOOTH = 1;
 
-    private static final int TEXT = Color.WHITE;
-    private static final int MUTED = Color.rgb(160, 168, 186);
-    private static final int CARD = Color.argb(26, 255, 255, 255);
-    private static final int ACCENT = Color.rgb(120, 170, 255);
+    private static final int TEXT = ScreenStyle.TEXT;
+    private static final int MUTED = ScreenStyle.MUTED;
+    private static final int CARD = ScreenStyle.CARD;
+    private static final int ACCENT = ScreenStyle.ACCENT;
 
     private int tab;
     private LinearLayout content;
@@ -125,9 +125,7 @@ public class ConnectionsActivity extends Activity {
         // clear of the bars and the layout inside it carries the margins.
         LinearLayout frame = new LinearLayout(this);
         frame.setFitsSystemWindows(true);
-        // The home screen's background, so this feels like part of it.
-        frame.setBackground(new GradientDrawable(
-                GradientDrawable.Orientation.TOP_BOTTOM, new int[] {Color.rgb(28, 34, 52), Color.rgb(12, 13, 18)}));
+        frame.setBackground(ScreenStyle.background());
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(dp(20), dp(28), dp(20), dp(16));
@@ -144,7 +142,7 @@ public class ConnectionsActivity extends Activity {
         sl.topMargin = dp(20);
         root.addView(scroll, sl);
 
-        TextView done = pill(getString(R.string.done), Color.rgb(52, 60, 84));
+        TextView done = pill(getString(R.string.done), ScreenStyle.BUTTON);
         done.setOnClickListener(v -> finish());
         LinearLayout.LayoutParams dl = new LinearLayout.LayoutParams(-1, dp(52));
         dl.topMargin = dp(12);
@@ -223,7 +221,7 @@ public class ConnectionsActivity extends Activity {
      */
     private boolean allowedNow() {
         String id = tab == TAB_BLUETOOTH ? BuiltInApps.BLUETOOTH : BuiltInApps.WIFI;
-        if (Policy.inParentMode(this) || Policy.homeApps(this).contains(id)) return true;
+        if (BuiltInApps.allowedNow(this, id)) return true;
         if (!isFinishing()) {
             toast(getString(R.string.tools_not_allowed_now, BuiltInApps.label(this, id)));
             finish();
@@ -399,7 +397,7 @@ public class ConnectionsActivity extends Activity {
     /** The full-width button that starts a Bluetooth search. */
     private void searchButton(String label) {
         TextView pair = pill(label, ACCENT);
-        pair.setTextColor(Color.rgb(12, 13, 18));
+        pair.setTextColor(ScreenStyle.ON_ACCENT);
         pair.setOnClickListener(v -> startSearch());
         LinearLayout.LayoutParams pl = new LinearLayout.LayoutParams(-1, dp(52));
         pl.topMargin = dp(20);
@@ -501,25 +499,15 @@ public class ConnectionsActivity extends Activity {
     }
 
     private TextView pill(String label, int color) {
-        TextView t = text(label, 16, TEXT);
-        t.setGravity(Gravity.CENTER);
-        t.setBackground(rounded(color, 26));
-        return t;
+        return ScreenStyle.pill(this, label, color);
     }
 
     private TextView text(String s, int sp, int color) {
-        TextView t = new TextView(this);
-        t.setText(s);
-        t.setTextSize(sp);
-        t.setTextColor(color);
-        return t;
+        return ScreenStyle.text(this, s, sp, color);
     }
 
     private GradientDrawable rounded(int color, int radiusDp) {
-        GradientDrawable d = new GradientDrawable();
-        d.setColor(color);
-        d.setCornerRadius(dp(radiusDp));
-        return d;
+        return ScreenStyle.rounded(this, color, radiusDp);
     }
 
     private void toast(String s) {
@@ -527,6 +515,6 @@ public class ConnectionsActivity extends Activity {
     }
 
     private int dp(int v) {
-        return Math.round(v * getResources().getDisplayMetrics().density);
+        return ScreenStyle.dp(this, v);
     }
 }

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Wording for the family chat: the child's Chat screen and its notifications, and the events parents get when
+     one of them limits the child's sending (see ChatLog). -->
+<resources>
+
+    <!-- Audience: child and parent. The chat's name on the child's home screen (it appears there like an app)
+         and in the parents' app list. -->
+    <string name="chat_app_name">Chat</string>
+    <!-- Audience: child. Notification channel name for chat messages, shown in Android's notification settings. -->
+    <string name="chat_channel">Chat familiar</string>
+    <!-- Audience: child. Shown as the sender of the child's own messages. -->
+    <string name="chat_you">Tú</string>
+    <!-- Audience: child. Placeholder in the empty text box. -->
+    <string name="chat_hint">Escribe un mensaje</string>
+    <!-- Audience: child. The button that sends the message. -->
+    <string name="chat_send">Enviar</string>
+    <!-- Audience: child. Shown instead of the thread before anyone has written. -->
+    <string name="chat_empty">Todavía no hay mensajes. Aquí puedes escribir a tus padres.</string>
+    <!-- Audience: child. Under one of her messages that hasn't reached the parents yet (no connection); it is
+         sent by itself later. -->
+    <string name="chat_not_sent">Aún sin enviar</string>
+    <!-- Audience: child. Under the thread while slow mode stops her sending. %1$s is a time (e.g. 7:05 PM). -->
+    <string name="chat_wait_slow">Podrás enviar otro mensaje a las %1$s</string>
+    <!-- Audience: child. Under the thread while a parent's timeout stops her sending. %1$s is a time, with the
+         weekday when it isn't today. -->
+    <string name="chat_wait_timeout">Tus padres pausaron tus mensajes hasta %1$s</string>
+    <!-- Audience: child. Notification when a parent pauses her chat messages. %1$s: the time it ends; %2$s:
+         parent's name. -->
+    <string name="chat_limit_timeout_child">Tus mensajes del chat están en pausa hasta %1$s (%2$s)</string>
+    <!-- Audience: child. Notification when a parent turns on slow mode. %1$d: minutes between messages (1, 5 or
+         15); %2$s: parent's name. -->
+    <plurals name="chat_limit_slow_child">
+        <item quantity="one">Puedes enviar un mensaje del chat cada %1$d minuto (%2$s)</item>
+        <item quantity="many">Puedes enviar un mensaje del chat cada %1$d minutos (%2$s)</item>
+        <item quantity="other">Puedes enviar un mensaje del chat cada %1$d minutos (%2$s)</item>
+    </plurals>
+    <!-- Audience: child. Notification when a parent ends slow mode and the timeout. %1$s: parent's name. -->
+    <string name="chat_limit_off_child">Ya puedes enviar mensajes del chat sin límite (%1$s)</string>
+    <!-- Audience: parent. Event: a parent paused the child's chat sending. %1$s: parent's name; %2$s: the time
+         it ends. -->
+    <string name="chat_event_timeout">%1$s: mensajes del chat en pausa hasta %2$s</string>
+    <!-- Audience: parent. Event: as above, with slow mode once the pause ends. %1$s: parent's name; %2$s: the
+         time; %3$d: minutes between messages. -->
+    <plurals name="chat_event_timeout_slow">
+        <item quantity="one">%1$s: mensajes del chat en pausa hasta %2$s y después uno cada %3$d minuto</item>
+        <item quantity="many">%1$s: mensajes del chat en pausa hasta %2$s y después uno cada %3$d minutos</item>
+        <item quantity="other">%1$s: mensajes del chat en pausa hasta %2$s y después uno cada %3$d minutos</item>
+    </plurals>
+    <!-- Audience: parent. Event: a parent turned on slow mode. %1$s: parent's name; %2$d: minutes between
+         messages. -->
+    <plurals name="chat_event_slow">
+        <item quantity="one">%1$s: modo lento del chat, un mensaje cada %2$d minuto</item>
+        <item quantity="many">%1$s: modo lento del chat, un mensaje cada %2$d minutos</item>
+        <item quantity="other">%1$s: modo lento del chat, un mensaje cada %2$d minutos</item>
+    </plurals>
+    <!-- Audience: parent. Event: a parent ended slow mode and the timeout. %1$s: parent's name. -->
+    <string name="chat_event_off">%1$s: los mensajes del chat ya no tienen límite</string>
+</resources>

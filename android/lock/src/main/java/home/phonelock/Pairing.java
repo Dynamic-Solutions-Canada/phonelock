@@ -126,6 +126,10 @@ final class Pairing {
      */
     private static synchronized void storeSecret(Context c, String secret) {
         SharedPreferences p = Policy.prefs(c);
+        // A new pairing (or none, after a release) starts a new family chat: the old one belongs to the old
+        // parents, so it is deleted rather than offered to whoever pairs next.
+        String old = secret(c);
+        if (!(old == null ? "" : old).equals(secret == null ? "" : secret)) ChatLog.clear(c);
         if (secret == null || secret.isEmpty()) {
             p.edit().remove(SEALED).remove(PLAIN).commit();
             cached = "";

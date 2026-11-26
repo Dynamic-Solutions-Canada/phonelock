@@ -34,7 +34,7 @@ public class HomeActivity extends Activity {
      * while allowed (by schedule or for a while). The menu always ends with Power, for turning the device
      * off or restarting it. (Settings, when allowed, is an ordinary app on the grid.)
      */
-    private static final List<String> QUICK = BuiltInApps.ALL;
+    private static final List<String> QUICK = BuiltInApps.CONTROLS;
 
     private TextView quickButton;
     private final List<String> quickAllowed = new ArrayList<>();
@@ -302,7 +302,7 @@ public class HomeActivity extends Activity {
         }
         // Wi-Fi and Bluetooth aren't apps: offered as pills after the app icons, not in the grid.
         List<String> controls = new ArrayList<>();
-        for (String id : BuiltInApps.ALL) if (pkgs.remove(id)) controls.add(id);
+        for (String id : BuiltInApps.CONTROLS) if (pkgs.remove(id)) controls.add(id);
 
         // Icons, not a text list: easier to find the app you mean.
         LinearLayout body = new LinearLayout(this);
@@ -464,8 +464,8 @@ public class HomeActivity extends Activity {
         for (String p : Schedule.masks(this).keySet()) {
             if (!usable.contains(p) && !pkgs.contains(p) && Policy.isPresent(this, p)) pkgs.add(p);
         }
-        // Wi-Fi and Bluetooth are always there in parent mode (they're also behind the ⋮ button).
-        for (String id : BuiltInApps.ALL) if (!pkgs.contains(id)) pkgs.add(id);
+        // Wi-Fi, Bluetooth and Chat are always there in parent mode (the first two are also behind the ⋮ button).
+        for (String id : BuiltInApps.offered(this)) if (!pkgs.contains(id)) pkgs.add(id);
         return pkgs;
     }
 

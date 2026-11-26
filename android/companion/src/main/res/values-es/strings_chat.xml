@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The family chat: the Chat row on a child's page, the chat page, the parents' limits on the child's sending, and chat notifications. -->
+<resources>
+    <!-- Title of the chat page and of its row on a child's device page -->
+    <string name="chat_title">Chat</string>
+    <!-- Notification channel for new chat messages -->
+    <string name="chat_channel">Chat familiar</string>
+    <string name="chat_empty">Todavía no hay mensajes.</string>
+    <string name="chat_you">Tú</string>
+    <!-- A message with its sender. %1$s: who wrote it (a name, or "You"); %2$s: the message -->
+    <string name="chat_notification_line">%1$s: %2$s</string>
+    <!-- Under this parent's own message: not stored by the child's phone yet -->
+    <string name="chat_sending">Enviando</string>
+    <!-- Under this parent's own message: the child's phone has it -->
+    <string name="chat_delivered">Entregado</string>
+    <!-- Under this parent's own message: the child has opened the chat since -->
+    <string name="chat_seen">Visto</string>
+    <!-- Placeholder of the field where a parent writes a message -->
+    <string name="chat_message_hint">Mensaje</string>
+    <string name="chat_send">Enviar</string>
+    <!-- Chip: the child can send only one message every few minutes -->
+    <string name="chat_slow_mode">Modo lento</string>
+    <!-- Chip while slow mode is on. %1$s: a length of time, such as "5 min" -->
+    <string name="chat_slow_mode_on">Modo lento: %1$s</string>
+    <string name="chat_slow_mode_off">Desactivado</string>
+    <!-- Choice in the slow mode dialog. %1$s: a length of time, such as "5 min" -->
+    <string name="chat_slow_mode_every">Un mensaje cada %1$s</string>
+    <!-- %1$s: the child's name or device name -->
+    <string name="chat_slow_mode_title">¿Cada cuánto puede enviar mensajes %1$s?</string>
+    <string name="chat_slow_mode_note">Solo se limitan los mensajes de tu hijo. Los padres siempre pueden escribir y todos pueden leer siempre.</string>
+    <!-- Chip: the child can't send messages for a while -->
+    <string name="chat_timeout">Pausa</string>
+    <!-- Chip while a timeout runs. %1$s: a time, such as 6:00 p.m. -->
+    <string name="chat_timeout_until">Pausa hasta las %1$s</string>
+    <!-- %1$s: the child's name or device name -->
+    <string name="chat_timeout_title">¿Cuánto tiempo sin mensajes de %1$s?</string>
+    <string name="chat_timeout_note">Tu hijo podrá seguir leyendo el chat y tus mensajes.</string>
+    <string name="chat_timeout_end">Terminar la pausa ahora</string>
+    <!-- On the Chat row. %1$d: how many messages from the child or other parents haven't been shown here -->
+    <plurals name="chat_unread">
+        <item quantity="one">%1$d mensaje sin leer</item>
+        <item quantity="many">%1$d mensajes sin leer</item>
+        <item quantity="other">%1$d mensajes sin leer</item>
+    </plurals>
+</resources>

@@ -501,6 +501,17 @@ public final class Remote {
                 // The child is always told (no hidden monitoring); an old "notify": false is ignored.
                 ScreenService.capture(c, m.optString("id"), who);
                 break;
+            case "chat":
+                // The family chat (see ChatLog): stored under the name the parent signs with. Ignored where chat
+                // isn't offered (ChatLog.available).
+                if (ChatLog.available(c)) ChatLog.onParentMessage(c, m, from);
+                break;
+            case "chatsync":
+                if (ChatLog.available(c)) ChatLog.onSync(c, m);
+                break;
+            case "chatlimit":
+                if (ChatLog.available(c)) ChatLog.onLimit(c, m, who);
+                break;
             default:
                 break;
         }
@@ -668,6 +679,8 @@ public final class Remote {
             }
             o.put("modeUntil", Schedule.currentModeUntil(c));
             AppTime.putState(c, o);
+            // In every state, so the reply to a chatlimit (a partial state) carries the new setting.
+            ChatLog.putState(c, o);
             if (full) {
                 JSONArray inst = new JSONArray();
                 for (String p : otherApps(c)) {
@@ -689,7 +702,8 @@ public final class Remote {
                         new JSONObject()
                                 .put("files", FileManager.permitted())
                                 .put("calllog", CallLogFeed.permitted(c))
-                                .put("release", true));
+                                .put("release", true)
+                                .put("chat", ChatLog.available(c)));
                 o.put("schedule", Schedule.rulesJson(c));
                 o.put("battAlert", Battery.alertAt(c));
                 o.put("screenRules", ScreenGuard.rulesJson(c));
@@ -751,7 +765,7 @@ public final class Remote {
             if (!skip.contains(p) && Policy.isPresent(c, p)) out.add(p);
         }
         // Wi-Fi and Bluetooth are listed like apps (see BuiltInApps).
-        for (String id : BuiltInApps.ALL) if (!skip.contains(id)) out.add(id);
+        for (String id : BuiltInApps.offered(c)) if (!skip.contains(id)) out.add(id);
         return new ArrayList<>(out);
     }
 
@@ -770,7 +784,7 @@ public final class Remote {
         return android.text.format.DateFormat.getTimeFormat(c).format(new java.util.Date(t));
     }
 
-    /** Requests, notable events and answers a parent is waiting for (location, screenshot). */
+    /** Requests, notable events, answers a parent is waiting for (location, screenshot) and the child's chat. */
     private static boolean urgent(JSONObject o) {
         switch (o.optString("t")) {
             case "req":
@@ -778,6 +792,7 @@ public final class Remote {
             case "shot":
             case "seen":
             case "sos":
+            case "chat":
                 return true;
             case "event":
                 return !o.optBoolean("quiet");

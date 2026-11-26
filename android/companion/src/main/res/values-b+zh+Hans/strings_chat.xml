@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The family chat: the Chat row on a child's page, the chat page, the parents' limits on the child's sending, and chat notifications. -->
+<resources>
+    <!-- Title of the chat page and of its row on a child's device page -->
+    <string name="chat_title">聊天</string>
+    <!-- Notification channel for new chat messages -->
+    <string name="chat_channel">家庭聊天</string>
+    <string name="chat_empty">还没有消息。</string>
+    <string name="chat_you">你</string>
+    <!-- A message with its sender. %1$s: who wrote it (a name, or "You"); %2$s: the message -->
+    <string name="chat_notification_line">%1$s：%2$s</string>
+    <!-- Under this parent's own message: not stored by the child's phone yet -->
+    <string name="chat_sending">正在发送</string>
+    <!-- Under this parent's own message: the child's phone has it -->
+    <string name="chat_delivered">已送达</string>
+    <!-- Under this parent's own message: the child has opened the chat since -->
+    <string name="chat_seen">已读</string>
+    <!-- Placeholder of the field where a parent writes a message -->
+    <string name="chat_message_hint">消息</string>
+    <string name="chat_send">发送</string>
+    <!-- Chip: the child can send only one message every few minutes -->
+    <string name="chat_slow_mode">慢速模式</string>
+    <!-- Chip while slow mode is on. %1$s: a length of time, such as "5 min" -->
+    <string name="chat_slow_mode_on">慢速模式：%1$s</string>
+    <string name="chat_slow_mode_off">关闭</string>
+    <!-- Choice in the slow mode dialog. %1$s: a length of time, such as "5 min" -->
+    <string name="chat_slow_mode_every">每 %1$s 一条消息</string>
+    <!-- %1$s: the child's name or device name -->
+    <string name="chat_slow_mode_title">%1$s 多久可以发一条消息？</string>
+    <string name="chat_slow_mode_note">只限制孩子的消息。家长随时可以发送，所有人随时可以阅读。</string>
+    <!-- Chip: the child can't send messages for a while -->
+    <string name="chat_timeout">暂停发言</string>
+    <!-- Chip while a timeout runs. %1$s: a time, such as 6:00 p.m. -->
+    <string name="chat_timeout_until">暂停发言至 %1$s</string>
+    <!-- %1$s: the child's name or device name -->
+    <string name="chat_timeout_title">让 %1$s 暂停发消息多久？</string>
+    <string name="chat_timeout_note">孩子仍然可以阅读聊天和你的消息。</string>
+    <string name="chat_timeout_end">立即结束暂停</string>
+    <!-- On the Chat row. %1$d: how many messages from the child or other parents haven't been shown here -->
+    <plurals name="chat_unread">
+        <item quantity="other">%1$d 条未读消息</item>
+    </plurals>
+</resources>

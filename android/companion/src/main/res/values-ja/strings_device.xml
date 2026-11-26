@@ -87,7 +87,7 @@
     <string name="device_disclosure_intro">PhoneLock はペアレンタル コントロール アプリです。お子様のスマートフォンやタブレットを管理し、その情報を確認できます。</string>
     <string name="device_disclosure_seen_title">お子様のデバイスから確認できる情報</string>
     <!-- A bulleted list: keep one item per line -->
-    <string name="device_disclosure_seen">• 位置情報：リクエスト時、および 15 分ごと（移動中は 2 分ごと）の記録。7 日間保存されます\n• バッテリー残量と、電源のオン・オフ\n• インストール済みのアプリ、その使用リクエスト、どのアプリをどれだけ使ったか\n• 接続した Wi-Fi ネットワークとペア設定した Bluetooth デバイス\n• 通話（通話履歴）と連絡先\n• 共有ストレージ内のファイル、写真、動画（開いたとき）\n• 画面（「画面を表示」をタップしたとき）</string>
+    <string name="device_disclosure_seen">• 位置情報：リクエスト時、および 15 分ごと（移動中は 2 分ごと）の記録。7 日間保存されます\n• バッテリー残量と、電源のオン・オフ\n• インストール済みのアプリ、その使用リクエスト、どのアプリをどれだけ使ったか\n• 接続した Wi-Fi ネットワークとペア設定した Bluetooth デバイス\n• 通話（通話履歴）と連絡先\n• 共有ストレージ内のファイル、写真、動画（開いたとき）\n• 画面（「画面を表示」をタップしたとき）\n• 家族チャットのメッセージ</string>
     <string name="device_disclosure_readers_title">閲覧できる人</string>
     <string name="device_disclosure_readers">あなたと、デバイスを共有している他の保護者のみです。すべてのデータはデバイス上でエンドツーエンド暗号化されます。メッセージを中継するリレーサーバーと Google のプッシュサービスが扱うのは、暗号化されたデータのみです。データの販売や広告への利用は一切ありません。</string>
     <string name="device_disclosure_child_title">お子様に伝えられること</string>

