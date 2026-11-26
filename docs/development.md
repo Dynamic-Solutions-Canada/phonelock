@@ -124,6 +124,10 @@ The full procedure is the `release` skill (`.agents/skills/release/SKILL.md`). I
 scripts/deploy/publish-release.sh
 ```
 
+## Try the parent app on an emulator
+
+`scripts/dev/emulator start` boots a headless Android 16 emulator in Docker (`android/docker/emulator/`) and connects adb to it as `127.0.0.1:5556`; `scripts/dev/emulator stop` removes it. It needs no host install (KVM is passed into the container) and about 5 GiB of memory under a hard cap, so check `free -m` first. Each start is a fresh phone. Install the parent app with `adb -s 127.0.0.1:5556 install -r -g` and add a test phone by opening its pairing link: `adb -s 127.0.0.1:5556 shell am start -a android.intent.action.VIEW -d '<phonelock://pair?... link>'`. A paired test phone (or `scripts/dev/ParentCli.java` as a second parent) gives it something to talk to. The camera can't read QR codes, and `uiautomator dump` hangs on Compose screens, so drive it with screenshots and taps.
+
 ## Install on the child's phone with adb
 
 The phone must have **no accounts** when the device owner is set (add them back afterwards).

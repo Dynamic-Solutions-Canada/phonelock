@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+# Start or stop a headless Android emulator in Docker (android/docker/emulator/), for trying the parent app
+# without a spare phone. Nothing is installed on this machine: KVM is passed into the container.
+#   scripts/dev/emulator start   # builds the image the first time (about 3 GB), boots, connects adb as 127.0.0.1:5556
+#   scripts/dev/emulator stop    # removes the container (the image stays)
+# Needs about 5 GiB of memory (a hard cap, no swap) plus the usual 2.5 GiB margin: check `free -m` first.
+# Every start is a fresh phone: install the app again (adb -s 127.0.0.1:5556 install -r -g <apk>).
+set -euo pipefail
+
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+adb="${ADB:-$HOME/android-sdk/platform-tools/adb}"
+name=phonelock-emulator
+serial=127.0.0.1:5556
+
+case "${1:-}" in
+  start)
+    docker image inspect phonelock-build >/dev/null 2>&1 || docker build -t phonelock-build "$repo_root/android/docker"
+    docker image inspect "$name" >/dev/null 2>&1 || docker build -t "$name" "$repo_root/android/docker/emulator"
+    docker rm -f "$name" >/dev/null 2>&1 || true
+    docker run -d --name "$name" --device /dev/kvm --memory 5g --memory-swap 5g -p 127.0.0.1:5556:5556 "$name" >/dev/null
+    echo "booting..."
+    for _ in $(seq 1 60); do
+      sleep 5
+      "$adb" connect "$serial" >/dev/null 2>&1 || true
+      if [ "$("$adb" -s "$serial" shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" = "1" ]; then
+        echo "ready: adb -s $serial"
+        exit 0
+      fi
+    done
+    echo "the emulator didn't finish booting; see: docker logs $name" >&2
+    exit 1
+    ;;
+  stop)
+    "$adb" disconnect "$serial" >/dev/null 2>&1 || true
+    docker rm -f "$name" >/dev/null 2>&1 || true
+    echo "stopped"
+    ;;
+  *)
+    echo "usage: scripts/dev/emulator start|stop" >&2
+    exit 2
+    ;;
+esac
