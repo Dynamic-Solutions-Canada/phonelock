@@ -25,7 +25,7 @@ PhoneLock is for parents who want to give a child a phone that does only what th
 
 Download `PhoneLock-parent-app.apk` from the [latest release](https://github.com/Dynamic-Solutions-Canada/phonelock/releases/latest) and install it on your phone. It updates itself from there once installed. You don't download anything for the child's phone: the parent app installs the lock app during setup, and the lock app keeps itself up to date.
 
-You'll need Android 13 or newer on both phones. During setup, the child's phone must be on the same Wi-Fi as yours and have no accounts signed in; you add the accounts back afterwards.
+You'll need Android 13 or newer on both phones, because PhoneLock uses Android's per-app language setting to let you choose the language of the app on your child's phone from your own. During setup, the child's phone must be on the same Wi-Fi as yours and have no accounts signed in; you add the accounts back afterwards.
 
 ## Set up a child's phone
 

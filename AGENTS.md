@@ -10,7 +10,7 @@ This repo follows the shared standards at https://github.com/Dynamic-Solutions-C
 
 `ARCHITECTURE.md` has the data flow and which files own each area. `docs/protocol.md` is the source of truth for every message between the apps; a protocol change updates it in the same commit as both apps.
 
-Both apps need Android 13 or newer (`minSdk` 33); raising it strands installed phones, so it changes only on the maintainer's decision.
+Both apps need Android 13 or newer (`minSdk` 33) for the per-app language APIs (`LocaleManager`, `localeConfig`), which let the parent set the child app's language. Everything else works from API 31 (checked with lint on 2026-11-26); lowering would need AppCompat or a guard for per-app language, about ten small 33-only call replacements and an Android 12 device test. Raising it strands installed phones, so it changes only on the maintainer's decision.
 
 ## Behaviour
 
