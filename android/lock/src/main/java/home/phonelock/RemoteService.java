@@ -310,7 +310,7 @@ public class RemoteService extends Service {
             if (sent > 0 && System.currentTimeMillis() - sent > 24 * 3600_000L) return;
             JSONObject att = o.optJSONObject("attachment");
             String url = att == null ? null : att.optString("url", null);
-            Remote.handle(this, msg, url);
+            Remote.handle(this, msg, url, sent);
         } catch (Exception e) {
             Log.w(Policy.TAG, "bad ntfy line: " + e);
         }

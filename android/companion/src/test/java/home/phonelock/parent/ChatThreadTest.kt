@@ -179,4 +179,13 @@ class ChatThreadTest {
         val t = ChatThread().withLog(listOf(msg("a", seq = 1)), after = 0, read = 0, ownRequest = false, baseline = true)
         assertFalse(t.caughtUp)
     }
+
+    @Test
+    fun aDeliveredMessageTakesThePhonesTime() {
+        val t = ChatThread().merge(listOf(msg("x", at = 1_000, mine = true)))
+        val (stored, _) = t.delivered("x", 1, at = 5_000)
+        assertEquals(5_000L, stored.messages.single().at)
+        // An older phone that sends no time keeps the one held.
+        assertEquals(1_000L, t.delivered("x", 1).first.messages.single().at)
+    }
 }

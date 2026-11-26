@@ -17,6 +17,7 @@
 ## How it works
 
 - **One thread per phone.** Every chat message goes on the phone's topic, so the child and every parent receive it directly. Messages are sealed like every other message; the hub relays only ciphertext.
+- **Times are the hub's.** Every message's time comes from the hub's clock, not a sender's, so all apps show the same times and a phone with a wrong clock neither mislabels nor deletes messages early. A parent's message takes the time the hub received it; the child's take the phone's clock corrected by the hub's, which the phone learns each time the hub accepts one of its messages (ntfy answers with its time). Until the phone has heard back once, it uses its own clock. Parent apps show their own message's local time only while it is "Sending".
 - **The phone is the record.** The phone stores every chat message it receives or sends, gives each a sequence number (`seq`, counting up from 1), and keeps the last 90 days, at most 2,000 messages. The thread is ordered by `seq`, never by the senders' clocks, which disagree.
 - **Delivery:** when the phone stores a parent's message it publishes `chatin` with that message's `seq`. That is the "Delivered" mark, and it tells every parent where the message sits in the thread.
 - **Catching up:** a parent app sends `chatsync` with the highest `seq` it has whenever a chat opens and when the app reconnects; the phone answers with `chatlog`, everything after that `seq` (pages of up to 200). A newly added parent starts from 0 and gets the whole history.

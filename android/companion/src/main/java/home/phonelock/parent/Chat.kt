@@ -199,7 +199,7 @@ object Chat {
         val cid = m.optString("cid").takeIf { it.isNotEmpty() } ?: return
         val seq = m.optLong("seq").takeIf { it > 0 } ?: return
         var known = false
-        val updated = change(dev) { t -> t.delivered(cid, seq).also { known = it.second }.first }
+        val updated = change(dev) { t -> t.delivered(cid, seq, m.optLong("at")).also { known = it.second }.first }
         // Another parent's message that never reached this phone, or seqs missed below it: catch up.
         if (!known || seq > updated.synced) catchUp(dev)
     }

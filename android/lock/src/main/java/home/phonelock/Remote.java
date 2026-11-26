@@ -54,6 +54,14 @@ public final class Remote {
 
     /** As {@link #handle(Context, String)}, with the ntfy attachment URL when the message carried a file. */
     static void handle(Context c, String body, String attachmentUrl) {
+        handle(c, body, attachmentUrl, 0);
+    }
+
+    /**
+     * As {@link #handle(Context, String, String)}, with {@code serverTime}: when the hub received the message (ms,
+     * ntfy's own time for it; 0 if unknown). The family chat stamps parents' messages with it.
+     */
+    static void handle(Context c, String body, String attachmentUrl, long serverTime) {
         if (!paired(c)) {
             // Legacy plain-text commands only work until a pairing secret is set.
             if (body.startsWith(RemoteService.REPLY_PREFIX) || body.startsWith("{")) return;
@@ -73,10 +81,10 @@ public final class Remote {
                 String inner = fetchBig(c, attachmentUrl, m.optString("id"));
                 JSONObject im = inner == null ? null : new JSONObject(inner);
                 if (im == null || FROM.equals(im.optString("from")) || !fresh(c, im)) return;
-                dispatch(c, im, im.optString("from"), null);
+                dispatch(c, im, im.optString("from"), null, serverTime);
                 return;
             }
-            dispatch(c, m, from, attachmentUrl);
+            dispatch(c, m, from, attachmentUrl, serverTime);
         } catch (Exception e) {
             Log.w(Policy.TAG, "remote: " + e);
         }
@@ -153,7 +161,8 @@ public final class Remote {
         return System.currentTimeMillis() - m.optLong("ts") <= LIVE_MAX_AGE_MS;
     }
 
-    private static void dispatch(Context c, JSONObject m, String from, String attachmentUrl) throws Exception {
+    private static void dispatch(Context c, JSONObject m, String from, String attachmentUrl, long serverTime)
+            throws Exception {
         // A parent with no name set signs as "Parent" (or nothing): word it in this phone's language.
         String who = from.isEmpty() || "Parent".equals(from) ? c.getString(R.string.events_a_parent) : from;
         switch (m.optString("t")) {
@@ -504,7 +513,7 @@ public final class Remote {
             case "chat":
                 // The family chat (see ChatLog): stored under the name the parent signs with. Ignored where chat
                 // isn't offered (ChatLog.available).
-                if (ChatLog.available(c)) ChatLog.onParentMessage(c, m, from);
+                if (ChatLog.available(c)) ChatLog.onParentMessage(c, m, from, serverTime);
                 break;
             case "chatsync":
                 if (ChatLog.available(c)) ChatLog.onSync(c, m);
@@ -890,14 +899,26 @@ public final class Remote {
             h.setRequestProperty("Message", messageHeader);
             h.setFixedLengthStreamingMode(body.length);
         }
+        long sentAt = System.currentTimeMillis();
         try (OutputStream os = h.getOutputStream()) {
             os.write(body);
         }
         int code = h.getResponseCode();
-        h.disconnect();
         if (code < 200 || code > 299) {
+            h.disconnect();
             Log.w(Policy.TAG, "ntfy publish HTTP " + code);
             return false;
+        }
+        long answeredAt = System.currentTimeMillis();
+        // ntfy answers with the message as stored, including the hub's time for it: learn the hub's clock.
+        try (java.io.InputStream in = h.getInputStream()) {
+            byte[] reply = in.readNBytes(4096);
+            long time = new JSONObject(new String(reply, java.nio.charset.StandardCharsets.UTF_8)).optLong("time", 0);
+            ServerClock.note(c, sentAt, answeredAt, time);
+        } catch (Exception e) {
+            // Only the clock reading is lost; the message itself was accepted.
+        } finally {
+            h.disconnect();
         }
         return true;
     }

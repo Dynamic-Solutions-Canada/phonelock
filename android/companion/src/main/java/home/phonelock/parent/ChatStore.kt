@@ -88,10 +88,13 @@ data class ChatThread(
     /** The child has seen the thread up to [seq]; the mark never moves back. */
     fun seenUpTo(seq: Long): ChatThread = if (seq > read) copy(read = seq) else this
 
-    /** The phone stored this parent's (or another parent's) message [cid] as [seq]; false in the pair when [cid] isn't held here. */
-    fun delivered(cid: String, seq: Long): Pair<ChatThread, Boolean> {
+    /**
+     * The phone stored this parent's (or another parent's) message [cid] as [seq] at [at] (the hub's time, the
+     * one everyone shows; 0 keeps the time held); false in the pair when [cid] isn't held here.
+     */
+    fun delivered(cid: String, seq: Long, at: Long = 0): Pair<ChatThread, Boolean> {
         val m = messages.firstOrNull { it.cid == cid } ?: return this to false
-        return merge(listOf(m.copy(seq = seq))) to true
+        return merge(listOf(m.copy(seq = seq, at = if (at > 0) at else m.at))) to true
     }
 
     /** Every message marked as shown, after the chat was on screen. */

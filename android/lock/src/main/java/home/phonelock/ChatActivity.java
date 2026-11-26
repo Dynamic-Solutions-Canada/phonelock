@@ -215,7 +215,7 @@ public class ChatActivity extends Activity {
         String end = ChatLog.when(this, wait.until);
         waitNote.setText(getString(wait.timeout ? R.string.chat_wait_timeout : R.string.chat_wait_slow, end));
         waitNote.setVisibility(View.VISIBLE);
-        handler.postDelayed(waitOver, Math.max(1000, wait.until - System.currentTimeMillis() + 500));
+        handler.postDelayed(waitOver, Math.max(1000, wait.until - ServerClock.now(this) + 500));
     }
 
     /** Send: hands the text to {@link ChatLog#send}, which decides whether it may go now. */

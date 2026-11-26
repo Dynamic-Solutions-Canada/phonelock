@@ -70,8 +70,9 @@ final class ChatLog {
      * (the parent app may have missed the first answer). Only a new message notifies the child.
      *
      * @param from the parent's name as the message carried it
+     * @param serverTime when the hub received it (ms; 0 if unknown): the message's time, the same for everyone
      */
-    static void onParentMessage(Context c, JSONObject m, String from) {
+    static void onParentMessage(Context c, JSONObject m, String from, long serverTime) {
         try {
             String cid = m.optString("cid");
             String text = ChatHistory.cleanText(m.optString("text", null));
@@ -79,8 +80,9 @@ final class ChatLog {
                 Log.w(Policy.TAG, "chat: dropped a malformed message");
                 return;
             }
-            long now = System.currentTimeMillis();
-            long at = m.optLong("at", m.optLong("ts", now));
+            // Times in the chat are the hub's (ServerClock), never a sender's own clock, which may be wrong.
+            long now = ServerClock.now(c);
+            long at = serverTime > 0 ? serverTime : now;
             ChatHistory.Added added;
             synchronized (ChatLog.class) {
                 ChatHistory h = history(c);
@@ -174,7 +176,7 @@ final class ChatLog {
             Log.w(Policy.TAG, "chat limit: dropped slow mode " + m.opt("every"));
             return;
         }
-        long now = System.currentTimeMillis();
+        long now = ServerClock.now(c);
         long until = m.optLong("until", 0);
         if (until <= now) until = 0;
         Policy.prefs(c)
@@ -212,7 +214,7 @@ final class ChatLog {
                 "chat",
                 new JSONObject()
                         .put("every", p.getInt(KEY_EVERY, 0))
-                        .put("until", until > System.currentTimeMillis() ? until : 0));
+                        .put("until", until > ServerClock.now(c) ? until : 0));
     }
 
     // ---------- the child's side ----------
@@ -228,10 +230,7 @@ final class ChatLog {
     static ChatHistory.Wait sendWait(Context c) {
         SharedPreferences p = Policy.prefs(c);
         return ChatHistory.sendWait(
-                p.getLong(KEY_LAST_SENT, 0),
-                p.getInt(KEY_EVERY, 0),
-                p.getLong(KEY_UNTIL, 0),
-                System.currentTimeMillis());
+                p.getLong(KEY_LAST_SENT, 0), p.getInt(KEY_EVERY, 0), p.getLong(KEY_UNTIL, 0), ServerClock.now(c));
     }
 
     /**
@@ -248,7 +247,7 @@ final class ChatLog {
         if (clean == null) return EMPTY;
         synchronized (ChatLog.class) {
             if (sendWait(c) != null) return WAIT;
-            long now = System.currentTimeMillis();
+            long now = ServerClock.now(c);
             ChatHistory h = history(c);
             h.add(Crypto.randomId(), ChatHistory.PHONE, clean, now, now, Crypto.randomId());
             h.prune(now);
@@ -274,8 +273,9 @@ final class ChatLog {
                 ChatHistory h = history(c);
                 List<ChatHistory.Msg> waiting = h.unsent();
                 next = waiting.isEmpty() ? null : waiting.get(0);
-                long now = System.currentTimeMillis();
-                wait = ChatHistory.paceWait(lastSend, h.childSentSince(now - 86_400_000L), now);
+                // Message times are the hub's; the spacing between sends is measured on the phone's own clock.
+                int sentToday = h.childSentSince(ServerClock.now(c) - 86_400_000L);
+                wait = ChatHistory.paceWait(lastSend, sentToday, System.currentTimeMillis());
             }
             if (next == null) {
                 // Nothing of the child's waiting: a read mark that couldn't go out before goes now.
@@ -419,14 +419,14 @@ final class ChatLog {
 
     /** A time, with the weekday when it isn't today ("8:00 PM", "Tue 8:00 PM"). */
     static String when(Context c, long t) {
-        if (sameDay(t, System.currentTimeMillis())) return Remote.time(c, t);
+        if (sameDay(t, ServerClock.now(c))) return Remote.time(c, t);
         return DateUtils.formatDateTime(
                 c, t, DateUtils.FORMAT_SHOW_WEEKDAY | DateUtils.FORMAT_ABBREV_WEEKDAY | DateUtils.FORMAT_SHOW_TIME);
     }
 
     /** A message's time in the thread: the time today, else the date and time. */
     static String stamp(Context c, long t) {
-        if (sameDay(t, System.currentTimeMillis())) return Remote.time(c, t);
+        if (sameDay(t, ServerClock.now(c))) return Remote.time(c, t);
         return DateUtils.formatDateTime(
                 c, t, DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_MONTH | DateUtils.FORMAT_SHOW_TIME);
     }
