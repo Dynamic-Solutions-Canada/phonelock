@@ -55,6 +55,9 @@
     <string name="tools_bluetooth_pairing_mode">Schalte die Kopfhörer oder den Lautsprecher in den Kopplungsmodus und tippe dann darauf.</string>
     <!-- Detail under a nearby device's name -->
     <string name="tools_bluetooth_tap_to_pair">Zum Koppeln tippen</string>
+    <string name="tools_bluetooth_searching">Suche …</string>
+    <string name="tools_bluetooth_search_again">Erneut suchen</string>
+    <string name="tools_bluetooth_none_found">Keine Geräte gefunden.</string>
     <!-- %1$s is the Bluetooth device's name -->
     <string name="tools_bluetooth_pairing">Wird mit %1$s gekoppelt …</string>
     <string name="tools_bluetooth_pairing_failed_start">Koppeln konnte nicht starten</string>

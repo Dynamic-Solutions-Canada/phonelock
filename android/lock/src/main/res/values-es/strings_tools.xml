@@ -55,6 +55,9 @@
     <string name="tools_bluetooth_pairing_mode">Pon los auriculares o el altavoz en modo de emparejamiento y luego tócalo.</string>
     <!-- Detail under a nearby device's name -->
     <string name="tools_bluetooth_tap_to_pair">Toca para emparejar</string>
+    <string name="tools_bluetooth_searching">Buscando…</string>
+    <string name="tools_bluetooth_search_again">Buscar de nuevo</string>
+    <string name="tools_bluetooth_none_found">No se encontraron dispositivos.</string>
     <!-- %1$s is the Bluetooth device's name -->
     <string name="tools_bluetooth_pairing">Emparejando con %1$s…</string>
     <string name="tools_bluetooth_pairing_failed_start">No se pudo empezar a emparejar</string>

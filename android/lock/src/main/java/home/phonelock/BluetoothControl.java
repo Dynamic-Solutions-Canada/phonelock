@@ -85,15 +85,19 @@ final class BluetoothControl {
         return out;
     }
 
-    /** Starts looking for nearby devices; each arrives as BluetoothDevice.ACTION_FOUND. */
-    static void discover(Context c) {
+    /**
+     * Starts looking for nearby devices, unless a search is already running (restarting one would end it with a
+     * stray ACTION_DISCOVERY_FINISHED). Each device arrives as BluetoothDevice.ACTION_FOUND, and Android ends the
+     * search by itself after about 12 seconds. Returns whether a search is now running.
+     */
+    static boolean discover(Context c) {
         BluetoothAdapter a = adapter(c);
-        if (a == null) return;
+        if (a == null) return false;
         try {
-            if (a.isDiscovering()) a.cancelDiscovery();
-            a.startDiscovery();
+            return a.isDiscovering() || a.startDiscovery();
         } catch (SecurityException e) {
             Log.w(Policy.TAG, "bluetooth discover: " + e);
+            return false;
         }
     }
 
@@ -122,7 +126,7 @@ final class BluetoothControl {
     /**
      * Starts pairing with {@code d}: lets Android's pairing dialog run inside the lock, then asks Android to pair.
      * The outcome arrives as BluetoothDevice.ACTION_BOND_STATE_CHANGED; a success is reported to the parents here,
-     * whether or not this screen is still in front. Returns false for a phone or computer (see {@link #accessory})
+     * whether or not this screen is still in front. Returns false for anything but a named audio device (see {@link #accessory})
      * and if Android refused to start.
      */
     static boolean pair(Context c, BluetoothDevice d) {
@@ -140,17 +144,17 @@ final class BluetoothControl {
     }
 
     /**
-     * Whether {@code d} may be paired by the child: accessories (headphones, speakers, watches, keyboards), not
-     * phones or computers, which a parent pairs in parent mode. A device that doesn't say what it is counts as an
-     * accessory, since many cheap headsets don't.
+     * Whether {@code d} may be listed and paired by the child: a named audio device (headphones, speakers, car
+     * kits), the ones a child needs. Everything else nearby (phones, computers, door locks, lights, medical
+     * devices, unnamed beacons) is left for a parent to pair in parent mode, which also keeps the list short.
+     * A device's name and class can arrive after it is first found, so callers check again when they change.
      */
     static boolean accessory(BluetoothDevice d) {
         try {
+            String n = d.getName();
+            if (n == null || n.isBlank()) return false;
             android.bluetooth.BluetoothClass k = d.getBluetoothClass();
-            if (k == null) return true;
-            int major = k.getMajorDeviceClass();
-            return major != android.bluetooth.BluetoothClass.Device.Major.PHONE
-                    && major != android.bluetooth.BluetoothClass.Device.Major.COMPUTER;
+            return k != null && k.getMajorDeviceClass() == android.bluetooth.BluetoothClass.Device.Major.AUDIO_VIDEO;
         } catch (SecurityException e) {
             return false;
         }

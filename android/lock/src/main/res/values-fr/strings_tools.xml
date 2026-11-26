@@ -55,6 +55,9 @@
     <string name="tools_bluetooth_pairing_mode">Mets le casque ou l’enceinte en mode association, puis appuie dessus.</string>
     <!-- Detail under a nearby device's name -->
     <string name="tools_bluetooth_tap_to_pair">Appuie pour associer</string>
+    <string name="tools_bluetooth_searching">Recherche…</string>
+    <string name="tools_bluetooth_search_again">Rechercher à nouveau</string>
+    <string name="tools_bluetooth_none_found">Aucun appareil trouvé.</string>
     <!-- %1$s is the Bluetooth device's name -->
     <string name="tools_bluetooth_pairing">Association avec %1$s…</string>
     <string name="tools_bluetooth_pairing_failed_start">Impossible de lancer l’association</string>

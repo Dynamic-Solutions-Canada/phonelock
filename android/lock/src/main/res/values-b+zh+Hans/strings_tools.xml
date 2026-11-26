@@ -55,6 +55,9 @@
     <string name="tools_bluetooth_pairing_mode">让耳机或音箱进入配对模式，然后点按它。</string>
     <!-- Detail under a nearby device's name -->
     <string name="tools_bluetooth_tap_to_pair">点按即可配对</string>
+    <string name="tools_bluetooth_searching">正在搜索…</string>
+    <string name="tools_bluetooth_search_again">重新搜索</string>
+    <string name="tools_bluetooth_none_found">未找到设备。</string>
     <!-- %1$s is the Bluetooth device's name -->
     <string name="tools_bluetooth_pairing">正在与 %1$s 配对…</string>
     <string name="tools_bluetooth_pairing_failed_start">无法开始配对</string>

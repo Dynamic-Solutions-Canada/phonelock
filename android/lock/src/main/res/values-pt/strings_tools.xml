@@ -55,6 +55,9 @@
     <string name="tools_bluetooth_pairing_mode">Coloque o fone ou a caixa de som no modo de pareamento e toque nele.</string>
     <!-- Detail under a nearby device's name -->
     <string name="tools_bluetooth_tap_to_pair">Toque para parear</string>
+    <string name="tools_bluetooth_searching">Procurando…</string>
+    <string name="tools_bluetooth_search_again">Procurar de novo</string>
+    <string name="tools_bluetooth_none_found">Nenhum dispositivo encontrado.</string>
     <!-- %1$s is the Bluetooth device's name -->
     <string name="tools_bluetooth_pairing">Pareando com %1$s…</string>
     <string name="tools_bluetooth_pairing_failed_start">Não foi possível começar o pareamento</string>

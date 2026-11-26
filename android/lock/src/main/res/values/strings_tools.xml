@@ -55,6 +55,9 @@
     <string name="tools_bluetooth_pairing_mode">Put the headphones or speaker in pairing mode, then tap it.</string>
     <!-- Detail under a nearby device's name -->
     <string name="tools_bluetooth_tap_to_pair">Tap to pair</string>
+    <string name="tools_bluetooth_searching">Searching…</string>
+    <string name="tools_bluetooth_search_again">Search again</string>
+    <string name="tools_bluetooth_none_found">No devices found.</string>
     <!-- %1$s is the Bluetooth device's name -->
     <string name="tools_bluetooth_pairing">Pairing with %1$s…</string>
     <string name="tools_bluetooth_pairing_failed_start">Couldn\'t start pairing</string>

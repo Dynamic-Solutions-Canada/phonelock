@@ -55,6 +55,9 @@
     <string name="tools_bluetooth_pairing_mode">ヘッドホンやスピーカーをペア設定モードにしてから、タップしてください。</string>
     <!-- Detail under a nearby device's name -->
     <string name="tools_bluetooth_tap_to_pair">タップしてペア設定</string>
+    <string name="tools_bluetooth_searching">さがしています…</string>
+    <string name="tools_bluetooth_search_again">もう一度さがす</string>
+    <string name="tools_bluetooth_none_found">デバイスが見つかりませんでした。</string>
     <!-- %1$s is the Bluetooth device's name -->
     <string name="tools_bluetooth_pairing">%1$s とペア設定しています…</string>
     <string name="tools_bluetooth_pairing_failed_start">ペア設定を始められませんでした</string>

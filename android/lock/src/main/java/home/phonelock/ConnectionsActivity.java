@@ -21,10 +21,12 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,8 +52,13 @@ public class ConnectionsActivity extends Activity {
 
     private int tab;
     private LinearLayout content;
-    /** Devices found by the current Bluetooth search, by address; null while not searching. */
+    /**
+     * Devices found by the current Bluetooth search, by address, including ones not shown (see
+     * {@link BluetoothControl#accessory}); null while not searching.
+     */
     private Map<String, BluetoothDevice> found;
+    /** Whether the Bluetooth search is still running; Android ends it by itself after about 12 seconds. */
+    private boolean searching;
 
     private String btNote;
 
@@ -82,6 +89,8 @@ public class ConnectionsActivity extends Activity {
                 String ssid = WifiControl.onAuthFailed(c);
                 if (ssid != null) toast(c.getString(R.string.tools_wifi_wrong_password, ssid));
             }
+            if (BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(a)) searching = true;
+            if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(a)) searching = false;
             BluetoothDevice d = i.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE, BluetoothDevice.class);
             if (BluetoothDevice.ACTION_FOUND.equals(a)
                     && d != null
@@ -112,13 +121,17 @@ public class ConnectionsActivity extends Activity {
         getWindow().setStatusBarColor(Color.BLACK);
         getWindow().setNavigationBarColor(Color.BLACK);
 
+        // fitsSystemWindows replaces a view's own padding with the system bars' insets, so the frame keeps
+        // clear of the bars and the layout inside it carries the margins.
+        LinearLayout frame = new LinearLayout(this);
+        frame.setFitsSystemWindows(true);
+        // The home screen's background, so this feels like part of it.
+        frame.setBackground(new GradientDrawable(
+                GradientDrawable.Orientation.TOP_BOTTOM, new int[] {Color.rgb(28, 34, 52), Color.rgb(12, 13, 18)}));
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(dp(20), dp(28), dp(20), dp(16));
-        root.setFitsSystemWindows(true);
-        // The home screen's background, so this feels like part of it.
-        root.setBackground(new GradientDrawable(
-                GradientDrawable.Orientation.TOP_BOTTOM, new int[] {Color.rgb(28, 34, 52), Color.rgb(12, 13, 18)}));
+        frame.addView(root, new LinearLayout.LayoutParams(-1, -1));
 
         root.addView(text(
                 BuiltInApps.label(this, tab == TAB_BLUETOOTH ? BuiltInApps.BLUETOOTH : BuiltInApps.WIFI), 28, TEXT));
@@ -136,7 +149,7 @@ public class ConnectionsActivity extends Activity {
         LinearLayout.LayoutParams dl = new LinearLayout.LayoutParams(-1, dp(52));
         dl.topMargin = dp(12);
         root.addView(done, dl);
-        setContentView(root);
+        setContentView(frame);
     }
 
     @Override
@@ -152,7 +165,12 @@ public class ConnectionsActivity extends Activity {
         f.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
         f.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
         f.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+        f.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+        f.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         f.addAction(BluetoothDevice.ACTION_FOUND);
+        // A found device's name and class can arrive later; the list is filtered on both.
+        f.addAction(BluetoothDevice.ACTION_NAME_CHANGED);
+        f.addAction(BluetoothDevice.ACTION_CLASS_CHANGED);
         f.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
         registerReceiver(systemRadios, f, Context.RECEIVER_EXPORTED);
         WifiControl.scan(this);
@@ -186,6 +204,7 @@ public class ConnectionsActivity extends Activity {
         }
         BluetoothControl.stopDiscovery(this);
         found = null;
+        searching = false;
         super.onPause();
     }
 
@@ -319,44 +338,86 @@ public class ConnectionsActivity extends Activity {
 
         if (btNote != null) note(btNote);
         if (found == null) {
-            TextView pair = pill(getString(R.string.tools_bluetooth_pair_new), ACCENT);
-            pair.setTextColor(Color.rgb(12, 13, 18));
-            pair.setOnClickListener(v -> {
-                if (!allowedNow()) return;
-                found = new LinkedHashMap<>();
-                btNote = null;
-                BluetoothControl.discover(this);
-                show();
-            });
-            LinearLayout.LayoutParams pl = new LinearLayout.LayoutParams(-1, dp(52));
-            pl.topMargin = dp(20);
-            content.addView(pair, pl);
-        } else {
-            heading(getString(R.string.tools_bluetooth_nearby));
-            note(getString(R.string.tools_bluetooth_pairing_mode));
-            if (!found.isEmpty()) {
-                LinearLayout list = card();
-                for (BluetoothDevice d : found.values()) {
-                    View row = listRow(
-                            BluetoothControl.name(d), getString(R.string.tools_bluetooth_tap_to_pair), false, null);
-                    row.setOnClickListener(v -> {
-                        if (!allowedNow()) return;
-                        btNote = getString(R.string.tools_bluetooth_pairing, BluetoothControl.name(d));
-                        pairingWith = d;
-                        if (!BluetoothControl.accessory(d)) {
-                            pairingWith = null;
-                            btNote = getString(R.string.tools_bluetooth_pair_failed, BluetoothControl.name(d));
-                        } else if (!BluetoothControl.pair(this, d)) {
-                            pairingWith = null;
-                            btNote = getString(R.string.tools_bluetooth_pairing_failed_start);
-                        }
-                        show();
-                    });
-                    list.addView(row);
-                }
-                content.addView(list);
-            }
+            searchButton(getString(R.string.tools_bluetooth_pair_new));
+            return;
         }
+
+        heading(getString(R.string.tools_bluetooth_nearby));
+        note(getString(R.string.tools_bluetooth_pairing_mode));
+        List<BluetoothDevice> shown = new ArrayList<>();
+        for (BluetoothDevice d : found.values()) if (BluetoothControl.accessory(d)) shown.add(d);
+
+        // The search's state goes above the list, so it's in view however many devices are found.
+        if (searching) {
+            searchingRow();
+        } else {
+            // The search has ended (by itself, or because a pairing started): offer another.
+            if (shown.isEmpty()) note(getString(R.string.tools_bluetooth_none_found));
+            searchButton(getString(R.string.tools_bluetooth_search_again));
+        }
+        if (!shown.isEmpty()) {
+            LinearLayout list = card();
+            for (BluetoothDevice d : shown) {
+                View row =
+                        listRow(BluetoothControl.name(d), getString(R.string.tools_bluetooth_tap_to_pair), false, null);
+                row.setOnClickListener(v -> onFound(d));
+                list.addView(row);
+            }
+            LinearLayout.LayoutParams ll = new LinearLayout.LayoutParams(-1, -2);
+            ll.topMargin = dp(12);
+            content.addView(list, ll);
+        }
+    }
+
+    /**
+     * Starts a fresh search for nearby devices, forgetting the last one's results (a device that went out of
+     * range would otherwise stay listed).
+     */
+    private void startSearch() {
+        if (!allowedNow()) return;
+        found = new LinkedHashMap<>();
+        btNote = null;
+        searching = BluetoothControl.discover(this);
+        show();
+    }
+
+    /** Tapping a found device: pair with it, which shows Android's own confirmation. */
+    private void onFound(BluetoothDevice d) {
+        if (!allowedNow()) return;
+        btNote = getString(R.string.tools_bluetooth_pairing, BluetoothControl.name(d));
+        pairingWith = d;
+        if (!BluetoothControl.accessory(d)) {
+            pairingWith = null;
+            btNote = getString(R.string.tools_bluetooth_pair_failed, BluetoothControl.name(d));
+        } else if (!BluetoothControl.pair(this, d)) {
+            pairingWith = null;
+            btNote = getString(R.string.tools_bluetooth_pairing_failed_start);
+        }
+        show();
+    }
+
+    /** The full-width button that starts a Bluetooth search. */
+    private void searchButton(String label) {
+        TextView pair = pill(label, ACCENT);
+        pair.setTextColor(Color.rgb(12, 13, 18));
+        pair.setOnClickListener(v -> startSearch());
+        LinearLayout.LayoutParams pl = new LinearLayout.LayoutParams(-1, dp(52));
+        pl.topMargin = dp(20);
+        content.addView(pair, pl);
+    }
+
+    /** A small spinner and "Searching…", shown while the Bluetooth search runs. */
+    private void searchingRow() {
+        LinearLayout r = new LinearLayout(this);
+        r.setGravity(Gravity.CENTER_VERTICAL);
+        r.setPadding(dp(8), dp(12), dp(8), dp(4));
+        ProgressBar spinner = new ProgressBar(this, null, android.R.attr.progressBarStyleSmall);
+        spinner.setIndeterminateTintList(ColorStateList.valueOf(ACCENT));
+        r.addView(spinner, new LinearLayout.LayoutParams(dp(20), dp(20)));
+        TextView t = text(getString(R.string.tools_bluetooth_searching), 14, MUTED);
+        t.setPadding(dp(10), 0, 0, 0);
+        r.addView(t);
+        content.addView(r);
     }
 
     // ---------- pieces ----------
