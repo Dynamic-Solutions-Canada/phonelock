@@ -46,8 +46,10 @@ public class SecretBoxTest {
     public void aChangedValueDoesntOpen() throws Exception {
         SecretKey key = newKey();
         String sealed = SecretBox.seal(key, SECRET);
-        char last = sealed.charAt(sealed.length() - 1);
-        String changed = sealed.substring(0, sealed.length() - 1) + (last == 'A' ? 'B' : 'A');
+        // Change a character in the middle: the last one may only carry Base64 padding bits, which decode the same.
+        int i = sealed.length() / 2;
+        char c = sealed.charAt(i);
+        String changed = sealed.substring(0, i) + (c == 'A' ? 'B' : 'A') + sealed.substring(i + 1);
         assertThrows(AEADBadTagException.class, () -> SecretBox.open(key, changed));
     }
 
